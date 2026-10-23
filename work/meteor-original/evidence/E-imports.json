@@ -1,0 +1,1445 @@
+{
+  "sample": "/Users/dulinfeng/Downloads/流星86726/lxhdj_/Meteor.exe",
+  "sha256": "289afb0aa44a47921d167fc24d6d404c60d6d00c299ac27d45fc61e16231b498",
+  "size": 1945600,
+  "machine": "0x14c",
+  "imageBase": "0x400000",
+  "entryPoint": "0x50982e",
+  "sections": [
+    {
+      "name": ".text",
+      "va": 4096,
+      "size": 1729213,
+      "raw": 4096,
+      "rawsize": 1732608
+    },
+    {
+      "name": ".rdata",
+      "va": 1736704,
+      "size": 114190,
+      "raw": 1736704,
+      "rawsize": 114688
+    },
+    {
+      "name": ".data",
+      "va": 1851392,
+      "size": 2289396,
+      "raw": 1851392,
+      "rawsize": 73728
+    },
+    {
+      "name": ".data1",
+      "va": 4141056,
+      "size": 2272,
+      "raw": 1925120,
+      "rawsize": 4096
+    },
+    {
+      "name": ".rsrc",
+      "va": 4145152,
+      "size": 16328,
+      "raw": 1929216,
+      "rawsize": 16384
+    }
+  ],
+  "imports": [
+    {
+      "dll": "KERNEL32.dll",
+      "functions": [
+        {
+          "name": "FindClose",
+          "iat": "0x5a8090"
+        },
+        {
+          "name": "FindNextFileA",
+          "iat": "0x5a8094"
+        },
+        {
+          "name": "FindFirstFileA",
+          "iat": "0x5a8098"
+        },
+        {
+          "name": "GetVersionExA",
+          "iat": "0x5a809c"
+        },
+        {
+          "name": "GetModuleHandleA",
+          "iat": "0x5a80a0"
+        },
+        {
+          "name": "CloseHandle",
+          "iat": "0x5a80a4"
+        },
+        {
+          "name": "GetSystemDefaultLangID",
+          "iat": "0x5a80a8"
+        },
+        {
+          "name": "GetLastError",
+          "iat": "0x5a80ac"
+        },
+        {
+          "name": "GetTickCount",
+          "iat": "0x5a80b0"
+        },
+        {
+          "name": "ReadFile",
+          "iat": "0x5a80b4"
+        },
+        {
+          "name": "GetFileSize",
+          "iat": "0x5a80b8"
+        },
+        {
+          "name": "CreateFileA",
+          "iat": "0x5a80bc"
+        },
+        {
+          "name": "lstrcatA",
+          "iat": "0x5a80c0"
+        },
+        {
+          "name": "DeleteFileA",
+          "iat": "0x5a80c4"
+        },
+        {
+          "name": "MultiByteToWideChar",
+          "iat": "0x5a80c8"
+        },
+        {
+          "name": "InitializeCriticalSection",
+          "iat": "0x5a80cc"
+        },
+        {
+          "name": "DeleteCriticalSection",
+          "iat": "0x5a80d0"
+        },
+        {
+          "name": "LeaveCriticalSection",
+          "iat": "0x5a80d4"
+        },
+        {
+          "name": "EnterCriticalSection",
+          "iat": "0x5a80d8"
+        },
+        {
+          "name": "RtlUnwind",
+          "iat": "0x5a80dc"
+        },
+        {
+          "name": "RaiseException",
+          "iat": "0x5a80e0"
+        },
+        {
+          "name": "HeapAlloc",
+          "iat": "0x5a80e4"
+        },
+        {
+          "name": "GetStartupInfoA",
+          "iat": "0x5a80e8"
+        },
+        {
+          "name": "GetVersion",
+          "iat": "0x5a80ec"
+        },
+        {
+          "name": "ExitProcess",
+          "iat": "0x5a80f0"
+        },
+        {
+          "name": "HeapReAlloc",
+          "iat": "0x5a80f4"
+        },
+        {
+          "name": "InterlockedDecrement",
+          "iat": "0x5a80f8"
+        },
+        {
+          "name": "InterlockedIncrement",
+          "iat": "0x5a80fc"
+        },
+        {
+          "name": "GetTimeZoneInformation",
+          "iat": "0x5a8100"
+        },
+        {
+          "name": "GetSystemTime",
+          "iat": "0x5a8104"
+        },
+        {
+          "name": "ResumeThread",
+          "iat": "0x5a8108"
+        },
+        {
+          "name": "CreateThread",
+          "iat": "0x5a810c"
+        },
+        {
+          "name": "TlsSetValue",
+          "iat": "0x5a8110"
+        },
+        {
+          "name": "ExitThread",
+          "iat": "0x5a8114"
+        },
+        {
+          "name": "GetSystemTimeAsFileTime",
+          "iat": "0x5a8118"
+        },
+        {
+          "name": "WriteFile",
+          "iat": "0x5a811c"
+        },
+        {
+          "name": "SetFilePointer",
+          "iat": "0x5a8120"
+        },
+        {
+          "name": "SetHandleCount",
+          "iat": "0x5a8124"
+        },
+        {
+          "name": "GetStdHandle",
+          "iat": "0x5a8128"
+        },
+        {
+          "name": "FreeLibrary",
+          "iat": "0x5a812c"
+        },
+        {
+          "name": "LoadLibraryA",
+          "iat": "0x5a8130"
+        },
+        {
+          "name": "GetCurrentProcess",
+          "iat": "0x5a8134"
+        },
+        {
+          "name": "HeapSize",
+          "iat": "0x5a8138"
+        },
+        {
+          "name": "GetModuleFileNameA",
+          "iat": "0x5a813c"
+        },
+        {
+          "name": "GetEnvironmentVariableA",
+          "iat": "0x5a8140"
+        },
+        {
+          "name": "HeapDestroy",
+          "iat": "0x5a8144"
+        },
+        {
+          "name": "HeapCreate",
+          "iat": "0x5a8148"
+        },
+        {
+          "name": "VirtualFree",
+          "iat": "0x5a814c"
+        },
+        {
+          "name": "VirtualAlloc",
+          "iat": "0x5a8150"
+        },
+        {
+          "name": "IsBadWritePtr",
+          "iat": "0x5a8154"
+        },
+        {
+          "name": "GetCurrentThreadId",
+          "iat": "0x5a8158"
+        },
+        {
+          "name": "TlsAlloc",
+          "iat": "0x5a815c"
+        },
+        {
+          "name": "SetLastError",
+          "iat": "0x5a8160"
+        },
+        {
+          "name": "TlsGetValue",
+          "iat": "0x5a8164"
+        },
+        {
+          "name": "FlushFileBuffers",
+          "iat": "0x5a8168"
+        },
+        {
+          "name": "SetUnhandledExceptionFilter",
+          "iat": "0x5a816c"
+        },
+        {
+          "name": "UnhandledExceptionFilter",
+          "iat": "0x5a8170"
+        },
+        {
+          "name": "FreeEnvironmentStringsA",
+          "iat": "0x5a8174"
+        },
+        {
+          "name": "FreeEnvironmentStringsW",
+          "iat": "0x5a8178"
+        },
+        {
+          "name": "WideCharToMultiByte",
+          "iat": "0x5a817c"
+        },
+        {
+          "name": "GetEnvironmentStrings",
+          "iat": "0x5a8180"
+        },
+        {
+          "name": "GetEnvironmentStringsW",
+          "iat": "0x5a8184"
+        },
+        {
+          "name": "LCMapStringA",
+          "iat": "0x5a8188"
+        },
+        {
+          "name": "LCMapStringW",
+          "iat": "0x5a818c"
+        },
+        {
+          "name": "GetStringTypeA",
+          "iat": "0x5a8190"
+        },
+        {
+          "name": "GetStringTypeW",
+          "iat": "0x5a8194"
+        },
+        {
+          "name": "GetCPInfo",
+          "iat": "0x5a8198"
+        },
+        {
+          "name": "GetACP",
+          "iat": "0x5a819c"
+        },
+        {
+          "name": "GetOEMCP",
+          "iat": "0x5a81a0"
+        },
+        {
+          "name": "SetStdHandle",
+          "iat": "0x5a81a4"
+        },
+        {
+          "name": "SetEndOfFile",
+          "iat": "0x5a81a8"
+        },
+        {
+          "name": "IsBadReadPtr",
+          "iat": "0x5a81ac"
+        },
+        {
+          "name": "IsBadCodePtr",
+          "iat": "0x5a81b0"
+        },
+        {
+          "name": "CompareStringA",
+          "iat": "0x5a81b4"
+        },
+        {
+          "name": "CompareStringW",
+          "iat": "0x5a81b8"
+        },
+        {
+          "name": "GetExitCodeProcess",
+          "iat": "0x5a81bc"
+        },
+        {
+          "name": "IsProcessorFeaturePresent",
+          "iat": "0x5a81c0"
+        },
+        {
+          "name": "CreateEventA",
+          "iat": "0x5a81c4"
+        },
+        {
+          "name": "SetEvent",
+          "iat": "0x5a81c8"
+        },
+        {
+          "name": "WaitForSingleObjectEx",
+          "iat": "0x5a81cc"
+        },
+        {
+          "name": "GetProcAddress",
+          "iat": "0x5a81d0"
+        },
+        {
+          "name": "QueryPerformanceCounter",
+          "iat": "0x5a81d4"
+        },
+        {
+          "name": "lstrcpyA",
+          "iat": "0x5a81d8"
+        },
+        {
+          "name": "QueryPerformanceFrequency",
+          "iat": "0x5a81dc"
+        },
+        {
+          "name": "Sleep",
+          "iat": "0x5a81e0"
+        },
+        {
+          "name": "GetLocalTime",
+          "iat": "0x5a81e4"
+        },
+        {
+          "name": "OutputDebugStringA",
+          "iat": "0x5a81e8"
+        },
+        {
+          "name": "InterlockedExchange",
+          "iat": "0x5a81ec"
+        },
+        {
+          "name": "CreateProcessA",
+          "iat": "0x5a81f0"
+        },
+        {
+          "name": "GetCommandLineA",
+          "iat": "0x5a81f4"
+        },
+        {
+          "name": "GetFileType",
+          "iat": "0x5a81f8"
+        },
+        {
+          "name": "TerminateProcess",
+          "iat": "0x5a81fc"
+        },
+        {
+          "name": "HeapFree",
+          "iat": "0x5a8200"
+        },
+        {
+          "name": "SetEnvironmentVariableA",
+          "iat": "0x5a8204"
+        }
+      ]
+    },
+    {
+      "dll": "USER32.dll",
+      "functions": [
+        {
+          "name": "GetDC",
+          "iat": "0x5a820c"
+        },
+        {
+          "name": "ChangeDisplaySettingsA",
+          "iat": "0x5a8210"
+        },
+        {
+          "name": "GetWindowRect",
+          "iat": "0x5a8214"
+        },
+        {
+          "name": "ClientToScreen",
+          "iat": "0x5a8218"
+        },
+        {
+          "name": "LoadStringA",
+          "iat": "0x5a821c"
+        },
+        {
+          "name": "LoadBitmapA",
+          "iat": "0x5a8220"
+        },
+        {
+          "name": "DestroyWindow",
+          "iat": "0x5a8224"
+        },
+        {
+          "name": "ReleaseDC",
+          "iat": "0x5a8228"
+        },
+        {
+          "name": "SetCursorPos",
+          "iat": "0x5a822c"
+        },
+        {
+          "name": "MessageBoxA",
+          "iat": "0x5a8230"
+        },
+        {
+          "name": "SetRectEmpty",
+          "iat": "0x5a8234"
+        },
+        {
+          "name": "EnumDisplaySettingsA",
+          "iat": "0x5a8238"
+        },
+        {
+          "name": "FillRect",
+          "iat": "0x5a823c"
+        },
+        {
+          "name": "ScreenToClient",
+          "iat": "0x5a8240"
+        },
+        {
+          "name": "GetCursorPos",
+          "iat": "0x5a8244"
+        },
+        {
+          "name": "GetWindowLongA",
+          "iat": "0x5a8248"
+        },
+        {
+          "name": "GetClientRect",
+          "iat": "0x5a824c"
+        },
+        {
+          "name": "SetWindowPos",
+          "iat": "0x5a8250"
+        },
+        {
+          "name": "ClipCursor",
+          "iat": "0x5a8254"
+        },
+        {
+          "name": "GetAsyncKeyState",
+          "iat": "0x5a8258"
+        },
+        {
+          "name": "GetKeyState",
+          "iat": "0x5a825c"
+        },
+        {
+          "name": "RegisterWindowMessageA",
+          "iat": "0x5a8260"
+        },
+        {
+          "name": "GetForegroundWindow",
+          "iat": "0x5a8264"
+        },
+        {
+          "name": "PostThreadMessageA",
+          "iat": "0x5a8268"
+        },
+        {
+          "name": "GetMessageA",
+          "iat": "0x5a826c"
+        },
+        {
+          "name": "PeekMessageA",
+          "iat": "0x5a8270"
+        },
+        {
+          "name": "DispatchMessageA",
+          "iat": "0x5a8274"
+        },
+        {
+          "name": "TranslateMessage",
+          "iat": "0x5a8278"
+        },
+        {
+          "name": "DefWindowProcA",
+          "iat": "0x5a827c"
+        },
+        {
+          "name": "BeginPaint",
+          "iat": "0x5a8280"
+        },
+        {
+          "name": "EndPaint",
+          "iat": "0x5a8284"
+        },
+        {
+          "name": "SetCursor",
+          "iat": "0x5a8288"
+        },
+        {
+          "name": "SetCapture",
+          "iat": "0x5a828c"
+        },
+        {
+          "name": "ReleaseCapture",
+          "iat": "0x5a8290"
+        },
+        {
+          "name": "LoadCursorA",
+          "iat": "0x5a8294"
+        },
+        {
+          "name": "LoadIconA",
+          "iat": "0x5a8298"
+        },
+        {
+          "name": "RegisterClassExA",
+          "iat": "0x5a829c"
+        },
+        {
+          "name": "GetSystemMetrics",
+          "iat": "0x5a82a0"
+        },
+        {
+          "name": "SetRect",
+          "iat": "0x5a82a4"
+        },
+        {
+          "name": "ShowWindow",
+          "iat": "0x5a82a8"
+        },
+        {
+          "name": "CreateWindowExA",
+          "iat": "0x5a82ac"
+        },
+        {
+          "name": "GetClassLongA",
+          "iat": "0x5a82b0"
+        },
+        {
+          "name": "SetWindowLongA",
+          "iat": "0x5a82b4"
+        },
+        {
+          "name": "SendMessageA",
+          "iat": "0x5a82b8"
+        },
+        {
+          "name": "UnregisterClassA",
+          "iat": "0x5a82bc"
+        },
+        {
+          "name": "UpdateWindow",
+          "iat": "0x5a82c0"
+        },
+        {
+          "name": "ShowCursor",
+          "iat": "0x5a82c4"
+        },
+        {
+          "name": "WaitForInputIdle",
+          "iat": "0x5a82c8"
+        }
+      ]
+    },
+    {
+      "dll": "d3d8.dll",
+      "functions": [
+        {
+          "name": "Direct3DCreate8",
+          "iat": "0x5a838c"
+        }
+      ]
+    },
+    {
+      "dll": "WINMM.dll",
+      "functions": [
+        {
+          "name": "mixerGetLineInfoA",
+          "iat": "0x5a82d0"
+        },
+        {
+          "name": "mixerGetLineControlsA",
+          "iat": "0x5a82d4"
+        },
+        {
+          "name": "auxGetNumDevs",
+          "iat": "0x5a82d8"
+        },
+        {
+          "name": "waveOutGetNumDevs",
+          "iat": "0x5a82dc"
+        },
+        {
+          "name": "auxGetDevCapsA",
+          "iat": "0x5a82e0"
+        },
+        {
+          "name": "mixerGetControlDetailsA",
+          "iat": "0x5a82e4"
+        },
+        {
+          "name": "mixerGetNumDevs",
+          "iat": "0x5a82e8"
+        },
+        {
+          "name": "mixerSetControlDetails",
+          "iat": "0x5a82ec"
+        },
+        {
+          "name": "timeBeginPeriod",
+          "iat": "0x5a82f0"
+        },
+        {
+          "name": "timeGetDevCaps",
+          "iat": "0x5a82f4"
+        },
+        {
+          "name": "timeEndPeriod",
+          "iat": "0x5a82f8"
+        },
+        {
+          "name": "timeKillEvent",
+          "iat": "0x5a82fc"
+        },
+        {
+          "name": "timeSetEvent",
+          "iat": "0x5a8300"
+        },
+        {
+          "name": "waveOutClose",
+          "iat": "0x5a8304"
+        },
+        {
+          "name": "waveOutUnprepareHeader",
+          "iat": "0x5a8308"
+        },
+        {
+          "name": "waveOutWrite",
+          "iat": "0x5a830c"
+        },
+        {
+          "name": "waveOutPrepareHeader",
+          "iat": "0x5a8310"
+        },
+        {
+          "name": "waveOutOpen",
+          "iat": "0x5a8314"
+        },
+        {
+          "name": "waveOutReset",
+          "iat": "0x5a8318"
+        },
+        {
+          "name": "mciSendCommandA",
+          "iat": "0x5a831c"
+        },
+        {
+          "name": "timeGetTime",
+          "iat": "0x5a8320"
+        },
+        {
+          "name": "mciGetErrorStringA",
+          "iat": "0x5a8324"
+        }
+      ]
+    },
+    {
+      "dll": "DDRAW.dll",
+      "functions": [
+        {
+          "name": "DirectDrawCreate",
+          "iat": "0x5a801c"
+        },
+        {
+          "name": "DirectDrawEnumerateA",
+          "iat": "0x5a8020"
+        }
+      ]
+    },
+    {
+      "dll": "DINPUT.dll",
+      "functions": [
+        {
+          "name": "DirectInputCreateA",
+          "iat": "0x5a8028"
+        },
+        {
+          "name": "DirectInputCreateEx",
+          "iat": "0x5a802c"
+        }
+      ]
+    },
+    {
+      "dll": "DSOUND.dll",
+      "functions": [
+        {
+          "name": "ordinal:1",
+          "iat": "0x5a8034"
+        }
+      ]
+    },
+    {
+      "dll": "AVIFIL32.dll",
+      "functions": [
+        {
+          "name": "AVIFileInit",
+          "iat": "0x5a8014"
+        }
+      ]
+    },
+    {
+      "dll": "GDI32.dll",
+      "functions": [
+        {
+          "name": "CreateFontIndirectA",
+          "iat": "0x5a803c"
+        },
+        {
+          "name": "TextOutW",
+          "iat": "0x5a8040"
+        },
+        {
+          "name": "SetBkColor",
+          "iat": "0x5a8044"
+        },
+        {
+          "name": "CreateDCA",
+          "iat": "0x5a8048"
+        },
+        {
+          "name": "CreateCompatibleBitmap",
+          "iat": "0x5a804c"
+        },
+        {
+          "name": "CreateSolidBrush",
+          "iat": "0x5a8050"
+        },
+        {
+          "name": "CreateFontA",
+          "iat": "0x5a8054"
+        },
+        {
+          "name": "GetGlyphOutlineA",
+          "iat": "0x5a8058"
+        },
+        {
+          "name": "SelectObject",
+          "iat": "0x5a805c"
+        },
+        {
+          "name": "BitBlt",
+          "iat": "0x5a8060"
+        },
+        {
+          "name": "CreateCompatibleDC",
+          "iat": "0x5a8064"
+        },
+        {
+          "name": "DeleteDC",
+          "iat": "0x5a8068"
+        },
+        {
+          "name": "SetPixel",
+          "iat": "0x5a806c"
+        },
+        {
+          "name": "GetPixel",
+          "iat": "0x5a8070"
+        },
+        {
+          "name": "GetObjectA",
+          "iat": "0x5a8074"
+        },
+        {
+          "name": "SetTextColor",
+          "iat": "0x5a8078"
+        },
+        {
+          "name": "SetBkMode",
+          "iat": "0x5a807c"
+        },
+        {
+          "name": "TextOutA",
+          "iat": "0x5a8080"
+        },
+        {
+          "name": "DeleteObject",
+          "iat": "0x5a8084"
+        },
+        {
+          "name": "CreateDIBSection",
+          "iat": "0x5a8088"
+        }
+      ]
+    },
+    {
+      "dll": "ADVAPI32.dll",
+      "functions": [
+        {
+          "name": "RegCloseKey",
+          "iat": "0x5a8000"
+        },
+        {
+          "name": "RegOpenKeyExA",
+          "iat": "0x5a8004"
+        },
+        {
+          "name": "RegOpenKeyA",
+          "iat": "0x5a8008"
+        },
+        {
+          "name": "RegQueryValueExA",
+          "iat": "0x5a800c"
+        }
+      ]
+    },
+    {
+      "dll": "ole32.dll",
+      "functions": [
+        {
+          "name": "CoCreateInstance",
+          "iat": "0x5a8394"
+        },
+        {
+          "name": "CoInitialize",
+          "iat": "0x5a8398"
+        },
+        {
+          "name": "CoUninitialize",
+          "iat": "0x5a839c"
+        }
+      ]
+    },
+    {
+      "dll": "WS2_32.dll",
+      "functions": [
+        {
+          "name": "ordinal:11",
+          "iat": "0x5a832c"
+        },
+        {
+          "name": "ordinal:14",
+          "iat": "0x5a8330"
+        },
+        {
+          "name": "ordinal:12",
+          "iat": "0x5a8334"
+        },
+        {
+          "name": "ordinal:8",
+          "iat": "0x5a8338"
+        },
+        {
+          "name": "ordinal:52",
+          "iat": "0x5a833c"
+        },
+        {
+          "name": "ordinal:57",
+          "iat": "0x5a8340"
+        },
+        {
+          "name": "ordinal:6",
+          "iat": "0x5a8344"
+        },
+        {
+          "name": "ordinal:23",
+          "iat": "0x5a8348"
+        },
+        {
+          "name": "ordinal:2",
+          "iat": "0x5a834c"
+        },
+        {
+          "name": "ordinal:4",
+          "iat": "0x5a8350"
+        },
+        {
+          "name": "ordinal:111",
+          "iat": "0x5a8354"
+        },
+        {
+          "name": "ordinal:18",
+          "iat": "0x5a8358"
+        },
+        {
+          "name": "ordinal:10",
+          "iat": "0x5a835c"
+        },
+        {
+          "name": "ordinal:21",
+          "iat": "0x5a8360"
+        },
+        {
+          "name": "ordinal:116",
+          "iat": "0x5a8364"
+        },
+        {
+          "name": "ordinal:115",
+          "iat": "0x5a8368"
+        },
+        {
+          "name": "ordinal:17",
+          "iat": "0x5a836c"
+        },
+        {
+          "name": "ordinal:9",
+          "iat": "0x5a8370"
+        },
+        {
+          "name": "ordinal:20",
+          "iat": "0x5a8374"
+        },
+        {
+          "name": "ordinal:16",
+          "iat": "0x5a8378"
+        },
+        {
+          "name": "ordinal:15",
+          "iat": "0x5a837c"
+        },
+        {
+          "name": "ordinal:19",
+          "iat": "0x5a8380"
+        },
+        {
+          "name": "ordinal:3",
+          "iat": "0x5a8384"
+        }
+      ]
+    },
+    {
+      "dll": "snmpapi.dll",
+      "functions": [
+        {
+          "name": "SnmpUtilOidCpy",
+          "iat": "0x5a83a4"
+        },
+        {
+          "name": "SnmpUtilOidNCmp",
+          "iat": "0x5a83a8"
+        },
+        {
+          "name": "SnmpUtilVarBindFree",
+          "iat": "0x5a83ac"
+        }
+      ]
+    }
+  ],
+  "formatStrings": [
+    {
+      "address": "0x5c92fc",
+      "offset": 1872636,
+      "text": "%s%s.pst"
+    },
+    {
+      "address": "0x5c9354",
+      "offset": 1872724,
+      "text": "%s%s.gmc"
+    },
+    {
+      "address": "0x5c9360",
+      "offset": 1872736,
+      "text": "%s%s.gmb"
+    },
+    {
+      "address": "0x5c9490",
+      "offset": 1873040,
+      "text": "Cmodel\\FlyBar.gmc"
+    },
+    {
+      "address": "0x5c94b4",
+      "offset": 1873076,
+      "text": "cmodel\\%sl.gmc"
+    },
+    {
+      "address": "0x5c94c4",
+      "offset": 1873092,
+      "text": "cmodel\\%sl.gmb"
+    },
+    {
+      "address": "0x5c94e4",
+      "offset": 1873124,
+      "text": "cmodel\\%sb.gmc"
+    },
+    {
+      "address": "0x5c94f4",
+      "offset": 1873140,
+      "text": "cmodel\\%sb.gmb"
+    },
+    {
+      "address": "0x5c9514",
+      "offset": 1873172,
+      "text": "cmodel\\%sa.gmc"
+    },
+    {
+      "address": "0x5c9524",
+      "offset": 1873188,
+      "text": "cmodel\\%sa.gmb"
+    },
+    {
+      "address": "0x5c9544",
+      "offset": 1873220,
+      "text": "cmodel\\%s.gmc"
+    },
+    {
+      "address": "0x5c9554",
+      "offset": 1873236,
+      "text": "cmodel\\%s.gmb"
+    },
+    {
+      "address": "0x5c9614",
+      "offset": 1873428,
+      "text": "PscriptLib\\jug.pst"
+    },
+    {
+      "address": "0x5c9628",
+      "offset": 1873448,
+      "text": "PscriptLib\\chair.pst"
+    },
+    {
+      "address": "0x5c9640",
+      "offset": 1873472,
+      "text": "PscriptLib\\desk.pst"
+    },
+    {
+      "address": "0x5c9654",
+      "offset": 1873492,
+      "text": "PscriptLib\\box.pst"
+    },
+    {
+      "address": "0x5c9668",
+      "offset": 1873512,
+      "text": "PscriptLib\\def.pst"
+    },
+    {
+      "address": "0x5c967c",
+      "offset": 1873532,
+      "text": "common\\character.act"
+    },
+    {
+      "address": "0x5c9784",
+      "offset": 1873796,
+      "text": "pose"
+    },
+    {
+      "address": "0x5c9ad8",
+      "offset": 1874648,
+      "text": "Load %s_.pst error"
+    },
+    {
+      "address": "0x5c9aec",
+      "offset": 1874668,
+      "text": "Level\\%s_.pst"
+    },
+    {
+      "address": "0x5c9b18",
+      "offset": 1874712,
+      "text": "Load NPC %s.pst error"
+    },
+    {
+      "address": "0x5c9b50",
+      "offset": 1874768,
+      "text": "Level\\%s.pst"
+    },
+    {
+      "address": "0x5c9d1c",
+      "offset": 1875228,
+      "text": "Load Pose Fail %s"
+    },
+    {
+      "address": "0x5c9da0",
+      "offset": 1875360,
+      "text": "%s_300.skc"
+    },
+    {
+      "address": "0x5c9dc4",
+      "offset": 1875396,
+      "text": "%s_800.skc"
+    },
+    {
+      "address": "0x5c9de8",
+      "offset": 1875432,
+      "text": "%s.amb"
+    },
+    {
+      "address": "0x5c9df0",
+      "offset": 1875440,
+      "text": "%s.bnc"
+    },
+    {
+      "address": "0x5c9e00",
+      "offset": 1875456,
+      "text": "%s.skc"
+    },
+    {
+      "address": "0x5c9ed4",
+      "offset": 1875668,
+      "text": "common\\character.amb"
+    },
+    {
+      "address": "0x5c9ef8",
+      "offset": 1875704,
+      "text": "FrameWeight"
+    },
+    {
+      "address": "0x5c9f14",
+      "offset": 1875732,
+      "text": "BeginPose"
+    },
+    {
+      "address": "0x5ca620",
+      "offset": 1877536,
+      "text": ".?AVstreambuf@@"
+    },
+    {
+      "address": "0x5d1870",
+      "offset": 1906800,
+      "text": "teamb"
+    },
+    {
+      "address": "0x5d199c",
+      "offset": 1907100,
+      "text": "attackvalue"
+    },
+    {
+      "address": "0x5d1a98",
+      "offset": 1907352,
+      "text": "defensemove"
+    },
+    {
+      "address": "0x5d1ae0",
+      "offset": 1907424,
+      "text": "defensepose"
+    },
+    {
+      "address": "0x5d1c48",
+      "offset": 1907784,
+      "text": "nextpose"
+    },
+    {
+      "address": "0x5d1c6c",
+      "offset": 1907820,
+      "text": "pose"
+    },
+    {
+      "address": "0x5d1d44",
+      "offset": 1908036,
+      "text": "targetvalue"
+    },
+    {
+      "address": "0x5d1d8c",
+      "offset": 1908108,
+      "text": "targetpose"
+    },
+    {
+      "address": "0x5d1db0",
+      "offset": 1908144,
+      "text": "targetposefront"
+    },
+    {
+      "address": "0x5d1dd4",
+      "offset": 1908180,
+      "text": "targetposeback"
+    },
+    {
+      "address": "0x5d1df8",
+      "offset": 1908216,
+      "text": "targetposeright"
+    },
+    {
+      "address": "0x5d1e1c",
+      "offset": 1908252,
+      "text": "targetposeleft"
+    },
+    {
+      "address": "0x5d1e40",
+      "offset": 1908288,
+      "text": "targetmove"
+    },
+    {
+      "address": "0x5d1f6c",
+      "offset": 1908588,
+      "text": "nextposebody"
+    },
+    {
+      "address": "0x5d1f80",
+      "offset": 1908608,
+      "text": "nextpose"
+    },
+    {
+      "address": "0x5d2058",
+      "offset": 1908824,
+      "text": "targetposeright"
+    },
+    {
+      "address": "0x5d2068",
+      "offset": 1908840,
+      "text": "targetposeleft"
+    },
+    {
+      "address": "0x5d2078",
+      "offset": 1908856,
+      "text": "targetposeback"
+    },
+    {
+      "address": "0x5d2088",
+      "offset": 1908872,
+      "text": "targetposefront"
+    },
+    {
+      "address": "0x5d2098",
+      "offset": 1908888,
+      "text": "targetpose"
+    },
+    {
+      "address": "0x5d20a4",
+      "offset": 1908900,
+      "text": "targetvalue"
+    },
+    {
+      "address": "0x5d20b0",
+      "offset": 1908912,
+      "text": "targetmove"
+    },
+    {
+      "address": "0x5d20d4",
+      "offset": 1908948,
+      "text": "defensepose"
+    },
+    {
+      "address": "0x5d20e0",
+      "offset": 1908960,
+      "text": "defensemove"
+    },
+    {
+      "address": "0x5d20fc",
+      "offset": 1908988,
+      "text": "attackvalue"
+    },
+    {
+      "address": "0x5d216c",
+      "offset": 1909100,
+      "text": "posefield"
+    },
+    {
+      "address": "0x5d2188",
+      "offset": 1909128,
+      "text": "posebody"
+    },
+    {
+      "address": "0x5d2198",
+      "offset": 1909144,
+      "text": "poses"
+    },
+    {
+      "address": "0x5d21b8",
+      "offset": 1909176,
+      "text": "KEY_targetvalue"
+    },
+    {
+      "address": "0x5d21c8",
+      "offset": 1909192,
+      "text": "KEY_targetmove"
+    },
+    {
+      "address": "0x5d21f8",
+      "offset": 1909240,
+      "text": "KEY_targetposeright"
+    },
+    {
+      "address": "0x5d220c",
+      "offset": 1909260,
+      "text": "KEY_targetposeleft"
+    },
+    {
+      "address": "0x5d2220",
+      "offset": 1909280,
+      "text": "KEY_targetposeback"
+    },
+    {
+      "address": "0x5d2234",
+      "offset": 1909300,
+      "text": "KEY_targetposefront"
+    },
+    {
+      "address": "0x5d2248",
+      "offset": 1909320,
+      "text": "KEY_targetpose"
+    },
+    {
+      "address": "0x5d227c",
+      "offset": 1909372,
+      "text": "KEY_pose"
+    },
+    {
+      "address": "0x5d2288",
+      "offset": 1909384,
+      "text": "KEY_nextpose"
+    },
+    {
+      "address": "0x5d231c",
+      "offset": 1909532,
+      "text": "KEY_defensepose"
+    },
+    {
+      "address": "0x5d232c",
+      "offset": 1909548,
+      "text": "KEY_defensemove"
+    },
+    {
+      "address": "0x5d2370",
+      "offset": 1909616,
+      "text": "KEY_attackvalue"
+    },
+    {
+      "address": "0x5d2380",
+      "offset": 1909632,
+      "text": "KEY_attacktype"
+    },
+    {
+      "address": "0x5d2390",
+      "offset": 1909648,
+      "text": "KEY_attack"
+    },
+    {
+      "address": "0x5d24e8",
+      "offset": 1909992,
+      "text": "Pose field error"
+    },
+    {
+      "address": "0x5d24fc",
+      "offset": 1910012,
+      "text": "} expected in pose"
+    },
+    {
+      "address": "0x5d2510",
+      "offset": 1910032,
+      "text": "'{' expected in pose"
+    },
+    {
+      "address": "0x5d2528",
+      "offset": 1910056,
+      "text": "'}' expected in pose"
+    },
+    {
+      "address": "0x5d2540",
+      "offset": 1910080,
+      "text": "Pose Structure Error"
+    },
+    {
+      "address": "0x5d2e68",
+      "offset": 1912424,
+      "text": "Error Found in Pose"
+    },
+    {
+      "address": "0x5d2e94",
+      "offset": 1912468,
+      "text": "%s%s.amb"
+    },
+    {
+      "address": "0x5d2ebc",
+      "offset": 1912508,
+      "text": "%scharacter.amb"
+    },
+    {
+      "address": "0x5d2edc",
+      "offset": 1912540,
+      "text": "%s%s.bnc"
+    },
+    {
+      "address": "0x5d2f00",
+      "offset": 1912576,
+      "text": "%s%s.skc"
+    },
+    {
+      "address": "0x5d2f40",
+      "offset": 1912640,
+      "text": "%s\\%s.gmb"
+    },
+    {
+      "address": "0x5d2f4c",
+      "offset": 1912652,
+      "text": "%s\\%s.gmc"
+    }
+  ]
+}

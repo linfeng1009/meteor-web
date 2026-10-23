@@ -1,0 +1,242 @@
+
+> meteor-sword-web@0.2.0 test
+> node --test tests/*.test.mjs
+
+TAP version 13
+# Subtest: the real cave mission creates three distinct runtime NPCs with their original source configuration and waypoints
+ok 1 - the real cave mission creates three distinct runtime NPCs with their original source configuration and waypoints
+  ---
+  duration_ms: 159.1335
+  type: 'test'
+  ...
+# Subtest: source loading preserves the native browser fetch receiver
+ok 2 - source loading preserves the native browser fetch receiver
+  ---
+  duration_ms: 160.261833
+  type: 'test'
+  ...
+# Subtest: the real engine mission bridges preserve source HP, distinct actor IDs and original weapon variants
+ok 3 - the real engine mission bridges preserve source HP, distinct actor IDs and original weapon variants
+  ---
+  duration_ms: 31.236416
+  type: 'test'
+  ...
+# Subtest: the patrol routes and generated movement targets come from the original WP graph
+ok 4 - the patrol routes and generated movement targets come from the original WP graph
+  ---
+  duration_ms: 41.649583
+  type: 'test'
+  ...
+# Subtest: source waypoints above the collision floor do not trap foot-positioned engine actors
+ok 5 - source waypoints above the collision floor do not trap foot-positioned engine actors
+  ---
+  duration_ms: 35.22525
+  type: 'test'
+  ...
+# Subtest: script perception respects original View distance and collision visibility
+ok 6 - script perception respects original View distance and collision visibility
+  ---
+  duration_ms: 33.927209
+  type: 'test'
+  ...
+# Subtest: the original guard discovery, loss, retreat and report dialogue execute through PST state transitions
+ok 7 - the original guard discovery, loss, retreat and report dialogue execute through PST state transitions
+  ---
+  duration_ms: 15.942708
+  type: 'test'
+  ...
+# Subtest: original scene item damage callbacks change real registered object collision and item activation
+ok 8 - original scene item damage callbacks change real registered object collision and item activation
+  ---
+  duration_ms: 30.7245
+  type: 'test'
+  ...
+# Subtest: mission completion uses all original hostile NPCs and retains its explicit Rule-10 inference
+ok 9 - mission completion uses all original hostile NPCs and retains its explicit Rule-10 inference
+  ---
+  duration_ms: 21.318792
+  type: 'test'
+  ...
+# Subtest: the source HP thresholds trigger a sentry retreat and the original leader death line
+ok 10 - the source HP thresholds trigger a sentry retreat and the original leader death line
+  ---
+  duration_ms: 22.100708
+  type: 'test'
+  ...
+# Subtest: unsupported host APIs are explicit and a disposed host stops script execution
+ok 11 - unsupported host APIs are explicit and a disposed host stops script execution
+  ---
+  duration_ms: 18.402
+  type: 'test'
+  ...
+# Subtest: leaving while player equipment loads does not start an abandoned source mission
+ok 12 - leaving while player equipment loads does not start an abandoned source mission
+  ---
+  duration_ms: 16.190208
+  type: 'test'
+  ...
+# Subtest: late original NPC loads are removed after the source mission is disposed
+ok 13 - late original NPC loads are removed after the source mission is disposed
+  ---
+  duration_ms: 35.526583
+  type: 'test'
+  ...
+# Subtest: all preserved PST/header files parse and load their actual include dependencies
+ok 14 - all preserved PST/header files parse and load their actual include dependencies
+  ---
+  duration_ms: 385.047333
+  type: 'test'
+  ...
+# Subtest: the original Stalactite Cave mission starts its three declared NPC scripts
+ok 15 - the original Stalactite Cave mission starts its three declared NPC scripts
+  ---
+  duration_ms: 0.995916
+  type: 'test'
+  ...
+# Subtest: the original first cave NPC binds its runtime address and enters its scripted wait behavior
+ok 16 - the original first cave NPC binds its runtime address and enters its scripted wait behavior
+  ---
+  duration_ms: 0.290334
+  type: 'test'
+  ...
+# Subtest: the original cave scene loads all included libraries and initializes its real stone state
+ok 17 - the original cave scene loads all included libraries and initializes its real stone state
+  ---
+  duration_ms: 13.146917
+  type: 'test'
+  ...
+# Subtest: an actual cave stone callback removes collision and activates its original item after damage
+ok 18 - an actual cave stone callback removes collision and activates its original item after damage
+  ---
+  duration_ms: 12.119833
+  type: 'test'
+  ...
+# Subtest: the real misspelled Perofrm API is exposed instead of silently corrected or skipped
+ok 19 - the real misspelled Perofrm API is exposed instead of silently corrected or skipped
+  ---
+  duration_ms: 0.710375
+  type: 'test'
+  ...
+# Subtest: native API requirements include exact names and source locations from included files
+ok 20 - native API requirements include exact names and source locations from included files
+  ---
+  duration_ms: 47.9595
+  type: 'test'
+  ...
+# Subtest: for/while loops, lexical locals, integer division and short circuit operators execute without JavaScript evaluation
+ok 21 - for/while loops, lexical locals, integer division and short circuit operators execute without JavaScript evaluation
+  ---
+  duration_ms: 6.799208
+  type: 'test'
+  ...
+# Subtest: a native output reference evaluates an array index once
+ok 22 - a native output reference evaluates an array index once
+  ---
+  duration_ms: 4.431625
+  type: 'test'
+  ...
+# Subtest: unknown native APIs, infinite loops, bounds violations and arbitrary property access fail explicitly
+ok 23 - unknown native APIs, infinite loops, bounds violations and arbitrary property access fail explicitly
+  ---
+  duration_ms: 3.248583
+  type: 'test'
+  ...
+# Subtest: the manifest exposes all actual maps and explicitly blocks the nonfinite map
+ok 24 - the manifest exposes all actual maps and explicitly blocks the nonfinite map
+  ---
+  duration_ms: 1.179041
+  type: 'test'
+  ...
+# Subtest: every imported model marked available has finite native geometry and matching source bytes
+ok 25 - every imported model marked available has finite native geometry and matching source bytes
+  ---
+  duration_ms: 539.854125
+  type: 'test'
+  ...
+# Subtest: POS and ACT are parsed from the preserved native files
+ok 26 - POS and ACT are parsed from the preserved native files
+  ---
+  duration_ms: 3.268417
+  type: 'test'
+  ...
+# Subtest: native animation phase speeds remain deterministic across frame partitions
+ok 27 - native animation phase speeds remain deterministic across frame partitions
+  ---
+  duration_ms: 3.634
+  type: 'test'
+  ...
+# Subtest: a POS attack window is inactive before its original start frame
+ok 28 - a POS attack window is inactive before its original start frame
+  ---
+  duration_ms: 0.2525
+  type: 'test'
+  ...
+# Subtest: active native combo transitions obey the original ACT link graph
+ok 29 - active native combo transitions obey the original ACT link graph
+  ---
+  duration_ms: 0.611625
+  type: 'test'
+  ...
+# Subtest: unverified native damage coefficients are reported without fabricating HP loss
+ok 30 - unverified native damage coefficients are reported without fabricating HP loss
+  ---
+  duration_ms: 2.050708
+  type: 'test'
+  ...
+# Subtest: the original sword, blade and spear remain their verified RES model IDs
+ok 31 - the original sword, blade and spear remain their verified RES model IDs
+  ---
+  duration_ms: 5.155
+  type: 'test'
+  ...
+# Subtest: native sound effects use the original PonEF-to-WAV references
+ok 32 - native sound effects use the original PonEF-to-WAV references
+  ---
+  duration_ms: 21.505292
+  type: 'test'
+  ...
+# Subtest: original spawn points in Four Squares and Stalactite Cave have actual collision surfaces
+ok 33 - original spawn points in Four Squares and Stalactite Cave have actual collision surfaces
+  ---
+  duration_ms: 49.269417
+  type: 'test'
+  ...
+# Subtest: an explicit native texture URL loads with an empty fallback path and retains a separate alpha mask
+ok 34 - an explicit native texture URL loads with an empty fallback path and retains a separate alpha mask
+  ---
+  duration_ms: 17.849833
+  type: 'test'
+  ...
+# Subtest: hidden collision platforms below the original Forge spawns remain solid
+ok 35 - hidden collision platforms below the original Forge spawns remain solid
+  ---
+  duration_ms: 19.812125
+  type: 'test'
+  ...
+# Subtest: rapid character selection keeps the latest requested native character
+ok 36 - rapid character selection keeps the latest requested native character
+  ---
+  duration_ms: 0.477916
+  type: 'test'
+  ...
+# Subtest: out-of-order native weapon loads attach only the latest selected model
+ok 37 - out-of-order native weapon loads attach only the latest selected model
+  ---
+  duration_ms: 0.653167
+  type: 'test'
+  ...
+# Subtest: native map cache eviction protects the current scene and pending loads
+ok 38 - native map cache eviction protects the current scene and pending loads
+  ---
+  duration_ms: 0.169208
+  type: 'test'
+  ...
+1..38
+# tests 38
+# suites 0
+# pass 38
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1048.126375

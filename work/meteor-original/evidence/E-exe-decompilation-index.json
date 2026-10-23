@@ -1,0 +1,107 @@
+{
+  "observedAt": "2026-10-23T13:58:33.538949+08:00",
+  "sampleSha256": "289afb0aa44a47921d167fc24d6d404c60d6d00c299ac27d45fc61e16231b498",
+  "tool": "Ghidra 12.1.4",
+  "method": "Static decompilation; missing function boundaries recovered from direct vtable references and RET/stack conventions. Selected virtual call prototypes annotated from x86. Original EXE not executed.",
+  "functions": [
+    {
+      "va": "004d4a70",
+      "file": "evidence/decompiled/004d4a70_FUN_004d4a70.c",
+      "bytes": 3208,
+      "sha256": "1e60ed6c57fcbd9f42e7ed95a42e83baa3024c169e6d247fa5d3ded78baf0be0"
+    },
+    {
+      "va": "004d4d30",
+      "file": "evidence/decompiled/004d4d30_FUN_004d4d30.c",
+      "bytes": 932,
+      "sha256": "03e89ebac4377855741057869bb9af6857a5ce58d1978dbddbd633f0a9662b58"
+    },
+    {
+      "va": "004d5de0",
+      "file": "evidence/decompiled/004d5de0_FUN_004d5de0.c",
+      "bytes": 672,
+      "sha256": "1a501182ab71c69c23ae81f43b72e37fe9c64ab9680f02159b1ffe1f8df8ac91"
+    },
+    {
+      "va": "004d5e30",
+      "file": "evidence/decompiled/004d5e30_FUN_004d5e30.c",
+      "bytes": 1887,
+      "sha256": "fe83d4db68c5bb0c9b295674a5e70cb8194b98bcb52db8801cc1384cd9bb2878"
+    },
+    {
+      "va": "004d5f70",
+      "file": "evidence/decompiled/004d5f70_FUN_004d5f70.c",
+      "bytes": 374,
+      "sha256": "fda2c89d1487e759850e5b98cffd309dcf3deebeca081d47d03b995de9e2014b"
+    },
+    {
+      "va": "004d6190",
+      "file": "evidence/decompiled/004d6190_FUN_004d6190.c",
+      "bytes": 356,
+      "sha256": "746177804844d9e769f024ad7ef5eb8023f8c282ccad7054ac30a4e2d7ac90de"
+    },
+    {
+      "va": "004d61c0",
+      "file": "evidence/decompiled/004d61c0_FUN_004d61c0.c",
+      "bytes": 2907,
+      "sha256": "f58a2ccbfa4454a7db3cf85e3df42c3135b7de526bedc6ab5f85d6b9c08a0a52"
+    },
+    {
+      "va": "004d5fc0",
+      "file": "evidence/decompiled/004d5fc0_FUN_004d5fc0.c",
+      "bytes": 2116,
+      "sha256": "c513eb949e401831e92cce510ce4c9a7af9ea673ab48f5ef144337dd4eb1c0d7"
+    },
+    {
+      "va": "004af630",
+      "file": "evidence/decompiled/004af630_FUN_004af630.c",
+      "bytes": 6614,
+      "sha256": "1a970412cbbae8f8e9c4be28309fd7d188f26bf19a8986abf323606921bb85af"
+    },
+    {
+      "va": "004bf650",
+      "file": "evidence/decompiled/004bf650_FUN_004bf650.c",
+      "bytes": 3938,
+      "sha256": "a5bd9e1148eeb51ea8062b2d11bfa8b88019ccbfd7e79f8a400dc9c15d986b63"
+    },
+    {
+      "va": "004ac160",
+      "file": "evidence/decompiled/004ac160_FUN_004ac160.c",
+      "bytes": 5740,
+      "sha256": "e7da0d72690fbc873b1d1270c5647d7e22adb06339685cb3599ba8051fa5aa7a"
+    },
+    {
+      "va": "0045b0a0",
+      "file": "evidence/decompiled/0045b0a0_FUN_0045b0a0.c",
+      "bytes": 4255,
+      "sha256": "0afc841f52f803c6b4a337aa72d12cafcf192eca0c9ed56a58d351fc197b6da8"
+    },
+    {
+      "va": "004ad530",
+      "file": "evidence/decompiled/004ad530_FUN_004ad530.c",
+      "bytes": 35492,
+      "sha256": "0d0d0032e77dcce06bc10a77eb386ea79acb0c109b6fc2a8f983c1fb4c6dd861"
+    },
+    {
+      "va": "004efb20",
+      "file": "evidence/decompiled/004efb20_FUN_004efb20.c",
+      "bytes": 7387,
+      "sha256": "f66e1cec0b02b21bc04974322afa88e839dde0ce61eacf61f8af23a2c924cf5a"
+    },
+    {
+      "va": "00574930",
+      "file": "evidence/decompiled/00574930_FUN_00574930.c",
+      "bytes": 2729,
+      "sha256": "747c07c3822f999b639589e0d6d0e798de7b5d272376fb799c49d56091a74c8d"
+    }
+  ],
+  "assembly": {
+    "file": "evidence/decompiled/004d61c0-disassembly.txt",
+    "sha256": "b82f04aba448a490ebd73837a2a017821982de32e65cbbf5dd4b97f5700693f9"
+  },
+  "limits": [
+    "Decompiled C is derived pseudocode, not recovered original source.",
+    "Implicit x87 inputs to __ftol are absent from C output; use assembly and explicit formula evidence.",
+    "Input selector and rage-consumption trigger mappings remain unconfirmed."
+  ]
+}

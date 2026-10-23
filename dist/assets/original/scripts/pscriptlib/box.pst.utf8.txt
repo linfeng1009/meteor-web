@@ -1,0 +1,1329 @@
+/*
+	PScript file for box Items of all scenes
+		by Peter Pon 2002/09/26
+
+	message handle for 60 Boxes &
+	message handle for 60 BBoxes
+*/
+
+int g_iNumBoxes = 65;
+int g_iBoxHP[g_iNumBoxes];
+int g_bBoxAlive[g_iNumBoxes];
+
+int g_iNumBBoxes = 60;
+int g_iBBoxHP[g_iNumBBoxes];
+int g_bBBoxAlive[g_iNumBBoxes];
+
+InitBoxes(int num)
+{
+	int i;
+	string name;
+	
+	for ( i=1; i<=num; i++ )
+	{
+		g_bBoxAlive[i-1] = 1;
+		g_iBoxHP[i-1] = g_iBoxMaxHP;
+		
+		MakeString(name, "D_BBox", i);
+		int id = GetSceneItem(name, "index");
+		SetSceneItem(id, "name", "machine");
+		SetSceneItem(id, "attribute", "collision", 1);
+		SetSceneItem(id, "pose", 0, 0);
+
+		MakeString(name, "D_itBBox", i);
+		SetSceneItem(name, "attribute", "active", 0);
+		SetSceneItem(name, "attribute", "interactive", 0);
+
+		MakeString(name, "D_wpBBox", i);
+		SetSceneItem(name, "attribute", "active", 0);
+		SetSceneItem(name, "attribute", "interactive", 0);
+	}
+}
+
+BoxOnAttack(int id, int index, int damage)
+{
+	g_iBoxHP[index-1] = g_iBoxHP[index-1] - damage;
+	if ( g_iBoxHP[index-1]>0 )
+	{
+		NetEvent(1);
+		Output("effect:", id, "BoxHit");
+		CreateEffect(id, "BoxHIT");
+		NetEvent(0);
+		return 0;
+	}
+	
+	if ( GetSceneItem(id, "pose")==1 )
+	{
+		return 0;
+	}
+	
+	string itemname;
+	string weaponname;
+	MakeString(itemname, "D_itBBox", index);
+	MakeString(weaponname, "D_wpBBox", index);
+
+	NetEvent(1);
+	CreateEffect(id, "BoxBRK");
+	SetSceneItem(id, "pose", 1, 0);
+	SetSceneItem(id, "attribute", "interactive", 0);
+	SetSceneItem(id, "attribute", "collision", 0);
+	SetSceneItem(itemname, "attribute", "active", 1);
+	SetSceneItem(itemname, "attribute", "interactive", 1);
+	SetSceneItem(weaponname, "attribute", "active", 1);
+	SetSceneItem(weaponname, "attribute", "interactive", 1);
+	NetEvent(0);
+	
+	return 1;
+}
+
+RemoveBox(int id)
+{
+	int state;
+	int pose;
+	
+	pose = GetSceneItem(id, "pose");
+	if ( pose==0 )
+	{
+		return 0;
+	}
+	
+	state = GetSceneItem(id, "state");
+	if ( state!=3 )
+	{
+		return 0;
+	}
+	
+	NetEvent(1);
+	SetSceneItem(id, "attribute", "active", 0);
+	NetEvent(0);
+	Output("remove item", id);
+	return 1;
+}
+
+BoxOnIdle(int id, int index)
+{
+	if ( g_bBoxAlive[index-1] )
+	{
+		if ( RemoveBox(id) )
+		{
+			g_bBoxAlive[index-1] = 0;
+		}
+	}
+}
+
+D_BBox01_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 1, damage);
+}
+D_BBox01_OnIdle(int id)
+{
+	BoxOnIdle(id, 1);
+}
+
+D_BBox02_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 2, damage);
+}
+D_BBox02_OnIdle(int id)
+{
+	BoxOnIdle(id, 2);
+}
+
+D_BBox03_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 3, damage);
+}
+D_BBox03_OnIdle(int id)
+{
+	BoxOnIdle(id, 3);
+}
+
+D_BBox04_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 4, damage);
+}
+D_BBox04_OnIdle(int id)
+{
+	BoxOnIdle(id, 4);
+}
+
+D_BBox05_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 5, damage);
+}
+D_BBox05_OnIdle(int id)
+{
+	BoxOnIdle(id, 5);
+}
+
+D_BBox06_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 6, damage);
+}
+D_BBox06_OnIdle(int id)
+{
+	BoxOnIdle(id, 6);
+}
+
+D_BBox07_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 7, damage);
+}
+D_BBox07_OnIdle(int id)
+{
+	BoxOnIdle(id, 7);
+}
+
+D_BBox08_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 8, damage);
+}
+D_BBox08_OnIdle(int id)
+{
+	BoxOnIdle(id, 8);
+}
+
+D_BBox09_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 9, damage);
+}
+D_BBox09_OnIdle(int id)
+{
+	BoxOnIdle(id, 9);
+}
+
+D_BBox10_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 10, damage);
+}
+D_BBox10_OnIdle(int id)
+{
+	BoxOnIdle(id, 10);
+}
+
+D_BBox11_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 11, damage);
+}
+D_BBox11_OnIdle(int id)
+{
+	BoxOnIdle(id, 11);
+}
+
+D_BBox12_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 12, damage);
+}
+D_BBox12_OnIdle(int id)
+{
+	BoxOnIdle(id, 12);
+}
+
+D_BBox13_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 13, damage);
+}
+D_BBox13_OnIdle(int id)
+{
+	BoxOnIdle(id, 13);
+}
+
+D_BBox14_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 14, damage);
+}
+D_BBox14_OnIdle(int id)
+{
+	BoxOnIdle(id, 14);
+}
+
+D_BBox15_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 15, damage);
+}
+D_BBox15_OnIdle(int id)
+{
+	BoxOnIdle(id, 15);
+}
+
+D_BBox16_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 16, damage);
+}
+D_BBox16_OnIdle(int id)
+{
+	BoxOnIdle(id, 16);
+}
+
+D_BBox17_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 17, damage);
+}
+D_BBox17_OnIdle(int id)
+{
+	BoxOnIdle(id, 17);
+}
+
+D_BBox18_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 18, damage);
+}
+D_BBox18_OnIdle(int id)
+{
+	BoxOnIdle(id, 18);
+}
+
+D_BBox19_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 19, damage);
+}
+D_BBox19_OnIdle(int id)
+{
+	BoxOnIdle(id, 19);
+}
+
+D_BBox20_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 20, damage);
+}
+D_BBox20_OnIdle(int id)
+{
+	BoxOnIdle(id, 20);
+}
+
+D_BBox21_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 21, damage);
+}
+D_BBox21_OnIdle(int id)
+{
+	BoxOnIdle(id, 21);
+}
+
+D_BBox22_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 22, damage);
+}
+D_BBox22_OnIdle(int id)
+{
+	BoxOnIdle(id, 22);
+}
+
+D_BBox23_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 23, damage);
+}
+D_BBox23_OnIdle(int id)
+{
+	BoxOnIdle(id, 23);
+}
+
+D_BBox24_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 24, damage);
+}
+D_BBox24_OnIdle(int id)
+{
+	BoxOnIdle(id, 24);
+}
+
+D_BBox25_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 25, damage);
+}
+D_BBox25_OnIdle(int id)
+{
+	BoxOnIdle(id, 25);
+}
+
+D_BBox26_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 26, damage);
+}
+D_BBox26_OnIdle(int id)
+{
+	BoxOnIdle(id, 26);
+}
+
+D_BBox27_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 27, damage);
+}
+D_BBox27_OnIdle(int id)
+{
+	BoxOnIdle(id, 27);
+}
+
+D_BBox28_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 28, damage);
+}
+D_BBox28_OnIdle(int id)
+{
+	BoxOnIdle(id, 28);
+}
+
+D_BBox29_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 29, damage);
+}
+D_BBox29_OnIdle(int id)
+{
+	BoxOnIdle(id, 29);
+}
+
+D_BBox30_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 30, damage);
+}
+D_BBox30_OnIdle(int id)
+{
+	BoxOnIdle(id, 30);
+}
+
+D_BBox31_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 31, damage);
+}
+D_BBox31_OnIdle(int id)
+{
+	BoxOnIdle(id, 31);
+}
+
+D_BBox32_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 32, damage);
+}
+D_BBox32_OnIdle(int id)
+{
+	BoxOnIdle(id, 32);
+}
+
+D_BBox33_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 33, damage);
+}
+D_BBox33_OnIdle(int id)
+{
+	BoxOnIdle(id, 33);
+}
+
+D_BBox34_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 34, damage);
+}
+D_BBox34_OnIdle(int id)
+{
+	BoxOnIdle(id, 34);
+}
+
+D_BBox35_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 35, damage);
+}
+D_BBox35_OnIdle(int id)
+{
+	BoxOnIdle(id, 35);
+}
+
+D_BBox36_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 36, damage);
+}
+D_BBox36_OnIdle(int id)
+{
+	BoxOnIdle(id, 36);
+}
+
+D_BBox37_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 37, damage);
+}
+D_BBox37_OnIdle(int id)
+{
+	BoxOnIdle(id, 37);
+}
+
+D_BBox38_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 38, damage);
+}
+D_BBox38_OnIdle(int id)
+{
+	BoxOnIdle(id, 38);
+}
+
+D_BBox39_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 39, damage);
+}
+D_BBox39_OnIdle(int id)
+{
+	BoxOnIdle(id, 39);
+}
+
+D_BBox40_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 40, damage);
+}
+D_BBox40_OnIdle(int id)
+{
+	BoxOnIdle(id, 40);
+}
+
+D_BBox41_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 41, damage);
+}
+D_BBox41_OnIdle(int id)
+{
+	BoxOnIdle(id, 41);
+}
+
+D_BBox42_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 42, damage);
+}
+D_BBox42_OnIdle(int id)
+{
+	BoxOnIdle(id, 42);
+}
+
+D_BBox43_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 43, damage);
+}
+D_BBox43_OnIdle(int id)
+{
+	BoxOnIdle(id, 43);
+}
+
+D_BBox44_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 44, damage);
+}
+D_BBox44_OnIdle(int id)
+{
+	BoxOnIdle(id, 44);
+}
+
+D_BBox45_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 45, damage);
+}
+D_BBox45_OnIdle(int id)
+{
+	BoxOnIdle(id, 45);
+}
+
+D_BBox46_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 46, damage);
+}
+D_BBox46_OnIdle(int id)
+{
+	BoxOnIdle(id, 46);
+}
+
+D_BBox47_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 47, damage);
+}
+D_BBox47_OnIdle(int id)
+{
+	BoxOnIdle(id, 47);
+}
+
+D_BBox48_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 48, damage);
+}
+D_BBox48_OnIdle(int id)
+{
+	BoxOnIdle(id, 48);
+}
+
+D_BBox49_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 49, damage);
+}
+D_BBox49_OnIdle(int id)
+{
+	BoxOnIdle(id, 49);
+}
+
+D_BBox50_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 50, damage);
+}
+D_BBox50_OnIdle(int id)
+{
+	BoxOnIdle(id, 50);
+}
+
+D_BBox51_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 51, damage);
+}
+D_BBox51_OnIdle(int id)
+{
+	BoxOnIdle(id, 51);
+}
+
+D_BBox52_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 52, damage);
+}
+D_BBox52_OnIdle(int id)
+{
+	BoxOnIdle(id, 52);
+}
+
+D_BBox53_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 53, damage);
+}
+D_BBox53_OnIdle(int id)
+{
+	BoxOnIdle(id, 53);
+}
+
+D_BBox54_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 54, damage);
+}
+D_BBox54_OnIdle(int id)
+{
+	BoxOnIdle(id, 54);
+}
+
+D_BBox55_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 55, damage);
+}
+D_BBox55_OnIdle(int id)
+{
+	BoxOnIdle(id, 55);
+}
+
+D_BBox56_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 56, damage);
+}
+D_BBox56_OnIdle(int id)
+{
+	BoxOnIdle(id, 56);
+}
+
+D_BBox57_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 57, damage);
+}
+D_BBox57_OnIdle(int id)
+{
+	BoxOnIdle(id, 57);
+}
+
+D_BBox58_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 58, damage);
+}
+D_BBox58_OnIdle(int id)
+{
+	BoxOnIdle(id, 58);
+}
+
+D_BBox59_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 59, damage);
+}
+D_BBox59_OnIdle(int id)
+{
+	BoxOnIdle(id, 59);
+}
+
+D_BBox60_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 60, damage);
+}
+D_BBox60_OnIdle(int id)
+{
+	BoxOnIdle(id, 60);
+}
+
+D_BBox61_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 61, damage);
+}
+D_BBox61_OnIdle(int id)
+{
+	BoxOnIdle(id, 61);
+}
+
+D_BBox62_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 62, damage);
+}
+D_BBox62_OnIdle(int id)
+{
+	BoxOnIdle(id, 62);
+}
+
+D_BBox63_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 63, damage);
+}
+D_BBox63_OnIdle(int id)
+{
+	BoxOnIdle(id, 63);
+}
+
+D_BBox64_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 64, damage);
+}
+D_BBox64_OnIdle(int id)
+{
+	BoxOnIdle(id, 64);
+}
+
+D_BBox65_OnAttack(int id, int characterid, int damage)
+{
+	BoxOnAttack(id, 65, damage);
+}
+D_BBox65_OnIdle(int id)
+{
+	BoxOnIdle(id, 65);
+}
+
+InitBBoxes(int num)
+{
+	int i;
+	string name;
+	
+	for ( i=1; i<=num; i++ )
+	{
+		g_bBBoxAlive[i-1] = 1;
+		g_iBBoxHP[i-1] = g_iBBoxMaxHP;
+		
+		MakeString(name, "D_BBBox", i);
+		int id = GetSceneItem(name, "index");
+		SetSceneItem(id, "name", "machine");
+		SetSceneItem(id, "attribute", "collision", 1);
+		SetSceneItem(id, "pose", 0, 0);
+
+		MakeString(name, "D_itBBBox", i);
+		SetSceneItem(name, "attribute", "active", 0);
+		SetSceneItem(name, "attribute", "interactive", 0);
+
+		MakeString(name, "D_wpBBBox", i);
+		SetSceneItem(name, "attribute", "active", 0);
+		SetSceneItem(name, "attribute", "interactive", 0);
+	}
+}
+
+BBoxOnAttack(int id, int index, int damage)
+{
+	g_iBBoxHP[index-1] = g_iBBoxHP[index-1] - damage;
+	if ( g_iBBoxHP[index-1]>0 )
+	{
+		NetEvent(1);
+		CreateEffect(id, "BoxHIT");
+		NetEvent(0);
+		return 0;
+	}
+	
+	string itemname;
+	string weaponname;
+	MakeString(itemname, "D_itBBBox", index);
+	MakeString(weaponname, "D_wpBBBox", index);
+
+	NetEvent(1);
+	CreateEffect(id, "BoxBRK");
+	SetSceneItem(id, "pose", 1, 0);
+	SetSceneItem(id, "attribute", "interactive", 0);
+	SetSceneItem(id, "attribute", "collision", 0);
+	SetSceneItem(itemname, "attribute", "active", 1);
+	SetSceneItem(itemname, "attribute", "interactive", 1);
+	SetSceneItem(weaponname, "attribute", "active", 1);
+	SetSceneItem(weaponname, "attribute", "interactive", 1);
+	NetEvent(0);
+	
+	return 1;
+}
+
+RemoveBBox(int id)
+{
+	int state;
+	int pose;
+	
+	pose = GetSceneItem(id, "pose");
+	if ( pose==0 )
+	{
+		return 0;
+	}
+	
+	state = GetSceneItem(id, "state");
+	if ( state!=3 )
+	{
+		return 0;
+	}
+	
+	NetEvent(1);
+	SetSceneItem(id, "attribute", "active", 0);
+	NetEvent(0);
+	Output("remove item", id);
+	return 1;
+}
+
+BBoxOnIdle(int id, int index)
+{
+	if ( g_bBBoxAlive[index-1] )
+	{
+		if ( RemoveBBox(id) )
+		{
+			g_bBBoxAlive[index-1] = 0;
+		}
+	}
+}
+
+D_BBBox01_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 1, damage);
+}
+D_BBBox01_OnIdle(int id)
+{
+	BBoxOnIdle(id, 1);
+}
+
+D_BBBox02_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 2, damage);
+}
+D_BBBox02_OnIdle(int id)
+{
+	BBoxOnIdle(id, 2);
+}
+
+D_BBBox03_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 3, damage);
+}
+D_BBBox03_OnIdle(int id)
+{
+	BBoxOnIdle(id, 3);
+}
+
+D_BBBox04_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 4, damage);
+}
+D_BBBox04_OnIdle(int id)
+{
+	BBoxOnIdle(id, 4);
+}
+
+D_BBBox05_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 5, damage);
+}
+D_BBBox05_OnIdle(int id)
+{
+	BBoxOnIdle(id, 5);
+}
+
+D_BBBox06_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 6, damage);
+}
+D_BBBox06_OnIdle(int id)
+{
+	BBoxOnIdle(id, 6);
+}
+
+D_BBBox07_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 7, damage);
+}
+D_BBBox07_OnIdle(int id)
+{
+	BBoxOnIdle(id, 7);
+}
+
+D_BBBox08_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 8, damage);
+}
+D_BBBox08_OnIdle(int id)
+{
+	BBoxOnIdle(id, 8);
+}
+
+D_BBBox09_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 9, damage);
+}
+D_BBBox09_OnIdle(int id)
+{
+	BBoxOnIdle(id, 9);
+}
+
+D_BBBox10_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 10, damage);
+}
+D_BBBox10_OnIdle(int id)
+{
+	BBoxOnIdle(id, 10);
+}
+
+D_BBBox11_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 11, damage);
+}
+D_BBBox11_OnIdle(int id)
+{
+	BBoxOnIdle(id, 11);
+}
+
+D_BBBox12_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 12, damage);
+}
+D_BBBox12_OnIdle(int id)
+{
+	BBoxOnIdle(id, 12);
+}
+
+D_BBBox13_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 13, damage);
+}
+D_BBBox13_OnIdle(int id)
+{
+	BBoxOnIdle(id, 13);
+}
+
+D_BBBox14_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 14, damage);
+}
+D_BBBox14_OnIdle(int id)
+{
+	BBoxOnIdle(id, 14);
+}
+
+D_BBBox15_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 15, damage);
+}
+D_BBBox15_OnIdle(int id)
+{
+	BBoxOnIdle(id, 15);
+}
+
+D_BBBox16_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 16, damage);
+}
+D_BBBox16_OnIdle(int id)
+{
+	BBoxOnIdle(id, 16);
+}
+
+D_BBBox17_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 17, damage);
+}
+D_BBBox17_OnIdle(int id)
+{
+	BBoxOnIdle(id, 17);
+}
+
+D_BBBox18_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 18, damage);
+}
+D_BBBox18_OnIdle(int id)
+{
+	BBoxOnIdle(id, 18);
+}
+
+D_BBBox19_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 19, damage);
+}
+D_BBBox19_OnIdle(int id)
+{
+	BBoxOnIdle(id, 19);
+}
+
+D_BBBox20_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 20, damage);
+}
+D_BBBox20_OnIdle(int id)
+{
+	BBoxOnIdle(id, 20);
+}
+
+D_BBBox21_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 21, damage);
+}
+D_BBBox21_OnIdle(int id)
+{
+	BBoxOnIdle(id, 21);
+}
+
+D_BBBox22_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 22, damage);
+}
+D_BBBox22_OnIdle(int id)
+{
+	BBoxOnIdle(id, 22);
+}
+
+D_BBBox23_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 23, damage);
+}
+D_BBBox23_OnIdle(int id)
+{
+	BBoxOnIdle(id, 23);
+}
+
+D_BBBox24_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 24, damage);
+}
+D_BBBox24_OnIdle(int id)
+{
+	BBoxOnIdle(id, 24);
+}
+
+D_BBBox25_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 25, damage);
+}
+D_BBBox25_OnIdle(int id)
+{
+	BBoxOnIdle(id, 25);
+}
+
+D_BBBox26_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 26, damage);
+}
+D_BBBox26_OnIdle(int id)
+{
+	BBoxOnIdle(id, 26);
+}
+
+D_BBBox27_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 27, damage);
+}
+D_BBBox27_OnIdle(int id)
+{
+	BBoxOnIdle(id, 27);
+}
+
+D_BBBox28_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 28, damage);
+}
+D_BBBox28_OnIdle(int id)
+{
+	BBoxOnIdle(id, 28);
+}
+
+D_BBBox29_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 29, damage);
+}
+D_BBBox29_OnIdle(int id)
+{
+	BBoxOnIdle(id, 29);
+}
+
+D_BBBox30_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 30, damage);
+}
+D_BBBox30_OnIdle(int id)
+{
+	BBoxOnIdle(id, 30);
+}
+
+D_BBBox31_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 31, damage);
+}
+D_BBBox31_OnIdle(int id)
+{
+	BBoxOnIdle(id, 31);
+}
+
+D_BBBox32_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 32, damage);
+}
+D_BBBox32_OnIdle(int id)
+{
+	BBoxOnIdle(id, 32);
+}
+
+D_BBBox33_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 33, damage);
+}
+D_BBBox33_OnIdle(int id)
+{
+	BBoxOnIdle(id, 33);
+}
+
+D_BBBox34_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 34, damage);
+}
+D_BBBox34_OnIdle(int id)
+{
+	BBoxOnIdle(id, 34);
+}
+
+D_BBBox35_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 35, damage);
+}
+D_BBBox35_OnIdle(int id)
+{
+	BBoxOnIdle(id, 35);
+}
+
+D_BBBox36_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 36, damage);
+}
+D_BBBox36_OnIdle(int id)
+{
+	BBoxOnIdle(id, 36);
+}
+
+D_BBBox37_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 37, damage);
+}
+D_BBBox37_OnIdle(int id)
+{
+	BBoxOnIdle(id, 37);
+}
+
+D_BBBox38_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 38, damage);
+}
+D_BBBox38_OnIdle(int id)
+{
+	BBoxOnIdle(id, 38);
+}
+
+D_BBBox39_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 39, damage);
+}
+D_BBBox39_OnIdle(int id)
+{
+	BBoxOnIdle(id, 39);
+}
+
+D_BBBox40_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 40, damage);
+}
+D_BBBox40_OnIdle(int id)
+{
+	BBoxOnIdle(id, 40);
+}
+
+D_BBBox41_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 41, damage);
+}
+D_BBBox41_OnIdle(int id)
+{
+	BBoxOnIdle(id, 41);
+}
+
+D_BBBox42_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 42, damage);
+}
+D_BBBox42_OnIdle(int id)
+{
+	BBoxOnIdle(id, 42);
+}
+
+D_BBBox43_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 43, damage);
+}
+D_BBBox43_OnIdle(int id)
+{
+	BBoxOnIdle(id, 43);
+}
+
+D_BBBox44_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 44, damage);
+}
+D_BBBox44_OnIdle(int id)
+{
+	BBoxOnIdle(id, 44);
+}
+
+D_BBBox45_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 45, damage);
+}
+D_BBBox45_OnIdle(int id)
+{
+	BBoxOnIdle(id, 45);
+}
+
+D_BBBox46_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 46, damage);
+}
+D_BBBox46_OnIdle(int id)
+{
+	BBoxOnIdle(id, 46);
+}
+
+D_BBBox47_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 47, damage);
+}
+D_BBBox47_OnIdle(int id)
+{
+	BBoxOnIdle(id, 47);
+}
+
+D_BBBox48_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 48, damage);
+}
+D_BBBox48_OnIdle(int id)
+{
+	BBoxOnIdle(id, 48);
+}
+
+D_BBBox49_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 49, damage);
+}
+D_BBBox49_OnIdle(int id)
+{
+	BBoxOnIdle(id, 49);
+}
+
+D_BBBox50_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 50, damage);
+}
+D_BBBox50_OnIdle(int id)
+{
+	BBoxOnIdle(id, 50);
+}
+
+D_BBBox51_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 51, damage);
+}
+D_BBBox51_OnIdle(int id)
+{
+	BBoxOnIdle(id, 51);
+}
+
+D_BBBox52_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 52, damage);
+}
+D_BBBox52_OnIdle(int id)
+{
+	BBoxOnIdle(id, 52);
+}
+
+D_BBBox53_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 53, damage);
+}
+D_BBBox53_OnIdle(int id)
+{
+	BBoxOnIdle(id, 53);
+}
+
+D_BBBox54_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 54, damage);
+}
+D_BBBox54_OnIdle(int id)
+{
+	BBoxOnIdle(id, 54);
+}
+
+D_BBBox55_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 55, damage);
+}
+D_BBBox55_OnIdle(int id)
+{
+	BBoxOnIdle(id, 55);
+}
+
+D_BBBox56_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 56, damage);
+}
+D_BBBox56_OnIdle(int id)
+{
+	BBoxOnIdle(id, 56);
+}
+
+D_BBBox57_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 57, damage);
+}
+D_BBBox57_OnIdle(int id)
+{
+	BBoxOnIdle(id, 57);
+}
+
+D_BBBox58_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 58, damage);
+}
+D_BBBox58_OnIdle(int id)
+{
+	BBoxOnIdle(id, 58);
+}
+
+D_BBBox59_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 59, damage);
+}
+D_BBBox59_OnIdle(int id)
+{
+	BBoxOnIdle(id, 59);
+}
+
+D_BBBox60_OnAttack(int id, int characterid, int damage)
+{
+	BBoxOnAttack(id, 60, damage);
+}
+D_BBBox60_OnIdle(int id)
+{
+	BBoxOnIdle(id, 60);
+}
+

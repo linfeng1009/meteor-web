@@ -1,0 +1,2169 @@
+{
+  "id": "E-mission-host",
+  "observedAt": "2026-10-23T05:58:46.735Z",
+  "scope": "work/meteor-original/scope.md",
+  "sampleRoot": "/Users/dulinfeng/Downloads/流星86726/lxhdj_",
+  "originalExecuted": false,
+  "method": "Original PST AST interpretation and original-source Node fixtures; actual MeteorGame bridge methods run without WebGL. Browser observations separately attributed to parent agent.",
+  "tests": {
+    "command": "npm test",
+    "total": 38,
+    "passed": 38,
+    "failed": 0,
+    "missionTests": 13,
+    "syntaxCheck": "npm run check: 9 runtime modules"
+  },
+  "level": {
+    "file": "level/sn01_.pst",
+    "globals": {
+      "Rule": 10,
+      "RoundTime": 10,
+      "PlayerSpawn": 9,
+      "PlayerSpawnDir": 90,
+      "PlayerWeapon": 5,
+      "PlayerWeapon2": 1,
+      "PlayerHP": 1500,
+      "trg0": 0,
+      "trg1": 0,
+      "trg2": 0,
+      "trg3": 0,
+      "trg4": 0,
+      "trg5": 0,
+      "trg6": 0
+    }
+  },
+  "npcs": [
+    {
+      "file": "level/npc01_01.pst",
+      "globals": {
+        "Name": "铁枪哨兵﹒甲",
+        "Model": 8,
+        "Weapon": 7,
+        "Weapon2": 0,
+        "Team": 2,
+        "View": 400,
+        "Think": 40,
+        "Attack1": 50,
+        "Attack2": 30,
+        "Attack3": 0,
+        "Guard": 20,
+        "Dodge": 10,
+        "Jump": 5,
+        "Look": 10,
+        "Burst": 2,
+        "Aim": 60,
+        "GetItem": 3,
+        "Spawn": 53,
+        "HP": 1000,
+        "g_selfAddr": 0,
+        "g_self": 0
+      }
+    },
+    {
+      "file": "level/npc01_02.pst",
+      "globals": {
+        "Name": "铁枪哨兵﹒乙",
+        "Model": 8,
+        "Weapon": 7,
+        "Weapon2": 0,
+        "Team": 2,
+        "View": 400,
+        "Think": 40,
+        "Attack1": 30,
+        "Attack2": 40,
+        "Attack3": 0,
+        "Guard": 30,
+        "Dodge": 10,
+        "Jump": 58,
+        "Look": 50,
+        "Burst": 3,
+        "Aim": 60,
+        "GetItem": 5,
+        "Spawn": 80,
+        "HP": 1000,
+        "g_selfAddr": 0,
+        "g_self": 0
+      }
+    },
+    {
+      "file": "level/npc01_03.pst",
+      "globals": {
+        "Name": "军枪哨兵长",
+        "Model": 8,
+        "Weapon": 16,
+        "Weapon2": 0,
+        "Team": 2,
+        "View": 500,
+        "Think": 70,
+        "Attack1": 15,
+        "Attack2": 25,
+        "Attack3": 30,
+        "Guard": 30,
+        "Dodge": 30,
+        "Jump": 10,
+        "Look": 80,
+        "Burst": 5,
+        "Aim": 70,
+        "GetItem": 8,
+        "Spawn": 32,
+        "HP": 2000,
+        "g_selfAddr": 0,
+        "g_self": 0
+      }
+    }
+  ],
+  "loadedSources": [
+    {
+      "source": {
+        "path": "Level/sn01_.pst",
+        "bytes": 5141,
+        "sha256": "a5d48f592f8bdb6a03b71c634973401850543bac11eef175b56c7dfa743d10dc"
+      },
+      "raw": "scripts/level/sn01_.pst",
+      "utf8": "scripts/level/sn01_.pst.utf8.txt",
+      "encoding": "gbk"
+    },
+    {
+      "source": {
+        "path": "PScriptLib/Def.h",
+        "bytes": 792,
+        "sha256": "383169b2a0681a1b10fbc41c2883d11ed196e8e534993bb28874d5953a9001cc"
+      },
+      "raw": "scripts/pscriptlib/def.h",
+      "utf8": "scripts/pscriptlib/def.h.utf8.txt",
+      "encoding": "big5"
+    },
+    {
+      "source": {
+        "path": "PScriptLib/box.pst",
+        "bytes": 22770,
+        "sha256": "029b204da294d64f45e0f2efece172c74d5248b73f366cc1c1a8462538f1840d"
+      },
+      "raw": "scripts/pscriptlib/box.pst",
+      "utf8": "scripts/pscriptlib/box.pst.utf8.txt",
+      "encoding": "ascii"
+    },
+    {
+      "source": {
+        "path": "PScriptLib/desk.pst",
+        "bytes": 5059,
+        "sha256": "541bd669ccc64703497cf7cf912baa3ff518ecde06b7ec75e535ef95d1803abb"
+      },
+      "raw": "scripts/pscriptlib/desk.pst",
+      "utf8": "scripts/pscriptlib/desk.pst.utf8.txt",
+      "encoding": "ascii"
+    },
+    {
+      "source": {
+        "path": "PScriptLib/chair.pst",
+        "bytes": 5174,
+        "sha256": "71d940dca55bae41f70e221fddd956cae380e3e0370d63a4d8c3488e3424d6ed"
+      },
+      "raw": "scripts/pscriptlib/chair.pst",
+      "utf8": "scripts/pscriptlib/chair.pst.utf8.txt",
+      "encoding": "ascii"
+    },
+    {
+      "source": {
+        "path": "PScriptLib/jug.pst",
+        "bytes": 10207,
+        "sha256": "eb7d1280b084d4164aed778042e9c8c588c016cf62caf8e2bcd150e6519ab430"
+      },
+      "raw": "scripts/pscriptlib/jug.pst",
+      "utf8": "scripts/pscriptlib/jug.pst.utf8.txt",
+      "encoding": "ascii"
+    },
+    {
+      "source": {
+        "path": "sn01/sn01.pst",
+        "bytes": 7524,
+        "sha256": "1f1c57029d4bcc4af27072d424173963bd66edf12721ba07c0b1a8bf09a74c30"
+      },
+      "raw": "maps/sn01/sn01.pst",
+      "utf8": "maps/sn01/sn01.pst.utf8.txt",
+      "encoding": "ascii"
+    },
+    {
+      "source": {
+        "path": "Level/npc01_01.pst",
+        "bytes": 513,
+        "sha256": "fb5b689953f6c391aa8dcdf53f21487ffa91acf23ae98350c514d70eeab84795"
+      },
+      "raw": "scripts/level/npc01_01.pst",
+      "utf8": "scripts/level/npc01_01.pst.utf8.txt",
+      "encoding": "gbk"
+    },
+    {
+      "source": {
+        "path": "Level/npc01_02.pst",
+        "bytes": 514,
+        "sha256": "02ced0123807f8345cc2a1c789f46f877eceff98606f0a0bc861977da4f97c2f"
+      },
+      "raw": "scripts/level/npc01_02.pst",
+      "utf8": "scripts/level/npc01_02.pst.utf8.txt",
+      "encoding": "gbk"
+    },
+    {
+      "source": {
+        "path": "Level/npc01_03.pst",
+        "bytes": 514,
+        "sha256": "20bcc9d1fe3a2b4a46d33f259169773d7e470fac442c4f836df8d78e3b9458e2"
+      },
+      "raw": "scripts/level/npc01_03.pst",
+      "utf8": "scripts/level/npc01_03.pst.utf8.txt",
+      "encoding": "gbk"
+    }
+  ],
+  "nativeRequirements": [
+    {
+      "file": "level/sn01_.pst",
+      "requirements": [
+        {
+          "name": "AddNPC",
+          "supplied": true,
+          "locations": [
+            {
+              "file": "level/sn01_.pst",
+              "line": 21,
+              "column": 2
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 22,
+              "column": 2
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 23,
+              "column": 2
+            }
+          ]
+        },
+        {
+          "name": "ChangeBehavior",
+          "supplied": true,
+          "locations": [
+            {
+              "file": "level/sn01_.pst",
+              "line": 31,
+              "column": 3
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 33,
+              "column": 3
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 51,
+              "column": 5
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 54,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 60,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 96,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 100,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 117,
+              "column": 5
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 124,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "name": "Distance",
+          "supplied": true,
+          "locations": [
+            {
+              "file": "level/sn01_.pst",
+              "line": 47,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "name": "GetAnyChar",
+          "supplied": true,
+          "locations": [
+            {
+              "file": "level/sn01_.pst",
+              "line": 260,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "name": "GetChar",
+          "supplied": true,
+          "locations": [
+            {
+              "file": "level/sn01_.pst",
+              "line": 28,
+              "column": 11
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 59,
+              "column": 17
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 75,
+              "column": 15
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 87,
+              "column": 7
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 88,
+              "column": 8
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 89,
+              "column": 8
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 110,
+              "column": 7
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 113,
+              "column": 9
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 114,
+              "column": 9
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 145,
+              "column": 7
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 156,
+              "column": 7
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 165,
+              "column": 7
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 179,
+              "column": 7
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 190,
+              "column": 7
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 199,
+              "column": 7
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 213,
+              "column": 7
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 225,
+              "column": 7
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 238,
+              "column": 7
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 239,
+              "column": 8
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 240,
+              "column": 8
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 249,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "name": "GetEnemy",
+          "supplied": true,
+          "locations": [
+            {
+              "file": "level/sn01_.pst",
+              "line": 111,
+              "column": 15
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 146,
+              "column": 15
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 157,
+              "column": 15
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 166,
+              "column": 15
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 180,
+              "column": 15
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 191,
+              "column": 15
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 200,
+              "column": 15
+            }
+          ]
+        },
+        {
+          "name": "GetHP",
+          "supplied": true,
+          "locations": [
+            {
+              "file": "level/sn01_.pst",
+              "line": 214,
+              "column": 15
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 226,
+              "column": 15
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 250,
+              "column": 15
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 261,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "name": "GetMaxHP",
+          "supplied": true,
+          "locations": [
+            {
+              "file": "level/sn01_.pst",
+              "line": 214,
+              "column": 25
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 226,
+              "column": 25
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 250,
+              "column": 24
+            }
+          ]
+        },
+        {
+          "name": "Perform",
+          "supplied": true,
+          "locations": [
+            {
+              "file": "level/sn01_.pst",
+              "line": 55,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 56,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 57,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 61,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 62,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 63,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 93,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 94,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 97,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 98,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 101,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 102,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 118,
+              "column": 5
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 119,
+              "column": 5
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 120,
+              "column": 5
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 125,
+              "column": 5
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 126,
+              "column": 5
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 127,
+              "column": 5
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 132,
+              "column": 5
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 133,
+              "column": 5
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 136,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 137,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 148,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 149,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 150,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 159,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 170,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 171,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 182,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 183,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 184,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 193,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 204,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 205,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 217,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 229,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 252,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 253,
+              "column": 4
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 254,
+              "column": 4
+            }
+          ]
+        },
+        {
+          "name": "Perofrm",
+          "supplied": true,
+          "locations": [
+            {
+              "file": "level/sn01_.pst",
+              "line": 103,
+              "column": 4
+            }
+          ]
+        },
+        {
+          "name": "Say",
+          "supplied": true,
+          "locations": [
+            {
+              "file": "level/sn01_.pst",
+              "line": 263,
+              "column": 4
+            }
+          ]
+        },
+        {
+          "name": "SetTarget",
+          "supplied": true,
+          "locations": [
+            {
+              "file": "level/sn01_.pst",
+              "line": 32,
+              "column": 3
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 44,
+              "column": 3
+            },
+            {
+              "file": "level/sn01_.pst",
+              "line": 45,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "sn01/sn01.pst",
+      "requirements": [
+        {
+          "name": "CreateEffect",
+          "supplied": true,
+          "locations": [
+            {
+              "file": "sn01/sn01.pst",
+              "line": 101,
+              "column": 2
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 120,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 50,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 66,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 731,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 742,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 44,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 59,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 43,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 59,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 76,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 92,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 326,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 351,
+              "column": 2
+            }
+          ]
+        },
+        {
+          "name": "GetSceneItem",
+          "supplied": true,
+          "locations": [
+            {
+              "file": "sn01/sn01.pst",
+              "line": 67,
+              "column": 13
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 72,
+              "column": 14
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 90,
+              "column": 13
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 28,
+              "column": 12
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 55,
+              "column": 7
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 84,
+              "column": 9
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 90,
+              "column": 10
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 710,
+              "column": 12
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 760,
+              "column": 9
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 766,
+              "column": 10
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 23,
+              "column": 12
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 48,
+              "column": 7
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 77,
+              "column": 9
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 83,
+              "column": 10
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 22,
+              "column": 12
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 48,
+              "column": 7
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 77,
+              "column": 9
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 83,
+              "column": 10
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 27,
+              "column": 8
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 50,
+              "column": 8
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 81,
+              "column": 7
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 110,
+              "column": 9
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 116,
+              "column": 10
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 331,
+              "column": 7
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 369,
+              "column": 9
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 375,
+              "column": 10
+            }
+          ]
+        },
+        {
+          "name": "MakeString",
+          "supplied": true,
+          "locations": [
+            {
+              "file": "sn01/sn01.pst",
+              "line": 25,
+              "column": 3
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 50,
+              "column": 3
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 56,
+              "column": 3
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 59,
+              "column": 3
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 89,
+              "column": 2
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 96,
+              "column": 2
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 97,
+              "column": 2
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 117,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 27,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 33,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 37,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 62,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 63,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 709,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 715,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 719,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 738,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 739,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 22,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 28,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 32,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 55,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 56,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 21,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 27,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 31,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 55,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 56,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 26,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 32,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 36,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 49,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 57,
+              "column": 4
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 58,
+              "column": 4
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 62,
+              "column": 4
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 63,
+              "column": 4
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 88,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 89,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 339,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 340,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 347,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 348,
+              "column": 2
+            }
+          ]
+        },
+        {
+          "name": "NetEvent",
+          "supplied": true,
+          "locations": [
+            {
+              "file": "sn01/sn01.pst",
+              "line": 77,
+              "column": 2
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 79,
+              "column": 2
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 100,
+              "column": 2
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 109,
+              "column": 2
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 119,
+              "column": 2
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 121,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 48,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 51,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 65,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 74,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 96,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 98,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 730,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 732,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 741,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 750,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 772,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 774,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 43,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 45,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 58,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 67,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 89,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 91,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 42,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 44,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 58,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 67,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 89,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 91,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 75,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 77,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 91,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 100,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 122,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 124,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 325,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 327,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 350,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 359,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 381,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 383,
+              "column": 2
+            }
+          ]
+        },
+        {
+          "name": "Output",
+          "supplied": true,
+          "locations": [
+            {
+              "file": "sn01/sn01.pst",
+              "line": 49,
+              "column": 3
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 99,
+              "column": 2
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 116,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 49,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 99,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 775,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 92,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 92,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 125,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 384,
+              "column": 2
+            }
+          ]
+        },
+        {
+          "name": "rand",
+          "supplied": true,
+          "locations": [
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 342,
+              "column": 13
+            }
+          ]
+        },
+        {
+          "name": "SetSceneItem",
+          "supplied": true,
+          "locations": [
+            {
+              "file": "sn01/sn01.pst",
+              "line": 26,
+              "column": 3
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 27,
+              "column": 3
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 51,
+              "column": 3
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 52,
+              "column": 3
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 53,
+              "column": 3
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 54,
+              "column": 3
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 57,
+              "column": 3
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 58,
+              "column": 3
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 60,
+              "column": 3
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 61,
+              "column": 3
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 78,
+              "column": 2
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 102,
+              "column": 2
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 103,
+              "column": 2
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 104,
+              "column": 2
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 105,
+              "column": 2
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 106,
+              "column": 2
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 107,
+              "column": 2
+            },
+            {
+              "file": "sn01/sn01.pst",
+              "line": 108,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 29,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 30,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 31,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 34,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 35,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 38,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 39,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 67,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 68,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 69,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 70,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 71,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 72,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 73,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 97,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 711,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 712,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 713,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 716,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 717,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 720,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 721,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 743,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 744,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 745,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 746,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 747,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 748,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 749,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/box.pst",
+              "line": 773,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 24,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 25,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 26,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 29,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 30,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 33,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 34,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 60,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 61,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 62,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 63,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 64,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 65,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 66,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/desk.pst",
+              "line": 90,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 23,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 24,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 25,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 28,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 29,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 32,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 33,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 60,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 61,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 62,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 63,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 64,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 65,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 66,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/chair.pst",
+              "line": 90,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 28,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 29,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 30,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 33,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 34,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 37,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 38,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 51,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 52,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 53,
+              "column": 3
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 59,
+              "column": 4
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 60,
+              "column": 4
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 64,
+              "column": 4
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 65,
+              "column": 4
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 93,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 94,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 95,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 96,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 97,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 98,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 99,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 123,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 352,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 353,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 354,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 355,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 356,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 357,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 358,
+              "column": 2
+            },
+            {
+              "file": "pscriptlib/jug.pst",
+              "line": 382,
+              "column": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "level/npc01_01.pst",
+      "requirements": [
+        {
+          "name": "ChangeBehavior",
+          "supplied": true,
+          "locations": [
+            {
+              "file": "level/npc01_01.pst",
+              "line": 32,
+              "column": 2
+            }
+          ]
+        },
+        {
+          "name": "GetSelf",
+          "supplied": true,
+          "locations": [
+            {
+              "file": "level/npc01_01.pst",
+              "line": 31,
+              "column": 11
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "level/npc01_02.pst",
+      "requirements": [
+        {
+          "name": "ChangeBehavior",
+          "supplied": true,
+          "locations": [
+            {
+              "file": "level/npc01_02.pst",
+              "line": 32,
+              "column": 2
+            }
+          ]
+        },
+        {
+          "name": "GetSelf",
+          "supplied": true,
+          "locations": [
+            {
+              "file": "level/npc01_02.pst",
+              "line": 31,
+              "column": 11
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "level/npc01_03.pst",
+      "requirements": [
+        {
+          "name": "ChangeBehavior",
+          "supplied": true,
+          "locations": [
+            {
+              "file": "level/npc01_03.pst",
+              "line": 32,
+              "column": 2
+            }
+          ]
+        },
+        {
+          "name": "GetSelf",
+          "supplied": true,
+          "locations": [
+            {
+              "file": "level/npc01_03.pst",
+              "line": 31,
+              "column": 11
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "dist/native-mission-host.js",
+      "bytes": 29552,
+      "sha256": "a699af0f8e924f4baac705cf003669457ff2d58d675375c1f087b12daef3e33f"
+    },
+    {
+      "path": "dist/native-script.js",
+      "bytes": 27443,
+      "sha256": "5ac8f1f947e6d113b653195ae1deb203a9afc660a423acc501335f4ec00761ff"
+    },
+    {
+      "path": "tests/native-mission-host.test.mjs",
+      "bytes": 16291,
+      "sha256": "26f2ed061914ba4fa387ca50091f06fae3e7354b079c75595fd1fcb608c9f3de"
+    },
+    {
+      "path": "tests/native-script.test.mjs",
+      "bytes": 8283,
+      "sha256": "d0ea12d99966b23d227cae8f95125a1981942a11096a869b66b23f435609d32b"
+    },
+    {
+      "path": "tests/native.test.mjs",
+      "bytes": 14747,
+      "sha256": "6612b8c7f44b4ebb8b285fba1b850ce28b496a802696b71e72331b9f4d7dc385"
+    },
+    {
+      "path": "work/meteor-original/evidence/native-mission-tests.tap",
+      "bytes": 9055,
+      "sha256": "1cd42bff14b60d61af2f1673ead67f35cc7943da79642c095e908261a5abe3a8"
+    }
+  ],
+  "provenance": {
+    "scripts": "Original Level/*.pst, scene PST and PScriptLib includes; source bytes preserved.",
+    "configuration": "NPC Model/Weapon/Team/View/Spawn/HP and player Spawn/HP/Weapon read from original globals.",
+    "navigation": "Original Level/*.wp positions and links; browser Dijkstra adapter projects waypoints onto actual collision floors for foot placement (original positions retained).",
+    "perception": "View uses native units × 0.08 and native map collision rays; native sight cone/AI internals remain unverified.",
+    "timing": "PST pause/guard numeric durations are treated as seconds; dialogue display duration is a browser reading aid.",
+    "rule10": "All hostile mission NPCs defeated => success is a Rule-10 adapter inference; no GameOver call exists in sn01_.pst."
+  },
+  "browserObservations": {
+    "by": "parent/root",
+    "date": "2026-10-23",
+    "confirmed": [
+      "actual sn01 map and native boxes",
+      "player HP1500 and original dagger",
+      "original NPC dialogue",
+      "E switches to original seven-star dart and updates HUD",
+      "walking onto bridge",
+      "Q locks target"
+    ],
+    "notClaimed": [
+      "manual full mission completion",
+      "exact original movement/physics/AI timing parity"
+    ]
+  },
+  "remaining": [
+    "Other missions not enabled as full story progression",
+    "Misc/rand/Rand/SetScene/GameCallBack/GetLeader commands remain explicit unsupported if called",
+    "Original machine damage coefficient unproven: scene-contact remains damagePending without sceneDamageResolver",
+    "Rule10 all-hostiles-defeated completion and player-death failure are explicit host adapters, not executable GameRule reconstruction",
+    "RoundTime10 is exposed for timer display; time-limit outcome unverified",
+    "Effects audio/native effect events supported; full PonEF visual renderer not complete",
+    "Native perception cone, path policy, attack timing, controls and physical constants not fully recovered"
+  ]
+}

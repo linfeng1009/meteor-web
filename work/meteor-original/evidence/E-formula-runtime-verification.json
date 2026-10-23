@@ -1,0 +1,198 @@
+{
+  "observedAt": "2026-10-23T05:58:33.492Z",
+  "method": "Owned browser module executed in Node; expected values independently derived from original x86 and RES offsets in E-exe-combat-formulas.json; not original EXE dynamic execution.",
+  "module": "dist/native-combat.js",
+  "moduleSha256": "4220804856c31eba45c1a59d03c41ce8558ca220f2ce4ef980bcfdbfefc55647",
+  "examples": [
+    {
+      "pose": 262,
+      "expected": {
+        "poseAttack": 39,
+        "damage": 24,
+        "rage": 3
+      },
+      "actual": {
+        "poseAttack": 39,
+        "defense": 15,
+        "beforeScale": 24,
+        "factor": 1,
+        "damage": 24,
+        "victimRage": 3,
+        "guarded": false
+      },
+      "pass": true
+    },
+    {
+      "pose": 263,
+      "expected": {
+        "poseAttack": 61,
+        "damage": 46,
+        "rage": 6
+      },
+      "actual": {
+        "poseAttack": 61,
+        "defense": 15,
+        "beforeScale": 46,
+        "factor": 1,
+        "damage": 46,
+        "victimRage": 6,
+        "guarded": false
+      },
+      "pass": true
+    },
+    {
+      "pose": 264,
+      "expected": {
+        "poseAttack": 72,
+        "damage": 57,
+        "rage": 7
+      },
+      "actual": {
+        "poseAttack": 72,
+        "defense": 15,
+        "beforeScale": 57,
+        "factor": 1,
+        "damage": 57,
+        "victimRage": 7,
+        "guarded": false
+      },
+      "pass": true
+    },
+    {
+      "pose": 279,
+      "expected": {
+        "poseAttack": 52,
+        "damage": 37,
+        "rage": 5
+      },
+      "actual": {
+        "poseAttack": 52,
+        "defense": 15,
+        "beforeScale": 37,
+        "factor": 1,
+        "damage": 37,
+        "victimRage": 5,
+        "guarded": false
+      },
+      "pass": true
+    },
+    {
+      "pose": 280,
+      "expected": {
+        "poseAttack": 64,
+        "damage": 49,
+        "rage": 6
+      },
+      "actual": {
+        "poseAttack": 64,
+        "defense": 15,
+        "beforeScale": 49,
+        "factor": 1,
+        "damage": 49,
+        "victimRage": 6,
+        "guarded": false
+      },
+      "pass": true
+    },
+    {
+      "pose": 281,
+      "expected": {
+        "poseAttack": 75,
+        "damage": 60,
+        "rage": 8
+      },
+      "actual": {
+        "poseAttack": 75,
+        "defense": 15,
+        "beforeScale": 60,
+        "factor": 1,
+        "damage": 60,
+        "victimRage": 8,
+        "guarded": false
+      },
+      "pass": true
+    },
+    {
+      "pose": 295,
+      "expected": {
+        "poseAttack": 59,
+        "damage": 44,
+        "rage": 6
+      },
+      "actual": {
+        "poseAttack": 59,
+        "defense": 15,
+        "beforeScale": 44,
+        "factor": 1,
+        "damage": 44,
+        "victimRage": 6,
+        "guarded": false
+      },
+      "pass": true
+    },
+    {
+      "pose": 296,
+      "expected": {
+        "poseAttack": 72,
+        "damage": 57,
+        "rage": 7
+      },
+      "actual": {
+        "poseAttack": 72,
+        "defense": 15,
+        "beforeScale": 57,
+        "factor": 1,
+        "damage": 57,
+        "victimRage": 7,
+        "guarded": false
+      },
+      "pass": true
+    },
+    {
+      "pose": 297,
+      "expected": {
+        "poseAttack": 91,
+        "damage": 76,
+        "rage": 10
+      },
+      "actual": {
+        "poseAttack": 91,
+        "defense": 15,
+        "beforeScale": 76,
+        "factor": 1,
+        "damage": 76,
+        "victimRage": 10,
+        "guarded": false
+      },
+      "pass": true
+    }
+  ],
+  "normalWeaponStats": [
+    {
+      "model": "w0_0",
+      "attack": 110,
+      "defense": 15
+    },
+    {
+      "model": "w7_0",
+      "attack": 115,
+      "defense": 15
+    },
+    {
+      "model": "w5_0",
+      "attack": 130,
+      "defense": 15
+    }
+  ],
+  "allPassed": true,
+  "actionFamiliesInCurrentModule": [
+    "dart",
+    "dagger",
+    "sword",
+    "spear",
+    "blade"
+  ],
+  "limits": [
+    "This check validates recovered arithmetic and the shipped module values, not input-selector, rage-cast-cost, physics, mission VM or browser rendering behavior."
+  ]
+}

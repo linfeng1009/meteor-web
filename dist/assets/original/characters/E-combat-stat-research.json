@@ -1,0 +1,1599 @@
+{
+  "case": "meteor-original",
+  "evidence": "E-combat-stat-research",
+  "quality": "structurally-validated-original-data",
+  "sample": "/Users/dulinfeng/Downloads/流星86726/lxhdj_/Meteor.res",
+  "sha256": "96fc310557ecc11e2741f88c1073c63e5267f67bc5baf48a02cad7771b77d901",
+  "bytes": 61630,
+  "recordCount": 732,
+  "recordTypeCounts": {
+    "1": 59,
+    "3": 600,
+    "2": 41,
+    "4": 10,
+    "5": 22
+  },
+  "structure": {
+    "record": "int32 type, int32 id, length-prefixed NUL name, length-prefixed NUL model, int32 flag, uint8 flag, int32 parameterCount, parameter[3*int32][], int32 effectCount, effect[10*int32][]",
+    "effectStatKeyWord": 2,
+    "effectModeWord": 5,
+    "effectValueWord": 6
+  },
+  "statSemanticCrossChecks": {
+    "2": "HP: original GBK item name 肉包 / 大肉包 / 小肉包 contains key2 values 300 / 500 / 100; final UI scaling not yet disassembled.",
+    "3": "Attack-related: weapon key3 base values, pose key3 mode1 coefficients, 嗜战 item key3 value25.",
+    "4": "Defense-related: 铜皮 item key4 value20; normal weapon key4 value15.",
+    "5": "Movement-related: 猫足 item key5 mode1 value150, 钝筋 key5 mode1 value50.",
+    "6": "Rage-related: 气元 item key6 value100, 元气糖 key6 value25, 气绝21 key6 value-10 and 气丧22 key6 value-20."
+  },
+  "normalWeaponRecords": [
+    {
+      "offset": 1036,
+      "endOffset": 1231,
+      "type": 1,
+      "id": 6,
+      "name": "碧血",
+      "nameEncodings": {
+        "big5": "碧血",
+        "gbk": "貉﹀",
+        "hex": "bad1a6e5"
+      },
+      "model": "W0_0",
+      "flag": 1,
+      "byteFlag": 0,
+      "parameters": [
+        {
+          "offset": 1071,
+          "words": [
+            11,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 1083,
+          "words": [
+            13,
+            30,
+            0
+          ]
+        },
+        {
+          "offset": 1095,
+          "words": [
+            14,
+            672,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 1111,
+          "words": [
+            2,
+            0,
+            3,
+            0,
+            -1,
+            0,
+            110,
+            1,
+            0,
+            0
+          ],
+          "statKey": 3,
+          "mode": 0,
+          "value": 110,
+          "valueOffset": 1135
+        },
+        {
+          "offset": 1151,
+          "words": [
+            2,
+            0,
+            4,
+            0,
+            -1,
+            0,
+            15,
+            1,
+            0,
+            0
+          ],
+          "statKey": 4,
+          "mode": 0,
+          "value": 15,
+          "valueOffset": 1175
+        },
+        {
+          "offset": 1191,
+          "words": [
+            2,
+            0,
+            5,
+            0,
+            -1,
+            1,
+            100,
+            1,
+            0,
+            0
+          ],
+          "statKey": 5,
+          "mode": 1,
+          "value": 100,
+          "valueOffset": 1215
+        }
+      ]
+    },
+    {
+      "offset": 1231,
+      "endOffset": 1426,
+      "type": 1,
+      "id": 7,
+      "name": "戰戢",
+      "nameEncodings": {
+        "big5": "戰戢",
+        "gbk": "驹穉",
+        "hex": "bed4b761"
+      },
+      "model": "W7_0",
+      "flag": 1,
+      "byteFlag": 0,
+      "parameters": [
+        {
+          "offset": 1266,
+          "words": [
+            11,
+            7,
+            0
+          ]
+        },
+        {
+          "offset": 1278,
+          "words": [
+            13,
+            75,
+            0
+          ]
+        },
+        {
+          "offset": 1290,
+          "words": [
+            14,
+            672,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 1306,
+          "words": [
+            2,
+            0,
+            3,
+            0,
+            -1,
+            0,
+            115,
+            1,
+            0,
+            0
+          ],
+          "statKey": 3,
+          "mode": 0,
+          "value": 115,
+          "valueOffset": 1330
+        },
+        {
+          "offset": 1346,
+          "words": [
+            2,
+            0,
+            4,
+            0,
+            -1,
+            0,
+            15,
+            1,
+            0,
+            0
+          ],
+          "statKey": 4,
+          "mode": 0,
+          "value": 15,
+          "valueOffset": 1370
+        },
+        {
+          "offset": 1386,
+          "words": [
+            2,
+            0,
+            5,
+            0,
+            -1,
+            1,
+            100,
+            1,
+            0,
+            0
+          ],
+          "statKey": 5,
+          "mode": 1,
+          "value": 100,
+          "valueOffset": 1410
+        }
+      ]
+    },
+    {
+      "offset": 1426,
+      "endOffset": 1621,
+      "type": 1,
+      "id": 8,
+      "name": "斬鐵",
+      "nameEncodings": {
+        "big5": "斬鐵",
+        "gbk": "辟臟",
+        "hex": "b1d9c54b"
+      },
+      "model": "W5_0",
+      "flag": 1,
+      "byteFlag": 0,
+      "parameters": [
+        {
+          "offset": 1461,
+          "words": [
+            11,
+            5,
+            0
+          ]
+        },
+        {
+          "offset": 1473,
+          "words": [
+            13,
+            60,
+            0
+          ]
+        },
+        {
+          "offset": 1485,
+          "words": [
+            14,
+            672,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 1501,
+          "words": [
+            2,
+            0,
+            3,
+            0,
+            -1,
+            0,
+            130,
+            1,
+            0,
+            0
+          ],
+          "statKey": 3,
+          "mode": 0,
+          "value": 130,
+          "valueOffset": 1525
+        },
+        {
+          "offset": 1541,
+          "words": [
+            2,
+            0,
+            4,
+            0,
+            -1,
+            0,
+            15,
+            1,
+            0,
+            0
+          ],
+          "statKey": 4,
+          "mode": 0,
+          "value": 15,
+          "valueOffset": 1565
+        },
+        {
+          "offset": 1581,
+          "words": [
+            2,
+            0,
+            5,
+            0,
+            -1,
+            1,
+            100,
+            1,
+            0,
+            0
+          ],
+          "statKey": 5,
+          "mode": 1,
+          "value": 100,
+          "valueOffset": 1605
+        }
+      ]
+    }
+  ],
+  "selectedPoseRecords": [
+    {
+      "offset": 20672,
+      "endOffset": 20773,
+      "type": 3,
+      "id": 201,
+      "name": "鏢地八方絕",
+      "nameEncodings": {
+        "big5": "鏢地八方絕",
+        "gbk": "灭�a�Kよ荡",
+        "hex": "c3f0a661a44ba4e8b5b4"
+      },
+      "model": "NoneName",
+      "flag": 1,
+      "byteFlag": 0,
+      "parameters": [
+        {
+          "offset": 20717,
+          "words": [
+            16,
+            22,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 20733,
+          "words": [
+            2,
+            0,
+            3,
+            0,
+            -1,
+            1,
+            110,
+            1,
+            0,
+            0
+          ],
+          "statKey": 3,
+          "mode": 1,
+          "value": 110,
+          "valueOffset": 20757
+        }
+      ]
+    },
+    {
+      "offset": 26541,
+      "endOffset": 26642,
+      "type": 3,
+      "id": 262,
+      "name": "劍輕１繞劍",
+      "nameEncodings": {
+        "big5": "劍輕１繞劍",
+        "gbk": "糃淮�奥都C",
+        "hex": "bc43bbb4a2b0c2b6bc43"
+      },
+      "model": "NoneName",
+      "flag": 1,
+      "byteFlag": 0,
+      "parameters": [
+        {
+          "offset": 26586,
+          "words": [
+            1,
+            100,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 26602,
+          "words": [
+            2,
+            0,
+            3,
+            0,
+            -1,
+            1,
+            35,
+            1,
+            0,
+            0
+          ],
+          "statKey": 3,
+          "mode": 1,
+          "value": 35,
+          "valueOffset": 26626
+        }
+      ]
+    },
+    {
+      "offset": 26642,
+      "endOffset": 26743,
+      "type": 3,
+      "id": 263,
+      "name": "劍輕２揮點",
+      "nameEncodings": {
+        "big5": "劍輕２揮點",
+        "gbk": "糃淮⒈揣翴",
+        "hex": "bc43bbb4a2b1b4a7c249"
+      },
+      "model": "NoneName",
+      "flag": 1,
+      "byteFlag": 0,
+      "parameters": [
+        {
+          "offset": 26687,
+          "words": [
+            1,
+            100,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 26703,
+          "words": [
+            2,
+            0,
+            3,
+            0,
+            -1,
+            1,
+            55,
+            1,
+            0,
+            0
+          ],
+          "statKey": 3,
+          "mode": 1,
+          "value": 55,
+          "valueOffset": 26727
+        }
+      ]
+    },
+    {
+      "offset": 26743,
+      "endOffset": 26844,
+      "type": 3,
+      "id": 264,
+      "name": "劍輕３左揮",
+      "nameEncodings": {
+        "big5": "劍輕３左揮",
+        "gbk": "糃淮⒉オ揣",
+        "hex": "bc43bbb4a2b2a5aab4a7"
+      },
+      "model": "NoneName",
+      "flag": 1,
+      "byteFlag": 0,
+      "parameters": [
+        {
+          "offset": 26788,
+          "words": [
+            1,
+            100,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 26804,
+          "words": [
+            2,
+            0,
+            3,
+            0,
+            -1,
+            1,
+            65,
+            1,
+            0,
+            0
+          ],
+          "statKey": 3,
+          "mode": 1,
+          "value": 65,
+          "valueOffset": 26828
+        }
+      ]
+    },
+    {
+      "offset": 28238,
+      "endOffset": 28335,
+      "type": 3,
+      "id": 279,
+      "name": "槍輕一",
+      "nameEncodings": {
+        "big5": "槍輕一",
+        "gbk": "簀淮�@",
+        "hex": "ba6abbb4a440"
+      },
+      "model": "NoneName",
+      "flag": 1,
+      "byteFlag": 0,
+      "parameters": [
+        {
+          "offset": 28279,
+          "words": [
+            1,
+            100,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 28295,
+          "words": [
+            2,
+            0,
+            3,
+            0,
+            -1,
+            1,
+            45,
+            1,
+            0,
+            0
+          ],
+          "statKey": 3,
+          "mode": 1,
+          "value": 45,
+          "valueOffset": 28319
+        }
+      ]
+    },
+    {
+      "offset": 28335,
+      "endOffset": 28432,
+      "type": 3,
+      "id": 280,
+      "name": "槍輕二",
+      "nameEncodings": {
+        "big5": "槍輕二",
+        "gbk": "簀淮�G",
+        "hex": "ba6abbb4a447"
+      },
+      "model": "NoneName",
+      "flag": 1,
+      "byteFlag": 0,
+      "parameters": [
+        {
+          "offset": 28376,
+          "words": [
+            1,
+            100,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 28392,
+          "words": [
+            2,
+            0,
+            3,
+            0,
+            -1,
+            1,
+            55,
+            1,
+            0,
+            0
+          ],
+          "statKey": 3,
+          "mode": 1,
+          "value": 55,
+          "valueOffset": 28416
+        }
+      ]
+    },
+    {
+      "offset": 28432,
+      "endOffset": 28529,
+      "type": 3,
+      "id": 281,
+      "name": "槍輕三",
+      "nameEncodings": {
+        "big5": "槍輕三",
+        "gbk": "簀淮�T",
+        "hex": "ba6abbb4a454"
+      },
+      "model": "NoneName",
+      "flag": 1,
+      "byteFlag": 0,
+      "parameters": [
+        {
+          "offset": 28473,
+          "words": [
+            1,
+            100,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 28489,
+          "words": [
+            2,
+            0,
+            3,
+            0,
+            -1,
+            1,
+            65,
+            1,
+            0,
+            0
+          ],
+          "statKey": 3,
+          "mode": 1,
+          "value": 65,
+          "valueOffset": 28513
+        }
+      ]
+    },
+    {
+      "offset": 29832,
+      "endOffset": 29933,
+      "type": 3,
+      "id": 295,
+      "name": "刀輕１右揮",
+      "nameEncodings": {
+        "big5": "刀輕１右揮",
+        "gbk": "�M淮�哎k揣",
+        "hex": "a44dbbb4a2b0a56bb4a7"
+      },
+      "model": "NoneName",
+      "flag": 1,
+      "byteFlag": 0,
+      "parameters": [
+        {
+          "offset": 29877,
+          "words": [
+            1,
+            100,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 29893,
+          "words": [
+            2,
+            0,
+            3,
+            0,
+            -1,
+            1,
+            45,
+            1,
+            0,
+            0
+          ],
+          "statKey": 3,
+          "mode": 1,
+          "value": 45,
+          "valueOffset": 29917
+        }
+      ]
+    },
+    {
+      "offset": 29933,
+      "endOffset": 30034,
+      "type": 3,
+      "id": 296,
+      "name": "刀輕２左揮",
+      "nameEncodings": {
+        "big5": "刀輕２左揮",
+        "gbk": "�M淮⒈オ揣",
+        "hex": "a44dbbb4a2b1a5aab4a7"
+      },
+      "model": "NoneName",
+      "flag": 1,
+      "byteFlag": 0,
+      "parameters": [
+        {
+          "offset": 29978,
+          "words": [
+            1,
+            100,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 29994,
+          "words": [
+            2,
+            0,
+            3,
+            0,
+            -1,
+            1,
+            55,
+            1,
+            0,
+            0
+          ],
+          "statKey": 3,
+          "mode": 1,
+          "value": 55,
+          "valueOffset": 30018
+        }
+      ]
+    },
+    {
+      "offset": 30034,
+      "endOffset": 30135,
+      "type": 3,
+      "id": 297,
+      "name": "刀輕３前劈",
+      "nameEncodings": {
+        "big5": "刀輕３前劈",
+        "gbk": "�M淮⒉玡糀",
+        "hex": "a44dbbb4a2b2ab65bc41"
+      },
+      "model": "NoneName",
+      "flag": 1,
+      "byteFlag": 0,
+      "parameters": [
+        {
+          "offset": 30079,
+          "words": [
+            1,
+            100,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 30095,
+          "words": [
+            2,
+            0,
+            3,
+            0,
+            -1,
+            1,
+            70,
+            1,
+            0,
+            0
+          ],
+          "statKey": 3,
+          "mode": 1,
+          "value": 70,
+          "valueOffset": 30119
+        }
+      ]
+    },
+    {
+      "offset": 36091,
+      "endOffset": 36190,
+      "type": 3,
+      "id": 368,
+      "name": "劍怒氣環",
+      "nameEncodings": {
+        "big5": "劍怒氣環",
+        "gbk": "糃�惝鹄�",
+        "hex": "bc43abe3aef0c0f4"
+      },
+      "model": "NoneName",
+      "flag": 1,
+      "byteFlag": 0,
+      "parameters": [
+        {
+          "offset": 36134,
+          "words": [
+            16,
+            21,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 36150,
+          "words": [
+            2,
+            0,
+            3,
+            0,
+            -1,
+            1,
+            85,
+            1,
+            0,
+            0
+          ],
+          "statKey": 3,
+          "mode": 1,
+          "value": 85,
+          "valueOffset": 36174
+        }
+      ]
+    }
+  ],
+  "selectedItemRecords": [
+    {
+      "offset": 53055,
+      "endOffset": 53220,
+      "type": 2,
+      "id": 1,
+      "name": "肉包",
+      "nameEncodings": {
+        "big5": "�滶�",
+        "gbk": "肉包",
+        "hex": "c8e2b0fc"
+      },
+      "model": "Item01",
+      "flag": 1,
+      "byteFlag": 0,
+      "parameters": [
+        {
+          "offset": 53092,
+          "words": [
+            11,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 53104,
+          "words": [
+            13,
+            120,
+            0
+          ]
+        },
+        {
+          "offset": 53116,
+          "words": [
+            14,
+            672,
+            0
+          ]
+        },
+        {
+          "offset": 53128,
+          "words": [
+            12,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 53140,
+          "words": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 53152,
+          "words": [
+            2,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 53164,
+          "words": [
+            8,
+            0,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 53180,
+          "words": [
+            2,
+            0,
+            2,
+            0,
+            0,
+            0,
+            300,
+            0,
+            0,
+            0
+          ],
+          "statKey": 2,
+          "mode": 0,
+          "value": 300,
+          "valueOffset": 53204
+        }
+      ]
+    },
+    {
+      "offset": 53385,
+      "endOffset": 53550,
+      "type": 2,
+      "id": 3,
+      "name": "铜皮",
+      "nameEncodings": {
+        "big5": "肣々",
+        "gbk": "铜皮",
+        "hex": "cdadc6a4"
+      },
+      "model": "Item03",
+      "flag": 1,
+      "byteFlag": 0,
+      "parameters": [
+        {
+          "offset": 53422,
+          "words": [
+            11,
+            1,
+            0
+          ]
+        },
+        {
+          "offset": 53434,
+          "words": [
+            13,
+            300,
+            0
+          ]
+        },
+        {
+          "offset": 53446,
+          "words": [
+            14,
+            672,
+            0
+          ]
+        },
+        {
+          "offset": 53458,
+          "words": [
+            15,
+            674,
+            0
+          ]
+        },
+        {
+          "offset": 53470,
+          "words": [
+            1,
+            900,
+            0
+          ]
+        },
+        {
+          "offset": 53482,
+          "words": [
+            2,
+            900,
+            0
+          ]
+        },
+        {
+          "offset": 53494,
+          "words": [
+            8,
+            10,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 53510,
+          "words": [
+            2,
+            0,
+            4,
+            0,
+            -1,
+            0,
+            20,
+            1,
+            0,
+            0
+          ],
+          "statKey": 4,
+          "mode": 0,
+          "value": 20,
+          "valueOffset": 53534
+        }
+      ]
+    },
+    {
+      "offset": 53550,
+      "endOffset": 53715,
+      "type": 2,
+      "id": 4,
+      "name": "嗜战",
+      "nameEncodings": {
+        "big5": "岓桵",
+        "gbk": "嗜战",
+        "hex": "cac8d5bd"
+      },
+      "model": "Item04",
+      "flag": 1,
+      "byteFlag": 0,
+      "parameters": [
+        {
+          "offset": 53587,
+          "words": [
+            11,
+            1,
+            0
+          ]
+        },
+        {
+          "offset": 53599,
+          "words": [
+            13,
+            300,
+            0
+          ]
+        },
+        {
+          "offset": 53611,
+          "words": [
+            14,
+            672,
+            0
+          ]
+        },
+        {
+          "offset": 53623,
+          "words": [
+            15,
+            675,
+            0
+          ]
+        },
+        {
+          "offset": 53635,
+          "words": [
+            1,
+            600,
+            0
+          ]
+        },
+        {
+          "offset": 53647,
+          "words": [
+            2,
+            600,
+            0
+          ]
+        },
+        {
+          "offset": 53659,
+          "words": [
+            8,
+            10,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 53675,
+          "words": [
+            2,
+            0,
+            3,
+            0,
+            -1,
+            0,
+            25,
+            1,
+            0,
+            0
+          ],
+          "statKey": 3,
+          "mode": 0,
+          "value": 25,
+          "valueOffset": 53699
+        }
+      ]
+    },
+    {
+      "offset": 53715,
+      "endOffset": 53880,
+      "type": 2,
+      "id": 5,
+      "name": "猫足",
+      "nameEncodings": {
+        "big5": "癡逋",
+        "gbk": "猫足",
+        "hex": "c3a8d7e3"
+      },
+      "model": "Item05",
+      "flag": 1,
+      "byteFlag": 0,
+      "parameters": [
+        {
+          "offset": 53752,
+          "words": [
+            11,
+            1,
+            0
+          ]
+        },
+        {
+          "offset": 53764,
+          "words": [
+            13,
+            180,
+            0
+          ]
+        },
+        {
+          "offset": 53776,
+          "words": [
+            14,
+            672,
+            0
+          ]
+        },
+        {
+          "offset": 53788,
+          "words": [
+            15,
+            676,
+            0
+          ]
+        },
+        {
+          "offset": 53800,
+          "words": [
+            1,
+            600,
+            0
+          ]
+        },
+        {
+          "offset": 53812,
+          "words": [
+            2,
+            600,
+            0
+          ]
+        },
+        {
+          "offset": 53824,
+          "words": [
+            8,
+            10,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 53840,
+          "words": [
+            2,
+            0,
+            5,
+            0,
+            -1,
+            1,
+            150,
+            1,
+            0,
+            0
+          ],
+          "statKey": 5,
+          "mode": 1,
+          "value": 150,
+          "valueOffset": 53864
+        }
+      ]
+    },
+    {
+      "offset": 54210,
+      "endOffset": 54375,
+      "type": 2,
+      "id": 8,
+      "name": "气元",
+      "nameEncodings": {
+        "big5": "ァ啋",
+        "gbk": "气元",
+        "hex": "c6f8d4aa"
+      },
+      "model": "Item08",
+      "flag": 1,
+      "byteFlag": 0,
+      "parameters": [
+        {
+          "offset": 54247,
+          "words": [
+            11,
+            2,
+            0
+          ]
+        },
+        {
+          "offset": 54259,
+          "words": [
+            13,
+            300,
+            0
+          ]
+        },
+        {
+          "offset": 54271,
+          "words": [
+            14,
+            672,
+            0
+          ]
+        },
+        {
+          "offset": 54283,
+          "words": [
+            12,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 54295,
+          "words": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 54307,
+          "words": [
+            2,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 54319,
+          "words": [
+            8,
+            0,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 54335,
+          "words": [
+            2,
+            0,
+            6,
+            0,
+            0,
+            0,
+            100,
+            0,
+            0,
+            0
+          ],
+          "statKey": 6,
+          "mode": 0,
+          "value": 100,
+          "valueOffset": 54359
+        }
+      ]
+    },
+    {
+      "offset": 56255,
+      "endOffset": 56415,
+      "type": 2,
+      "id": 21,
+      "name": "气绝",
+      "nameEncodings": {
+        "big5": "ァ橈",
+        "gbk": "气绝",
+        "hex": "c6f8bef8"
+      },
+      "model": "0",
+      "flag": 1,
+      "byteFlag": 0,
+      "parameters": [
+        {
+          "offset": 56287,
+          "words": [
+            11,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 56299,
+          "words": [
+            13,
+            99999,
+            0
+          ]
+        },
+        {
+          "offset": 56311,
+          "words": [
+            14,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 56323,
+          "words": [
+            15,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 56335,
+          "words": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 56347,
+          "words": [
+            2,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 56359,
+          "words": [
+            8,
+            0,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 56375,
+          "words": [
+            2,
+            0,
+            6,
+            0,
+            0,
+            0,
+            -10,
+            0,
+            0,
+            0
+          ],
+          "statKey": 6,
+          "mode": 0,
+          "value": -10,
+          "valueOffset": 56399
+        }
+      ]
+    },
+    {
+      "offset": 56415,
+      "endOffset": 56575,
+      "type": 2,
+      "id": 22,
+      "name": "气丧",
+      "nameEncodings": {
+        "big5": "ァ犮",
+        "gbk": "气丧",
+        "hex": "c6f8c9a5"
+      },
+      "model": "0",
+      "flag": 1,
+      "byteFlag": 0,
+      "parameters": [
+        {
+          "offset": 56447,
+          "words": [
+            11,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 56459,
+          "words": [
+            13,
+            99999,
+            0
+          ]
+        },
+        {
+          "offset": 56471,
+          "words": [
+            14,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 56483,
+          "words": [
+            15,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 56495,
+          "words": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 56507,
+          "words": [
+            2,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 56519,
+          "words": [
+            8,
+            0,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 56535,
+          "words": [
+            2,
+            0,
+            6,
+            0,
+            0,
+            0,
+            -20,
+            0,
+            0,
+            0
+          ],
+          "statKey": 6,
+          "mode": 0,
+          "value": -20,
+          "valueOffset": 56559
+        }
+      ]
+    },
+    {
+      "offset": 57124,
+      "endOffset": 57291,
+      "type": 2,
+      "id": 28,
+      "name": "元气糖",
+      "nameEncodings": {
+        "big5": "啋ァ昒",
+        "gbk": "元气糖",
+        "hex": "d4aac6f8ccc7"
+      },
+      "model": "Item11",
+      "flag": 1,
+      "byteFlag": 0,
+      "parameters": [
+        {
+          "offset": 57163,
+          "words": [
+            11,
+            1,
+            0
+          ]
+        },
+        {
+          "offset": 57175,
+          "words": [
+            13,
+            99999,
+            0
+          ]
+        },
+        {
+          "offset": 57187,
+          "words": [
+            14,
+            672,
+            0
+          ]
+        },
+        {
+          "offset": 57199,
+          "words": [
+            12,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 57211,
+          "words": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 57223,
+          "words": [
+            2,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 57235,
+          "words": [
+            8,
+            0,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 57251,
+          "words": [
+            2,
+            0,
+            6,
+            0,
+            0,
+            0,
+            25,
+            0,
+            0,
+            0
+          ],
+          "statKey": 6,
+          "mode": 0,
+          "value": 25,
+          "valueOffset": 57275
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Effect and parameter semantics are inferred through consistent raw values and original in-file item names; final executable HP/damage/rage formulas remain unverified.",
+    "Do not treat pose coefficient 35 or weapon attack 110 as direct HP damage.",
+    "TargetMove / TargetPose in POS are movement and reaction descriptors, not this raw attack stat.",
+    "Field mode1 appears percentage-like (normal movement100, 猫足150, 钝筋50), but full operation dispatch still needs EXE confirmation."
+  ]
+}

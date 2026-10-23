@@ -1,0 +1,190 @@
+{
+  "case": "meteor-original",
+  "sample": "/Users/dulinfeng/Downloads/流星86726/lxhdj_/Meteor.exe",
+  "sha256": "289afb0aa44a47921d167fc24d6d404c60d6d00c299ac27d45fc61e16231b498",
+  "method": "Ghidra 12.1.4 decompilation with stat virtual-call prototypes recovered from ECX/stack/RET; original x86 disassembly cross-check. Original EXE not executed.",
+  "statObject": {
+    "actorOffset": "0x88",
+    "vtable": "0x5a9490",
+    "ids": {
+      "1": "maxHP",
+      "2": "HP",
+      "3": "attack",
+      "4": "defense",
+      "5": "movement percent",
+      "6": "rage",
+      "7": "max rage"
+    }
+  },
+  "functions": {
+    "0x004d4a70": {
+      "role": "initialize stats",
+      "proof": "fld float arg; fmul float[0x5a9bac]=1000; __ftol; insert (2,rawHP,0),(1,rawHP,0), (6,0,0),(7,100,0), (5,100,0),(3,0,0),(4,0,0)",
+      "formula": "rawHP=trunc(lifeRatio*1000)"
+    },
+    "0x004bf650": {
+      "role": "level PST settings",
+      "proof": "this+0x588 assigned 1000 before optional PlayerHP override",
+      "formula": "PlayerHP default = 1000 raw units"
+    },
+    "0x004d5de0": {
+      "vtableOffset": "0x30",
+      "role": "get underlying stat",
+      "formula": "entry.base + entry.delta; optional out pointer gets base"
+    },
+    "0x004d5e30": {
+      "vtableOffset": "0x34",
+      "role": "get effective stat",
+      "formula": "max(0,underlying + selectedWeaponModifiers + activeItemModifiers)",
+      "modifierFilter": "effect.words[2]==statId && words[4]==-1 && (words[0]&2)!=0 && words[1]==0",
+      "mode0": "add words[6]",
+      "mode1": "add trunc((words[6]*float32(0.01)-1)*underlying)"
+    },
+    "0x004d61c0": {
+      "vtableOffset": "0x40",
+      "role": "get pose attack",
+      "formula": "effectiveAttack + sum(poseModifiers)",
+      "mode0": "add RES effect value",
+      "mode1": "add trunc((RES effect value*float32(0.01)-1)*effectiveAttack)",
+      "criticalDisassembly": "004d6281 call getStat(3); 004d6284 store EAX at [esp+0x14]; 004d62ac PUSH EBP changes ESP by -4; 004d62f1 FIMUL [esp+0x18] therefore uses saved effective attack, not optional base-out value."
+    },
+    "0x004d6190": {
+      "vtableOffset": "0x3c",
+      "role": "damage before team scale",
+      "formula": "poseAttack - target.getStat(4)"
+    },
+    "0x004d5f70": {
+      "vtableOffset": "0x38",
+      "role": "apply damage",
+      "formula": "damage=trunc((poseAttack-defense)*factor); if damage>0 target.addStat(2,-damage,0)",
+      "proof": "004d5f88 FMUL [esp+0x10]; __ftol; JLE skips; target virtual +0x2c stat2"
+    },
+    "0x004af630": {
+      "role": "server hit event",
+      "factor": "1.0 normally; 0.2 when victim.teamMask & attacker.teamMask !=0",
+      "victimRage": "floor(14*(HPbefore-HPafter)/100)",
+      "guardBranchRage": "trunc(14*(poseAttack-defense)/500) to victim if damageBeforeScale>0 and different team; branch requires hitPacket.field10to15==0 and victim+0x20c==1",
+      "poseParameter16": "after surviving a hit, victim stats +0x48 resolves pose(type3,id) parameter16 -> item(type2,id), then server applies those item effects to victim; these effects are NOT attacker cast cost"
+    },
+    "0x004d4d30": {
+      "role": "clamp stat adjustments",
+      "formula": "stats2 clamp 0..effectiveStat1; stats6 clamp 0..effectiveStat7; other stats lower bound0"
+    }
+  },
+  "floatPercentConstant": {
+    "va": "0x5a8410",
+    "hex": "0x3c23d70a",
+    "floatValue": 0.009999999776482582
+  },
+  "examples": [
+    {
+      "weapon": "sword",
+      "attack": 110,
+      "defense": 15,
+      "pose": 262,
+      "coefficient": 35,
+      "coefficientOffset": 26626,
+      "poseAttack": 39,
+      "rawHPDamage": 24,
+      "rageGainedByVictim": 3
+    },
+    {
+      "weapon": "sword",
+      "attack": 110,
+      "defense": 15,
+      "pose": 263,
+      "coefficient": 55,
+      "coefficientOffset": 26727,
+      "poseAttack": 61,
+      "rawHPDamage": 46,
+      "rageGainedByVictim": 6
+    },
+    {
+      "weapon": "sword",
+      "attack": 110,
+      "defense": 15,
+      "pose": 264,
+      "coefficient": 65,
+      "coefficientOffset": 26828,
+      "poseAttack": 72,
+      "rawHPDamage": 57,
+      "rageGainedByVictim": 7
+    },
+    {
+      "weapon": "spear",
+      "attack": 115,
+      "defense": 15,
+      "pose": 279,
+      "coefficient": 45,
+      "coefficientOffset": 28319,
+      "poseAttack": 52,
+      "rawHPDamage": 37,
+      "rageGainedByVictim": 5
+    },
+    {
+      "weapon": "spear",
+      "attack": 115,
+      "defense": 15,
+      "pose": 280,
+      "coefficient": 55,
+      "coefficientOffset": 28416,
+      "poseAttack": 64,
+      "rawHPDamage": 49,
+      "rageGainedByVictim": 6
+    },
+    {
+      "weapon": "spear",
+      "attack": 115,
+      "defense": 15,
+      "pose": 281,
+      "coefficient": 65,
+      "coefficientOffset": 28513,
+      "poseAttack": 75,
+      "rawHPDamage": 60,
+      "rageGainedByVictim": 8
+    },
+    {
+      "weapon": "blade",
+      "attack": 130,
+      "defense": 15,
+      "pose": 295,
+      "coefficient": 45,
+      "coefficientOffset": 29917,
+      "poseAttack": 59,
+      "rawHPDamage": 44,
+      "rageGainedByVictim": 6
+    },
+    {
+      "weapon": "blade",
+      "attack": 130,
+      "defense": 15,
+      "pose": 296,
+      "coefficient": 55,
+      "coefficientOffset": 30018,
+      "poseAttack": 72,
+      "rawHPDamage": 57,
+      "rageGainedByVictim": 7
+    },
+    {
+      "weapon": "blade",
+      "attack": 130,
+      "defense": 15,
+      "pose": 297,
+      "coefficient": 70,
+      "coefficientOffset": 30119,
+      "poseAttack": 91,
+      "rawHPDamage": 76,
+      "rageGainedByVictim": 10
+    }
+  ],
+  "unresolved": [
+    "Exact original player input recognizer and direction-to-pose table",
+    "Full action trigger mapping for rage consumption events",
+    "End-to-end life_adjust config object field propagation; scalar percent initialization itself is proven at 0x004ac453"
+  ],
+  "caveats": [
+    "Raw HP is the internal integer scale; do not divide damage by ten unless all HP and item values are likewise converted for presentation.",
+    "__ftol truncates toward zero; do not replace attack+trunc((coefficient*.01-1)*attack) with floor(attack*coefficient/100).",
+    "Ghidra omits x87 expressions around __ftol; use accompanying disassembly and annotated formulas."
+  ]
+}

@@ -1,0 +1,72 @@
+/* 
+	PScript by Peter Pon
+	
+	scene21
+*/
+#include "..\PScriptLib\Def.h"
+
+#include "sn21box.pst"
+#include "..\PScriptLib\desk.pst"
+#include "..\PScriptLib\chair.pst"
+#include "..\PScriptLib\jug.pst"
+
+Scene_OnInit()
+{
+	InitBoxes(g_iNumBoxes);
+	InitBBoxes(g_iNumBBoxes);
+	InitChairs(g_iNumChairs);
+	InitDeskes(g_iNumDeskes);
+	InitJugs(g_iNumJugs);
+	SetSceneItem("D_sn21st01", "name", "machine");
+	SetSceneItem("D_sn21st01", "pose", 0, 0);
+	SetSceneItem("D_sn21st01", "attribute", "collision", 0);
+	SetSceneItem("D_sn21st01", "attribute", "interactive", 1);
+	int i;
+	string name;
+	for (i=5; i<=103; i++ )
+	{
+		MakeString(name, "D_Item", i);
+		SetSceneItem(name, "attribute", "active", 0);
+		SetSceneItem(name, "attribute", "interactive", 0);
+	}
+	
+	SetScene("snow", 1);
+	SetScene("snowdensity", 1000);
+	SetScene("winddir", 50, 0, 0);
+	SetScene("snowspeed", 20, 100);
+	SetScene("snowsize", 5, 5);
+	
+	for (i=1; i<=136; i++ )
+	{
+		MakeString(name, "D_start", i);
+		SetSceneItem(name, "name", "machine");
+	}
+}
+
+Scene_OnClose()
+{
+	SetScene("snow", 0);
+}
+
+D_sn21st01_OnAttack(int id, int characterid, int damage)
+{
+	int state = GetSceneItem(id, "state");
+	if ( state!=3 )
+	{
+		return 0;
+	}
+	Output("rotate.....");
+	
+	NetEvent(1);
+	CreateEffect(id, "XStar");
+	SetSceneItem(id, "pose", 1, 0);
+	int i;
+	string name;
+	for (i=5; i<=103; i++ )
+	{
+		MakeString(name, "D_Item", i);
+		SetSceneItem(name, "attribute", "active", 1);
+		SetSceneItem(name, "attribute", "interactive", 1);
+	}
+	NetEvent(0);
+}

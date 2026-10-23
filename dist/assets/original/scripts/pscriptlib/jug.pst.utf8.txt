@@ -1,0 +1,577 @@
+/*
+	PScript file for jug Items of all scenes
+		by Peter Pon 2002/09/26
+
+	message handle for 20 jugs
+*/
+int g_iNumJugs = 20;
+int g_bJugAlive[g_iNumJugs];
+int g_iJugHP[g_iNumJugs];
+
+int g_iNumRJugs = 20;
+int g_bRJugAlive[g_iNumRJugs];
+int g_iRJugHP[g_iNumRJugs];
+
+InitJugs(int num)
+{
+	int i;
+	string name;
+	int id;
+	
+	for ( i=1; i<=num; i++ )
+	{
+		g_bJugAlive[i-1] = 1;
+		g_iJugHP[i-1] = g_iJugMaxHP;
+		
+		MakeString(name, "D_Jug", i);
+		id = GetSceneItem(name, "index");
+		SetSceneItem(id, "name", "machine");
+		SetSceneItem(id, "attribute", "collision", 1);
+		SetSceneItem(id, "pose", 0, 0);
+
+		MakeString(name, "D_itJug", i);
+		SetSceneItem(name, "attribute", "active", 0);
+		SetSceneItem(name, "attribute", "interactive", 0);
+
+		MakeString(name, "D_wpJug", i);
+		SetSceneItem(name, "attribute", "active", 0);
+		SetSceneItem(name, "attribute", "interactive", 0);
+	}
+	
+	int j;
+	string itemname;
+	
+	for ( i=1; i<=g_iNumRJugs; i++ )
+	{
+		g_bRJugAlive[i-1] = 1;
+		g_iRJugHP[i-1] = g_iJugMaxHP;
+		
+		MakeString(name, "D_RJug", i);
+		id = GetSceneItem(name, "index");
+		SetSceneItem(id, "name", "machine");
+		SetSceneItem(id, "attribute", "collision", 1);
+		SetSceneItem(id, "pose", 0, 0);
+		
+		for ( j=1; j<=4; j++ )
+		{
+			MakeString(name, "D_itRJug", i);
+			MakeString(itemname, name, j);
+			SetSceneItem(itemname, "attribute", "active", 0);
+			SetSceneItem(itemname, "attribute", "interactive", 0);
+	
+			MakeString(name, "D_wpRJug", i);
+			MakeString(itemname, name, j);
+			SetSceneItem(itemname, "attribute", "active", 0);
+			SetSceneItem(itemname, "attribute", "interactive", 0);
+		}
+	}
+}
+
+JugOnAttack(int id, int index, int damage)
+{
+	g_iJugHP[index-1] = g_iJugHP[index-1] - damage;
+	if ( g_iJugHP[index-1]>0 )
+	{
+		NetEvent(1);
+		CreateEffect(id, "WonHIT");
+		NetEvent(0);
+		return 0;
+	}
+	
+	if ( GetSceneItem(id, "pose")==1 )
+	{
+		return 0;
+	}
+	
+	string itemname;
+	string weaponname;
+	MakeString(itemname, "D_itJug", index);
+	MakeString(weaponname, "D_wpJug", index);
+
+	NetEvent(1);
+	CreateEffect(id, "WonBRK");
+	SetSceneItem(id, "pose", 1, 0);
+	SetSceneItem(id, "attribute", "interactive", 0);
+	SetSceneItem(id, "attribute", "collision", 0);
+	SetSceneItem(itemname, "attribute", "active", 1);
+	SetSceneItem(itemname, "attribute", "interactive", 1);
+	SetSceneItem(weaponname, "attribute", "active", 1);
+	SetSceneItem(weaponname, "attribute", "interactive", 1);
+	NetEvent(0);
+	
+	return 1;
+}
+
+RemoveJug(int id)
+{
+	int state;
+	int pose;
+	
+	pose = GetSceneItem(id, "pose");
+	if ( pose==0 )
+	{
+		return 0;
+	}
+	
+	state = GetSceneItem(id, "state");
+	if ( state!=3 )
+	{
+		return 0;
+	}
+	
+	NetEvent(1);
+	SetSceneItem(id, "attribute", "active", 0);
+	NetEvent(0);
+	Output("remove item", id);
+	return 1;
+}
+
+JugOnIdle(int id, int index)
+{
+	if ( g_bJugAlive[index-1] )
+	{
+		if ( RemoveJug(id) )
+		{
+			g_bJugAlive[index-1] = 0;
+		}
+	}
+}
+
+D_Jug01_OnAttack(int id, int character, int damage)
+{
+	JugOnAttack(id, 1, damage);
+}
+D_Jug01_OnIdle(int id)
+{
+	JugOnIdle(id, 1);
+}
+
+D_Jug02_OnAttack(int id, int character, int damage)
+{
+	JugOnAttack(id, 2, damage);
+}
+D_Jug02_OnIdle(int id)
+{
+	JugOnIdle(id, 2);
+}
+
+D_Jug03_OnAttack(int id, int character, int damage)
+{
+	JugOnAttack(id, 3, damage);
+}
+D_Jug03_OnIdle(int id)
+{
+	JugOnIdle(id, 3);
+}
+
+D_Jug04_OnAttack(int id, int character, int damage)
+{
+	JugOnAttack(id, 4, damage);
+}
+D_Jug04_OnIdle(int id)
+{
+	JugOnIdle(id, 4);
+}
+
+D_Jug05_OnAttack(int id, int character, int damage)
+{
+	JugOnAttack(id, 5, damage);
+}
+D_Jug05_OnIdle(int id)
+{
+	JugOnIdle(id, 5);
+}
+
+D_Jug06_OnAttack(int id, int character, int damage)
+{
+	JugOnAttack(id, 6, damage);
+}
+D_Jug06_OnIdle(int id)
+{
+	JugOnIdle(id, 6);
+}
+
+D_Jug07_OnAttack(int id, int character, int damage)
+{
+	JugOnAttack(id, 7, damage);
+}
+D_Jug07_OnIdle(int id)
+{
+	JugOnIdle(id, 7);
+}
+
+D_Jug08_OnAttack(int id, int character, int damage)
+{
+	JugOnAttack(id, 8, damage);
+}
+D_Jug08_OnIdle(int id)
+{
+	JugOnIdle(id, 8);
+}
+
+D_Jug09_OnAttack(int id, int character, int damage)
+{
+	JugOnAttack(id, 9, damage);
+}
+D_Jug09_OnIdle(int id)
+{
+	JugOnIdle(id, 9);
+}
+
+D_Jug10_OnAttack(int id, int character, int damage)
+{
+	JugOnAttack(id, 10, damage);
+}
+D_Jug10_OnIdle(int id)
+{
+	JugOnIdle(id, 10);
+}
+
+D_Jug11_OnAttack(int id, int character, int damage)
+{
+	JugOnAttack(id, 11, damage);
+}
+D_Jug11_OnIdle(int id)
+{
+	JugOnIdle(id, 11);
+}
+
+D_Jug12_OnAttack(int id, int character, int damage)
+{
+	JugOnAttack(id, 12, damage);
+}
+D_Jug12_OnIdle(int id)
+{
+	JugOnIdle(id, 12);
+}
+
+D_Jug13_OnAttack(int id, int character, int damage)
+{
+	JugOnAttack(id, 13, damage);
+}
+D_Jug13_OnIdle(int id)
+{
+	JugOnIdle(id, 13);
+}
+
+D_Jug14_OnAttack(int id, int character, int damage)
+{
+	JugOnAttack(id, 14, damage);
+}
+D_Jug14_OnIdle(int id)
+{
+	JugOnIdle(id, 14);
+}
+
+D_Jug15_OnAttack(int id, int character, int damage)
+{
+	JugOnAttack(id, 15, damage);
+}
+D_Jug15_OnIdle(int id)
+{
+	JugOnIdle(id, 15);
+}
+
+D_Jug16_OnAttack(int id, int character, int damage)
+{
+	JugOnAttack(id, 16, damage);
+}
+D_Jug16_OnIdle(int id)
+{
+	JugOnIdle(id, 16);
+}
+
+D_Jug17_OnAttack(int id, int character, int damage)
+{
+	JugOnAttack(id, 17, damage);
+}
+D_Jug17_OnIdle(int id)
+{
+	JugOnIdle(id, 17);
+}
+
+D_Jug18_OnAttack(int id, int character, int damage)
+{
+	JugOnAttack(id, 18, damage);
+}
+D_Jug18_OnIdle(int id)
+{
+	JugOnIdle(id, 18);
+}
+
+D_Jug19_OnAttack(int id, int character, int damage)
+{
+	JugOnAttack(id, 19, damage);
+}
+D_Jug19_OnIdle(int id)
+{
+	JugOnIdle(id, 19);
+}
+
+D_Jug20_OnAttack(int id, int character, int damage)
+{
+	JugOnAttack(id, 20, damage);
+}
+D_Jug20_OnIdle(int id)
+{
+	JugOnIdle(id, 20);
+}
+
+RJugOnAttack(int id, int index, int damage)
+{
+	g_iRJugHP[index-1] = g_iRJugHP[index-1] - damage;
+	if ( g_iRJugHP[index-1]>0 )
+	{
+		NetEvent(1);
+		CreateEffect(id, "WonHIT");
+		NetEvent(0);
+		return 0;
+	}
+	
+	if ( GetSceneItem(id, "pose")==1 )
+	{
+		return 0;
+	}
+	
+	string itemname;
+	string weaponname;
+
+	MakeString(itemname, "D_itRJug", index);
+	MakeString(weaponname, "D_wpRJug", index);
+
+	int rand = rand(1,4);
+	
+	string ritemname;
+	string rweaponname;
+
+	MakeString(ritemname, itemname, rand);
+	MakeString(rweaponname, weaponname, rand);
+	
+	NetEvent(1);
+	CreateEffect(id, "WonBRK");
+	SetSceneItem(id, "pose", 1, 0);
+	SetSceneItem(id, "attribute", "interactive", 0);
+	SetSceneItem(id, "attribute", "collision", 0);
+	SetSceneItem(ritemname, "attribute", "active", 1);
+	SetSceneItem(ritemname, "attribute", "interactive", 1);
+	SetSceneItem(rweaponname, "attribute", "active", 1);
+	SetSceneItem(rweaponname, "attribute", "interactive", 1);
+	NetEvent(0);
+	
+	return 1;
+}
+
+RemoveRJug(int id)
+{
+	int state;
+	int pose;
+	
+	pose = GetSceneItem(id, "pose");
+	if ( pose==0 )
+	{
+		return 0;
+	}
+	
+	state = GetSceneItem(id, "state");
+	if ( state!=3 )
+	{
+		return 0;
+	}
+	
+	NetEvent(1);
+	SetSceneItem(id, "attribute", "active", 0);
+	NetEvent(0);
+	Output("remove item", id);
+	return 1;
+}
+
+RJugOnIdle(int id, int index)
+{
+	if ( g_bRJugAlive[index-1] )
+	{
+		if ( RemoveRJug(id) )
+		{
+			g_bRJugAlive[index-1] = 0;
+		}
+	}
+}
+
+D_RJug01_OnAttack(int id, int character, int damage)
+{
+	RJugOnAttack(id, 1, damage);
+}
+D_RJug01_OnIdle(int id)
+{
+	RJugOnIdle(id, 1);
+}
+
+D_RJug02_OnAttack(int id, int character, int damage)
+{
+	RJugOnAttack(id, 2, damage);
+}
+D_RJug02_OnIdle(int id)
+{
+	RJugOnIdle(id, 2);
+}
+
+D_RJug03_OnAttack(int id, int character, int damage)
+{
+	RJugOnAttack(id, 3, damage);
+}
+D_RJug03_OnIdle(int id)
+{
+	RJugOnIdle(id, 3);
+}
+
+D_RJug04_OnAttack(int id, int character, int damage)
+{
+	RJugOnAttack(id, 4, damage);
+}
+D_RJug04_OnIdle(int id)
+{
+	RJugOnIdle(id, 4);
+}
+
+D_RJug05_OnAttack(int id, int character, int damage)
+{
+	RJugOnAttack(id, 5, damage);
+}
+D_RJug05_OnIdle(int id)
+{
+	RJugOnIdle(id, 5);
+}
+
+D_RJug06_OnAttack(int id, int character, int damage)
+{
+	RJugOnAttack(id, 6, damage);
+}
+D_RJug06_OnIdle(int id)
+{
+	RJugOnIdle(id, 6);
+}
+
+D_RJug07_OnAttack(int id, int character, int damage)
+{
+	RJugOnAttack(id, 7, damage);
+}
+D_RJug07_OnIdle(int id)
+{
+	JugOnIdle(id, 7);
+}
+
+D_RJug08_OnAttack(int id, int character, int damage)
+{
+	RJugOnAttack(id, 8, damage);
+}
+D_RJug08_OnIdle(int id)
+{
+	RJugOnIdle(id, 8);
+}
+
+D_RJug09_OnAttack(int id, int character, int damage)
+{
+	RJugOnAttack(id, 9, damage);
+}
+D_RJug09_OnIdle(int id)
+{
+	RJugOnIdle(id, 9);
+}
+
+D_RJug10_OnAttack(int id, int character, int damage)
+{
+	RJugOnAttack(id, 10, damage);
+}
+D_RJug10_OnIdle(int id)
+{
+	RJugOnIdle(id, 10);
+}
+
+D_RJug11_OnAttack(int id, int character, int damage)
+{
+	RJugOnAttack(id, 11, damage);
+}
+D_RJug11_OnIdle(int id)
+{
+	RJugOnIdle(id, 11);
+}
+
+D_RJug12_OnAttack(int id, int character, int damage)
+{
+	RJugOnAttack(id, 12, damage);
+}
+D_RJug12_OnIdle(int id)
+{
+	RJugOnIdle(id, 12);
+}
+
+D_RJug13_OnAttack(int id, int character, int damage)
+{
+	RJugOnAttack(id, 13, damage);
+}
+D_RJug13_OnIdle(int id)
+{
+	RJugOnIdle(id, 13);
+}
+
+D_RJug14_OnAttack(int id, int character, int damage)
+{
+	RJugOnAttack(id, 14, damage);
+}
+D_RJug14_OnIdle(int id)
+{
+	RJugOnIdle(id, 14);
+}
+
+D_RJug15_OnAttack(int id, int character, int damage)
+{
+	RJugOnAttack(id, 15, damage);
+}
+D_RJug15_OnIdle(int id)
+{
+	RJugOnIdle(id, 15);
+}
+
+D_RJug16_OnAttack(int id, int character, int damage)
+{
+	RJugOnAttack(id, 16, damage);
+}
+D_RJug16_OnIdle(int id)
+{
+	RJugOnIdle(id, 16);
+}
+
+D_RJug17_OnAttack(int id, int character, int damage)
+{
+	RJugOnAttack(id, 17, damage);
+}
+D_RJug17_OnIdle(int id)
+{
+	JugOnIdle(id, 17);
+}
+
+D_RJug18_OnAttack(int id, int character, int damage)
+{
+	RJugOnAttack(id, 18, damage);
+}
+D_RJug18_OnIdle(int id)
+{
+	RJugOnIdle(id, 18);
+}
+
+D_RJug19_OnAttack(int id, int character, int damage)
+{
+	RJugOnAttack(id, 19, damage);
+}
+D_RJug19_OnIdle(int id)
+{
+	RJugOnIdle(id, 19);
+}
+
+D_RJug20_OnAttack(int id, int character, int damage)
+{
+	RJugOnAttack(id, 20, damage);
+}
+D_RJug20_OnIdle(int id)
+{
+	RJugOnIdle(id, 20);
+}

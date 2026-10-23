@@ -1,0 +1,1451 @@
+{
+  "case": "meteor-original",
+  "type": "E-character-format",
+  "quality": "validated-original-data",
+  "equivalentImportAnchor": "SKC texture names + bone indices reference ptexture ZIP and BNC; BANIM 30 bones / 6 dummies / per-frame records. Data files have no executable import table.",
+  "manifest": {
+    "sourceRoot": "/Users/dulinfeng/Downloads/流星86726/lxhdj_",
+    "readOnlySource": true,
+    "common": {
+      "bones": 30,
+      "dummies": 6,
+      "frames": 17061,
+      "fps": 30,
+      "stride": 698,
+      "bytes": 11908599,
+      "maxQuaternionNormSquaredError": 1.0178780929237519e-07,
+      "dummyParents": [
+        [
+          "NULL"
+        ],
+        [
+          "b13"
+        ],
+        [
+          "NULL",
+          "d3",
+          "d4"
+        ],
+        [
+          "b17"
+        ],
+        [
+          "NULL",
+          "d2",
+          "d5"
+        ],
+        [
+          "b25"
+        ]
+      ],
+      "sha256": "87f8b4d81160c924408f9d12bc73aa51b184ea69c31953c1236d8de97c03578a"
+    },
+    "characters": [
+      {
+        "id": 0,
+        "name": "孟星魂",
+        "portrait": "./assets/original/characters/portraits/p0.jpg",
+        "portraitSource": "/Users/dulinfeng/Downloads/流星86726/lxhdj_/image/P001.JPG",
+        "vertices": 1290,
+        "triangles": 1482,
+        "maxBoneIndex": 29,
+        "maxWeightSumError": 9.99999999995449e-06,
+        "files": {
+          "skc": {
+            "bytes": 135984,
+            "sha256": "044e29b3adf0c3207bd4681e5ec62820cbb0e274676679e15b814abcdbf5e34b"
+          },
+          "bnc": {
+            "bytes": 4899,
+            "sha256": "1364f804c2703b91d373854c496c69b538fb098f348748281fc984017e0d2978"
+          },
+          "amb": {
+            "bytes": 453721,
+            "sha256": "3f68efa6689191f654a22a4c777fec0b32f2bafb8276990b1c1182029b5e3bc9"
+          },
+          "pos": {
+            "bytes": 296888,
+            "sha256": "1e71f945afc6b701f86eb50e500feccca22f20b52f7f3bec073b0247d390a5fb"
+          }
+        },
+        "animation": {
+          "bones": 30,
+          "dummies": 6,
+          "frames": 650,
+          "fps": 30,
+          "stride": 698,
+          "bytes": 453721,
+          "maxQuaternionNormSquaredError": 9.532132505540858e-08,
+          "dummyParents": [
+            [
+              "NULL"
+            ],
+            [
+              "b13"
+            ],
+            [
+              "d3"
+            ],
+            [
+              "b17"
+            ],
+            [
+              "d5"
+            ],
+            [
+              "b25"
+            ]
+          ],
+          "sha256": "3f68efa6689191f654a22a4c777fec0b32f2bafb8276990b1c1182029b5e3bc9"
+        },
+        "textures": [
+          {
+            "source": "nm001b01.tga",
+            "web": "nm001b01.png",
+            "sha256": "be9bd1e7337522797b95806e0bbe0f0473daf29fed31685eecba72c7fb4ab86c"
+          },
+          {
+            "source": "nm001f01.JPG",
+            "web": "nm001f01.jpg",
+            "sha256": "e0f6442a407706385f2959fddab1b77edb6da5d79f957d301d8ceda47390e994"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "name": "冷燕",
+        "portrait": "./assets/original/characters/portraits/p1.jpg",
+        "portraitSource": "/Users/dulinfeng/Downloads/流星86726/lxhdj_/image/P002.JPG",
+        "vertices": 1183,
+        "triangles": 1262,
+        "maxBoneIndex": 29,
+        "maxWeightSumError": 1.0000000000065512e-05,
+        "files": {
+          "skc": {
+            "bytes": 124530,
+            "sha256": "7ccaebbb9abe927ac7b60e31e8a950c5da53cb4b7d7cc2b2a2a7776e02390130"
+          },
+          "bnc": {
+            "bytes": 4898,
+            "sha256": "9ab23df27efa9b7aedd875e97c68176dab7cb384d5ad9b28c95f3057968a60d3"
+          },
+          "amb": {
+            "bytes": 738505,
+            "sha256": "976877982329ffb4a3800fba8be4bdb60242b3b4b72cc41f6593f5b6f27d19c5"
+          },
+          "pos": {
+            "bytes": 296400,
+            "sha256": "3d373e4d39ca8f643c482fe9aac87f0b30597818fc540de4ff27e0b7f677d1a5"
+          }
+        },
+        "animation": {
+          "bones": 30,
+          "dummies": 6,
+          "frames": 1058,
+          "fps": 30,
+          "stride": 698,
+          "bytes": 738505,
+          "maxQuaternionNormSquaredError": 8.928383810058449e-08,
+          "dummyParents": [
+            [
+              "NULL"
+            ],
+            [
+              "b13"
+            ],
+            [
+              "d3"
+            ],
+            [
+              "b17"
+            ],
+            [
+              "d5"
+            ],
+            [
+              "b25"
+            ]
+          ],
+          "sha256": "976877982329ffb4a3800fba8be4bdb60242b3b4b72cc41f6593f5b6f27d19c5"
+        },
+        "textures": [
+          {
+            "source": "nw001b01.tga",
+            "web": "nw001b01.png",
+            "sha256": "4725219801614ac8f0ed8a85a1a27de48914ad388bee156621a786f4b532ead1"
+          },
+          {
+            "source": "nw001f01.jpg",
+            "web": "nw001f01.jpg",
+            "sha256": "b0791e70abf587688412805a91b82bc7331a5199bd6acfac691e3dfa92609fe7"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "铁胡子",
+        "portrait": "./assets/original/characters/portraits/p2.jpg",
+        "portraitSource": "/Users/dulinfeng/Downloads/流星86726/lxhdj_/image/P003.JPG",
+        "vertices": 973,
+        "triangles": 1322,
+        "maxBoneIndex": 29,
+        "maxWeightSumError": 1.0000000000065512e-05,
+        "files": {
+          "skc": {
+            "bytes": 105586,
+            "sha256": "21ea1c08c0a0bb33ba3c6a068dea129a2488feb02e8378b7ca988e076c26f5c2"
+          },
+          "bnc": {
+            "bytes": 4901,
+            "sha256": "5cb9724a358c6c09c88eff64b9b6e30fd0e7361a1161facf3689409613c1e3cc"
+          },
+          "amb": {
+            "bytes": 439761,
+            "sha256": "fb48f77dd5c40c2c537d35831c224f15e6c4d0e25eed928bcd83f2039d60d5f4"
+          },
+          "pos": {
+            "bytes": 296820,
+            "sha256": "848ba8f4839c22510a98744df93d2e565775f1bc93e90c2525038654d192dd34"
+          }
+        },
+        "animation": {
+          "bones": 30,
+          "dummies": 6,
+          "frames": 630,
+          "fps": 30,
+          "stride": 698,
+          "bytes": 439761,
+          "maxQuaternionNormSquaredError": 8.536959761329399e-08,
+          "dummyParents": [
+            [
+              "NULL"
+            ],
+            [
+              "b13"
+            ],
+            [
+              "d3"
+            ],
+            [
+              "b17"
+            ],
+            [
+              "d5"
+            ],
+            [
+              "b25"
+            ]
+          ],
+          "sha256": "fb48f77dd5c40c2c537d35831c224f15e6c4d0e25eed928bcd83f2039d60d5f4"
+        },
+        "textures": [
+          {
+            "source": "nm015b01.jpg",
+            "web": "nm015b01.jpg",
+            "sha256": "83308828496f7d873483f2d7dd423c5604d4ad5c9764f67b686f26dd4d5d76e1"
+          },
+          {
+            "source": "nm015f01.jpg",
+            "web": "nm015f01.jpg",
+            "sha256": "4166d40c61ceab5980b3621ffd51bbff48567e2dfb5b6d6f6631974dce444544"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "name": "破空",
+        "portrait": "./assets/original/characters/portraits/p3.jpg",
+        "portraitSource": "/Users/dulinfeng/Downloads/流星86726/lxhdj_/image/P004.JPG",
+        "vertices": 1128,
+        "triangles": 1369,
+        "maxBoneIndex": 29,
+        "maxWeightSumError": 1.0000000000065512e-05,
+        "files": {
+          "skc": {
+            "bytes": 119321,
+            "sha256": "b959dd7d7976da22e927004ec38b2b81d9b0b6b7995f328c006ec08d960e6e83"
+          },
+          "bnc": {
+            "bytes": 4899,
+            "sha256": "4f227cd8dc275524d6693fbe0e02bc49617a89c0ce8ef26508b53725f2c36286"
+          },
+          "amb": {
+            "bytes": 407653,
+            "sha256": "2b2e5f49de476a74eb57ae67406f338d03303d4436a7178a18705de41f82b5f8"
+          },
+          "pos": {
+            "bytes": 296824,
+            "sha256": "678e0e28b51bcab47a78aa990d24f8917c02bbf436b46905265a4fcc6e29a15c"
+          }
+        },
+        "animation": {
+          "bones": 30,
+          "dummies": 6,
+          "frames": 584,
+          "fps": 30,
+          "stride": 698,
+          "bytes": 407653,
+          "maxQuaternionNormSquaredError": 8.547257412949705e-08,
+          "dummyParents": [
+            [
+              "NULL"
+            ],
+            [
+              "b13"
+            ],
+            [
+              "d3"
+            ],
+            [
+              "b17"
+            ],
+            [
+              "d5"
+            ],
+            [
+              "b25"
+            ]
+          ],
+          "sha256": "2b2e5f49de476a74eb57ae67406f338d03303d4436a7178a18705de41f82b5f8"
+        },
+        "textures": [
+          {
+            "source": "nm004b01.jpg",
+            "web": "nm004b01.jpg",
+            "sha256": "1090941f7ff9589ebd9be903984f833b0b24f2b3949f179802864b1793664fac"
+          },
+          {
+            "source": "nm004f01.jpg",
+            "web": "nm004f01.jpg",
+            "sha256": "6445e3d1d74c11b6273d4e3eed1dc2176a20f024b795b54d740a9f254eb4465b"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "name": "夜猫子",
+        "portrait": "./assets/original/characters/portraits/p4.jpg",
+        "portraitSource": "/Users/dulinfeng/Downloads/流星86726/lxhdj_/image/P005.JPG",
+        "vertices": 1163,
+        "triangles": 1483,
+        "maxBoneIndex": 29,
+        "maxWeightSumError": 1.0000000000065512e-05,
+        "files": {
+          "skc": {
+            "bytes": 119837,
+            "sha256": "9d1c062cd5754923b5da75c9ef01166ba813d078d687648134ee225def8747d0"
+          },
+          "bnc": {
+            "bytes": 4907,
+            "sha256": "062ceafa4cb4b086cacd8b06c4f3df624fd102814375006f81dab8a4d401eb2f"
+          },
+          "amb": {
+            "bytes": 446741,
+            "sha256": "b4092997e336e0697b79147758ed00293f88b48d19d4fd460325bb27e34b1ddb"
+          },
+          "pos": {
+            "bytes": 296735,
+            "sha256": "dbe1ce13f663d4c26209473f5d1bc69689dccee1324e11a7c8baf72eccffd7ec"
+          }
+        },
+        "animation": {
+          "bones": 30,
+          "dummies": 6,
+          "frames": 640,
+          "fps": 30,
+          "stride": 698,
+          "bytes": 446741,
+          "maxQuaternionNormSquaredError": 8.505450099782763e-08,
+          "dummyParents": [
+            [
+              "NULL"
+            ],
+            [
+              "b13"
+            ],
+            [
+              "d3"
+            ],
+            [
+              "b17"
+            ],
+            [
+              "d5"
+            ],
+            [
+              "b25"
+            ]
+          ],
+          "sha256": "b4092997e336e0697b79147758ed00293f88b48d19d4fd460325bb27e34b1ddb"
+        },
+        "textures": [
+          {
+            "source": "nm005b01.jpg",
+            "web": "nm005b01.jpg",
+            "sha256": "bd8a18c3480c3e9e97411449646b5d11ec33eff387210f93f58852c3ac1a162f"
+          },
+          {
+            "source": "nm005f01.jpg",
+            "web": "nm005f01.jpg",
+            "sha256": "a83c8ea3135a4163da873e39af6cd76b08a63f8d5884a707493bd6a142b2cb4a"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "name": "冯浩",
+        "portrait": "./assets/original/characters/portraits/p5.jpg",
+        "portraitSource": "/Users/dulinfeng/Downloads/流星86726/lxhdj_/image/P006.JPG",
+        "vertices": 1142,
+        "triangles": 1334,
+        "maxBoneIndex": 29,
+        "maxWeightSumError": 1.0000000000065512e-05,
+        "files": {
+          "skc": {
+            "bytes": 115028,
+            "sha256": "18fffd808898b10bd4fa4a5bd6c2cce2140c89926e98e11ec350fc07bcf6ee12"
+          },
+          "bnc": {
+            "bytes": 4905,
+            "sha256": "64bab04c32463f0a732b330b7555f3049eeb1e87b6aad39d50d983c834a07604"
+          },
+          "amb": {
+            "bytes": 446741,
+            "sha256": "e952079548b15c79c5cc71e43ea6c0b2977a8c7b6a887189a28bfe3220c84c5b"
+          },
+          "pos": {
+            "bytes": 296820,
+            "sha256": "5ab1dc70e3b5920c585a73e9ac047ef9ecbe6cfadabeaefcdea5d8151e755091"
+          }
+        },
+        "animation": {
+          "bones": 30,
+          "dummies": 6,
+          "frames": 640,
+          "fps": 30,
+          "stride": 698,
+          "bytes": 446741,
+          "maxQuaternionNormSquaredError": 8.6964954570945e-08,
+          "dummyParents": [
+            [
+              "NULL"
+            ],
+            [
+              "b13"
+            ],
+            [
+              "d3"
+            ],
+            [
+              "b17"
+            ],
+            [
+              "d5"
+            ],
+            [
+              "b25"
+            ]
+          ],
+          "sha256": "e952079548b15c79c5cc71e43ea6c0b2977a8c7b6a887189a28bfe3220c84c5b"
+        },
+        "textures": [
+          {
+            "source": "nm014b01.jpg",
+            "web": "nm014b01.jpg",
+            "sha256": "ce76d85f93f03b698d2208ba120c68d497d848c732e11247d4c022cfb8ce103f"
+          },
+          {
+            "source": "nm014f01.jpg",
+            "web": "nm014f01.jpg",
+            "sha256": "d132af9a598424d90bc939de64e5ce1871e1d3096cada03e2ed98102a7c96137"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "name": "孙剑",
+        "portrait": "./assets/original/characters/portraits/p6.jpg",
+        "portraitSource": "/Users/dulinfeng/Downloads/流星86726/lxhdj_/image/P007.JPG",
+        "vertices": 931,
+        "triangles": 1304,
+        "maxBoneIndex": 29,
+        "maxWeightSumError": 1.0000000000065512e-05,
+        "files": {
+          "skc": {
+            "bytes": 98190,
+            "sha256": "0c9656fdf4175f00c07f67bb1fa5deca20c71a8aaff1e032bed85724d8aace0f"
+          },
+          "bnc": {
+            "bytes": 4904,
+            "sha256": "4392778bbbad4f9d0c2cc61ca62c28f17f2af3a141199f7e8670184427910cf1"
+          },
+          "amb": {
+            "bytes": 420915,
+            "sha256": "2f2b71ab894a45478cc053fbb3e494a1c74bbfa8bb05230a1be4cee7e82658e3"
+          },
+          "pos": {
+            "bytes": 296887,
+            "sha256": "28c0f958c542f358fee1bc52a93a53af844f612e56d840579c61f4279c54aa41"
+          }
+        },
+        "animation": {
+          "bones": 30,
+          "dummies": 6,
+          "frames": 603,
+          "fps": 30,
+          "stride": 698,
+          "bytes": 420915,
+          "maxQuaternionNormSquaredError": 8.671767659507168e-08,
+          "dummyParents": [
+            [
+              "NULL"
+            ],
+            [
+              "b13"
+            ],
+            [
+              "d3"
+            ],
+            [
+              "b17"
+            ],
+            [
+              "d5"
+            ],
+            [
+              "b25"
+            ]
+          ],
+          "sha256": "2f2b71ab894a45478cc053fbb3e494a1c74bbfa8bb05230a1be4cee7e82658e3"
+        },
+        "textures": [
+          {
+            "source": "nm013b01.jpg",
+            "web": "nm013b01.jpg",
+            "sha256": "47e6003fde7990231aa5b09218c632d6a42f0538743b85f5e89dc93825e7d103"
+          },
+          {
+            "source": "nm013f01.jpg",
+            "web": "nm013f01.jpg",
+            "sha256": "638c129a7ba1ce123648abebb83fc85c5ebb6ff5965d93163d6b5bf0bd3cabd1"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "name": "萧安",
+        "portrait": "./assets/original/characters/portraits/p7.jpg",
+        "portraitSource": "/Users/dulinfeng/Downloads/流星86726/lxhdj_/image/P008.JPG",
+        "vertices": 1115,
+        "triangles": 1400,
+        "maxBoneIndex": 29,
+        "maxWeightSumError": 1.0000000000065512e-05,
+        "files": {
+          "skc": {
+            "bytes": 119201,
+            "sha256": "6066e60429ae51555f9994a0825a5c7df9fbade5374c57c826de148c72d6d3bb"
+          },
+          "bnc": {
+            "bytes": 4902,
+            "sha256": "e2ea58422a24aecf7c42f50c1ec5807fb97b342c972b487bb3294b6afa08083d"
+          },
+          "amb": {
+            "bytes": 446741,
+            "sha256": "796ed3d060d8873efe4e6b3ffdf1dc95bcd1084d730afe51298e2c03c0b8da76"
+          },
+          "pos": {
+            "bytes": 296820,
+            "sha256": "6bb950e505a5478ce84ac2ad1be8e978b2d8fc7780618bf3ffbd7c096d58dd72"
+          }
+        },
+        "animation": {
+          "bones": 30,
+          "dummies": 6,
+          "frames": 640,
+          "fps": 30,
+          "stride": 698,
+          "bytes": 446741,
+          "maxQuaternionNormSquaredError": 8.505450099782763e-08,
+          "dummyParents": [
+            [
+              "NULL"
+            ],
+            [
+              "b13"
+            ],
+            [
+              "d3"
+            ],
+            [
+              "b17"
+            ],
+            [
+              "d5"
+            ],
+            [
+              "b25"
+            ]
+          ],
+          "sha256": "796ed3d060d8873efe4e6b3ffdf1dc95bcd1084d730afe51298e2c03c0b8da76"
+        },
+        "textures": [
+          {
+            "source": "nm012f01.JPG",
+            "web": "nm012f01.jpg",
+            "sha256": "4a0eae5e5f4209d30628f63173c6b6bbabec51147a31094ebb707030d86f8855"
+          },
+          {
+            "source": "nm012b01.JPG",
+            "web": "nm012b01.jpg",
+            "sha256": "182da97ef43f8bd636f7de11cb42478cd19b9c6b81ddd0bca500dad56148574f"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "name": "子与",
+        "portrait": "./assets/original/characters/portraits/p8.jpg",
+        "portraitSource": "/Users/dulinfeng/Downloads/流星86726/lxhdj_/image/P009.JPG",
+        "vertices": 1120,
+        "triangles": 1330,
+        "maxBoneIndex": 29,
+        "maxWeightSumError": 1.0000000000065512e-05,
+        "files": {
+          "skc": {
+            "bytes": 120111,
+            "sha256": "48e21bf98b33feb1eb931dc91ded3d4d4db82395e69b539e9fca230485e8bf57"
+          },
+          "bnc": {
+            "bytes": 4903,
+            "sha256": "1f54fdefbcbfdef0eeebb0ce3d910b0eaab45b5f5ad79f7b2d91077ffc0a49f0"
+          },
+          "amb": {
+            "bytes": 418821,
+            "sha256": "2eba794dad73d616865e423ac9b2449d003c16c74f25bab7b062343c6bd49f1a"
+          },
+          "pos": {
+            "bytes": 296824,
+            "sha256": "29467ca50d86817fcfeedcbb7d6ef45f8497c98fe8af603dd7d45646a5c7e4c3"
+          }
+        },
+        "animation": {
+          "bones": 30,
+          "dummies": 6,
+          "frames": 600,
+          "fps": 30,
+          "stride": 698,
+          "bytes": 418821,
+          "maxQuaternionNormSquaredError": 8.65367830726882e-08,
+          "dummyParents": [
+            [
+              "NULL"
+            ],
+            [
+              "b13"
+            ],
+            [
+              "d3"
+            ],
+            [
+              "b17"
+            ],
+            [
+              "d5"
+            ],
+            [
+              "b25"
+            ]
+          ],
+          "sha256": "2eba794dad73d616865e423ac9b2449d003c16c74f25bab7b062343c6bd49f1a"
+        },
+        "textures": [
+          {
+            "source": "nm009f01.JPG",
+            "web": "nm009f01.jpg",
+            "sha256": "b9e0d97a9393066011a37e6839f40bc50ac24f66f1f1ba2a84605b864b392749"
+          },
+          {
+            "source": "nm009b01.JPG",
+            "web": "nm009b01.jpg",
+            "sha256": "17107a9b4e22045fef5fb4e4cd9d7566a7765ff08804b6c1f5fc5e20cbf000af"
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "name": "王强",
+        "portrait": "./assets/original/characters/portraits/p9.jpg",
+        "portraitSource": "/Users/dulinfeng/Downloads/流星86726/lxhdj_/image/P0010.JPG",
+        "vertices": 1019,
+        "triangles": 1404,
+        "maxBoneIndex": 29,
+        "maxWeightSumError": 1.0000000000065512e-05,
+        "files": {
+          "skc": {
+            "bytes": 114018,
+            "sha256": "da73f66b9a79842727eebf2914af69f9aa45a689d2ea2bd857e5efa83e56a1fa"
+          },
+          "bnc": {
+            "bytes": 4906,
+            "sha256": "254f8522fa0788775a60771a407d6cd03704c2a01d2963c90246ebf291be312d"
+          },
+          "amb": {
+            "bytes": 422311,
+            "sha256": "0b6d6a6732c80f52680efd4a7042d85961e57699e89a9c1a8bfa7d14b2bba9dd"
+          },
+          "pos": {
+            "bytes": 296824,
+            "sha256": "331f9433e5db358c8e0a52a3b05785984f343726b337caa11e25e23745284928"
+          }
+        },
+        "animation": {
+          "bones": 30,
+          "dummies": 6,
+          "frames": 605,
+          "fps": 30,
+          "stride": 698,
+          "bytes": 422311,
+          "maxQuaternionNormSquaredError": 8.542537632827418e-08,
+          "dummyParents": [
+            [
+              "NULL"
+            ],
+            [
+              "b13"
+            ],
+            [
+              "d3"
+            ],
+            [
+              "b17"
+            ],
+            [
+              "d5"
+            ],
+            [
+              "b25"
+            ]
+          ],
+          "sha256": "0b6d6a6732c80f52680efd4a7042d85961e57699e89a9c1a8bfa7d14b2bba9dd"
+        },
+        "textures": [
+          {
+            "source": "nm011b01.jpg",
+            "web": "nm011b01.jpg",
+            "sha256": "0487f4409995b037ff07700fdb3dd874e638e4de6abb83be17d9c419fccf8757"
+          },
+          {
+            "source": "nm011f01.jpg",
+            "web": "nm011f01.jpg",
+            "sha256": "b73079227f531e770dc20cfda3e9c35037a99323d660a8b51dddac6aba893993"
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "name": "无名",
+        "portrait": "./assets/original/characters/portraits/p10.jpg",
+        "portraitSource": "/Users/dulinfeng/Downloads/流星86726/lxhdj_/image/P0011.JPG",
+        "vertices": 888,
+        "triangles": 1304,
+        "maxBoneIndex": 29,
+        "maxWeightSumError": 1.0000000000065512e-05,
+        "files": {
+          "skc": {
+            "bytes": 101845,
+            "sha256": "55c8638bc9f49eee3e4527218cdba6f79bf0511e6391a6b3fe24d64627dd4597"
+          },
+          "bnc": {
+            "bytes": 4898,
+            "sha256": "625e26b284021cacfea8ebcd4349f32e544f60136e2d03151bb89e44893c5fae"
+          },
+          "amb": {
+            "bytes": 733619,
+            "sha256": "88d0807cbd1b4f1e774614b99ea748827e6489dd41c2bbc1310071c2cb5f79d1"
+          },
+          "pos": {
+            "bytes": 296830,
+            "sha256": "0a6e17e39dcc5dc62d31466ef6ce431cc666adfaa1e00fc12a627edf02d83e2e"
+          }
+        },
+        "animation": {
+          "bones": 30,
+          "dummies": 6,
+          "frames": 1051,
+          "fps": 30,
+          "stride": 698,
+          "bytes": 733619,
+          "maxQuaternionNormSquaredError": 9.91256356996928e-08,
+          "dummyParents": [
+            [
+              "NULL"
+            ],
+            [
+              "b13"
+            ],
+            [
+              "d3"
+            ],
+            [
+              "b17"
+            ],
+            [
+              "d5"
+            ],
+            [
+              "b25"
+            ]
+          ],
+          "sha256": "88d0807cbd1b4f1e774614b99ea748827e6489dd41c2bbc1310071c2cb5f79d1"
+        },
+        "textures": [
+          {
+            "source": "nm007b01.JPG",
+            "web": "nm007b01.jpg",
+            "sha256": "ef5d2328eb51af3f90d5aeec21600d3f9fefcb936994742cd5c1169c56946288"
+          },
+          {
+            "source": "nm007f01.JPG",
+            "web": "nm007f01.jpg",
+            "sha256": "7f57df3c42727d4c3db2de62e9504a1e0a23379f078f8c87282f207f9a98c46a"
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "name": "叶翔",
+        "portrait": "./assets/original/characters/portraits/p11.jpg",
+        "portraitSource": "/Users/dulinfeng/Downloads/流星86726/lxhdj_/image/P0012.JPG",
+        "vertices": 1040,
+        "triangles": 1243,
+        "maxBoneIndex": 29,
+        "maxWeightSumError": 1.0000000000065512e-05,
+        "files": {
+          "skc": {
+            "bytes": 110922,
+            "sha256": "18525796ead4f160d1bb7c69f170028d32bff1ddf1a633f768f9a0d9136bb832"
+          },
+          "bnc": {
+            "bytes": 4905,
+            "sha256": "dbeeee08482ef4cb02ba9ef8445c8850e7e9ea1954f55251ca0bb0d3b328786f"
+          },
+          "amb": {
+            "bytes": 422311,
+            "sha256": "0b6d6a6732c80f52680efd4a7042d85961e57699e89a9c1a8bfa7d14b2bba9dd"
+          },
+          "pos": {
+            "bytes": 296824,
+            "sha256": "9c628e56471ad691c3379cbbf06370e8c3466617414aa113ab720823f60bfff1"
+          }
+        },
+        "animation": {
+          "bones": 30,
+          "dummies": 6,
+          "frames": 605,
+          "fps": 30,
+          "stride": 698,
+          "bytes": 422311,
+          "maxQuaternionNormSquaredError": 8.542537632827418e-08,
+          "dummyParents": [
+            [
+              "NULL"
+            ],
+            [
+              "b13"
+            ],
+            [
+              "d3"
+            ],
+            [
+              "b17"
+            ],
+            [
+              "d5"
+            ],
+            [
+              "b25"
+            ]
+          ],
+          "sha256": "0b6d6a6732c80f52680efd4a7042d85961e57699e89a9c1a8bfa7d14b2bba9dd"
+        },
+        "textures": [
+          {
+            "source": "nm010b01.JPG",
+            "web": "nm010b01.jpg",
+            "sha256": "058d1d1c5ae864ee39a7e4f5a034d7b88b0839e2048994d069d8f1f383d6b48d"
+          },
+          {
+            "source": "nm010f01.JPG",
+            "web": "nm010f01.jpg",
+            "sha256": "b7176fe668072d6a30a22d47b8198964be101e2460afdee03350da470d3f1d1f"
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "name": "小何",
+        "portrait": "./assets/original/characters/portraits/p12.jpg",
+        "portraitSource": "/Users/dulinfeng/Downloads/流星86726/lxhdj_/image/P0013.JPG",
+        "vertices": 1436,
+        "triangles": 1505,
+        "maxBoneIndex": 29,
+        "maxWeightSumError": 1.0000000000065512e-05,
+        "files": {
+          "skc": {
+            "bytes": 145218,
+            "sha256": "43529640f93787086e574e9f2e5951bd9d5509d562f2e37eccb323be3eee2530"
+          },
+          "bnc": {
+            "bytes": 4905,
+            "sha256": "1294885cfccb4b9b1ddaf07ab936aaef5708e9dfbf190ff413703771e80b9704"
+          },
+          "amb": {
+            "bytes": 422311,
+            "sha256": "184d9bea456059c86536f385822561cb97a7122b6084fa184a810a474732d156"
+          },
+          "pos": {
+            "bytes": 296824,
+            "sha256": "57e53c451ba87a87b60882a6cfaa51ace4c896737a8da550019cc9efafc712a4"
+          }
+        },
+        "animation": {
+          "bones": 30,
+          "dummies": 6,
+          "frames": 605,
+          "fps": 30,
+          "stride": 698,
+          "bytes": 422311,
+          "maxQuaternionNormSquaredError": 8.727687661469474e-08,
+          "dummyParents": [
+            [
+              "NULL"
+            ],
+            [
+              "b13"
+            ],
+            [
+              "d3"
+            ],
+            [
+              "b17"
+            ],
+            [
+              "d5"
+            ],
+            [
+              "b25"
+            ]
+          ],
+          "sha256": "184d9bea456059c86536f385822561cb97a7122b6084fa184a810a474732d156"
+        },
+        "textures": [
+          {
+            "source": "nm002f01.JPG",
+            "web": "nm002f01.jpg",
+            "sha256": "89bdc0e4a9cfa90bbb70ddd1d72a2df7fd3d008cce5d284eb627d691751d15af"
+          },
+          {
+            "source": "nm002b01.JPG",
+            "web": "nm002b01.jpg",
+            "sha256": "054a4c8c91a8c2c8bf4196fe5f734a543bc6cd81ea75a7fd937997b0175ab23c"
+          }
+        ]
+      },
+      {
+        "id": 13,
+        "name": "凤凰",
+        "portrait": "./assets/original/characters/portraits/p13.jpg",
+        "portraitSource": "/Users/dulinfeng/Downloads/流星86726/lxhdj_/image/P0014.JPG",
+        "vertices": 957,
+        "triangles": 1206,
+        "maxBoneIndex": 29,
+        "maxWeightSumError": 1.0000000000065512e-05,
+        "files": {
+          "skc": {
+            "bytes": 103467,
+            "sha256": "aea6b7c44bac125db5b892c789957d84e9063a5f2462b0e83b55df7fd0c315fa"
+          },
+          "bnc": {
+            "bytes": 4898,
+            "sha256": "22f34360aeb2740857a51d8d606a5c9689780365df022d1d3379d5c3e211a442"
+          },
+          "amb": {
+            "bytes": 741995,
+            "sha256": "e53bbebb4602a3b4410ae2e7fe2b2ae499af0a846ba573aaf19ff3cc304944af"
+          },
+          "pos": {
+            "bytes": 296400,
+            "sha256": "52348dcc53a50a32a4d9f3cf77bcf887e8ad017e04cab799bcf83af77b4c4fc0"
+          }
+        },
+        "animation": {
+          "bones": 30,
+          "dummies": 6,
+          "frames": 1063,
+          "fps": 30,
+          "stride": 698,
+          "bytes": 741995,
+          "maxQuaternionNormSquaredError": 9.856631932869675e-08,
+          "dummyParents": [
+            [
+              "NULL"
+            ],
+            [
+              "b13"
+            ],
+            [
+              "d3"
+            ],
+            [
+              "b17"
+            ],
+            [
+              "d5"
+            ],
+            [
+              "b25"
+            ]
+          ],
+          "sha256": "e53bbebb4602a3b4410ae2e7fe2b2ae499af0a846ba573aaf19ff3cc304944af"
+        },
+        "textures": [
+          {
+            "source": "nw002b01.jpg",
+            "web": "nw002b01.jpg",
+            "sha256": "8f5b24eeec039b81c866ded9a576b95dd677384269a532d852a1e78afd6eb3c6"
+          },
+          {
+            "source": "nw002f01.tga",
+            "web": "nw002f01.png",
+            "sha256": "8f5df4cffea718b853a4bb31ba9b501000f1f0a9c418b55b7cce9995e363fb33"
+          }
+        ]
+      },
+      {
+        "id": 14,
+        "name": "石群",
+        "portrait": "./assets/original/characters/portraits/p14.jpg",
+        "portraitSource": "/Users/dulinfeng/Downloads/流星86726/lxhdj_/image/P0015.JPG",
+        "vertices": 1001,
+        "triangles": 1254,
+        "maxBoneIndex": 29,
+        "maxWeightSumError": 1.0000000000065512e-05,
+        "files": {
+          "skc": {
+            "bytes": 109049,
+            "sha256": "963d6b5b780096b83eb82962fbed0e9da616d97a510fbe0b02f657b73b979bb9"
+          },
+          "bnc": {
+            "bytes": 4904,
+            "sha256": "05f8975b799486b0f0d4f99c2443bafd4288af44f3c68c1eb6bf00ff60699c2b"
+          },
+          "amb": {
+            "bytes": 422311,
+            "sha256": "c014578df8459b4e223dff365a91eba93cee7520ea294753cfdd839f411d5f36"
+          },
+          "pos": {
+            "bytes": 296824,
+            "sha256": "e21729852af4ad6ce10460e7db9591920d0e32507af5854675d460298794dc21"
+          }
+        },
+        "animation": {
+          "bones": 30,
+          "dummies": 6,
+          "frames": 605,
+          "fps": 30,
+          "stride": 698,
+          "bytes": 422311,
+          "maxQuaternionNormSquaredError": 8.977128218567998e-08,
+          "dummyParents": [
+            [
+              "NULL"
+            ],
+            [
+              "b13"
+            ],
+            [
+              "d3"
+            ],
+            [
+              "b17"
+            ],
+            [
+              "d5"
+            ],
+            [
+              "b25"
+            ]
+          ],
+          "sha256": "c014578df8459b4e223dff365a91eba93cee7520ea294753cfdd839f411d5f36"
+        },
+        "textures": [
+          {
+            "source": "nm003b01.JPG",
+            "web": "nm003b01.jpg",
+            "sha256": "2271cc40c87de603a5070d761e05530847791e7ab4d20f44d4e2421dda77035b"
+          },
+          {
+            "source": "nm003f01.JPG",
+            "web": "nm003f01.jpg",
+            "sha256": "689c9a483af91b940de7763441b7946f97a66c091a0c6e1f9b6aa6570127cb78"
+          }
+        ]
+      },
+      {
+        "id": 15,
+        "name": "屠城",
+        "portrait": "./assets/original/characters/portraits/p15.jpg",
+        "portraitSource": "/Users/dulinfeng/Downloads/流星86726/lxhdj_/image/P0016.JPG",
+        "vertices": 1059,
+        "triangles": 1236,
+        "maxBoneIndex": 29,
+        "maxWeightSumError": 1.0000000000065512e-05,
+        "files": {
+          "skc": {
+            "bytes": 109204,
+            "sha256": "fc79cc3e0a74796b0fd841dd79a10533d1ad2e71025b0492879a8df9e4114fbe"
+          },
+          "bnc": {
+            "bytes": 4904,
+            "sha256": "152d479b55e72d0b42e0a6e20501d0a1f180c507e7866805d2acd24634b30881"
+          },
+          "amb": {
+            "bytes": 432781,
+            "sha256": "0e3b81156e16c53e146b2216abd96bc309f7a46d60e29cb7d60158dcb371da9d"
+          },
+          "pos": {
+            "bytes": 296820,
+            "sha256": "e18ee590d871acadb557425adc518e84036fd6ab590ae21a9d7e152a462e6bb0"
+          }
+        },
+        "animation": {
+          "bones": 30,
+          "dummies": 6,
+          "frames": 620,
+          "fps": 30,
+          "stride": 698,
+          "bytes": 432781,
+          "maxQuaternionNormSquaredError": 1.0022635166251348e-07,
+          "dummyParents": [
+            [
+              "NULL"
+            ],
+            [
+              "b13"
+            ],
+            [
+              "d3"
+            ],
+            [
+              "b17"
+            ],
+            [
+              "d5"
+            ],
+            [
+              "b25"
+            ]
+          ],
+          "sha256": "0e3b81156e16c53e146b2216abd96bc309f7a46d60e29cb7d60158dcb371da9d"
+        },
+        "textures": [
+          {
+            "source": "nm017b01.tga",
+            "web": "nm017b01.png",
+            "sha256": "edacdf31b31734fc42cc199a24fbdd1afcde20e0c33b7c3acea017b95ca39781"
+          },
+          {
+            "source": "nm017f01.jpg",
+            "web": "nm017f01.jpg",
+            "sha256": "7ed94e91a2c33a8c9bc4420f2b579622dd672585cdedeae7eafc490499a2a8a4"
+          }
+        ]
+      },
+      {
+        "id": 16,
+        "name": "范璇",
+        "portrait": "./assets/original/characters/portraits/p16.jpg",
+        "portraitSource": "/Users/dulinfeng/Downloads/流星86726/lxhdj_/image/P0017.JPG",
+        "vertices": 1152,
+        "triangles": 1266,
+        "maxBoneIndex": 29,
+        "maxWeightSumError": 1.0000000000065512e-05,
+        "files": {
+          "skc": {
+            "bytes": 120285,
+            "sha256": "575f3447b163a4ed8746c4b9677aa033f0d2634f4d9cb2edbb9d53db245ab79e"
+          },
+          "bnc": {
+            "bytes": 4906,
+            "sha256": "e5be296c40a22c99748ed37ac8cd95359ff31f988e2bfbb26b041b88bdce5ffb"
+          },
+          "amb": {
+            "bytes": 446741,
+            "sha256": "e3e982262c5075298ccf3d78c33b345d8dea2cb826fb2bf4d4ba9c74095c94b9"
+          },
+          "pos": {
+            "bytes": 296820,
+            "sha256": "3749a40c973d00f9fc68686086d75ddde9fb8f7bf6217d71e98fe9c6db3a6a45"
+          }
+        },
+        "animation": {
+          "bones": 30,
+          "dummies": 6,
+          "frames": 640,
+          "fps": 30,
+          "stride": 698,
+          "bytes": 446741,
+          "maxQuaternionNormSquaredError": 9.261137723370894e-08,
+          "dummyParents": [
+            [
+              "NULL"
+            ],
+            [
+              "b13"
+            ],
+            [
+              "d3"
+            ],
+            [
+              "b17"
+            ],
+            [
+              "d5"
+            ],
+            [
+              "b25"
+            ]
+          ],
+          "sha256": "e3e982262c5075298ccf3d78c33b345d8dea2cb826fb2bf4d4ba9c74095c94b9"
+        },
+        "textures": [
+          {
+            "source": "nm006b01.tga",
+            "web": "nm006b01.png",
+            "sha256": "4ff8c6ec902de182f79a9c379422907d2ca12619837ff0292e6e9aba290d1686"
+          },
+          {
+            "source": "nm006f01.JPG",
+            "web": "nm006f01.jpg",
+            "sha256": "e25cd0dc6c6c8e58b83f9074f61ee9e36db671fa441f182fea0669d167a22e5c"
+          }
+        ]
+      },
+      {
+        "id": 17,
+        "name": "高寄萍",
+        "portrait": "./assets/original/characters/portraits/p17.jpg",
+        "portraitSource": "/Users/dulinfeng/Downloads/流星86726/lxhdj_/image/P0018.JPG",
+        "vertices": 986,
+        "triangles": 1275,
+        "maxBoneIndex": 29,
+        "maxWeightSumError": 2.0000000000020002e-05,
+        "files": {
+          "skc": {
+            "bytes": 106356,
+            "sha256": "67097ec936c58019812df8e6d64e7cda262214b9190da4da1eba105769257da9"
+          },
+          "bnc": {
+            "bytes": 4901,
+            "sha256": "71754955f7d4fba1d23fc6c094453d39568a64f536c4e733a847391e3a10705e"
+          },
+          "amb": {
+            "bytes": 749673,
+            "sha256": "ce332ce174d40e1e016d7a8b4747937a2cb8f701e549fbc94d6ae0f1fb6dbf51"
+          },
+          "pos": {
+            "bytes": 296574,
+            "sha256": "1b405f53752680d8fbf0805b5ff23bac08c5469f09c24f173bb1cdeab2d46112"
+          }
+        },
+        "animation": {
+          "bones": 30,
+          "dummies": 6,
+          "frames": 1074,
+          "fps": 30,
+          "stride": 698,
+          "bytes": 749673,
+          "maxQuaternionNormSquaredError": 9.863734984350003e-08,
+          "dummyParents": [
+            [
+              "NULL"
+            ],
+            [
+              "b13"
+            ],
+            [
+              "d3"
+            ],
+            [
+              "b17"
+            ],
+            [
+              "d5"
+            ],
+            [
+              "b25"
+            ]
+          ],
+          "sha256": "ce332ce174d40e1e016d7a8b4747937a2cb8f701e549fbc94d6ae0f1fb6dbf51"
+        },
+        "textures": [
+          {
+            "source": "nw003b01.JPG",
+            "web": "nw003b01.jpg",
+            "sha256": "d024b7de3903215f70787074ca69f1d76edc3ad56ca89e7d3b201375b13b08d4"
+          },
+          {
+            "source": "nw003f01.tga",
+            "web": "nw003f01.png",
+            "sha256": "557b401deae40fce0d548b24fe107cb4a0c771b7bd83a29c4e10462819995964"
+          }
+        ]
+      },
+      {
+        "id": 18,
+        "name": "孙玉伯",
+        "portrait": "./assets/original/characters/portraits/p18.jpg",
+        "portraitSource": "/Users/dulinfeng/Downloads/流星86726/lxhdj_/image/P0019.JPG",
+        "vertices": 1201,
+        "triangles": 1374,
+        "maxBoneIndex": 29,
+        "maxWeightSumError": 1.0000000000065512e-05,
+        "files": {
+          "skc": {
+            "bytes": 126554,
+            "sha256": "bed29169da1f927174adb91a6bbcc91c156061d6ffb8c1167152e76e53dcd45a"
+          },
+          "bnc": {
+            "bytes": 4900,
+            "sha256": "9158e2fbca80ec1c017f266e8188e39fa50eaa4ea3b0a6ce2bff6d5b6cfc5f43"
+          },
+          "amb": {
+            "bytes": 439761,
+            "sha256": "356847c04cd68d439d0616f60f86b6f66e2d1f48067a896c62a7b65fc290c58f"
+          },
+          "pos": {
+            "bytes": 296820,
+            "sha256": "6b625d870e3216b7ef10c1080933b8a1f87e1f55aa9b80991dbf7092c9357f94"
+          }
+        },
+        "animation": {
+          "bones": 30,
+          "dummies": 6,
+          "frames": 630,
+          "fps": 30,
+          "stride": 698,
+          "bytes": 439761,
+          "maxQuaternionNormSquaredError": 8.631740788800357e-08,
+          "dummyParents": [
+            [
+              "NULL"
+            ],
+            [
+              "b13"
+            ],
+            [
+              "d3"
+            ],
+            [
+              "b17"
+            ],
+            [
+              "d5"
+            ],
+            [
+              "b25"
+            ]
+          ],
+          "sha256": "356847c04cd68d439d0616f60f86b6f66e2d1f48067a896c62a7b65fc290c58f"
+        },
+        "textures": [
+          {
+            "source": "nm008b01.JPG",
+            "web": "nm008b01.jpg",
+            "sha256": "83f7dda35343d7cc8fc723fa20e8c81a24c0b0ba42dd27e27cb775879eb554fb"
+          },
+          {
+            "source": "nm008f01.JPG",
+            "web": "nm008f01.jpg",
+            "sha256": "4b23caee870b7168c84b4b18a1fe5b16302e1ecbd867138f8dafa2393fccaa87"
+          }
+        ]
+      },
+      {
+        "id": 19,
+        "name": "律香川",
+        "portrait": "./assets/original/characters/portraits/p19.jpg",
+        "portraitSource": "/Users/dulinfeng/Downloads/流星86726/lxhdj_/image/P0020.JPG",
+        "vertices": 1144,
+        "triangles": 1306,
+        "maxBoneIndex": 29,
+        "maxWeightSumError": 1.0000000000065512e-05,
+        "files": {
+          "skc": {
+            "bytes": 122119,
+            "sha256": "151ff76df3e42b52afe590daa491785a241a436e71618f38dc730e5d1e11b501"
+          },
+          "bnc": {
+            "bytes": 4902,
+            "sha256": "9499c837ea7d35eb9256a5616862ff6753d301743d1fd0e110be8f47ef6cd9d4"
+          },
+          "amb": {
+            "bytes": 422311,
+            "sha256": "4d7cca49ac9389d61212608ab3ce8df8e711a1e3d969d5d1fab25ed71ee2c735"
+          },
+          "pos": {
+            "bytes": 296824,
+            "sha256": "9d48cdf4e5b5915ae2af07c0c437fac0ff099b652abda96fb6b54dc4d214008f"
+          }
+        },
+        "animation": {
+          "bones": 30,
+          "dummies": 6,
+          "frames": 605,
+          "fps": 30,
+          "stride": 698,
+          "bytes": 422311,
+          "maxQuaternionNormSquaredError": 8.632917025686027e-08,
+          "dummyParents": [
+            [
+              "NULL"
+            ],
+            [
+              "b13"
+            ],
+            [
+              "d3"
+            ],
+            [
+              "b17"
+            ],
+            [
+              "d5"
+            ],
+            [
+              "b25"
+            ]
+          ],
+          "sha256": "4d7cca49ac9389d61212608ab3ce8df8e711a1e3d969d5d1fab25ed71ee2c735"
+        },
+        "textures": [
+          {
+            "source": "nm016f01.JPG",
+            "web": "nm016f01.jpg",
+            "sha256": "e453572ada1c1669d6714abc430080017e27e5e885a4f1521c03f18228fe7d8e"
+          },
+          {
+            "source": "nm016b01.JPG",
+            "web": "nm016b01.jpg",
+            "sha256": "38ffba231fb875f97af95098baa56f39cdf323e3946555d0cb6d34f508b9913e"
+          }
+        ]
+      }
+    ],
+    "formatReferences": [
+      "https://www.lxres.com/LiuXingBiJi/1758.html",
+      "https://github.com/IceRiverr/Meteor/blob/master/Tools/AmbToTxt/compile_amb.cpp"
+    ],
+    "sourceCodeCopied": false
+  }
+}

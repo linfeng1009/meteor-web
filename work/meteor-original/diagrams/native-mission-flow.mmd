@@ -1,0 +1,24 @@
+flowchart LR
+  subgraph source["只读原始资料"]
+    level["Level 与 NPC PST"]
+    scene["Scene PST 与 include"]
+    assets["原 WP / DES / 模型 / POS / ACT / RES"]
+  end
+  subgraph browser["Web 移植运行时"]
+    vm["受限 AST 解释器"]
+    host["任务宿主与原条件分支"]
+    bridge["人物 / 场景 / 碰撞桥"]
+    ui["原对白与 HUD"]
+    pending["未实现调用 / 参数未证实"]
+    diagnostic["显式 diagnostic 或 pending"]
+  end
+  level --> vm
+  scene --> vm
+  vm --> host
+  assets --> bridge
+  host -->|"原配置 / 原 WP / Perform"| bridge
+  bridge -->|"HP / 视线 / 回调"| host
+  host -->|"dialogue / missionState"| ui
+  host --> pending
+  bridge --> pending
+  pending --> diagnostic

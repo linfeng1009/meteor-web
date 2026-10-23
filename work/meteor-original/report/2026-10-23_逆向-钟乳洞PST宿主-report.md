@@ -35,6 +35,35 @@ item 5/1/7/16 分别解析为原 `w1_0`、`w3_0`、`w7_0`、`w7_1` 模型。三�
 
 宿主先加载 include，再执行 `Scene_OnLoad → Scene_OnInit → level.OnInit（若存在）→ level.OnStart`。`AddNPC` 异步读取 NPC 源配置，创建角色后执行该 NPC 的 `OnInit(scriptId) → OnStart`，所有创建完成后执行首个 `level.OnUpdate`。此后以 0.05 秒浏览器适配节奏执行关卡/NPC 更新、Scene_OnUpdate/Scene_OnIdle；对象 OnIdle 每 0.1 秒委托源回调。
 
+下面的Mermaid对应已接入的源数据/宿主/引擎调用路径；“未实现调用/参数未证实”分支保留显式诊断，不表示相关原行为已实现。可编辑独立源码见 [native-mission-flow.mmd](../diagrams/native-mission-flow.mmd)。本机没有mmdc，仅提供源码并检查连接关系，未声称已导出渲染图片。
+
+```mermaid
+flowchart LR
+  subgraph source["只读原始资料"]
+    level["Level 与 NPC PST"]
+    scene["Scene PST 与 include"]
+    assets["原 WP / DES / 模型 / POS / ACT / RES"]
+  end
+  subgraph browser["Web 移植运行时"]
+    vm["受限 AST 解释器"]
+    host["任务宿主与原条件分支"]
+    bridge["人物 / 场景 / 碰撞桥"]
+    ui["原对白与 HUD"]
+    pending["未实现调用 / 参数未证实"]
+    diagnostic["显式 diagnostic 或 pending"]
+  end
+  level --> vm
+  scene --> vm
+  vm --> host
+  assets --> bridge
+  host -->|"原配置 / 原 WP / Perform"| bridge
+  bridge -->|"HP / 视线 / 回调"| host
+  host -->|"dialogue / missionState"| ui
+  host --> pending
+  bridge --> pending
+  pending --> diagnostic
+```
+
 甲的原巡逻路线为 `0,1,4,2,3`；乙为 `18,19,75,55,79,38,77,78,14,20`。路径连接与边长来自原 WP；浏览器用 Dijkstra 寻路。WP 的 `position` 保留原坐标，另将 `navigationPosition` 投影到真实碰撞地面以匹配人物脚底，避免 WP53 原高度 2.8 与实际脚底高度不同而永远无法抵达。地面偏移 0.015、抵达半径等是明确的宿主参数，并非已经恢复的原 AI 常量。
 
 ## 引擎接入接口
@@ -99,3 +128,5 @@ P-mission，`path_type=callflow`：
 5. 原角色伤害分支更新 HP；宿主完成策略明确附带推断来源（E-exe-combat-formulas、E-mission-host / F-mission-completion）。
 
 时间线：2026-10-22 读取/导出资源并完成 PST 语法与 VM；2026-10-23 接通第一关宿主及引擎、修复浏览器 fetch 接收者和脚底 WP 高度、完成 38 项测试及有限浏览器交互验证。原时间线见 [timeline.md](../timeline.md)。本报告只总结当前可复现实现；后续应先恢复机器伤害、规则与投射物，再扩大原任务范围。
+
+阶段发布记录见 [E-web-deployment.json](../evidence/E-web-deployment.json)：私有部署succeeded，源提交`ce1c35f2bf126589d6e05af8a7eb3d113e784452`，3953运行文件比对0差异。线上浏览器只看到私有登录门，未登录验证游戏，不外推为线上通关或完整游戏完成。收尾职责/未完成工单见 [workitems.md](../workitems.md)，项目内匿名经验见 [field journal](../field-journal/2026-10-23_native-game-port.md)。

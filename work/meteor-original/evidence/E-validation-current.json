@@ -75,9 +75,10 @@
     "WI-027"
   ],
   "whitespace": {
-    "command": "git diff --check",
+    "command": "git diff b1ced130 HEAD --check -- dist tests scripts README.md package.json",
     "exitCode": 0,
-    "runner": "lead"
+    "runner": "lead",
+    "scope": "Runtime/source/tests and README. Verbatim decompiler exports and raw TAP are retained byte-for-byte with their original whitespace for evidence hashes."
   },
   "jumpCamera": {
     "command": "node --test tests/native-jump-camera.test.mjs",

@@ -1,0 +1,42 @@
+0053dd90 PUSH ESI
+0053dd91 MOV ESI,dword ptr [ESP + 0x8]
+0053dd95 MOV EAX,dword ptr [ESI + 0x14]
+0053dd98 CMP EAX,0xc8
+0053dd9d JZ 0x0053ddbf
+0053dd9f CMP EAX,0xc9
+0053dda4 JZ 0x0053ddbf
+0053dda6 MOV EAX,dword ptr [ESI]
+0053dda8 PUSH ESI
+0053dda9 MOV dword ptr [EAX + 0x14],0x14
+0053ddb0 MOV ECX,dword ptr [ESI]
+0053ddb2 MOV EDX,dword ptr [ESI + 0x14]
+0053ddb5 MOV dword ptr [ECX + 0x18],EDX
+0053ddb8 MOV EAX,dword ptr [ESI]
+0053ddba CALL dword ptr [EAX]
+0053ddbc ADD ESP,0x4
+0053ddbf PUSH ESI
+0053ddc0 CALL 0x0053de00
+0053ddc5 MOV ECX,EAX
+0053ddc7 ADD ESP,0x4
+0053ddca DEC ECX
+0053ddcb JZ 0x0053ddf9
+0053ddcd DEC ECX
+0053ddce JNZ 0x0053ddfe
+0053ddd0 MOV AL,byte ptr [ESP + 0xc]
+0053ddd4 TEST AL,AL
+0053ddd6 JZ 0x0053dde9
+0053ddd8 MOV ECX,dword ptr [ESI]
+0053ddda PUSH ESI
+0053dddb MOV dword ptr [ECX + 0x14],0x33
+0053dde2 MOV EDX,dword ptr [ESI]
+0053dde4 CALL dword ptr [EDX]
+0053dde6 ADD ESP,0x4
+0053dde9 PUSH ESI
+0053ddea CALL 0x0053e2c0
+0053ddef ADD ESP,0x4
+0053ddf2 MOV EAX,0x2
+0053ddf7 POP ESI
+0053ddf8 RET
+0053ddf9 MOV EAX,0x1
+0053ddfe POP ESI
+0053ddff RET

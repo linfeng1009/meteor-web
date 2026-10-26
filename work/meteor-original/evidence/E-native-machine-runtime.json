@@ -1,0 +1,43 @@
+{
+  "id": "E-native-machine-runtime",
+  "observedAt": "2026-10-23T13:12:07.859006+00:00",
+  "command": "node --test --test-name-pattern='original machine damage|projectile world hits feed' tests/native-script.test.mjs",
+  "exitCode": 0,
+  "tests": 2,
+  "passed": 2,
+  "failed": 0,
+  "expected": {
+    "dartPose200SceneDamage": 49,
+    "dartPose202SceneDamage": 49,
+    "daggerPose248SceneDamage": 50,
+    "spearPose279SceneDamage": 52,
+    "dartPose200VsDefense15CharacterDamage": 34,
+    "stoneHPAfter10DartHits": 10,
+    "stoneHPAfter11DartHits": -39,
+    "stoneCollisionAfter11Hits": 0
+  },
+  "scope": "Actual runtime scene damage resolver and original cave PST callbacks; impact object/property storage is an injected fixture, not browser geometric collision or actual DES item-presence validation.",
+  "notAsserted": [
+    "manual full mission clear",
+    "exact original projectile physics",
+    "original EXE dynamic execution",
+    "all source scene items exist in loose DES"
+  ],
+  "artifacts": [
+    {
+      "path": "dist/native-combat.js",
+      "sha256": "a23396fee8859219f92ee7e19754355254f0dade5ef878e2752397a1ddaaaa5a",
+      "bytes": 18245
+    },
+    {
+      "path": "tests/native-script.test.mjs",
+      "sha256": "bf86a1aa9ab7927645b33a0c87bf7f029328a62f9839080d7b11d2987f6dfe9f",
+      "bytes": 11177
+    },
+    {
+      "path": "work/meteor-original/evidence/native-machine-damage-tests.tap",
+      "sha256": "5dd462e3ed6596c87ded73ed3e4ecc616c73fa36112bb3c4706126dbda38fb9a",
+      "bytes": 613
+    }
+  ]
+}

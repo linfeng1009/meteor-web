@@ -87,7 +87,7 @@ mode1增量 = trunc((value * P - 1) * basis)
 
 已保留的限制：sn22原GMB含非有限顶点，被标记不可用；w6_5缺源模型；场景实例w8_0、w8_3此前清单未找到精确同名cmodel，但追加核对确认其w8_0r/l、w8_3r/l双持组件均在，属于逻辑别名解析问题（见[E-missing-models-research.json](../evidence/E-missing-models-research.json)）；三处纹理n23r05.bmp、n23r06.bmp、n23w01.BMP缺失。缺失项未用程序模型伪称原版资源替代。
 
-人物是原版蒙皮与原版动画；动作时间轴、攻击窗与连招可达图来自POS/ACT。当前模块实际声明的动作家族为 `dart, dagger, sword, spear, blade` 共5种。59个道具/71个武器模型的资源存在，不等于59个道具的所有操作行为均已恢复。COB碰撞单元、原任务VM与机关伤害（场景OnAttack的damage传参链未核实）、完整导航、投射物/全部特效行为、完整原AI与联机同步仍不能仅凭资源已导入宣称完成。
+人物是原版蒙皮与原版动画；动作时间轴、攻击窗与连招可达图来自POS/ACT。当前模块实际声明的动作家族为 `dart, dagger, sword, spear, blade` 共5种。59个道具/71个武器模型的资源存在，不等于59个道具的所有操作行为均已恢复。机关OnAttack的damage传参链现已恢复，见本报告追加章节；完整机关行为、COB碰撞单元、全任务/导航、投射物的原物理参数、全部特效行为、完整原AI与联机同步仍不能仅凭资源已导入宣称完成。
 
 ## Evidence → Finding → Path
 
@@ -155,3 +155,61 @@ JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home   /opt/
 ## 未完成项与收尾状态
 
 本分项的数值公式、证据保全与覆盖核验已收尾。原输入selector、怒气消费到动作触发映射、完整life_adjust配置传播链明确未完成；没有继续以猜测补齐。恢复工作应从现有函数地址、ACT分组对象+0x644与已识别网络事件继续，保留现有证据即可，不需要重新从网站素材开始。完整游戏重构仍应以主任务实现/验证结果为准。
+
+## 追加：机关OnAttack伤害与飞镖效果路径
+
+2026-10-23本轮仅静态读取原PE，并以 `-readOnly -noanalysis` 打开既有Ghidra项目。新增导出放在 `evidence/projectile-native/pass1..pass7`，未覆盖先前decompiled文件或其哈希；原EXE未执行，SHA256复查不变。Ghidra自身缓存和新分析产物有写入，临时函数元数据在只读项目关闭时丢弃。
+
+**机关回调的damage是攻击者的姿态攻击值，不减目标角色防御，也不套阵营/防御分支倍率。** 原始链为：
+
+1. `004f3380` 经 `00565520` 的真实场景可受击对象查询，发送事件`0x1d`；每个DWORD的低16位为sceneIndex，高16位为poseId。
+2. `004ad530 case0x1d` 调用服务对象首基址vtable `005a9bf8 +0x68`。原PE表项直接读得`004af570`；不要把同一对象的次基址vtable混用。
+3. `004af570` 按attackerId从`this+0x3a8`查角色，调用该角色`+0x88`属性接口`+0x40(poseId)`，即已经恢复的`004d61c0 nativePoseAttack`。x86 `004af5ed PUSH EDX → 004af5fa CALL [EAX+0x40] → 004af601 PUSH EAX`确认返回值原样作为第三参数。
+4. `005643f0(sceneIndex,attackerId,damage)`取得场景记录，再调用`00560500`。后者把record`+0x20`的sceneItemId、attackerId、damage依次组为三个PST整型参数，调用record`+0x3c`保存的`物体名_OnAttack`。
+
+```mermaid
+flowchart LR
+  contact["原场景受击查询"] --> packet["0x1d: sceneIndex + poseId"]
+  packet --> server["004af570"]
+  server --> pose["stats +0x40: 姿态攻击"]
+  pose --> args["005643f0 / 00560500"]
+  args --> pst["PST OnAttack: id, attacker, damage"]
+```
+
+当前接入点为 `createNativeSceneDamageResolver({moveRecords,weaponRecords,...})`：先用已恢复的stat3逻辑求有效攻击，再调用`nativePoseAttack`；接口接受`{attacker,state:{poseId},...}`。这与角色伤害共享原属性/姿态运算，但不执行角色防御减法。
+
+| 原武器/姿态 | 有效攻击 | 机关damage |
+|---|---:|---:|
+| item1 / w3_0 / Pose200 | 75 | 49 |
+| item1 / w3_0 / Pose202 | 75 | 49 |
+| item5 / w1_0 / Pose248 | 90 | 50 |
+| item5 / w1_0 / Pose249 | 90 | 59 |
+| item7 / w7_0 / Pose279 | 115 | 52 |
+
+飞镖Pose200对防御15角色的伤害是34，不能用34作为机关damage。独立运行的两项新增验证检查此差异，并将每次49的飞镖世界命中接入真实钟乳洞PST：原石块HP500在十次后剩10，第十一次后为-39，原脚本关闭碰撞并触发StoneBRK。该回调测试使用注入的命中对象和属性存储，**不证明实际DES中每个通用道具名都存在，也不替代浏览器真实几何接触验收**。
+
+飞镖效果的有限追踪也已保全。Pos200/Pos202.ef均为3239字节的`PonEF V1.00`，各含6个节点：2 AUDIO、2 BILLBOARD、1 SPHERE、1 PARTICLE；原音效含W03FIR01.wav和MMRun.wav，没有MODEL节点。`0056e490 → 0058a700`读取原类型注册表并选择构造器；`00566a90 / 00566380 / 0055d1e0`负责克隆和绑定效果。`005663e0`累计时间于实例`+0x134`，与模板结束`+0x1c`比较并循环或结束；`0056df30`从子节点时间区间汇总模板边界，`0056e870 / 00582e90`更新节点及采样的变换。
+
+这证明了原效果加载/生命周期路径，**尚未证明飞镖实体的速度、寿命、重力、旋转或碰撞半径**。本轮另外定位的GunHit射线候选`004bc5e0 / 004f3d50`构造`origin + direction * 1000`，但与item1/Pose200的关联未闭合，不可把该1000当飞镖射程或速度。Web当前speed50/radius0.12/life3/gravity0/spin28继续明确作为适配参数；PonEF视觉SPHERE半径或效果结束时刻不能直接取代这些物理参数。
+
+### 追加证据与复现
+
+| E-id | source_ref | SHA256 / 复现 |
+|---|---|---|
+| E-307 | [原机关damage闭环](../evidence/E-native-machine-damage.json) | `00d6c29e9a7b68b296f62e7fbe0a21a334b35bf5bbf7adb05d43c6533b9323c5`；内含逐文件C/ASM哈希和完整命令 |
+| E-308 | [原飞镖效果有限追踪](../evidence/E-native-dart-trace.json) | `69294e3306a8980651ba4e60337b045263ac438389f827f9fab9b6d60909370c`；内含原EF字节/类型偏移和导出函数哈希 |
+| E-309 | [机关数值与原PST回调验证](../evidence/E-native-machine-runtime.json) | `6739279f17fdafd54756a97ea1edbec38b9ddafa086182a3dc92fadc545307f2`；[2/2测试日志](../evidence/native-machine-damage-tests.tap) |
+
+在meteor-web目录中复现（Ghidra会写工具缓存和目标分析目录，原样本不变；勿与其他Ghidra会话并发打开同一DB）：
+
+```sh
+JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home /opt/homebrew/Cellar/ghidra/12.1.4/libexec/support/analyzeHeadless work/meteor-original/ghidra-project MeteorOriginal -process Meteor.exe -readOnly -noanalysis -scriptPath scripts/analysis -postScript ReadOnlyProjectileTrace.java work/meteor-original/evidence/projectile-native/reproduce 004af570 005643f0 00560500 00565520 004f3380 004ad530 0056e490 0058a700 00566a90 005663e0 0056df30 0056e870 00582e90
+node --test --test-name-pattern='original machine damage|projectile world hits feed' tests/native-script.test.mjs
+```
+
+| Finding | 状态/置信度 | Evidence / location / 结论 |
+|---|---|---|
+| F-307 | validated / high / n/a_re | E-307、E-303、E-309；004af570→005643f0→00560500：机关damage直接使用姿态攻击，实参链与原PST数值/破坏状态验证吻合；完整原碰撞判定仍单列 |
+| F-308 | candidate / high / n/a_re | E-308；原EF加载、绑定和时间采样路径已定位；本轮不能将任何候选常量提升为已证飞镖物理 |
+
+P-307，`path_type=callflow`：原碰撞查询与poseId打包（E-307 / F-307）→ 0x1d服务端查攻击者（E-307 / F-307）→ 原stats+0x40姿态攻击（E-303、E-307 / F-307）→ 三实参PST OnAttack（E-307 / F-307）→ 49伤害与原石块HP/碰撞状态核验（E-309 / F-307）。残余边界：无原EXE动态运行对照；原飞镖运动、全机关接触和其他物品交互未因本数值恢复而宣称完成。

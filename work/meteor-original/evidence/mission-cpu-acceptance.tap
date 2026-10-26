@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: the actual source mission starts on real floors with the original distinct NPC configuration
+ok 1 - the actual source mission starts on real floors with the original distinct NPC configuration
+  ---
+  duration_ms: 348.825167
+  type: 'test'
+  ...
+# Subtest: a player dagger attack uses actual native pose, bones, weapon geometry and RES math to remove NPC HP
+ok 2 - a player dagger attack uses actual native pose, bones, weapon geometry and RES math to remove NPC HP
+  ---
+  duration_ms: 134.617875
+  type: 'test'
+  ...
+# Subtest: switching to the source secondary dart releases from the real hand and damages an original NPC only after flight
+ok 3 - switching to the source secondary dart releases from the real hand and damages an original NPC only after flight
+  ---
+  duration_ms: 122.570958
+  type: 'test'
+  ...
+# Subtest: all original mission NPC spawns are reachable from the player through WP edges and real collision geometry
+ok 4 - all original mission NPC spawns are reachable from the player through WP edges and real collision geometry
+  ---
+  duration_ms: 2070.491416
+  type: 'test'
+  ...
+# Subtest: source patrol AI can reach and damage a player who enters the original guard area
+ok 5 - source patrol AI can reach and damage a player who enters the original guard area
+  ---
+  duration_ms: 1320.168209
+  type: 'test'
+  ...
+# Subtest: real native attacks defeat source NPC HP and produce one story win, then restart resets the mission
+ok 6 - real native attacks defeat source NPC HP and produce one story win, then restart resets the mission
+  ---
+  duration_ms: 12058.833375
+  type: 'test'
+  ...
+# Subtest: walking normally into the source enemies causes player death and one failure, and restart resets accumulated state
+ok 7 - walking normally into the source enemies causes player death and one failure, and restart resets accumulated state
+  ---
+  duration_ms: 9288.052458
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 25552.037916

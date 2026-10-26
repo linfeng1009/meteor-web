@@ -1,0 +1,184 @@
+{
+  "id": "E-validation-current",
+  "observedAt": "2026-10-26T12:04:06+08:00",
+  "scope": "work/meteor-original/scope.md",
+  "originalExecuted": false,
+  "status": "validated-local-integrated-snapshot",
+  "fullSuite": {
+    "command": "npm test",
+    "total": 83,
+    "passed": 83,
+    "failed": 0,
+    "durationMs": 26870.848917,
+    "runner": "lead",
+    "artifactPath": "evidence/native-runtime-current.tap",
+    "contentHash": "sha256:2693f9c2e5b6cabdf61311107024edeb6f525fbb028cd7a2a317cab60ec8b795",
+    "rawTapArchived": true,
+    "note": "Final integrated local run on 2026-10-26; includes default scene resolver, jump/camera regression and engine item pickup integration."
+  },
+  "syntax": {
+    "command": "npm run check",
+    "runtimeModules": 11,
+    "passed": 11,
+    "failed": 0,
+    "runner": "lead"
+  },
+  "projectiles": {
+    "command": "node --test tests/native-projectiles.test.mjs",
+    "total": 13,
+    "passed": 13,
+    "failed": 0,
+    "evidence": "evidence/E-native-projectiles.md",
+    "realAssets": "Original SKC/BNC/AMB, d_wpnR, W3_0 and sn01 triangles: WP67 to WP53 three impacts of 34; original bridge mesh T blocks a shot; W7_1 defense0 receives49."
+  },
+  "missionAcceptance": {
+    "command": "node --test tests/mission-acceptance.test.mjs",
+    "total": 7,
+    "passed": 7,
+    "failed": 0,
+    "durationMs": 25552.037916,
+    "runner": "mission_acceptance",
+    "evidence": "evidence/E-mission-cpu-acceptance.md",
+    "artifactPath": "evidence/mission-cpu-acceptance.tap",
+    "contentHash": "sha256:d9d150fbd1f8eb846f852f6994dc6f235020226d4e91603548a4bed6dcbe9d7d",
+    "assertions": [
+      "Original source spawn, floor and HP/weapon configuration",
+      "Real dagger contact removes original NPC HP",
+      "Actual hand/POS dart release precedes flight damage",
+      "Actual WP9 to WP53/80/32 movement through source collision",
+      "Source NPC AI reaches and damages the player",
+      "Isolated retaliation: normal dagger attacks remove4000HP, cause3kills, source leader death line, one inferred Rule10 win, restart",
+      "Live AI/ordinary movement from WP9 to WP53: natural player death, one failure, restart clears rage and contacts"
+    ]
+  },
+  "boundaries": [
+    "No complete live-AI combat victory or manual mission completion has been demonstrated.",
+    "The 3-NPC win test freezes NPC physical retaliation and places the player near original NPC spawns; it does not prove full combat victory from the source player spawn.",
+    "The live-AI failure test uses ordinary movement from the original player spawn without directly assigning HP/dead.",
+    "Rule10 completion remains an explicit host inference, not a recovered EXE GameRule.",
+    "Dart flight constants and actor/world collision approximations are browser adapters; advanced projectiles and complete EF behavior remain pending.",
+    "Previous E-mission-host 38-test results and E-web-deployment describe an earlier snapshot; this validation does not attest a new hosted deployment.",
+    "The original d_base scene translation is suppressed only for browser in-place collision-aligned playback; bone-local pose and authored rootMotion playback remain intact.",
+    "Meatbun support is limited to sn01 story mode; pickup input/range, full-HP retention and no timed respawn are browser adapters, not recovered EXE rules.",
+    "The current local version has not been uploaded or deployed: automatic approval review rejected the external upload and explicit user authorization is still outstanding. The earlier private deployment is historical only."
+  ],
+  "linkedWorkitems": [
+    "WI-008",
+    "WI-009",
+    "WI-012",
+    "WI-013",
+    "WI-014",
+    "WI-015",
+    "WI-016",
+    "WI-023",
+    "WI-024",
+    "WI-027"
+  ],
+  "whitespace": {
+    "command": "git diff --check",
+    "exitCode": 0,
+    "runner": "lead"
+  },
+  "jumpCamera": {
+    "command": "node --test tests/native-jump-camera.test.mjs",
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "evidence": "evidence/E-jump-follow-2026-10-26.md",
+    "finalSuiteArtifact": "evidence/native-runtime-current.tap",
+    "baseline": {
+      "sourceCommit": "b1ced130b8f01d6d601f384bc264ee76c0e24ea2",
+      "total": 10,
+      "passed": 2,
+      "failed": 8,
+      "artifactPath": "evidence/E-jump-follow-baseline-2026-10-26.tap"
+    },
+    "assertions": [
+      "Real SKC/BNC/AMB/POS takeoff, airborne and landing frames keep scene displacement aligned with collider",
+      "Flat, locked, moving and near-wall jumps remain in screen projection and land naturally",
+      "Vertical camera and look target preserve height relative to the jumping collision root",
+      "Native dart hand attachments and pelvis pose remain intact; authored rootMotion playback remains available",
+      "All 20 original BNC scene-base hierarchies checked, including nonzero P19 rest pivot"
+    ]
+  },
+  "items": {
+    "command": "node --test tests/native-items.test.mjs",
+    "total": 9,
+    "passed": 9,
+    "failed": 0,
+    "evidence": "evidence/E-native-items-2026-10-26.md",
+    "finalSuiteArtifact": "evidence/native-runtime-current.tap",
+    "scope": "sn01 story mode only, original type2/id1 Item01 meatbun with raw current-HP +300 clamped to current actor.maxHp; training pickups are disabled",
+    "assertions": [
+      "Original RES identity and healing value",
+      "One consumption, HP clamp, full-HP retention, source reset/disposal",
+      "Visibility, interactive flag, range, height, occlusion and actor-life gates",
+      "Engine reach excludes the item own collider and restores ray distance",
+      "Engine-initialized story/pause/input gates, actual recovery event and serializable HUD",
+      "Actual cave DES/PST Item01 stone drop, heal and original scene reinitialization"
+    ],
+    "browserAdapters": [
+      "Explicit F/touch pickup",
+      "Horizontal 1.8world and vertical 2world range",
+      "Full HP does not consume",
+      "One use per instance per match; no inferred timed respawn"
+    ],
+    "historicalStandaloneNote": "The earlier native-items-2026-10-26.tap has 7 tests; the final 9-item-test count is demonstrated by native-runtime-current.tap."
+  },
+  "sceneMachineIntegration": {
+    "status": "default-engine-resolver-integrated-and-validated",
+    "damageEvidence": "evidence/E-native-machine-damage.json",
+    "numericCallbackEvidence": "evidence/E-native-machine-runtime.json",
+    "geometryCommand": "node work/meteor-original/evidence/scene-machine-audit-2026-10-26.mjs",
+    "geometryEvidence": "evidence/scene-machine-audit-2026-10-26.json",
+    "observed": "Actual sn01 DES/cmodel/FMC/POS/PST and continuous projectile sweep: 11 hits of nativePoseAttack49 take D_St20 from500 to-39, play break pose1 to state3, hide stone/disable collision, activate D_itSt20; Scene_OnInit restores original state.",
+    "limits": "D_itSt20 is Item02 and remains outside meatbun pickup support. Geometry audit uses a synthetic probe origin; actual character aim/release, walk route to this probe and browser interaction are not asserted by it."
+  },
+  "historicalSnapshots": [
+    {
+      "observedAt": "2026-10-23T21:04:12+08:00",
+      "status": "superseded-pre-machine-integration-local-snapshot",
+      "fullSuite": {
+        "command": "npm test",
+        "total": 58,
+        "passed": 58,
+        "failed": 0,
+        "durationMs": 28060.5335,
+        "runner": "game_engine",
+        "sourceRef": "Shared agent execution result: functions exec session 90090, reported to mission_acceptance on 2026-10-23.",
+        "rawTapArchived": false,
+        "note": "Full-suite counts preserve the runner report; rerun npm test for a fresh full TAP. The independent 7-test mission acceptance TAP is archived below."
+      },
+      "syntax": {
+        "command": "npm run check",
+        "runtimeModules": 10,
+        "passed": 10,
+        "failed": 0,
+        "runner": "game_engine"
+      },
+      "laterUpdateAtThatTime": {
+        "observedAt": "2026-10-23T21:08:39+08:00",
+        "status": "pending-default-engine-integration-and-final-full-suite",
+        "expectedTotal": 60,
+        "newTestsPassed": 2,
+        "newTestModuleReportedResult": "tests/native-script.test.mjs: 12/12 passed by lead",
+        "evidence": "evidence/E-native-machine-damage.json",
+        "note": "58/58 remains a successful earlier full-suite snapshot, not the final post-integration count. Lead is integrating the default scene resolver before final validation."
+      }
+    }
+  ],
+  "sceneMeatbunChain": {
+    "command": "node work/meteor-original/evidence/scene-meatbun-chain-2026-10-26.mjs",
+    "passed": true,
+    "evidence": "evidence/scene-meatbun-chain-2026-10-26.json",
+    "assertions": [
+      "11 actual D_St22/Object01 projectile world contacts at49 each, stone HP500 to-39",
+      "Original break pose completes, stone active/collision0 and Item01 active/interactive1",
+      "Grounded probe actor passes engine line-of-sight, HP1000 to1300, duplicate rejected",
+      "Original Scene_OnInit and item reset restore original stone/item state"
+    ],
+    "limits": [
+      "Synthetic shot origin and grounded actor placement; no ordinary walk route, native hand release or browser F pickup asserted"
+    ]
+  }
+}

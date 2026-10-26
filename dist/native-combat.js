@@ -131,6 +131,19 @@ export function createNativeDamageResolver(data) {
   };
 }
 
+// Scene OnAttack receives the attacker's pose attack directly. The original
+// 004af570 -> 005643f0 -> 00560500 path applies no victim defense/team factor.
+// Evidence: work/meteor-original/evidence/E-native-machine-damage.json.
+export function createNativeSceneDamageResolver(data) {
+  return context => {
+    const { attacker } = context, moveRecord = data.moveRecords.get(context.state?.poseId ?? context.poseId);
+    if (!moveRecord) return null;
+    const weapon = attacker.weaponRecord || data.weaponRecords.get(NATIVE_WEAPONS[attacker.weapon]?.model);
+    const attack = nativeEffectiveStat(3, attacker.nativeStats?.[3] ?? 0, [weapon, ...(attacker.activeItems || [])]);
+    return nativePoseAttack(attack, moveRecord);
+  };
+}
+
 export class NativePoseTimeline {
   constructor(pose, { fps = 30, loop = false, sampleRoot = null, scale = .08 } = {}) {
     if (!pose?.valid) throw new Error(`Pose ${pose?.id ?? '?'} has no animation frames`);

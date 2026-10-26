@@ -1,0 +1,137 @@
+{
+  "id": "E-native-machine-damage",
+  "observedAt": "2026-10-23T13:06:55.515773+00:00",
+  "sample": "/Users/dulinfeng/Downloads/流星86726/lxhdj_/Meteor.exe",
+  "sampleSha256": "289afb0aa44a47921d167fc24d6d404c60d6d00c299ac27d45fc61e16231b498",
+  "method": "Ghidra12.1.4 -process Meteor.exe -readOnly -noanalysis; x86 disassembly, unchanged source sample, no EXE execution. Temporary function metadata discarded on close.",
+  "status": "static-chain-verified",
+  "event": {
+    "senderFunction": "0x004f3380",
+    "id": "0x1d",
+    "payload": "one uint32 per hit machine: low16=sceneIndex, high16=poseId",
+    "dispatcher": "0x004ad530 case0x1d",
+    "serverVtableBase": "0x005a9bf8",
+    "serverVtableSlot": "0x68",
+    "serverFunction": "0x004af570"
+  },
+  "damage": {
+    "formula": "nativePoseAttack(effectiveAttack, moveRecord)",
+    "effectiveAttack": "stat3 base/delta plus current weapon and applicable active-item modifiers, via original 0x004d5e30",
+    "poseAttack": "original stats virtual+0x40 / function0x004d61c0; already verified percentage/truncation semantics retained",
+    "notApplied": [
+      "target character defense",
+      "team multiplier",
+      "guard branch",
+      "HP scale division"
+    ],
+    "proof": [
+      "004af5a3 MOV DX,word ptr [payload+index*4+2]",
+      "004af5ed PUSH EDX; LEA ECX,[attacker+0x88]; 004af5fa CALL [statsVtable+0x40]",
+      "004af601 PUSH EAX; PUSH attackerId; PUSH sceneIndex; 004af60e CALL 005643f0",
+      "005643f0 resolves scene record and calls00560500 with attackerId/damage unchanged",
+      "00560500 copies record+0x20,attackerId,damage into 3 integer PST arguments, calls callback pointer record+0x3c"
+    ]
+  },
+  "pstArguments": [
+    "sceneItemId",
+    "attackerId",
+    "nativePoseAttack"
+  ],
+  "examples": [
+    {
+      "weaponModel": "w3_0",
+      "itemId": 1,
+      "poseId": 200,
+      "effectiveAttack": 75,
+      "sceneDamage": 49,
+      "characterDamageVsDefense15": 34
+    },
+    {
+      "weaponModel": "w3_0",
+      "itemId": 1,
+      "poseId": 202,
+      "effectiveAttack": 75,
+      "sceneDamage": 49,
+      "characterDamageVsDefense15": 34
+    },
+    {
+      "weaponModel": "w1_0",
+      "itemId": 5,
+      "poseId": 248,
+      "effectiveAttack": 90,
+      "sceneDamage": 50
+    },
+    {
+      "weaponModel": "w1_0",
+      "itemId": 5,
+      "poseId": 249,
+      "effectiveAttack": 90,
+      "sceneDamage": 59
+    },
+    {
+      "weaponModel": "w7_0",
+      "itemId": 7,
+      "poseId": 279,
+      "effectiveAttack": 115,
+      "sceneDamage": 52
+    }
+  ],
+  "limits": [
+    "Original hit-volume generation and event rate still separate from the numeric damage rule.",
+    "This verifies the source OnAttack damage argument, not native full machine physics, splash damage, projectile impact-to-machine mapping or all machine interactions.",
+    "No original EXE dynamic run cross-check performed."
+  ],
+  "artifacts": [
+    {
+      "path": "work/meteor-original/evidence/projectile-native/pass3/004af570_FUN_004af570.c",
+      "bytes": 1293,
+      "sha256": "3c0dd74165c1d8ed6f4fb1aed60ad8cc6908c48be45001623cfd4dc547e4a2e6"
+    },
+    {
+      "path": "work/meteor-original/evidence/projectile-native/pass3/004af570_FUN_004af570.asm",
+      "bytes": 1775,
+      "sha256": "6ee9b87290bbfe9dec1bf501f19cf2a8ea4138d2a4ebb617b04ffc6188c6f96d"
+    },
+    {
+      "path": "work/meteor-original/evidence/projectile-native/pass4/005643f0_FUN_005643f0.c",
+      "bytes": 342,
+      "sha256": "f42197fdbacb717cb10486d6b2552a60c7fbe557b8383cfce761071ffd05e25a"
+    },
+    {
+      "path": "work/meteor-original/evidence/projectile-native/pass4/005643f0_FUN_005643f0.asm",
+      "bytes": 343,
+      "sha256": "864c4c80ac43f30423503e2296106352bb4c039a3386924d076104f81390dba9"
+    },
+    {
+      "path": "work/meteor-original/evidence/projectile-native/pass5/00560500_FUN_00560500.c",
+      "bytes": 1259,
+      "sha256": "3dec34573c2a9248473b956018792b53bf45cf1a7a27cbcac052a4661a271bb0"
+    },
+    {
+      "path": "work/meteor-original/evidence/projectile-native/pass5/00560500_FUN_00560500.asm",
+      "bytes": 1982,
+      "sha256": "b42061c5e4dbcd430b0b91ab4eade9a90f584edda4dd4561c54b783d7fe648e1"
+    },
+    {
+      "path": "work/meteor-original/evidence/projectile-native/pass1/00565520_FUN_00565520.c",
+      "bytes": 2824,
+      "sha256": "825d870972051d2b2e3c7d29e49ac330db580e861b28c6e41a92007e80b9f22f"
+    },
+    {
+      "path": "work/meteor-original/evidence/decompiled/004f3380_FUN_004f3380.c",
+      "bytes": 9143,
+      "sha256": "58d57ffa3ed86a6ef83c8476d02a45a4054347c27b1a6bea3fa1a335908d337f"
+    },
+    {
+      "path": "work/meteor-original/evidence/decompiled/004ad530_FUN_004ad530.c",
+      "bytes": 35492,
+      "sha256": "0d0d0032e77dcce06bc10a77eb386ea79acb0c109b6fc2a8f983c1fb4c6dd861"
+    },
+    {
+      "path": "work/meteor-original/evidence/E-exe-combat-formulas.json",
+      "bytes": 6251,
+      "sha256": "ed62a44fbea278976a36138e492505c0f1b3468afae57c70a52b5347ec2e851a"
+    }
+  ],
+  "reproduction": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home /opt/homebrew/Cellar/ghidra/12.1.4/libexec/support/analyzeHeadless work/meteor-original/ghidra-project MeteorOriginal -process Meteor.exe -readOnly -noanalysis -scriptPath scripts/analysis -postScript ReadOnlyProjectileTrace.java work/meteor-original/evidence/projectile-native/machine-reproduce 004af570 005643f0 00560500 00565520 004f3380 004ad530"
+}

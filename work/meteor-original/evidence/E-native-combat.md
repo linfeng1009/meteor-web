@@ -55,16 +55,24 @@ The UI time is elapsed rehearsal time. No invented five-kill or three-minute ori
 
 Native sound playback follows extracted EF soundReferences into original WAV files. The host currently triggers the selected EF sound at animation start/contact; the binary EF's internal event delays have not yet been decoded and are not claimed as accurate timing.
 
-The original first-mission PST VM now runs through native-mission-host.js. Core pending items remain explicit in onUpdate.native: original physical constants, machine-object damage arguments and ranged projectile semantics. Browser contact radii, AI movement timing/perception and the Rule-10 completion fallback remain identified adapters. This is not a claim that the Windows executable has been fully decompiled or ported.
+The original first-mission PST VM now runs through native-mission-host.js. Core pending items remain explicit in onUpdate.native: original physical constants, machine collision volumes and advanced/native projectile semantics. Browser contact radii, AI movement timing/perception and the Rule-10 completion fallback remain identified adapters. This is not a claim that the Windows executable has been fully decompiled or ported.
 
 
 ## 2026-10-23 runtime integration update
 
 - The original first cave mission fixes the player to p0, original waypoint 9, HP 1500, item 5 (W1_0 dagger) and secondary item 1 (W3_0 dart). All three original model-8 NPCs have distinct runtime IDs, their source names, original spawn waypoints 53/80/32, HP 1000/1000/2000 and exact weapon items 7/7/16 (including W7_1). Story actors do not respawn.
-- E switches between the original primary/secondary items in story mode. Rehearsal supports original sword, blade, spear and dagger via 1/2/3/4. Space/K guards, right mouse/L jumps, C crouches. Dart geometry and throw animation are present; projectile collision/damage is explicitly pending.
+- E switches between the original primary/secondary items in story mode. Rehearsal supports original sword, blade, spear and dagger via 1/2/3/4. Space/K guards, right mouse/L jumps, C crouches. Dart geometry, original throw animation, continuous flight and actor/map collision are now implemented for basic poses 200/202; see E-native-projectiles.md. Advanced projectile specials and exact native flight physics remain pending.
 - Original DES custom-model dummies are instantiated from the read-only extraction manifest; original FMC rigid transforms and implicit cmodel POS pose indices animate both rendering and collision. Source meshes are retained, with no generated replacement floors. See E-scene-model-extraction.json and E-scene-runtime-verification.json.
 - DES aliases W8_0/W8_3 resolve the actual r/l GMC files. Showing both together is a browser-host choice, not independently proven EXE pickup-display semantics.
-- Scene attacks trace original collision triangles toward source attack bones. A default numeric argument is not sent to PST OnAttack until the EXE's machine damage path has been recovered. onUpdate.native.sceneDamagePending and scene-contact events expose that boundary.
+- Scene attacks trace original collision triangles toward source attack bones. The EXE machine path has now been recovered (004af570 → 005643f0 → 00560500): nativePoseAttack is passed directly to PST OnAttack, without victim defense or team factor. The default createNativeSceneDamageResolver is installed; E-native-machine-damage.json retains the static proof.
 - Collision surface normals are transformed into world coordinates, preserving rotated dynamic floors. Scene cache retains at most two maps after loading, protecting current/pending maps; eviction releases unique geometry, material and texture objects.
 
 Reproduction: `npm test`, `npm run check`, `node scripts/verify-native-scenes.mjs`. The last command loads actual original dummy geometry/FMC with a no-op texture decoder in Node and writes E-scene-runtime-verification.json; it does not assert browser visual correctness.
+
+
+## 七星基础投射增量
+
+详见 E-native-projectiles.md：原POS200/202攻击窗、原W3_0模型/贴图、原RES75/65与已恢复EXE伤害链已经接上实际飞行与命中；13项投射回归含真实SKC/BNC/AMB+d_wpnR+sn01源地图。桥上W12发射由原mesh T遮挡，开阔地WP67→53连续三发各34；长官W7_1防0每击49，与实机观察一致。移动、重力、碰撞半径、寿命、自旋等仍是明确声明的Web适配参数。
+
+
+锁定与近墙相机的最新交互适配另见 E-native-camera.md；它不修改原姿态、碰撞世界或伤害规则。

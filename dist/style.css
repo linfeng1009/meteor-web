@@ -17,3 +17,7 @@ dialog{background:#111a1e;color:var(--paper);border:1px solid #8f785950;padding:
 .stat-line b{white-space:nowrap;min-width:64px;flex-shrink:0}
 @media(pointer:coarse){.touch-controls{display:flex;inset:auto 18px 35px}.key-guide{display:none}.hud-bottom{bottom:8px}#mission-dialogue{bottom:150px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+#enemy-hp{display:block;font:9px var(--sans);color:#c9b997;letter-spacing:1px;margin:5px 0 7px}#mission-goal{position:absolute;top:132px;left:32px;color:#cab58d;font-size:10px;letter-spacing:2px}.loadout{flex-wrap:wrap}@media(max-width:800px){#mission-goal{top:115px;left:15px;font-size:9px}#enemy-hp{font-size:8px}.weapon-chip{padding:7px 8px}.weapon-chip span{margin-left:5px}}
+
+#game-hud #pickup-hint{pointer-events:auto;position:absolute;bottom:125px;left:50%;transform:translateX(-50%);min-height:44px;padding:10px 20px;border:1px solid #c9a96f;background:#162024ed;color:#efdbb7;font:13px var(--sans);letter-spacing:1px;cursor:pointer;box-shadow:0 4px 18px #0006}#game-hud #pickup-hint:disabled{color:#bdb6a7;border-color:#807357;cursor:default}#pickup-hint:focus-visible{outline:2px solid #f2d5a1;outline-offset:4px}@media(max-width:800px){#game-hud #pickup-hint{bottom:165px;max-width:90%;font-size:12px;white-space:nowrap}}@media(max-height:500px) and (orientation:landscape){#game-hud #pickup-hint{bottom:135px}}

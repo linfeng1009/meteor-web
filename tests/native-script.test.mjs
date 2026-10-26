@@ -3,9 +3,17 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { posix } from 'node:path';
 import { NativeScriptVM, NativeScriptError, parsePst } from '../dist/native-script.js';
+import { createNativeDamageResolver, createNativeSceneDamageResolver } from '../dist/native-combat.js';
+import { MeteorGame } from '../dist/engine.js';
+import * as THREE from '../dist/vendor/three.module.js';
 
 const root = new URL('../dist/assets/original/', import.meta.url);
 const manifest = JSON.parse(await readFile(new URL('manifest.json', root), 'utf8'));
+const resources = JSON.parse(await readFile(new URL('characters/meteor-res-data.json', root), 'utf8'));
+const combatData = {
+  moveRecords: new Map(resources.allRecords.filter(r => r.type === 3).map(r => [r.id, r])),
+  weaponRecords: new Map(resources.allRecords.filter(r => r.type === 1).map(r => [r.model.toLowerCase(), r]))
+};
 const sources = new Map();
 for (const script of manifest.scripts.filter(s => /\.(pst|h)$/i.test(s.source.path))) {
   sources.set(script.source.path.toLowerCase(), await readFile(new URL(script.utf8, root), 'utf8'));
@@ -104,6 +112,41 @@ test('an actual cave stone callback removes collision and activates its original
   vm.call('D_St01_OnIdle', [host.id('D_St01')]);
   assert.equal(vm.getGlobal('g_bStoneAlive')[0], 0);
   assert.equal(host.props('D_St01').get('attribute/active'), 0);
+});
+
+test('original machine damage uses pose attack without character defense, guard or team scaling', () => {
+  const sceneDamage = createNativeSceneDamageResolver(combatData), characterDamage = createNativeDamageResolver(combatData);
+  const attacker = { weapon: 'dart', nativeStats: {}, teamMask: 1 };
+  assert.equal(sceneDamage({ attacker, state: { poseId: 200 }, guarded: true }), 49);
+  assert.equal(sceneDamage({ attacker, state: { poseId: 202 } }), 49);
+  assert.equal(sceneDamage({ attacker: { weapon: 'dagger' }, state: { poseId: 248 } }), 50);
+  assert.equal(sceneDamage({ attacker: { weapon: 'spear' }, state: { poseId: 279 } }), 52);
+  assert.equal(characterDamage({ attacker, target: { weapon: 'spear', teamMask: 2 }, poseId: 200 }), 34);
+  assert.equal(sceneDamage({ attacker, state: { poseId: -1 } }), null, 'unknown pose must not invent machine damage');
+});
+
+test('projectile world hits feed original pose damage into the actual cave stone PST callback', () => {
+  const host = sceneHost(), vm = load('sn01/sn01.pst', { natives: host.natives });
+  vm.call('Scene_OnLoad'); vm.call('Scene_OnInit');
+  const game = Object.create(MeteorGame.prototype);
+  game.sceneDamageResolver = createNativeSceneDamageResolver(combatData);
+  const callbacks = [];
+  game.missionHost = { sceneVm: vm, sceneItemAttack(name, attackerId, damage) {
+    callbacks.push([name, attackerId, damage]);
+    vm.call(`${name}_OnAttack`, [host.id(name), attackerId, damage]);
+  } };
+  const attacker = { weapon: 'dart', scriptId: 0, nativeStats: {} };
+  const hit = { object: { userData: { nativeSceneInstance: { name: 'D_St01' } } }, point: new THREE.Vector3() };
+  for (let id = 1; id <= 10; id++) game._projectileWorldHit({ id, context: { attacker, state: { poseId: 200 } } }, hit);
+  assert.equal(vm.getGlobal('g_iStoneHP')[0], 10);
+  assert.equal(host.props('D_St01').get('attribute/collision'), 1);
+  game._projectileWorldHit({ id: 11, context: { attacker, state: { poseId: 202 } } }, hit);
+  assert.equal(callbacks.length, 11);
+  assert.ok(callbacks.every(c => c[1] === 0 && c[2] === 49));
+  assert.equal(vm.getGlobal('g_iStoneHP')[0], -39);
+  assert.equal(host.props('D_St01').get('attribute/collision'), 0);
+  assert.equal(host.props('D_itSt01').get('attribute/active'), 1);
+  assert.ok(host.calls.some(c => c[0] === 'CreateEffect' && c[2] === 'StoneBRK'));
 });
 
 test('the real misspelled Perofrm API is exposed instead of silently corrected or skipped', () => {

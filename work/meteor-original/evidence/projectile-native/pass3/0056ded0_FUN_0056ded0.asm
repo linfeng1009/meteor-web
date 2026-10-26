@@ -1,0 +1,18 @@
+0056ded0 PUSH ESI
+0056ded1 PUSH EDI
+0056ded2 MOV EDI,ECX
+0056ded4 XOR ESI,ESI
+0056ded6 MOV EAX,dword ptr [EDI + 0x40]
+0056ded9 TEST EAX,EAX
+0056dedb JLE 0x0056def0
+0056dedd MOV EAX,dword ptr [EDI + 0x4c]
+0056dee0 MOV ECX,dword ptr [EAX + ESI*0x4]
+0056dee3 MOV EDX,dword ptr [ECX]
+0056dee5 CALL dword ptr [EDX + 0x38]
+0056dee8 MOV EAX,dword ptr [EDI + 0x40]
+0056deeb INC ESI
+0056deec CMP ESI,EAX
+0056deee JL 0x0056dedd
+0056def0 POP EDI
+0056def1 POP ESI
+0056def2 RET

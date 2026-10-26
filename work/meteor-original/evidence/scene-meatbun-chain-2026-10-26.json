@@ -1,0 +1,116 @@
+{
+  "date": "2026-10-26",
+  "kind": "single-chain-cpu-geometric-probe",
+  "passed": true,
+  "source": "actual sn01 DES/cmodel/FMC/POS and scene PST; actual continuous projectile sweep, native scene damage resolver, NativeItemSystem and engine item reach ray",
+  "chain": [
+    "D_St22 actual triangle hit",
+    "11 original pose200/RES attack damage calls",
+    "original StoneOnAttack and break pose1",
+    "actual D_itSt22 Item01 activates",
+    "native meatbun effect HP+300 once",
+    "original Scene_OnInit reset"
+  ],
+  "shotProbe": {
+    "from": [
+      -48.95167812729498,
+      1.35,
+      27.63568168106201
+    ],
+    "target": [
+      -42.95167812729498,
+      1.35,
+      27.63568168106201
+    ],
+    "firstNativeHit": "D_St22/Object01"
+  },
+  "hitNames": [
+    "D_St22",
+    "D_St22",
+    "D_St22",
+    "D_St22",
+    "D_St22",
+    "D_St22",
+    "D_St22",
+    "D_St22",
+    "D_St22",
+    "D_St22",
+    "D_St22"
+  ],
+  "stoneHp": [
+    500,
+    451,
+    402,
+    353,
+    304,
+    255,
+    206,
+    157,
+    108,
+    59,
+    10,
+    -39
+  ],
+  "stateAfterImpact": {
+    "pose": 1,
+    "state": 1,
+    "playing": true,
+    "frame": 0,
+    "active": 1
+  },
+  "afterAnimation": {
+    "stonePose": 1,
+    "stoneState": 3,
+    "stoneActive": 0,
+    "stoneCollision": 0,
+    "itemModel": "\"item01\"",
+    "itemActive": 1,
+    "itemInteractive": 1
+  },
+  "pickupProbe": {
+    "actorPosition": [
+      -41.951679999999996,
+      0.015,
+      27.635680000000004
+    ],
+    "groundObject": "Box10",
+    "distance": 1,
+    "placedByProbe": true
+  },
+  "pickup": {
+    "ok": true,
+    "name": "肉包",
+    "itemId": 1,
+    "objectName": "D_itSt22",
+    "hpBefore": 1000,
+    "hpAfter": 1300,
+    "healed": 300,
+    "effectValue": 300,
+    "recordOffset": 53055,
+    "valueOffset": 53204,
+    "events": 1
+  },
+  "duplicate": {
+    "ok": false,
+    "reason": "no-item",
+    "hpAfter": 1300
+  },
+  "reinitialized": {
+    "stoneHp": 500,
+    "stonePose": 0,
+    "stoneActive": 1,
+    "stoneCollision": 1,
+    "itemActive": 0,
+    "itemInteractive": 0,
+    "nearbyItem": null
+  },
+  "notAsserted": [
+    "actual character animation/hand release or player aiming",
+    "ordinary walking from the original player spawn",
+    "browser rendering or F/touch interaction",
+    "exact EXE flight or pickup trigger constants",
+    "full mission clear",
+    "original EXE execution"
+  ],
+  "diagnostics": []
+}

@@ -1,4 +1,4 @@
-/* Meteor.exe original x86 @ 004f3380 */
+/* Meteor.exe original x86 @ 004f3380; function boundary recovered from direct vtable/code reference */
 /* Caller: 005aa0cc */
 /* Caller: 005ab554 */
 /* Caller: 005ab994 */

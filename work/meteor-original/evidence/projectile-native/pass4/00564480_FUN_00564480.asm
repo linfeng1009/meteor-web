@@ -1,0 +1,3 @@
+00564480 MOV EAX,dword ptr [ESP + 0x4]
+00564484 MOV byte ptr [EAX + 0x8],0x1
+00564488 RET 0x4

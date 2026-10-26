@@ -1,0 +1,64 @@
+TAP version 13
+# Subtest: only original type2 Item01 resolves the exact RES current-HP +300 record
+ok 1 - only original type2 Item01 resolves the exact RES current-HP +300 record
+  ---
+  duration_ms: 0.859708
+  type: 'test'
+  ...
+# Subtest: native HP gain clamps to max HP and the same scene instance cannot be consumed twice
+ok 2 - native HP gain clamps to max HP and the same scene instance cannot be consumed twice
+  ---
+  duration_ms: 0.8895
+  type: 'test'
+  ...
+# Subtest: full HP keeps the meatbun with an explicit adapter policy; a subsequent wound can use it
+ok 3 - full HP keeps the meatbun with an explicit adapter policy; a subsequent wound can use it
+  ---
+  duration_ms: 0.261834
+  type: 'test'
+  ...
+# Subtest: hidden, noninteractive, distant, vertically separate, blocked and dead-player pickups are rejected
+ok 4 - hidden, noninteractive, distant, vertically separate, blocked and dead-player pickups are rejected
+  ---
+  duration_ms: 0.233083
+  type: 'test'
+  ...
+# Subtest: source model identity controls effects; names and arbitrary health-item models cannot grant meatbun healing
+ok 5 - source model identity controls effects; names and arbitrary health-item models cannot grant meatbun healing
+  ---
+  duration_ms: 0.095583
+  type: 'test'
+  ...
+# Subtest: nearest reachable original meatbun is selected, reset permits a source-reinitialized instance, disposal stops pickups
+ok 6 - nearest reachable original meatbun is selected, reset permits a source-reinitialized instance, disposal stops pickups
+  ---
+  duration_ms: 0.140958
+  type: 'test'
+  ...
+# Subtest: engine pickup reach ignores its own collider, rejects an intervening wall or another scene object, and restores ray distance
+ok 7 - engine pickup reach ignores its own collider, rejects an intervening wall or another scene object, and restores ray distance
+  ---
+  duration_ms: 2.72525
+  type: 'test'
+  ...
+# Subtest: engine-initialized pickup respects paused/story gates, emits actual HP recovery, and publishes a serializable HUD
+ok 8 - engine-initialized pickup respects paused/story gates, emits actual HP recovery, and publishes a serializable HUD
+  ---
+  duration_ms: 60.209375
+  type: 'test'
+  ...
+# Subtest: actual cave stone PST releases the actual DES Item01, heals once, and source init plus reset restores its hidden state
+ok 9 - actual cave stone PST releases the actual DES Item01, heals once, and source init plus reset restores its hidden state
+  ---
+  duration_ms: 186.506041
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 344.369667

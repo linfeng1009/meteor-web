@@ -1,0 +1,207 @@
+{
+  "id": "E-native-dart-trace",
+  "observedAt": "2026-10-23T13:10:49.729311+00:00",
+  "sampleSha256": "289afb0aa44a47921d167fc24d6d404c60d6d00c299ac27d45fc61e16231b498",
+  "method": "Bounded Ghidra12.1.4 read-only/noanalysis exports; static PonEF headers and type registry; no original EXE execution; no runtime/tests edited in this analysis pass.",
+  "effectFiles": [
+    {
+      "id": "pos200",
+      "path": "dist/assets/original/sounds/definitions/pos200.ef",
+      "bytes": 3239,
+      "sha256": "5fe764c2007833cf2a18d113a9b5130bb03f5ca41335099b7a76ad3584a2f08a",
+      "signature": "PonEF V1.00",
+      "declaredNodes": 6,
+      "nodeHeaders": [
+        {
+          "offset": 15,
+          "type": "BILLBOARD"
+        },
+        {
+          "offset": 759,
+          "type": "AUDIO"
+        },
+        {
+          "offset": 1156,
+          "type": "BILLBOARD"
+        },
+        {
+          "offset": 1900,
+          "type": "AUDIO"
+        },
+        {
+          "offset": 2300,
+          "type": "SPHERE"
+        },
+        {
+          "offset": 2731,
+          "type": "PARTICLE"
+        }
+      ],
+      "sounds": [
+        "MMRun.wav",
+        "W03FIR01.wav"
+      ],
+      "hasModelNode": false
+    },
+    {
+      "id": "pos202",
+      "path": "dist/assets/original/sounds/definitions/pos202.ef",
+      "bytes": 3239,
+      "sha256": "d2f27bba4367c79cd0218ee291a8365284dc83ffd45bff86d7cad7f09c76ee2c",
+      "signature": "PonEF V1.00",
+      "declaredNodes": 6,
+      "nodeHeaders": [
+        {
+          "offset": 15,
+          "type": "AUDIO"
+        },
+        {
+          "offset": 415,
+          "type": "SPHERE"
+        },
+        {
+          "offset": 846,
+          "type": "BILLBOARD"
+        },
+        {
+          "offset": 1590,
+          "type": "BILLBOARD"
+        },
+        {
+          "offset": 2334,
+          "type": "AUDIO"
+        },
+        {
+          "offset": 2731,
+          "type": "PARTICLE"
+        }
+      ],
+      "sounds": [
+        "W03FIR01.wav",
+        "MMRun.wav"
+      ],
+      "hasModelNode": false
+    }
+  ],
+  "verifiedPaths": [
+    {
+      "path": "effect list -> template load -> PonEF type dispatch",
+      "functions": [
+        "0x00496250",
+        "0x00566940",
+        "0x00566230",
+        "0x0056e490",
+        "0x0058a700"
+      ],
+      "details": "SFX/effect.lst references effect templates. PonEF reads node type names and dispatches constructors. Registry maps AUDIO2/BILLBOARD4/PARTICLE9/SPHERE12/MODEL8."
+    },
+    {
+      "path": "clone and attach effect template",
+      "functions": [
+        "0x00566a90",
+        "0x00566380",
+        "0x0055d1e0"
+      ],
+      "details": "effect instance clone binds to parent/character and activates template; no fixed dart speed identified in this path."
+    },
+    {
+      "path": "effect wrapper tick and lifetime",
+      "functions": [
+        "0x005663e0",
+        "0x0056df30",
+        "0x0056e870",
+        "0x00582e90"
+      ],
+      "details": "wrapper accumulates delta time in+0x134; compares template end at+0x1c, loops to start+0x18 or marks finished+0x140. Template bounds derive from node animation channels; node update samples timed transforms. These are visual-effect lifetimes, not established dart projectile lifetime."
+    },
+    {
+      "path": "generic GunHit ray candidate",
+      "functions": [
+        "0x004bc5e0",
+        "0x004f3d50"
+      ],
+      "details": "Builds ray endpoint origin+direction*float(1000) and queries scene ray; emits GunHit. Association with dart weapon item1/pose200 has not been proven, so this is not evidence of dart range or speed."
+    }
+  ],
+  "flightParameters": {
+    "speed": {
+      "originalValue": null,
+      "status": "unverified",
+      "currentWebAdapterValue": 50
+    },
+    "radius": {
+      "originalValue": null,
+      "status": "unverified",
+      "currentWebAdapterValue": 0.12
+    },
+    "life": {
+      "originalValue": null,
+      "status": "unverified",
+      "currentWebAdapterValue": 3
+    },
+    "gravity": {
+      "originalValue": null,
+      "status": "unverified",
+      "currentWebAdapterValue": 0
+    },
+    "spin": {
+      "originalValue": null,
+      "status": "unverified",
+      "currentWebAdapterValue": 28
+    }
+  },
+  "conclusion": "No native dart speed/life/spin/gravity/collision-radius constant is confirmed by this bounded trace. Do not promote PonEF visual sphere radius, effect timeline end, generic GunHit ray length, or Web adapter constants to verified dart physics.",
+  "artifacts": [
+    {
+      "path": "work/meteor-original/evidence/projectile-native/pass1/0056e490_FUN_0056e490.c",
+      "bytes": 4817,
+      "sha256": "e25b3c5e1d45fd6899a5daa9f49ce3db6b6cf71c8b61a3a8d64dd82643896a73"
+    },
+    {
+      "path": "work/meteor-original/evidence/projectile-native/pass3/00566a90_FUN_00566a90.c",
+      "bytes": 4551,
+      "sha256": "9e4f1e55bc2dce4d1438d4598a73bcba8f23de1d4e9650070237d3c0ab844357"
+    },
+    {
+      "path": "work/meteor-original/evidence/projectile-native/pass3/0058a700_FUN_0058a700.c",
+      "bytes": 1041,
+      "sha256": "abb23c191b1eef8fd75e51fc392dddb019f74572f920cb4675634552c3adc129"
+    },
+    {
+      "path": "work/meteor-original/evidence/projectile-native/pass4/005663e0_FUN_005663e0.c",
+      "bytes": 1325,
+      "sha256": "343b31c2bbe5ba84e7fb198bd772d97b520346cda0ff570037565a8ad32eac43"
+    },
+    {
+      "path": "work/meteor-original/evidence/projectile-native/pass3/0056df30_FUN_0056df30.c",
+      "bytes": 1495,
+      "sha256": "5ed0c633683023ab7dbf6240d1cfa7336f7c12c874b5fb214224cfacf5a0f539"
+    },
+    {
+      "path": "work/meteor-original/evidence/projectile-native/pass5/0056e870_FUN_0056e870.c",
+      "bytes": 4132,
+      "sha256": "7ef4f6ff0118af14bff70ca4f1c08baa0a512db2a95d31a151f30149d0cb859e"
+    },
+    {
+      "path": "work/meteor-original/evidence/projectile-native/pass6/00582e90_FUN_00582e90.c",
+      "bytes": 1170,
+      "sha256": "fb0a275ec593b6cd3ad230b0ac1a8ccc28329b1a093ee82341f721b198355b40"
+    },
+    {
+      "path": "work/meteor-original/evidence/projectile-native/pass7/004bc5e0_FUN_004bc5e0.c",
+      "bytes": 1508,
+      "sha256": "3e9142fdc2781488049f8760984b511d6d62b90973d4b26a78949c98554385a5"
+    },
+    {
+      "path": "work/meteor-original/evidence/projectile-native/pass7/004f3d50_FUN_004f3d50.c",
+      "bytes": 1947,
+      "sha256": "cd86bb67943a61379a7fb0445c844fe93e38ca380e18df21bdf4763921644e04"
+    },
+    {
+      "path": "work/meteor-original/evidence/projectile-native/pass6/0055d1e0_FUN_0055d1e0.c",
+      "bytes": 814,
+      "sha256": "5c7ec9c8d4911896f39069b8d4958f49ec24a721d0df870bdeeb2a7891e067f0"
+    }
+  ],
+  "reproduction": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home /opt/homebrew/Cellar/ghidra/12.1.4/libexec/support/analyzeHeadless work/meteor-original/ghidra-project MeteorOriginal -process Meteor.exe -readOnly -noanalysis -scriptPath scripts/analysis -postScript ReadOnlyProjectileTrace.java work/meteor-original/evidence/projectile-native/dart-reproduce 0056e490 0058a700 00566a90 00566380 0055d1e0 005663e0 0056df30 0056e870 00582e90 004bc5e0 004f3d50"
+}

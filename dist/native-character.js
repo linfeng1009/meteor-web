@@ -89,6 +89,7 @@ export function createNativeCharacter(data,options={}){
   for(const entry of data.skeleton.entries){const bone=new THREE.Bone();bone.name=entry.name;bone.position.fromArray(entry.position);applyQuaternion(bone.quaternion,entry.quaternion);byName.set(entry.name,bone);(entry.kind==='bone'?boneNodes:dummyNodes).push(bone);}
   const resolve=name=>byName.get(name)||(/^b\d+$/.test(name)?boneNodes[Number(name.slice(1))]:/^d\d+$/.test(name)?dummyNodes[Number(name.slice(1))]:null);
   for(const entry of data.skeleton.entries){const node=byName.get(entry.name),parent=resolve(entry.parent);(parent||nativeSpace).add(node);}
+  const motionBase=byName.get('d_base'),motionBaseRest=motionBase?.position.clone();
   const materials=data.skin.materials.map(s=>new THREE.MeshStandardMaterial({color:0xffffff,roughness:.85,metalness:0,side:s.twoSide?THREE.DoubleSide:THREE.FrontSide,transparent:s.opacity<.99,opacity:s.opacity,alphaTest:s.alpha ? 0.35 : 0}));
   const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(data.skin.positions,3));geometry.setAttribute('uv',new THREE.Float32BufferAttribute(data.skin.uvs,2));geometry.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(data.skin.skinIndices,4));geometry.setAttribute('skinWeight',new THREE.Float32BufferAttribute(data.skin.skinWeights,4));
   const indices=[];for(let i=0;i<materials.length;i++){const start=indices.length;for(const f of data.skin.faces)if(f.material===i)indices.push(...f.indices);if(indices.length>start)geometry.addGroup(start,indices.length-start,i);}
@@ -119,6 +120,11 @@ export function createNativeCharacter(data,options={}){
     for(let i=0;i<dummyNodes.length;i++){
       const x=start+i*33+5,y=next+i*33+5;
       positionA.set(v.getFloat32(x,true),v.getFloat32(x+4,true),v.getFloat32(x+8,true));positionB.set(v.getFloat32(y,true),v.getFloat32(y+4,true),v.getFloat32(y+8,true));dummyNodes[i].position.copy(positionA).lerp(positionB,t);
+      // d_base carries scene displacement independently of the pelvis/root
+      // bone. The host already moves the actor and its collision body. Keep
+      // the whole skin/attachment tree in place, including during jump/fall;
+      // retain the authored bone-local height and all rotations unchanged.
+      if(!rootMotion&&dummyNodes[i]===motionBase)motionBase.position.copy(motionBaseRest);
       readQ(v,x+12,qa);readQ(v,y+12,qb);dummyNodes[i].quaternion.copy(qa).slerp(qb,t);
     }
     group.updateMatrixWorld(true);skeleton.update();api.source=Number(source);api.frame=f;return api;

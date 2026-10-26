@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-26",
+  "kind": "cpu-geometric-audit",
+  "passed": true,
+  "source": "actual sn01 DES/cmodel/FMC/POS and scene PST; actual NativeProjectileSystem continuous map sweep and createNativeSceneDamageResolver",
+  "probe": {
+    "from": [
+      40.94761793807523,
+      1.35,
+      -21.359125804387784
+    ],
+    "target": [
+      42.118159870172,
+      1.35,
+      -27.243837486807166
+    ],
+    "firstNativeHit": "D_St20/Object02"
+  },
+  "hitNames": [
+    "D_St20",
+    "D_St20",
+    "D_St20",
+    "D_St20",
+    "D_St20",
+    "D_St20",
+    "D_St20",
+    "D_St20",
+    "D_St20",
+    "D_St20",
+    "D_St20"
+  ],
+  "hpAfterHits": -39,
+  "stateAfterImpact": {
+    "pose": 1,
+    "state": 1,
+    "playing": true,
+    "frame": 0,
+    "active": 1
+  },
+  "final": {
+    "stonePose": 1,
+    "stoneState": 3,
+    "stoneActive": 0,
+    "stoneCollision": 0,
+    "itemActive": 1,
+    "itemInteractive": 1
+  },
+  "reinitialized": {
+    "hp": 500,
+    "stonePose": 0,
+    "stoneActive": 1,
+    "stoneCollision": 1,
+    "itemActive": 0,
+    "itemInteractive": 0
+  },
+  "notAsserted": [
+    "actual character aim/release",
+    "reachable walk route to synthetic probe origin",
+    "browser rendering",
+    "item pickup or item effects",
+    "exact EXE flight constants"
+  ],
+  "diagnostics": []
+}

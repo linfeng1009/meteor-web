@@ -1,0 +1,512 @@
+
+> meteor-sword-web@0.3.0 test
+> node --test tests/*.test.mjs
+
+TAP version 13
+# Subtest: the actual source mission starts on real floors with the original distinct NPC configuration
+ok 1 - the actual source mission starts on real floors with the original distinct NPC configuration
+  ---
+  duration_ms: 973.761666
+  type: 'test'
+  ...
+# Subtest: a player dagger attack uses actual native pose, bones, weapon geometry and RES math to remove NPC HP
+ok 2 - a player dagger attack uses actual native pose, bones, weapon geometry and RES math to remove NPC HP
+  ---
+  duration_ms: 175.65175
+  type: 'test'
+  ...
+# Subtest: switching to the source secondary dart releases from the real hand and damages an original NPC only after flight
+ok 3 - switching to the source secondary dart releases from the real hand and damages an original NPC only after flight
+  ---
+  duration_ms: 159.557709
+  type: 'test'
+  ...
+# Subtest: all original mission NPC spawns are reachable from the player through WP edges and real collision geometry
+ok 4 - all original mission NPC spawns are reachable from the player through WP edges and real collision geometry
+  ---
+  duration_ms: 2142.095333
+  type: 'test'
+  ...
+# Subtest: source patrol AI can reach and damage a player who enters the original guard area
+ok 5 - source patrol AI can reach and damage a player who enters the original guard area
+  ---
+  duration_ms: 1370.239917
+  type: 'test'
+  ...
+# Subtest: real native attacks defeat source NPC HP and produce one story win, then restart resets the mission
+ok 6 - real native attacks defeat source NPC HP and produce one story win, then restart resets the mission
+  ---
+  duration_ms: 12246.936417
+  type: 'test'
+  ...
+# Subtest: walking normally into the source enemies causes player death and one failure, and restart resets accumulated state
+ok 7 - walking normally into the source enemies causes player death and one failure, and restart resets accumulated state
+  ---
+  duration_ms: 9392.932458
+  type: 'test'
+  ...
+# Subtest: lock-on turns the camera behind the player to keep the actual enemy in view
+ok 8 - lock-on turns the camera behind the player to keep the actual enemy in view
+  ---
+  duration_ms: 11.289208
+  type: 'test'
+  ...
+# Subtest: manual camera override holds the user angle temporarily and then smoothly follows the lock again
+ok 9 - manual camera override holds the user angle temporarily and then smoothly follows the lock again
+  ---
+  duration_ms: 0.40175
+  type: 'test'
+  ...
+# Subtest: near-wall camera stays in front of the actual triangle and hides only the close player rendering
+ok 10 - near-wall camera stays in front of the actual triangle and hides only the close player rendering
+  ---
+  duration_ms: 2.018292
+  type: 'test'
+  ...
+# Subtest: enemy HUD reports world distance and signed bearing from the actual camera direction
+ok 11 - enemy HUD reports world distance and signed bearing from the actual camera direction
+  ---
+  duration_ms: 0.5925
+  type: 'test'
+  ...
+# Subtest: only original type2 Item01 resolves the exact RES current-HP +300 record
+ok 12 - only original type2 Item01 resolves the exact RES current-HP +300 record
+  ---
+  duration_ms: 1.293667
+  type: 'test'
+  ...
+# Subtest: native HP gain clamps to max HP and the same scene instance cannot be consumed twice
+ok 13 - native HP gain clamps to max HP and the same scene instance cannot be consumed twice
+  ---
+  duration_ms: 2.911
+  type: 'test'
+  ...
+# Subtest: full HP keeps the meatbun with an explicit adapter policy; a subsequent wound can use it
+ok 14 - full HP keeps the meatbun with an explicit adapter policy; a subsequent wound can use it
+  ---
+  duration_ms: 0.346
+  type: 'test'
+  ...
+# Subtest: hidden, noninteractive, distant, vertically separate, blocked and dead-player pickups are rejected
+ok 15 - hidden, noninteractive, distant, vertically separate, blocked and dead-player pickups are rejected
+  ---
+  duration_ms: 4.187041
+  type: 'test'
+  ...
+# Subtest: source model identity controls effects; names and arbitrary health-item models cannot grant meatbun healing
+ok 16 - source model identity controls effects; names and arbitrary health-item models cannot grant meatbun healing
+  ---
+  duration_ms: 0.264
+  type: 'test'
+  ...
+# Subtest: nearest reachable original meatbun is selected, reset permits a source-reinitialized instance, disposal stops pickups
+ok 17 - nearest reachable original meatbun is selected, reset permits a source-reinitialized instance, disposal stops pickups
+  ---
+  duration_ms: 0.879292
+  type: 'test'
+  ...
+# Subtest: engine pickup reach ignores its own collider, rejects an intervening wall or another scene object, and restores ray distance
+ok 18 - engine pickup reach ignores its own collider, rejects an intervening wall or another scene object, and restores ray distance
+  ---
+  duration_ms: 39.919042
+  type: 'test'
+  ...
+# Subtest: engine-initialized pickup respects paused/story gates, emits actual HP recovery, and publishes a serializable HUD
+ok 19 - engine-initialized pickup respects paused/story gates, emits actual HP recovery, and publishes a serializable HUD
+  ---
+  duration_ms: 253.476625
+  type: 'test'
+  ...
+# Subtest: actual cave stone PST releases the actual DES Item01, heals once, and source init plus reset restores its hidden state
+ok 20 - actual cave stone PST releases the actual DES Item01, heals once, and source init plus reset restores its hidden state
+  ---
+  duration_ms: 815.694916
+  type: 'test'
+  ...
+# Subtest: native in-place jump removes scene translation from d_base while preserving the authored skeleton pose
+ok 21 - native in-place jump removes scene translation from d_base while preserving the authored skeleton pose
+  ---
+  duration_ms: 55.742083
+  type: 'test'
+  ...
+# Subtest: authored non-in-place jump remains available with its original d_base displacement
+ok 22 - authored non-in-place jump remains available with its original d_base displacement
+  ---
+  duration_ms: 5.766458
+  type: 'test'
+  ...
+# Subtest: the real L jump stays in view on open ground and lands with the collider
+ok 23 - the real L jump stays in view on open ground and lands with the collider
+  ---
+  duration_ms: 221.65775
+  type: 'test'
+  ...
+# Subtest: the real L jump stays in view with an enemy locked and lands with the collider
+ok 24 - the real L jump stays in view with an enemy locked and lands with the collider
+  ---
+  duration_ms: 189.237334
+  type: 'test'
+  ...
+# Subtest: jump camera follows the native body without crossing a nearby wall
+ok 25 - jump camera follows the native body without crossing a nearby wall
+  ---
+  duration_ms: 181.967333
+  type: 'test'
+  ...
+# Subtest: in-place correction keeps native dart hand attachments aligned with the same skin pose
+ok 26 - in-place correction keeps native dart hand attachments aligned with the same skin pose
+  ---
+  duration_ms: 10.094375
+  type: 'test'
+  ...
+# Subtest: native attack 259 cannot leave the skin behind its collision root and raw per-frame override remains usable
+ok 27 - native attack 259 cannot leave the skin behind its collision root and raw per-frame override remains usable
+  ---
+  duration_ms: 2.191
+  type: 'test'
+  ...
+# Subtest: vertical camera follow preserves its settled height over the collision root throughout a real jump
+ok 28 - vertical camera follow preserves its settled height over the collision root throughout a real jump
+  ---
+  duration_ms: 47.520833
+  type: 'test'
+  ...
+# Subtest: moving forward during the native jump keeps the rendered body on screen and lands while moving
+ok 29 - moving forward during the native jump keeps the rendered body on screen and lands while moving
+  ---
+  duration_ms: 142.763125
+  type: 'test'
+  ...
+# Subtest: all twenty supplied characters share the scene dummy hierarchy used by the in-place adapter
+ok 30 - all twenty supplied characters share the scene dummy hierarchy used by the in-place adapter
+  ---
+  duration_ms: 57.45675
+  type: 'test'
+  ...
+# Subtest: the real cave mission creates three distinct runtime NPCs with their original source configuration and waypoints
+ok 31 - the real cave mission creates three distinct runtime NPCs with their original source configuration and waypoints
+  ---
+  duration_ms: 74.356333
+  type: 'test'
+  ...
+# Subtest: source loading preserves the native browser fetch receiver
+ok 32 - source loading preserves the native browser fetch receiver
+  ---
+  duration_ms: 65.534167
+  type: 'test'
+  ...
+# Subtest: the real engine mission bridges preserve source HP, distinct actor IDs and original weapon variants
+ok 33 - the real engine mission bridges preserve source HP, distinct actor IDs and original weapon variants
+  ---
+  duration_ms: 99.14525
+  type: 'test'
+  ...
+# Subtest: the patrol routes and generated movement targets come from the original WP graph
+ok 34 - the patrol routes and generated movement targets come from the original WP graph
+  ---
+  duration_ms: 53.634125
+  type: 'test'
+  ...
+# Subtest: source waypoints above the collision floor do not trap foot-positioned engine actors
+ok 35 - source waypoints above the collision floor do not trap foot-positioned engine actors
+  ---
+  duration_ms: 59.652375
+  type: 'test'
+  ...
+# Subtest: script perception respects original View distance and collision visibility
+ok 36 - script perception respects original View distance and collision visibility
+  ---
+  duration_ms: 34.85225
+  type: 'test'
+  ...
+# Subtest: the original guard discovery, loss, retreat and report dialogue execute through PST state transitions
+ok 37 - the original guard discovery, loss, retreat and report dialogue execute through PST state transitions
+  ---
+  duration_ms: 104.974916
+  type: 'test'
+  ...
+# Subtest: original scene item damage callbacks change real registered object collision and item activation
+ok 38 - original scene item damage callbacks change real registered object collision and item activation
+  ---
+  duration_ms: 23.900709
+  type: 'test'
+  ...
+# Subtest: mission completion uses all original hostile NPCs and retains its explicit Rule-10 inference
+ok 39 - mission completion uses all original hostile NPCs and retains its explicit Rule-10 inference
+  ---
+  duration_ms: 25.340959
+  type: 'test'
+  ...
+# Subtest: the source HP thresholds trigger a sentry retreat and the original leader death line
+ok 40 - the source HP thresholds trigger a sentry retreat and the original leader death line
+  ---
+  duration_ms: 92.444
+  type: 'test'
+  ...
+# Subtest: unsupported host APIs are explicit and a disposed host stops script execution
+ok 41 - unsupported host APIs are explicit and a disposed host stops script execution
+  ---
+  duration_ms: 40.830584
+  type: 'test'
+  ...
+# Subtest: leaving while player equipment loads does not start an abandoned source mission
+ok 42 - leaving while player equipment loads does not start an abandoned source mission
+  ---
+  duration_ms: 8.624125
+  type: 'test'
+  ...
+# Subtest: late original NPC loads are removed after the source mission is disposed
+ok 43 - late original NPC loads are removed after the source mission is disposed
+  ---
+  duration_ms: 17.190084
+  type: 'test'
+  ...
+# Subtest: original POS ground and air windows release one real W3_0 model, at native scale, once each
+ok 44 - original POS ground and air windows release one real W3_0 model, at native scale, once each
+  ---
+  duration_ms: 8.068292
+  type: 'test'
+  ...
+# Subtest: actual dart movement hits once using original 75/65 RES and recovered damage 34
+ok 45 - actual dart movement hits once using original 75/65 RES and recovered damage 34
+  ---
+  duration_ms: 1.123375
+  type: 'test'
+  ...
+# Subtest: continuous swept contact does not tunnel through a capsule at a low frame rate
+ok 46 - continuous swept contact does not tunnel through a capsule at a low frame rate
+  ---
+  duration_ms: 3.377917
+  type: 'test'
+  ...
+# Subtest: relative motion sweep catches a target crossing the projectile between frames
+ok 47 - relative motion sweep catches a target crossing the projectile between frames
+  ---
+  duration_ms: 18.03525
+  type: 'test'
+  ...
+# Subtest: an original map triangle blocks a target behind it and the closest actor wins before a wall
+ok 48 - an original map triangle blocks a target behind it and the closest actor wins before a wall
+  ---
+  duration_ms: 22.210083
+  type: 'test'
+  ...
+# Subtest: a hand beyond a wall cannot spawn a projectile through that wall
+ok 49 - a hand beyond a wall cannot spawn a projectile through that wall
+  ---
+  duration_ms: 10.536667
+  type: 'test'
+  ...
+# Subtest: a guarded dart is consumed once without HP loss; lethal impact emits one death
+ok 50 - a guarded dart is consumed once without HP loss; lethal impact emits one death
+  ---
+  duration_ms: 14.100833
+  type: 'test'
+  ...
+# Subtest: a weapon change after release preserves original launch weapon, pose, team and item snapshot
+ok 51 - a weapon change after release preserves original launch weapon, pose, team and item snapshot
+  ---
+  duration_ms: 2.133458
+  type: 'test'
+  ...
+# Subtest: self is excluded and friendly bodies use the original 0.2 team factor instead of being skipped
+ok 52 - self is excluded and friendly bodies use the original 0.2 team factor instead of being skipped
+  ---
+  duration_ms: 2.2055
+  type: 'test'
+  ...
+# Subtest: pause freezes motion and age, resume continues, expiry and match end remove every shot
+ok 53 - pause freezes motion and age, resume continues, expiry and match end remove every shot
+  ---
+  duration_ms: 2.032708
+  type: 'test'
+  ...
+# Subtest: map changes and menu exit clear shots before scene replacement
+ok 54 - map changes and menu exit clear shots before scene replacement
+  ---
+  duration_ms: 1.394167
+  type: 'test'
+  ...
+# Subtest: actual SKC/BNC/AMB, d_wpnR, W3_0 and original cave triangles launch and damage a real model at source waypoints
+ok 55 - actual SKC/BNC/AMB, d_wpnR, W3_0 and original cave triangles launch and damage a real model at source waypoints
+  ---
+  duration_ms: 2921.151792
+  type: 'test'
+  ...
+# Subtest: original leader W7_1 defense zero receives 49 instead of the basic spear defense-15 result
+ok 56 - original leader W7_1 defense zero receives 49 instead of the basic spear defense-15 result
+  ---
+  duration_ms: 0.434583
+  type: 'test'
+  ...
+# Subtest: all preserved PST/header files parse and load their actual include dependencies
+ok 57 - all preserved PST/header files parse and load their actual include dependencies
+  ---
+  duration_ms: 451.9345
+  type: 'test'
+  ...
+# Subtest: the original Stalactite Cave mission starts its three declared NPC scripts
+ok 58 - the original Stalactite Cave mission starts its three declared NPC scripts
+  ---
+  duration_ms: 2.144
+  type: 'test'
+  ...
+# Subtest: the original first cave NPC binds its runtime address and enters its scripted wait behavior
+ok 59 - the original first cave NPC binds its runtime address and enters its scripted wait behavior
+  ---
+  duration_ms: 0.917166
+  type: 'test'
+  ...
+# Subtest: the original cave scene loads all included libraries and initializes its real stone state
+ok 60 - the original cave scene loads all included libraries and initializes its real stone state
+  ---
+  duration_ms: 16.951208
+  type: 'test'
+  ...
+# Subtest: an actual cave stone callback removes collision and activates its original item after damage
+ok 61 - an actual cave stone callback removes collision and activates its original item after damage
+  ---
+  duration_ms: 14.678875
+  type: 'test'
+  ...
+# Subtest: original machine damage uses pose attack without character defense, guard or team scaling
+ok 62 - original machine damage uses pose attack without character defense, guard or team scaling
+  ---
+  duration_ms: 0.515084
+  type: 'test'
+  ...
+# Subtest: projectile world hits feed original pose damage into the actual cave stone PST callback
+ok 63 - projectile world hits feed original pose damage into the actual cave stone PST callback
+  ---
+  duration_ms: 11.375834
+  type: 'test'
+  ...
+# Subtest: the real misspelled Perofrm API is exposed instead of silently corrected or skipped
+ok 64 - the real misspelled Perofrm API is exposed instead of silently corrected or skipped
+  ---
+  duration_ms: 0.718917
+  type: 'test'
+  ...
+# Subtest: native API requirements include exact names and source locations from included files
+ok 65 - native API requirements include exact names and source locations from included files
+  ---
+  duration_ms: 52.405083
+  type: 'test'
+  ...
+# Subtest: for/while loops, lexical locals, integer division and short circuit operators execute without JavaScript evaluation
+ok 66 - for/while loops, lexical locals, integer division and short circuit operators execute without JavaScript evaluation
+  ---
+  duration_ms: 0.5925
+  type: 'test'
+  ...
+# Subtest: a native output reference evaluates an array index once
+ok 67 - a native output reference evaluates an array index once
+  ---
+  duration_ms: 0.195792
+  type: 'test'
+  ...
+# Subtest: unknown native APIs, infinite loops, bounds violations and arbitrary property access fail explicitly
+ok 68 - unknown native APIs, infinite loops, bounds violations and arbitrary property access fail explicitly
+  ---
+  duration_ms: 0.21375
+  type: 'test'
+  ...
+# Subtest: the manifest exposes all actual maps and explicitly blocks the nonfinite map
+ok 69 - the manifest exposes all actual maps and explicitly blocks the nonfinite map
+  ---
+  duration_ms: 0.748334
+  type: 'test'
+  ...
+# Subtest: every imported model marked available has finite native geometry and matching source bytes
+ok 70 - every imported model marked available has finite native geometry and matching source bytes
+  ---
+  duration_ms: 663.039917
+  type: 'test'
+  ...
+# Subtest: POS and ACT are parsed from the preserved native files
+ok 71 - POS and ACT are parsed from the preserved native files
+  ---
+  duration_ms: 2.430625
+  type: 'test'
+  ...
+# Subtest: native animation phase speeds remain deterministic across frame partitions
+ok 72 - native animation phase speeds remain deterministic across frame partitions
+  ---
+  duration_ms: 5.654791
+  type: 'test'
+  ...
+# Subtest: a POS attack window is inactive before its original start frame
+ok 73 - a POS attack window is inactive before its original start frame
+  ---
+  duration_ms: 0.158625
+  type: 'test'
+  ...
+# Subtest: active native combo transitions obey the original ACT link graph
+ok 74 - active native combo transitions obey the original ACT link graph
+  ---
+  duration_ms: 0.673666
+  type: 'test'
+  ...
+# Subtest: unverified native damage coefficients are reported without fabricating HP loss
+ok 75 - unverified native damage coefficients are reported without fabricating HP loss
+  ---
+  duration_ms: 1.279208
+  type: 'test'
+  ...
+# Subtest: the original sword, blade and spear remain their verified RES model IDs
+ok 76 - the original sword, blade and spear remain their verified RES model IDs
+  ---
+  duration_ms: 0.865833
+  type: 'test'
+  ...
+# Subtest: native sound effects use the original PonEF-to-WAV references
+ok 77 - native sound effects use the original PonEF-to-WAV references
+  ---
+  duration_ms: 10.6575
+  type: 'test'
+  ...
+# Subtest: original spawn points in Four Squares and Stalactite Cave have actual collision surfaces
+ok 78 - original spawn points in Four Squares and Stalactite Cave have actual collision surfaces
+  ---
+  duration_ms: 47.314042
+  type: 'test'
+  ...
+# Subtest: an explicit native texture URL loads with an empty fallback path and retains a separate alpha mask
+ok 79 - an explicit native texture URL loads with an empty fallback path and retains a separate alpha mask
+  ---
+  duration_ms: 18.728333
+  type: 'test'
+  ...
+# Subtest: hidden collision platforms below the original Forge spawns remain solid
+ok 80 - hidden collision platforms below the original Forge spawns remain solid
+  ---
+  duration_ms: 19.495584
+  type: 'test'
+  ...
+# Subtest: rapid character selection keeps the latest requested native character
+ok 81 - rapid character selection keeps the latest requested native character
+  ---
+  duration_ms: 3.006416
+  type: 'test'
+  ...
+# Subtest: out-of-order native weapon loads attach only the latest selected model
+ok 82 - out-of-order native weapon loads attach only the latest selected model
+  ---
+  duration_ms: 0.838834
+  type: 'test'
+  ...
+# Subtest: native map cache eviction protects the current scene and pending loads
+ok 83 - native map cache eviction protects the current scene and pending loads
+  ---
+  duration_ms: 0.250625
+  type: 'test'
+  ...
+1..83
+# tests 83
+# suites 0
+# pass 83
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 26870.848917

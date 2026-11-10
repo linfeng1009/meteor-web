@@ -5,6 +5,7 @@ import * as THREE from '../dist/vendor/three.module.js';
 import { MeteorGame } from '../dist/engine.js';
 import { loadNativeCombat, NativeCombatController, NativePoseTimeline, createNativeDamageResolver, nativeReactionParameters, nativeHitAngle, nativeHitSelection, nativeGuardPose, NATIVE_GUARD_REACTIONS, NATIVE_DEFAULT_BLEND_TIME } from '../dist/native-combat.js';
 import { NativeImpactFeedback } from '../dist/native-impact-feedback.js';
+import { NetworkGame } from '../dist/network-game.js';
 
 // Real POS, RES, SKC/BNC/AMB and native weapons on a plain CPU test floor.
 // Textures, browser rendering/audio and NPC retaliation are intentionally absent;
@@ -108,6 +109,28 @@ function tick(game, dt = 1 / 60) {
   game._updateFighter(game.hero, dt); for (const actor of game.enemies) game._updateFighter(actor, dt);
   game.projectiles.update(dt);
 }
+
+test('listen-host remote inputs use native movement and hit the actual host, then replicas use the same HP snapshot',async()=>{
+  const {game,hero,target}=await fixture();await game._equip(target,'sword');target.scriptControlled=false;target.networkId='guest';hero.networkId='host';target.root.rotation.y=Math.PI;
+  const room={players:[{id:'host'},{id:'guest'}]},client={host:true,playerId:'host',send(){}};
+  const session=new NetworkGame(game,client,room);session.play();
+  try{
+    game.pause(true);assert.equal(game.paused,false,'network menu must not stop the shared simulation');game.pause(false);
+    session.inputs([{playerId:'guest',action:'attack',active:true,angle:0}]);assert.equal(target.combat.timeline.pose.id,262);
+    for(let i=0;i<90;i++)tick(game);assert.ok(hero.hp<hero.maxHp,'remote sword must damage host through the original contact path');
+    const frame=session.snapshot();assert.equal(frame.players.find(p=>p.id==='host').hp,hero.hp);assert.equal(frame.players.find(p=>p.id==='guest').id,'guest');
+    const before=target.root.position.x;session.inputs([{playerId:'guest',action:'right',active:true,angle:0}]);for(let i=0;i<30;i++)tick(game);assert.ok(target.root.position.x>before+1);
+    session.inputs([{playerId:'guest',action:'clear',active:false,angle:0}]);assert.equal(session.remote.keys.size,0);
+    assert.equal(game.hero,hero);assert.equal(game.enemies[0],target,'temporary actor context must restore host references');
+    target.spawnIndex=1;game.currentMap.spawns.push({position:v(0,.015,6)});target.hp=1;hit(game,hero,target,262);assert.equal(target.dead,true);assert.equal(session.scores.get('host').kills,1);
+    for(let i=0;i<200;i++)tick(game);assert.equal(target.dead,false);assert.ok(target.root.position.z>5,'remote respawns at its own source spawn rather than the host spawn');
+    const replica=await fixture();replica.hero.networkId='guest';replica.target.networkId='host';const guestSession=new NetworkGame(replica.game,{host:false,playerId:'guest',send(){}},room);guestSession.play();
+    try{guestSession.apply(session.snapshot());assert.equal(replica.hero.hp,target.hp);assert.equal(replica.target.hp,hero.hp);assert.deepEqual(replica.hero.root.position.toArray(),target.root.position.toArray());const position=replica.hero.root.position.clone();tick(replica.game);assert.deepEqual(replica.hero.root.position.toArray(),position.toArray(),'guest must not independently simulate authoritative movement');}
+    finally{guestSession.dispose();}
+    game._placeFighter(hero,{position:v(0,.015,0)});game._placeFighter(target,{position:v(.1,.015,0)});game._separateCharacters(.1);
+    assert.ok(Math.abs(Math.abs(hero.root.position.x)-Math.abs(target.root.position.x-.1))<1e-8,'body separation must not give the host the old player-vs-NPC weight advantage');
+  }finally{session.dispose();}
+});
 
 test('real hit events, original animation and impact sound all use the selected front/back/side source pose', async () => {
   for (const [offset, expected] of [[v(0, 0, 1.1), 93], [v(1.1, 0, 0), 94], [v(-1.1, 0, 0), 91], [v(0, 0, -1.1), 92]]) {

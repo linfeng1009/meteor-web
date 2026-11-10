@@ -25,7 +25,7 @@ def main():
         for path in (ROOT / 'dist').rglob('*')
         if path.is_file() and path.name != '.DS_Store'
     }
-    for filename in ['server.mjs', '启动游戏.command', '停止游戏.command']:
+    for filename in ['server.mjs', 'network-server.mjs', '启动游戏.command', '停止游戏.command']:
         path = ROOT / filename
         if not path.is_file():
             raise FileNotFoundError(filename)

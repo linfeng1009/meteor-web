@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import * as THREE from '../dist/vendor/three.module.js';
-import { NativeItemSystem, nativeMeatbunEffect, NATIVE_ITEM_PICKUP_PROFILE } from '../dist/native-items.js';
+import { NativeItemSystem, nativeMeatbunEffect, NATIVE_ITEM_PICKUP_PROFILE, nativeWorldItemEffect, updateNativeScriptItems, nativeMovementScale } from '../dist/native-items.js';
+import { nativeEffectiveStat } from '../dist/native-combat.js';
 import { MeteorGame } from '../dist/engine.js';
 import { NativeMissionHost } from '../dist/native-mission-host.js';
 
@@ -55,7 +56,34 @@ test('hidden, noninteractive, distant, vertically separate, blocked and dead-pla
 
 test('source model identity controls effects; names and arbitrary health-item models cannot grant meatbun healing', () => {
   const { system } = fixture([item('Item01', '"Item02"'), item('肉包', '"Item07"'), item('Item01', '')]);
-  assert.equal(system.tryPickup(actor()).ok, false);
+  const hero=actor(),result=system.tryPickup(hero);assert.equal(result.ok,true);assert.equal(result.itemId,2);assert.equal(result.healed,0);assert.equal(hero.hp,1000);assert.equal(hero.maxHp,2000);
+  assert.equal(system.tryPickup(hero).ok,false,'unsupported Item07 cannot become a heal merely by its display name');
+});
+
+test('ground pickups apply native attack, defense and movement modifiers even at full HP and expire',()=>{
+  for(const [id,stat,value] of [[3,4,20],[4,3,25],[5,5,150]]){
+    const {system}=fixture([item('world',itemRecords.get(id).model)]),hero=actor(1500),effect=nativeWorldItemEffect(itemRecords.get(id));
+    const result=system.tryPickup(hero);assert.equal(result.ok,true);assert.equal(hero.hp,1500);assert.equal(result.healed,0);
+    if(stat===5)assert.equal(nativeMovementScale(hero),1.49);else assert.equal(nativeEffectiveStat(stat,100,hero.activeItems),100+value);
+    updateNativeScriptItems(hero,effect.duration+.2);assert.equal(hero.activeItems.length,0);
+  }
+});
+test('rage and small/large meatbuns use their own values, clamp and preserve full-resource pickups',()=>{
+  for(const [id,value] of [[16,500],[17,100]]){const {system}=fixture([item('bun',itemRecords.get(id).model)]),hero=actor(1400);assert.equal(system.tryPickup(hero).healed,Math.min(value,100));}
+  const {system,instances}=fixture([item('rage','Item08')]),hero=actor(1500);hero.rage=100;
+  assert.equal(system.tryPickup(hero).reason,'full-rage');assert.equal(instances[0].attributes.active,1);hero.rage=80;
+  assert.equal(system.tryPickup(hero).rageGained,20);assert.equal(hero.rage,100);
+});
+test('world buff duplicate refreshes without stacking and source poison buns actually tick',()=>{
+  const {system,instances}=fixture([item('first','Item04'),item('second','Item04')]),hero=actor();system.tryPickup(hero);updateNativeScriptItems(hero,10);
+  assert.equal(system.tryPickup(hero).refreshed,true);assert.equal(hero.activeItems.length,1);assert.equal(hero.scriptItems[0].remaining,60);assert.ok(instances.every(x=>x.attributes.active===0));
+  const poison=fixture([item('poison','Item0103')]);assert.equal(poison.system.tryPickup(hero).itemId,18);updateNativeScriptItems(hero,5.2);assert.equal(hero.hp,990);
+});
+test('unsupported effects stay unconsumed and full HP buns do not block a nearby usable buff',()=>{
+  for(const id of [6,7,9,32,33,39])assert.equal(nativeWorldItemEffect(itemRecords.get(id)),null);
+  const {system,instances}=fixture([item('bun','Item01'),item('buff','Item03')]),hero=actor(1500);instances[1].root.position.x=1;
+  assert.equal(system.tryPickup(hero).itemId,3);assert.equal(instances[0].attributes.active,1);
+  const changed=structuredClone(itemRecords.get(3));changed.effects[0].words[6]=999;assert.equal(nativeWorldItemEffect(changed),null);
 });
 
 test('nearest reachable original meatbun is selected, reset permits a source-reinitialized instance, disposal stops pickups', () => {
@@ -130,6 +158,8 @@ test('actual cave stone PST releases the actual DES Item01, heals once, and sour
     host.call(host.sceneVm, 'Scene_OnInit'); system.reset(); assert.equal(system.peek(hero), null);
     assert.equal(host.sceneVm.getGlobal('g_iStoneHP')[21], 500); assert.equal(host.diagnostics.length, 0);
     host.sceneItemAttack('D_St22', 0, 500); assert.equal(system.tryPickup(hero).healed, 200); assert.equal(hero.hp, 1500);
+    const huatuo=game.getSceneObject('D_itSt20');hero.root.position.copy(huatuo.root.position);host.sceneItemAttack('D_St20',0,500);
+    assert.equal(huatuo.source.properties.model,'"item02"');const buff=system.tryPickup(hero);assert.equal(buff.itemId,2);assert.equal(hero.maxHp,2000);assert.equal(hero.hp,1500);assert.equal(buff.duration,600);
   } finally {
     system?.dispose(); game?.missionHost?.dispose(); if (game?.currentMap) game._disposeMap(game.currentMap);
     globalThis.fetch = priorFetch; THREE.TextureLoader.prototype.load = priorTexture;

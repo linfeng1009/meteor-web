@@ -58,6 +58,50 @@ function jump(fixture, visit) {
   return frames;
 }
 
+test('four crouch double-tap rolls play original poses and consume their actual d_base displacement',()=>{
+  for(const [direction,poseId,axis,sign] of [['forward',176,'z',-1],['right',177,'x',1],['left',178,'x',-1],['back',179,'z',1]]){
+    const f=fixture();
+    try{
+      const {game,hero}=f;hero.combat.sampleRoot=hero.character.sampleSceneMotion;game.cameraAngle=0;game.action('crouch');game.action(direction);game.action(direction,false);game.elapsed+=.15;game.action(direction);
+      assert.equal(hero.combat.timeline.pose.id,poseId);assert.equal(hero.combat.busy,true);assert.equal(hero.combat.attacking,false);assert.deepEqual(game.directionBuffer,[]);
+      game.action(direction,false);const start=hero.root.position.clone(),pose=hero.combat.data.poses.get(poseId);
+      const a=hero.character.sampleSceneMotion(pose.source,pose.start),b=hero.character.sampleSceneMotion(pose.source,pose.end);
+      const expected=Math.hypot(b.x-a.x,b.y-a.y)*.08;
+      for(let i=0;i<35;i++){game.elapsed+=1/60;game._updateFighter(hero,1/60);}
+      const delta=hero.root.position.clone().sub(start);assert.ok(delta[axis]*sign>4,`${direction}: ${delta.toArray()}`);assert.ok(Math.abs(Math.hypot(delta.x,delta.z)-expected)<.02);
+      assert.equal(hero.combat.busy,false);assert.equal(hero.combat.timeline.pose.id,10);assert.equal(hero.hp,undefined,'locomotion must not invent HP or immunity');
+    }finally{f.dispose();}
+  }
+});
+
+test('held direction repeats, air, dead, paused and script-blocked players cannot force a roll',()=>{
+  const f=fixture();try{const {game,hero}=f;game.action('crouch');game.action('forward');game.elapsed+=.1;game.action('forward');assert.notEqual(hero.combat.timeline.pose.id,176);
+    for(const mutate of [()=>hero.grounded=false,()=>hero.dead=true,()=>game.paused=true,()=>hero.scriptInputBlocked=true]){
+      hero.grounded=true;hero.dead=false;game.paused=false;hero.scriptInputBlocked=false;mutate();assert.equal(game._beginRoll('forward',176),false);
+    }
+  }finally{f.dispose();}
+});
+
+test('native roll is stopped by actual wall geometry and remains interruptible by a hit',()=>{
+  const f=fixture({wall:true});try{
+    const {game,hero}=f;hero.combat.sampleRoot=hero.character.sampleSceneMotion;game.cameraAngle=0;game.action('crouch');assert.equal(game._beginRoll('back',179),true);
+    for(let i=0;i<35;i++){game.elapsed+=1/60;game._updateFighter(hero,1/60);}
+    assert.ok(hero.root.position.z<3.7&&hero.root.position.z>2,'roll must stop on the wall at z=4');
+    assert.equal(game._beginRoll('forward',176),true);game._updateFighter(hero,.05);assert.equal(hero.combat.react(90),true);assert.equal(hero.combat.currentMove,null);assert.equal(hero.combat.reacting,true);assert.equal(hero.combat._motionChain,false);
+  }finally{f.dispose();}
+});
+
+test('pausing clears a pending double tap and does not advance the native roll clip',()=>{
+  const f=fixture();try{const {game,hero}=f;game._hud=()=>{};game.action('crouch');game.action('right');game.action('right',false);game.pause(true);assert.equal(game.traversalTap,null);game.pause(false);game.action('crouch');game.elapsed+=.1;game.action('right');assert.notEqual(hero.combat.timeline.pose.id,177);
+  }finally{f.dispose();}
+});
+
+test('battle lock keeps tracking its opponent even after a previous free-camera override',()=>{
+  const f=fixture({locked:true});
+  try{f.game.cameraManualUntil=Infinity;f.game.cameraAngle=1;for(let i=0;i<90;i++)f.game._tickCamera(1/60);assert.ok(Math.abs(f.game.cameraAngle)<.05,'locked camera must not wait for the free-look timer');}
+  finally{f.dispose();}
+});
+
 test('native in-place jump removes scene translation from d_base while preserving the authored skeleton pose', () => {
   const character = createNativeCharacter(data, { inPlace: true, loadTextures: false });
   const base = character.getAttachment('d_base'), originalParent = character.bones[0].parent;

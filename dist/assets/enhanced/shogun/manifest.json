@@ -1,0 +1,106 @@
+{
+  "schema": 1,
+  "characterId": 0,
+  "appearance": "shogun",
+  "label": "雷电将军 · 模型适配",
+  "mesh": "mesh.json",
+  "complete": true,
+  "completeness": {
+    "bodyGeometry": true,
+    "headHairGeometry": true,
+    "eyes": true,
+    "faceGeometry": true,
+    "sourcePmxSkeleton": true,
+    "originalSourceGameSkeleton": false
+  },
+  "stats": {
+    "sourceVertices": 20614,
+    "sourceTriangles": 25517,
+    "vertices": 20614,
+    "triangles": 22574,
+    "sourceBones": 309,
+    "bones": 30,
+    "dummies": 6,
+    "secondaryBones": 42,
+    "materials": 22,
+    "textures": 4,
+    "omittedTriangles": 2943
+  },
+  "retarget": {
+    "method": "Original mesh proportions preserved by a single uniform transform; independent source-length display skeleton follows original AMB/POS rotations; display weapon sockets follow the new hands.",
+    "provisional": true,
+    "sourceSkeletonMissing": false,
+    "hairPhysics": true,
+    "hairPhysicsProfile": "web-spring-bone-v2-restrained",
+    "originalMmdPhysics": false,
+    "clothPhysics": false,
+    "fingerArticulation": "Thumb and index chains of the native rig drive the source finger groups; other fingers fold into those two chains."
+  },
+  "provenance": {
+    "sourceArchive": "assets/source/shogun",
+    "sourceModel": "RaiDenShougun",
+    "modelAuthor": "miHoYo",
+    "rigAuthor": "观海（BiliBili：观海子）",
+    "credit": "模型提供：miHoYo；模型改造：观海（BiliBili：观海子）。",
+    "license": "Original distribution readme retained verbatim. It forbids redistribution, part extraction and commercial use, and states MMD use; this is a user-requested local adaptation, not a rights grant or published distribution.",
+    "limits": [
+      "Original source proportions preserved; action retarget remains approximate.",
+      "Source PMX has no verified real-world centimetre calibration; no physical height is claimed.",
+      "Source hair skeleton and weights retained but MMD rigid bodies are not executed.",
+      "Skirt panels are rigid on the pelvis and the sleeves ride their source arm bones; no cloth solver.",
+      "No expression morph or independent per-finger solver.",
+      "Original toon ramp and sphere maps are not reproduced; base colour, alpha cutout and roughness are used."
+    ]
+  },
+  "omittedRenderPasses": [
+    {
+      "material": "发sph+",
+      "sourceMaterial": 10,
+      "triangles": 2943,
+      "reason": "Sphere add pass over the identical 发 hair surface."
+    }
+  ],
+  "sourceFiles": [
+    {
+      "file": "雷电将军.pmx",
+      "bytes": 1439589,
+      "sha256": "80f12e5db89d3f6b9d43cfdfccc20364e0828d369cb31a9d8e1c56feb680b448"
+    },
+    {
+      "file": "tex/面.png",
+      "runtime": "textures/面.png",
+      "sha256": "3d2447a3d28a765e19e261a5caac8bd09e0f63f27740dcca1293ca61d3f61ff4",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "tex/发.png",
+      "runtime": "textures/发.png",
+      "sha256": "6a6abc7df5be6155fff4bc34f766c2baeb54688ea61b8ce80af4f0d2c5b6a8e0",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "tex/衣.png",
+      "runtime": "textures/衣.png",
+      "sha256": "d649fd0964bb28c603981c459fe41e06da3b42d711751198cb5bffd24dfae486",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "tex/肌.png",
+      "runtime": "textures/肌.png",
+      "sha256": "11174908439c82edd25eaf31e7a87c94c9e57c436e0b6c21afed284c535262e5",
+      "size": [
+        2048,
+        2048
+      ]
+    }
+  ]
+}

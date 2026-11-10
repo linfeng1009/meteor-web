@@ -10,7 +10,9 @@ const details = Object.freeze({
   emilia: { name: 'RE0-爱蜜莉雅', seal: '爱', shortLabel: 'RE0-爱蜜莉雅', title: 'RE0-爱蜜莉雅 · 模型适配', kind: 'pmx', note: '采用本地完整「Emilia_v1.pmx」及配套贴图，适配《流星》人物动作。长发已加入独立弹簧骨骼、惯性和基础身体碰撞；衣裙物理和面部表情尚未接入；原包署名 Skymoons／Elemental Craft／Kadokawa corp／chenxs（陈心舒），完整原说明保留在本地。' },
   doubao: { name: '豆包', seal: '豆', shortLabel: '豆包', title: '豆包 · 模型适配', kind: 'pmx', note: '保留原模型身材比例、完整网格和原4K贴图，适配《流星》动作与武器，头发轻微跟随；可查看原模型姿态。版权归属《豆包》；建模：sdn1111，绑定：鹿铃。衣物物理和面部表情尚未接入。' },
   springfield: { name: '春田', seal: '春', shortLabel: '春田', title: '春田 · 泳装P3', kind: 'pmx', note: '保留原模型身材比例、网格与贴图，沿用《流星》动作，刘海和长发轻微跟随；可查看原模型姿态。模型：Sunborn Network Technology；绑定修正：DesmondChan／摸鱼的可露凯。衣物物理与表情尚未接入。' },
-  ganyu: { name: '甘雨', seal: '甘', shortLabel: '甘雨', title: '甘雨 · 模型适配', kind: 'pmx', note: '保留原模型身高、躯干与四肢比例，网格与贴图未经压缩，沿用《流星》动作；长发与呆毛为轻量跟随。模型提供：miHoYo；模型改造：观海（BiliBili：观海子）。裙摆、流苏与表情尚未接入物理与控制。' }
+  ganyu: { name: '甘雨', seal: '甘', shortLabel: '甘雨', title: '甘雨 · 模型适配', kind: 'pmx', note: '保留原模型身高、躯干与四肢比例，网格与贴图未经压缩，沿用《流星》动作；长发与呆毛为轻量跟随。模型提供：miHoYo；模型改造：观海（BiliBili：观海子）。裙摆、流苏与表情尚未接入物理与控制。' },
+  yaemiko: { name: '八重神子', seal: '八', shortLabel: '八重神子', title: '八重神子 · 模型适配', kind: 'pmx', note: '保留原模型身材比例、完整网格及原2K贴图，适配《流星》动作和武器；长发与发绳轻微跟随，可查看原模型姿态。模型提供：miHoYo；模型改造：观海（BiliBili：观海子）。袖摆、衣裙与表情尚未接入物理和控制。' },
+  shogun: { name: '雷电将军', seal: '雷', shortLabel: '雷电将军', title: '雷电将军 · 模型适配', kind: 'pmx', note: '保留原模型身高、躯干与四肢比例，网格与贴图未经压缩，沿用《流星》动作；辫子与左右长发为轻量跟随。模型提供：miHoYo；模型改造：观海（BiliBili：观海子）。裙摆、袖摆与表情尚未接入物理与控制。' }
 });
 
 export const WORKSHOP_APPEARANCES = Object.freeze(Object.keys(NATIVE_APPEARANCES).filter(id => NATIVE_APPEARANCES[id].assetPath));

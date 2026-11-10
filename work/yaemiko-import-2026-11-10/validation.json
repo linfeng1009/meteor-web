@@ -1,0 +1,187 @@
+{
+  "date": "2026-11-10",
+  "status": "passed_with_environment_recheck",
+  "source": {
+    "archive": "assets/source/yaemiko",
+    "files": 12,
+    "bytes": 8490371,
+    "complete": true,
+    "downloadsRequired": false
+  },
+  "asset": {
+    "sourceVertices": 25219,
+    "sourceTriangles": 29140,
+    "vertices": 25219,
+    "triangles": 29140,
+    "sourceBones": 456,
+    "bones": 30,
+    "dummies": 6,
+    "secondaryBones": 48,
+    "materials": 25,
+    "textures": 5,
+    "omittedTriangles": 0
+  },
+  "proportions": {
+    "uniformSourceGeometry": true,
+    "independentEveryVertexNormalUvCheck": true,
+    "sourceGeometryMaxError": 0.0,
+    "sourceRestMaxError": 1.8987300372355858e-07
+  },
+  "targeted": {
+    "tests": 8,
+    "passed": 8,
+    "failed": 0
+  },
+  "fullSuite": {
+    "tests": 496,
+    "passed": 494,
+    "failed": 2,
+    "environmentBlocked": 2,
+    "durationMs": 171867.758,
+    "log": "full-tests.tap"
+  },
+  "networkRecheck": {
+    "tests": 18,
+    "passed": 18,
+    "failed": 0,
+    "loopbackOnly": true,
+    "serversClosed": true,
+    "includesBothOriginalFailures": true,
+    "log": "network-recheck.tap"
+  },
+  "originalSuitePassedCoverage": 496,
+  "syntaxModules": 46,
+  "motion": {
+    "samples": 45,
+    "allFinite": true,
+    "nativeJointsUnchanged": true,
+    "maxObservedEdgeGrowth": 0.12896083736553896
+  },
+  "blender": {
+    "version": "5.4.0 Alpha",
+    "blend": "work/yaemiko-import-2026-11-10/八重神子-流星动作适配.blend",
+    "sha256": "c38a7d355d87cf6a4a6b97915d61a2e8818b1df3ea70978da6621484720c2348",
+    "packedImages": 5,
+    "actions": 4,
+    "bodyBones": 30,
+    "hairBones": 48,
+    "linkedLibraries": 0,
+    "restMatrixError": 3.039836883544922e-06,
+    "poseMatrixError": 7.62939453125e-06
+  },
+  "browser": {
+    "date": "2026-11-10",
+    "workshop": {
+      "url": "http://localhost:4173/character-compare.html?appearance=yaemiko",
+      "verified": [
+        "原模型姿态",
+        "脸部和透明头发高光",
+        "跑步播放及暂停",
+        "20%跳跃",
+        "20%出招"
+      ],
+      "logs": []
+    },
+    "game": {
+      "appearance": "八重神子",
+      "map": "炼铁狱",
+      "verified": [
+        "人物选择与实际载入",
+        "游戏内材质和武器显示"
+      ],
+      "manualJumpAttackVerified": false,
+      "inputNote": "Background browser reports pointer lock unavailable; current mouse-only jump/attack bindings did not trigger. Action geometry is covered by workshop and CPU sampling.",
+      "logs": [],
+      "previousSelectionRestored": "选择人物，当前孟星魂",
+      "temporaryTabClosed": true
+    }
+  },
+  "package": {
+    "archive": "artifacts/meteor-web-v0.7.6.zip",
+    "version": "0.7.6",
+    "bytes": 179369187,
+    "sha256": "83a8021901a0102601c08d2a7b20de15ee98e39b4f946938be36b7588ba39595",
+    "verifiedFiles": 4182,
+    "characters": [
+      {
+        "id": "hutao",
+        "label": "YS-胡桃 · 完整模型适配",
+        "mesh": "dist/assets/enhanced/hutao/mesh.json",
+        "textures": 5
+      },
+      {
+        "id": "raiden",
+        "label": "YS-影 · 礼服 · 完整模型适配",
+        "mesh": "dist/assets/enhanced/raiden/mesh.json",
+        "textures": 7
+      },
+      {
+        "id": "emilia",
+        "label": "RE0-爱蜜莉雅 · 完整模型适配",
+        "mesh": "dist/assets/enhanced/emilia/mesh.json",
+        "textures": 4
+      },
+      {
+        "id": "doubao",
+        "label": "豆包 · 模型适配",
+        "mesh": "dist/assets/enhanced/doubao/mesh.json",
+        "textures": 1
+      },
+      {
+        "id": "springfield",
+        "label": "春田 · 泳装P3",
+        "mesh": "dist/assets/enhanced/springfield/mesh.json",
+        "textures": 33
+      },
+      {
+        "id": "ganyu",
+        "label": "甘雨 · 模型适配",
+        "mesh": "dist/assets/enhanced/ganyu/mesh.json",
+        "textures": 5
+      },
+      {
+        "id": "yaemiko",
+        "label": "八重神子 · 模型适配",
+        "mesh": "dist/assets/enhanced/yaemiko/mesh.json",
+        "textures": 5
+      }
+    ],
+    "originalPmxRequired": false
+  },
+  "packageMatchesCurrentDist": true,
+  "localOnly": true,
+  "limits": [
+    "No complete source MMD toon/sphere shader or rigid-body solver.",
+    "Cloth, expression morphs and per-finger control remain simplified.",
+    "Background browser pointer lock unavailable; actual mouse jump/attack chain not counted as passed manual gameplay."
+  ],
+  "hashes": {
+    "work/yaemiko-import-2026-11-10/source-copy.json": "3bef31e2a9a126ffce28a7dfde72f9dc6db2e1fd21df8b17e23d1a7e89443c32",
+    "work/yaemiko-import-2026-11-10/source-audit.json": "f3ed0ab09b4cfc3b553a22e6daf72a25b889d7dff18a3e0a5a367aaabd586417",
+    "work/yaemiko-import-2026-11-10/build-evidence.json": "5a9938f93444ac10018eab93de92a1120fa4198a2d05e21ef1949ad46f882fcc",
+    "work/yaemiko-import-2026-11-10/blend-validation.json": "24dfb4d0d42c244e950394db45f09403c8bf60b8a6a5019eb7ea8d69912c55af",
+    "work/yaemiko-import-2026-11-10/character-tests.tap": "0eff310849a973fd46d00025c9a98dc1f430f171952ca09025a78c1b7b09c402",
+    "work/yaemiko-import-2026-11-10/motion-summary.json": "b9747e01f3a1bf548c1d7db0fe4e731b263b6531327cabccd68acbd424879a5a",
+    "work/yaemiko-import-2026-11-10/motion-probe.json": "6a83c3f5d9e1c833fb67f71f0556c75abd95596c01545e635340d413e7efcbe3",
+    "work/yaemiko-import-2026-11-10/full-tests.tap": "bbee51a57eda2bf6ae318ee085687c15f9191c9e909397125cc48798cf699f25",
+    "work/yaemiko-import-2026-11-10/network-recheck.tap": "07f1936fe89bf8ce9a9a67da4c3e646af91337b51de6977dfce76b564c6c78bb",
+    "work/yaemiko-import-2026-11-10/syntax.log": "aed7e7815693ef9e3eb18342fa1edfbe1c1c06f0f4289e826ce38055ac589a49",
+    "work/yaemiko-import-2026-11-10/browser-validation.json": "c316555f37e41c72b2babd36ab802a2707c4c84d7056d9131aa6a9616355510b",
+    "work/yaemiko-import-2026-11-10/source-pose-preview.png": "00606feadd350559e14833d12ec23c6ea9a0b559b55f64e775009e2de310ecae",
+    "work/yaemiko-import-2026-11-10/face-preview.png": "9daddaadb0f058ea906def7df59125ecd521a74fbd3097032765b1428bd10dca",
+    "work/yaemiko-import-2026-11-10/run-preview.png": "1d80c81378e2ef0415787b81dca109d528851355187c469358de45874a2c2e72",
+    "work/yaemiko-import-2026-11-10/jump-preview.png": "148ec8cc78ab3c550ef5ce97de56092e3c0b9d90036e5ee23e6c3805528346aa",
+    "work/yaemiko-import-2026-11-10/attack-preview.png": "fa72af1b905447ed578717e72fa531b74a36d1564e5be718fde4dfbb9ceea12f",
+    "work/yaemiko-import-2026-11-10/game-preview.png": "29862cdfc567dcfac65525dc8b7923d8b0f9553ab6058b45809bad22308d3a40",
+    "work/yaemiko-import-2026-11-10/八重神子-流星动作适配.blend": "c38a7d355d87cf6a4a6b97915d61a2e8818b1df3ea70978da6621484720c2348",
+    "work/yaemiko-import-2026-11-10/README.md": "56477df97f7d2155b64cc6799aae27b40165e2e03e3303753cb9012b1b69088a",
+    "work/yaemiko-import-2026-11-10/report/2026-11-10_模型适配-八重神子-report.md": "c5a9b98ef7a9003a47dd97393925109dbe938158f9a0fdca8d5218bd1eecd5a9",
+    "scripts/blender/build_yaemiko.py": "7961e16d88ebab419d350de22c79c095fc3d43bf6ae7495b53c6c0064a19a06e",
+    "scripts/blender/check_yaemiko_build.py": "77e111dd65cb117b03ee54764b0644f0410481797226079369f1513705e135b2",
+    "scripts/probe-yaemiko.mjs": "5566eb48c0005630ff800cdecf39d39b78ffcfb794062dcaa81506e48ef21d84",
+    "tests/native-yaemiko-character.test.mjs": "b5726c598eb2daab43460fe2188363475de8c0d155dff64ac7f21c6207047b1c",
+    "scripts/package-game.py": "a1476737b33f1eb1f977b52e8063044b42ddb81beb8074f6e704fb3c26053410",
+    "dist/assets/enhanced/yaemiko/mesh.json": "bb58958480899e4f5032bfa7bf9e9d01813f18d8e2267fe72ca65ac42b31bea6",
+    "dist/assets/enhanced/yaemiko/manifest.json": "e35c0c71b28dfaae654f994bcdd9678eac29d21ba98a78425fa51970339d5a08"
+  }
+}

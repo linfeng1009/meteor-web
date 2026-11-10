@@ -7,6 +7,7 @@ import {createNativeCharacter,loadNativeCharacterData,loadEnhancedCharacterData,
 import {appearanceCharacterName,WORKSHOP_APPEARANCES} from '../dist/character-appearances.js';
 import {MeteorGame} from '../dist/engine.js';
 import {bindQiankunGrip} from '../dist/native-qiankun-grip.js';
+import {sourcePmxVertices} from './helpers/source-pmx-vertices.mjs';
 const root=new URL('../',import.meta.url),dist=new URL('dist/',root);
 const json=async path=>JSON.parse(await readFile(new URL(path,root)));
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
@@ -75,7 +76,7 @@ test('all seven appearance variants retain native joints, cached meshes and weap
     for(const appearance of ['original','hd','hutao','raiden','emilia','doubao','springfield','original','springfield']){
       const status=await actor.setAppearance(appearance);assert.equal(status.available,true);assert.equal(status.complete,true);
       if(meshes.has(appearance))assert.equal(actor.mesh===meshes.get(appearance),true);else meshes.set(appearance,actor.mesh);
-      assert.equal(actor.skeleton===skeleton,true);assert.equal(actor.skeleton.bones.length,30);assert.equal(actor.mesh.skeleton.bones.slice(0,30).every((b,i)=>b===actor.bones[i]),appearance!=='springfield');
+      assert.equal(actor.skeleton===skeleton,true);assert.equal(actor.skeleton.bones.length,30);assert.equal(actor.mesh.skeleton.bones.slice(0,30).every((b,i)=>b===actor.bones[i]),!['springfield','doubao'].includes(appearance));
       assert.deepEqual(matrices(actor),joints);assert.equal(actor.frame,frame);assert.deepEqual(weapon.matrixWorld.toArray(),weaponTransform);assert.equal(weapon.parent===attachment,true);
       assert.equal(actor.nativeSpace.children.filter(c=>c.isSkinnedMesh).length,1);
     }
@@ -109,18 +110,6 @@ test('Springfield run, jump, guard and attack samples preserve native transforms
 
 // Parse the original PMX vertex prefix independently of the Blender exporter.
 // Comparing every vertex catches the torso/leg compression reported by users.
-function sourcePmxVertices(bytes){
-  assert.equal(bytes.subarray(0,4).toString(),'PMX ');
-  const header=bytes.subarray(9,9+bytes[8]),extra=header[1],boneBytes=header[5];let offset=9+bytes[8];
-  for(let i=0;i<4;i++){const length=bytes.readInt32LE(offset);offset+=4+length;}
-  const count=bytes.readInt32LE(offset);offset+=4;const vertices=[];
-  for(let i=0;i<count;i++){
-    const position=[0,1,2].map(a=>bytes.readFloatLE(offset+a*4)),normal=[0,1,2].map(a=>bytes.readFloatLE(offset+12+a*4)),uv=[bytes.readFloatLE(offset+24),bytes.readFloatLE(offset+28)];offset+=32+extra*16;
-    const deform=bytes[offset++];offset+=deform===0?boneBytes:deform===1?boneBytes*2+4:deform===3?boneBytes*2+40:boneBytes*4+16;offset+=4;
-    vertices.push({position,normal,uv});
-  }
-  return vertices;
-}
 
 test('Springfield preserves every source vertex uniformly and can display the untouched source pose',async()=>withFetch(async()=>{
   const {skin}=await loadEnhancedCharacterData(0,'springfield'),source=sourcePmxVertices(await readFile(new URL('assets/source/springfield/春田_泳衣_全P3_刘海物理优化.pmx',root)));

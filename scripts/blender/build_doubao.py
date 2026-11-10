@@ -6,13 +6,13 @@ Add -- --render to produce a Blender stance preview. Runtime uses only dist/.
 import bpy, sys, json, shutil, hashlib, math, argparse
 from pathlib import Path
 from collections import defaultdict
-from mathutils import Vector, Matrix
+from mathutils import Vector, Matrix, Quaternion
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent))
 from pmx_reader import PMXReader
 from hutao_native_rest import B, world as REST
-from native_character_authoring import make_native_armature, bake_native_samples
+from proportional_authoring import build_source_armature, bake_source_samples
 
 ROOT = Path(__file__).resolve().parents[2]
 SRC = ROOT / 'assets/source/doubao'
@@ -30,26 +30,25 @@ def source_point(p): return Vector((p[0], p[2], p[1]))
 def bp(name): return source_point(byname[name]['position'])
 def target(index): return REST[B[index]['name']].translation
 floor, top = audit['bounds'][1]
-hip = (bp('左足').z+bp('右足').z)/2
-head_scale = (39.4-target(13).z)/(top-bp('頭').z)
-width_scale = (abs(target(15).x)+abs(target(23).x))/(abs(bp('左腕').x)+abs(bp('右腕').x))
-height_pairs = [(floor,0), ((bp('左足首').z+bp('右足首').z)/2,(target(5).z+target(9).z)/2), ((bp('左ひざ').z+bp('右ひざ').z)/2,(target(4).z+target(8).z)/2), (hip,target(1).z), (bp('上半身').z,target(2).z), (bp('上半身2').z,target(11).z), (bp('首').z,target(12).z), (bp('頭').z,target(13).z), (top,39.4)]
-depth_pairs = [(bp(n).z, target(i).y-bp(n).y*head_scale) for n,i in [('下半身',1),('上半身',2),('上半身2',11),('首',12),('頭',13)]]
-def body(p):
-    depth = float(np.interp(p.z, [a for a,b in depth_pairs], [b for a,b in depth_pairs]))
-    return Vector((p.x*width_scale, p.y*head_scale+depth, float(np.interp(p.z,[a for a,b in height_pairs],[b for a,b in height_pairs]))))
-def head(p): return target(13)+(p-bp('頭'))*head_scale
-def segment(a,b,x,y,scale=None):
-    rotation = (b-a).normalized().rotation_difference((y-x).normalized()).to_matrix()
-    return a,x,rotation*((y-x).length/(b-a).length if scale is None else scale)
-limbs = {}
-for side,offset in [('左',0),('右',8)]:
-    limbs[side,'upper'] = segment(bp(side+'腕'),bp(side+'ひじ'),target(15+offset),target(16+offset))
-    limbs[side,'lower'] = segment(bp(side+'ひじ'),bp(side+'手首'),target(16+offset),target(17+offset))
-    limbs[side,'hand'] = segment(bp(side+'手首'),bp(side+'中指３'),target(17+offset),target(21+offset),head_scale)
-for side,offset in [('左',0),('右',4)]:
-    for part,a,b,x,y in [('thigh','足','ひざ',3,4),('calf','ひざ','足首',4,5),('foot','足首','つま先',5,6)]:
-        limbs[side,part] = segment(bp(side+a),bp(side+b),target(x+offset),target(y+offset),head_scale if part=='foot' else None)
+uniform_scale=39.4/(top-floor)
+def body(p):return Vector((p.x*uniform_scale,p.y*uniform_scale,(p.z-floor)*uniform_scale))
+def head(p):return body(p)
+hip=(bp('左足').z+bp('右足').z)/2
+source_names=['センター','下半身','上半身','左足','左ひざ','左足首','左つま先','右足','右ひざ','右足首','右つま先','上半身2','首','頭','左肩','左腕','左ひじ','左手首','左親指０','左親指１','左中指１','左中指３','右肩','右腕','右ひじ','右手首','右親指０','右親指１','右中指１','右中指３']
+parents=[-1,0,0,1,3,4,5,1,7,8,9,2,11,12,11,14,15,16,17,18,17,20,11,22,23,24,25,26,25,28]
+anchors=[body(bp(name)) for name in source_names]
+# This auto rig's lower-body pivot is above the actual hip joints. Use their
+# source-space midpoint for the display pelvis, preserving the source geometry.
+anchors[1]=(anchors[3]+anchors[7])*.5
+links={3:4,4:5,5:6,7:8,8:9,9:10,14:15,15:16,16:17,17:21,18:19,20:21,22:23,23:24,24:25,25:29,26:27,28:29}
+body_bones=[]
+for i,entry in enumerate(B):
+    q=REST[entry['name']].to_quaternion()
+    if i in links:
+        j=links[i];native_axis=target(j)-target(i);source_axis=anchors[j]-anchors[i]
+        if native_axis.length>1e-5 and source_axis.length>1e-5:q=native_axis.normalized().rotation_difference(source_axis.normalized())@q
+    body_bones.append(dict(name=entry['name'],nativeBone=i,parent=parents[i],position=list(anchors[i]),rotation=[q.x,q.y,q.z,q.w]))
+body_rig=dict(schema=1,type='source-proportions',bones=body_bones,nativeRootBind=list(target(0)),sourceUniformScale=uniform_scale,sourceFloor=floor,pelvisAnchor='Source left/right thigh-joint midpoint; auto-rig lower-body pivot lies above the hips.')
 def ancestors(index):
     seen=set()
     while index >= 0 and index not in seen:
@@ -93,28 +92,18 @@ for index in ordered:
     depth=0 if parent==13 else hair_bones[parent-30]['depth']+1
     hair_bones.append(dict(name='doubao_spring_'+b['name'],sourceBone=index,sourceName=b['name'],parent=parent,position=list(position),tail=list(tail),rotation=[q.x,q.y,q.z,q.w],depth=depth,stiffness=220 if depth==0 else 150 if depth==1 else 110,damping=30 if depth==0 else 24,maxAngle=.01 if depth==0 else .025,gravity=0 if depth==0 else .003,follow=.98,globalMaxAngle=.04,radius=.08))
 def torso_weights(p):
-    z=body(p).z; anchors=[(target(i).z,i) for i in [1,2,11,12,13]]
-    if z <= anchors[0][0]: return [(anchors[0][1],1)]
-    for (lo,a),(hi,b) in zip(anchors,anchors[1:]):
+    z=body(p).z;stops=[(anchors[i].z,i) for i in [1,2,11,12,13]]
+    if z<=stops[0][0]:return [(1,1)]
+    for (lo,a),(hi,b) in zip(stops,stops[1:]):
         if z<=hi:
-            t=(z-lo)/(hi-lo); return [(a,1-t),(b,t)]
+            t=(z-lo)/(hi-lo);return [(a,1-t),(b,t)]
     return [(13,1)]
-def transform(p,index):
-    kind,side,part=classes[index]
-    if kind in ['head','hair']: return head(p)
-    if kind in ['arm','leg']:
-        a,x,m=limbs[side,part]; result=x+m@(p-a)
-        if part=='thigh':
-            span=(hip-(bp('左ひざ').z+bp('右ひざ').z)/2)*.55
-            t=max(0,min(1,(hip-p.z)/span)); return body(p)*(1-t)+result*t
-        return result
-    return body(p)
 def influence(p,index):
     kind,side,part=classes[index]
-    if kind=='hair': return [(hair_indices[index],1)]
-    if kind=='head': return [(13,1)]
-    if kind=='arm': return [(dict(upper=15,lower=16,hand=17)[part]+(0 if side=='左' else 8),1)]
-    if kind=='clavicle': return [(14+(0 if side=='左' else 8),1)]
+    if kind=='hair':return [(hair_indices[index],1)]
+    if kind=='head':return [(13,1)]
+    if kind=='arm':return [(dict(upper=15,lower=16,hand=17)[part]+(0 if side=='左' else 8),1)]
+    if kind=='clavicle':return [(14+(0 if side=='左' else 8),1)]
     if kind=='leg':
         bone=dict(thigh=3,calf=4,foot=5)[part]+(0 if side=='左' else 4)
         if part=='thigh':
@@ -165,13 +154,12 @@ for vi,v in enumerate(pmx.vertices):
     head_weight=sum(w for j,w in influences if classes[j][0] in ['head','hair'])
     # Keep the entire authored face coherent despite the source's coarse auto rig.
     is_head=p.z>bp('首').z and head_weight>.45
-    mapped=head(p) if is_head else sum((transform(p,j)*w for j,w in influences),Vector())
+    mapped=body(p)
     acc=defaultdict(float)
     for j,w in influences:
         for bone,amount in influence(p,j): acc[bone]+=amount*w
     cloth_amount=float(cloth[group_ids[vi]])
     if cloth_amount>1e-6:
-        mapped=mapped.lerp(body(p),cloth_amount)
         acc=defaultdict(float,{j:w*(1-cloth_amount) for j,w in acc.items()})
         left=max(0,min(1,(p.x/(abs(bp('左足').x)*2)+1)/2))
         for j,w in [(1,.92),(3,.08*left),(7,.08*(1-left))]: acc[j]+=w*cloth_amount
@@ -180,57 +168,36 @@ for vi,v in enumerate(pmx.vertices):
         acc=defaultdict(float,{bone:w for bone,w in acc.items() if bone==13 or bone>=30})
     ranked=sorted(((j,w) for j,w in acc.items() if w>1e-8),key=lambda item:-item[1])[:4]
     total=sum(w for j,w in ranked); ranked=[(j,w/total) for j,w in ranked]
-    if not is_head:
-        columns=[]
-        for axis in range(3):
-            q=p.copy();q[axis]+=1e-4
-            neighbor=sum((transform(q,j)*w for j,w in influences),Vector()).lerp(body(q),cloth_amount)
-            columns.append((neighbor-mapped)/1e-4)
-        jacobian=Matrix([tuple(c) for c in columns]).transposed()
-        try: n=(jacobian.inverted().transposed()@n).normalized()
-        except ValueError: n.normalize()
-    else: n.normalize()
+    n.normalize()
     positions.append(tuple(mapped)); normals.append(tuple(n)); weights.append(ranked); uvs.append((v['uv'][0],1-v['uv'][1]))
     if any(j>=30 for j,w in ranked): source_hair.append(vi)
     elif is_head: rigid_head.append(vi)
     if vi%25000==0: print('RETARGET_VERTEX',vi,flush=True)
 
-# Repair abrupt auto-rig transitions at the armpits as a smooth displacement
-# field. Smoothing offsets rather than coordinates retains the source surface
-# detail; the complete head and authored hair influences remain locked.
+# Smooth only weights at auto-rig seams. Vertex positions and source normals
+# stay under the same uniform transform, including armpits and skirt edges.
 group_weights=np.zeros((len(groups),30+len(hair_bones)),dtype=np.float64)
 for vi,ranked in enumerate(weights):
     for joint,amount in ranked:group_weights[group_ids[vi],joint]+=amount
 group_weights/=counts[:,None]
-base=np.array([tuple(body(source_point(v['position']))) for v in pmx.vertices])
-offsets=np.array(positions)-base
-group_offsets=np.column_stack([np.bincount(group_ids,weights=offsets[:,axis],minlength=len(groups))/counts for axis in range(3)])
 locked=np.zeros(len(groups),dtype=bool);locked[group_ids[rigid_head+source_hair]]=True
 for iteration in range(8):
-    for field in [group_weights,group_offsets]:
-        neighbor=np.column_stack([np.bincount(graph[:,0],weights=field[graph[:,1],axis],minlength=len(groups))+np.bincount(graph[:,1],weights=field[graph[:,0],axis],minlength=len(groups)) for axis in range(field.shape[1])])
-        updated=.55*field+.45*neighbor/degree[:,None]
-        field[~locked]=updated[~locked]
-positions=[tuple(p) for p in base+group_offsets[group_ids]]
+    neighbor=np.column_stack([np.bincount(graph[:,0],weights=group_weights[graph[:,1],axis],minlength=len(groups))+np.bincount(graph[:,1],weights=group_weights[graph[:,0],axis],minlength=len(groups)) for axis in range(group_weights.shape[1])])
+    updated=.55*group_weights+.45*neighbor/degree[:,None];group_weights[~locked]=updated[~locked]
 weights=[]
 for group in group_ids:
     row=group_weights[group];chosen=np.argsort(row)[-4:][::-1]
     ranked=[(int(j),float(row[j])) for j in chosen if row[j]>1e-8];total=sum(w for j,w in ranked)
     weights.append([(j,w/total) for j,w in ranked])
+geometry_error=max((Vector(positions[i])-body(source_point(v['position']))).length for i,v in enumerate(pmx.vertices));assert geometry_error<1e-8
 
 texture_target=OUT/'textures/color.jpg'; shutil.copyfile(texture_source,texture_target)
 image=bpy.data.images.load(str(texture_target),check_existing=True); image.alpha_mode='NONE'; resolution=list(image.size); image.pack()
-spec=[dict(name='豆包 · 原4K颜色贴图',sourceName=pmx.materials[0]['name'],texture='textures/color.jpg',color=[1,1,1],twoSide=True,transparent=False,opacity=1,alphaTest=0,roughness=.84,metalness=0,depthWrite=True)]
+spec=[dict(name='豆包 · 原4K颜色贴图',sourceName=pmx.materials[0]['name'],texture='textures/color.jpg',color=0xffffff,twoSide=True,transparent=False,opacity=1,alphaTest=0,roughness=.84,metalness=0,depthWrite=True,textureAnisotropy=8)]
 material=bpy.data.materials.new(spec[0]['name']);material.use_nodes=True
 bsdf=material.node_tree.nodes.get('Principled BSDF');bsdf.inputs['Roughness'].default_value=.84;bsdf.inputs['Specular IOR Level'].default_value=.18
 node=material.node_tree.nodes.new('ShaderNodeTexImage');node.image=image;material.node_tree.links.new(node.outputs['Color'],bsdf.inputs['Base Color'])
 faces=[(a,c,b) for a,b,c in zip(pmx.indices[::3],pmx.indices[1::3],pmx.indices[2::3])]
-position_array=np.array(positions);triangles=np.array(faces);surface_normals=np.cross(position_array[triangles[:,1]]-position_array[triangles[:,0]],position_array[triangles[:,2]]-position_array[triangles[:,0]])
-group_normals=np.zeros((len(groups),3),dtype=np.float64)
-for corner in range(3):np.add.at(group_normals,group_ids[triangles[:,corner]],surface_normals)
-normal_lengths=np.linalg.norm(group_normals,axis=1);group_normals/=np.maximum(1e-12,normal_lengths[:,None])
-for vi,group in enumerate(group_ids):
-    if not locked[group] and normal_lengths[group]>1e-12:normals[vi]=tuple(group_normals[group])
 mesh=bpy.data.meshes.new('Doubao native-rest full surface');mesh.from_pydata(positions,[],faces);mesh.materials.append(material);mesh.update()
 surface=bpy.data.objects.new('豆包 · 完整人物 · 原版动作适配',mesh);bpy.context.collection.objects.link(surface)
 uv=mesh.uv_layers.new(name='Source atlas UV')
@@ -245,18 +212,19 @@ for i,ranked in enumerate(weights):
     for j,w in ranked: surface.vertex_groups[j].add([i],w,'REPLACE')
     indices.extend([j for j,w in ranked]+[0]*(4-len(ranked)))
     strengths.extend([round(w,7) for j,w in ranked]+[0]*(4-len(ranked)))
-head_offset=REST[B[13]['name']].inverted()@head(bp('頭')+Vector((0,0,.65)))
+head_q=body_bones[13]['rotation'];head_matrix=Matrix.Translation(anchors[13])@Quaternion((head_q[3],head_q[0],head_q[1],head_q[2])).to_matrix().to_4x4()
+head_offset=head_matrix.inverted()@head(bp('頭')+Vector((0,0,.65)))
 rig=dict(schema=1,type='web-spring-bone',nativeBoneCount=30,bones=hair_bones,hairMaterials=[],vertexCount=len(source_hair),colliders=[dict(shape='sphere',bone=13,offset=list(head_offset),radius=1.8),dict(shape='capsule',bone=12,endBone=1,radius=2.1)],provenance='Source CF/hair bone hierarchy and source vertex hair influences retained; restrained Web springs, not MMD rigid bodies.')
-skin=dict(schema=1,coordinateSystem='original-native-Z-up',materials=spec,positions=[round(x,7) for p in positions for x in p],normals=[round(x,7) for p in normals for x in p],uvs=[round(x,8) for p in uvs for x in p],skinIndices=indices,skinWeights=strengths,faces=[dict(material=0,indices=list(f)) for f in faces],vertexCount=len(positions),triangleCount=len(faces),secondaryMotion=rig)
+skin=dict(schema=1,coordinateSystem='original-native-Z-up',bodyRig=body_rig,materials=spec,positions=[round(x,7) for p in positions for x in p],normals=[round(x,7) for p in normals for x in p],uvs=[round(x,8) for p in uvs for x in p],skinIndices=indices,skinWeights=strengths,faces=[dict(material=0,indices=list(f)) for f in faces],vertexCount=len(positions),triangleCount=len(faces),secondaryMotion=rig)
 (OUT/'mesh.json').write_text(json.dumps(skin,separators=(',',':')))
 credits='版权归属《豆包》；建模原作者：sdn1111；绑定：鹿铃。允许规范使用、二次修改优化和规范转载；使用或发布时注明原作者和版权方。'
-manifest=dict(schema=1,characterId=0,appearance='doubao',label='豆包 · 模型适配',mesh='mesh.json',complete=True,completeness=dict(bodyGeometry=True,headHairGeometry=True,faceGeometry=True,eyes=True,sourcePmxSkeleton=True,originalSourceGameSkeleton=False),stats=dict(sourceVertices=len(pmx.vertices),sourceTriangles=len(faces),vertices=len(positions),triangles=len(faces),sourceBones=len(pmx.bones),bones=30,dummies=6,secondaryBones=len(hair_bones),textures=1,textureResolutions=[resolution]),retarget=dict(method='Source PMX joint positions and influences retargeted to native p0 BNC rest; native AMB/POS drives the original body and weapon attachments.',provisional=True,sourceSkeletonMissing=False,hairPhysics=True,hairPhysicsProfile='web-spring-bone-v2-restrained',originalMmdPhysics=False,clothPhysics=False,fingerArticulation='Source fingers follow native hands; no independent facial morph or full finger solver.'),provenance=dict(sourceArchive='assets/source/doubao',source='Project-owned archived Doubao PMX and original 4K JPEG atlas.',copyright='豆包',modelAuthor='sdn1111',rigAuthor='鹿铃',license=credits,sourceNotes='Source author notes possible rig bugs and no cloth physics.',limits=['Native p0 body proportions require approximate limb/torso retargeting.','Restrained Web hair springs are not original MMD rigid-body simulation.','No facial morph, cloth physics or individual finger animation.','Full source triangle count retained; more geometry than other imported appearances.']),sourceFiles=[dict(file='豆包模型.pmx',bytes=len(pmx.data),sha256=hashlib.sha256(pmx.data).hexdigest()),dict(file='tex/Color.jpg',bytes=texture_source.stat().st_size,sha256=hashlib.sha256(texture_source.read_bytes()).hexdigest())])
+manifest=dict(schema=1,characterId=0,appearance='doubao',label='豆包 · 模型适配',mesh='mesh.json',complete=True,completeness=dict(bodyGeometry=True,headHairGeometry=True,faceGeometry=True,eyes=True,sourcePmxSkeleton=True,originalSourceGameSkeleton=False),stats=dict(sourceVertices=len(pmx.vertices),sourceTriangles=len(faces),vertices=len(positions),triangles=len(faces),sourceBones=len(pmx.bones),bones=30,dummies=6,secondaryBones=len(hair_bones),textures=1,textureResolutions=[resolution]),retarget=dict(method='Source mesh keeps one uniform transform and original proportions; source-length display joints follow original AMB/POS rotations; visible weapons follow source hands.',provisional=True,sourceSkeletonMissing=False,hairPhysics=True,hairPhysicsProfile='web-spring-bone-v2-restrained',originalMmdPhysics=False,clothPhysics=False,fingerArticulation='Source fingers follow native hands; no independent facial morph or full finger solver.'),provenance=dict(sourceArchive='assets/source/doubao',source='Project-owned archived Doubao PMX and original 4K JPEG atlas.',copyright='豆包',modelAuthor='sdn1111',rigAuthor='鹿铃',license=credits,sourceNotes='Source author notes possible rig bugs and no cloth physics.',limits=['Source proportions preserved; native action rotation transfer and clothing weights remain approximate.','Restrained Web hair springs are not original MMD rigid-body simulation.','No facial morph, cloth physics or individual finger animation.','Full source triangle count retained; more geometry than other imported appearances.']),sourceFiles=[dict(file='豆包模型.pmx',bytes=len(pmx.data),sha256=hashlib.sha256(pmx.data).hexdigest()),dict(file='tex/Color.jpg',bytes=texture_source.stat().st_size,sha256=hashlib.sha256(texture_source.read_bytes()).hexdigest())])
 (OUT/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2))
 (OUT/'署名与使用说明.txt').write_text(credits+'\n\n'+(SRC/'注意事项.txt').read_text(encoding='utf-8-sig'),encoding='utf-8')
-arm,rest_error=make_native_armature(surface,'豆包',hair_bones)
-clips,pose_error=bake_native_samples(arm)
+arm,rest,rest_error=build_source_armature(surface,body_rig,hair_bones,label='豆包')
+clips,pose_error=bake_source_samples(arm,body_rig,rest)
 arm['web_hair_springs']=json.dumps(rig,ensure_ascii=False)
-arm['README']='Native body actions are baked for editing; Web samples original AMB/POS and simulates restrained hair separately. Jump world arc is applied by Web host.'
+arm['README']='Source-length display actions are baked for editing; Web samples original AMB/POS rotations and simulates restrained hair separately. Jump world arc is applied by Web host.'
 scene=bpy.context.scene;scene['attribution']=credits;scene['source_archive']='assets/source/doubao'
 scene.render.engine='CYCLES';scene.cycles.samples=16;scene.cycles.use_denoising=True;scene.world.color=(.18,.18,.18)
 scene.view_settings.view_transform='Standard';scene.render.resolution_x=900;scene.render.resolution_y=1100;scene.render.resolution_percentage=100
@@ -266,6 +234,6 @@ bpy.ops.object.camera_add(location=(20,-110,43));camera=bpy.context.object;camer
 if args.render:
     scene.render.filepath=str(WORK/'retargeted-stance.png');bpy.ops.render.render(write_still=True)
 bpy.ops.wm.save_as_mainfile(filepath=str(WORK/'豆包-完整人物-流星动作适配.blend'))
-evidence=dict(blender=bpy.app.version_string,sourceArchive='assets/source/doubao',sourceDownloadsRequired=False,runtimeRoot='dist/assets/enhanced/doubao',restMatrixError=rest_error,poseMatrixError=pose_error,bakedActions=clips,hairVertices=source_hair,rigidHeadVertices=rigid_head,stabilizedClothVertices=stabilized_cloth,sourceWeldGroups=len(groups),stats=manifest['stats'],hashes={name:hashlib.sha256((OUT/name).read_bytes()).hexdigest() for name in ['manifest.json','mesh.json','textures/color.jpg']})
+evidence=dict(blender=bpy.app.version_string,sourceArchive='assets/source/doubao',sourceDownloadsRequired=False,runtimeRoot='dist/assets/enhanced/doubao',restMatrixError=rest_error,poseMatrixError=pose_error,bakedActions=clips,hairVertices=source_hair,rigidHeadVertices=rigid_head,stabilizedClothVertices=stabilized_cloth,sourceWeldGroups=len(groups),sourceUniformScale=uniform_scale,sourceGeometryMaxError=geometry_error,proportionalDisplayRig=True,stats=manifest['stats'],hashes={name:hashlib.sha256((OUT/name).read_bytes()).hexdigest() for name in ['manifest.json','mesh.json','textures/color.jpg']})
 (WORK/'build-evidence.json').write_text(json.dumps(evidence,ensure_ascii=False,indent=2))
 print('DOUBAO_READY',json.dumps(manifest['stats'],ensure_ascii=False),'REST',rest_error,'POSE',pose_error,flush=True)

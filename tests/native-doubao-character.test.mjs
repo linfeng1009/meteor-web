@@ -6,6 +6,7 @@ import * as THREE from '../dist/vendor/three.module.js';
 import {createNativeCharacter,loadNativeCharacterData,loadEnhancedCharacterData,NATIVE_APPEARANCES} from '../dist/native-character.js';
 import {appearanceCharacterName,WORKSHOP_APPEARANCES} from '../dist/character-appearances.js';
 import {MeteorGame} from '../dist/engine.js';
+import {sourcePmxVertices} from './helpers/source-pmx-vertices.mjs';
 
 const root=new URL('../',import.meta.url),dist=new URL('dist/',root),assets=new URL('assets/enhanced/doubao/',dist);
 const json=async path=>JSON.parse(await readFile(new URL(path,root)));
@@ -24,7 +25,7 @@ test('Doubao source archive and build inputs remain in the project after Downloa
   const inventory=await json('work/doubao-import-2026-11-10/source-copy.json');
   assert.equal(inventory.complete,true);assert.equal(inventory.archive,'assets/source/doubao');assert.equal(inventory.files.length,9);
   for(const file of inventory.files){const bytes=await readFile(new URL(inventory.archive+'/'+file.path,root));assert.equal(bytes.length,file.bytes);assert.equal(sha(bytes),file.sha256);}
-  for(const script of ['scripts/blender/build_doubao.py','scripts/blender/native_character_authoring.py']){
+  for(const script of ['scripts/blender/build_doubao.py','scripts/blender/proportional_authoring.py']){
     const text=await readFile(new URL(script,root),'utf8');
     assert.equal(/Path\(['"]\/Users\//.test(text),false);assert.equal(text.includes('/Downloads/'),false);
   }
@@ -65,7 +66,7 @@ test('Doubao appears in game/workshop and switching all six surfaces preserves p
       const status=await actor.setAppearance(appearance);assert.equal(status.available,true);assert.equal(status.appearance,appearance);
       if(meshes.has(appearance))assert.equal(actor.mesh===meshes.get(appearance),true);else meshes.set(appearance,actor.mesh);
       assert.equal(actor.skeleton===native,true);assert.equal(actor.skeleton.bones.length,30);
-      assert.equal(actor.mesh.skeleton.bones.slice(0,30).every((b,i)=>b===actor.bones[i]),true);
+      assert.equal(actor.mesh.skeleton.bones.slice(0,30).every((b,i)=>b===actor.bones[i]),appearance!=='doubao');
       assert.deepEqual(matrices(actor),pose);assert.equal(actor.frame,frame);assert.deepEqual(weapon.matrixWorld.toArray(),weaponTransform);
       assert.equal(actor.getAttachment('d_wpnR')===attachment,true);assert.equal(actor.nativeSpace.children.filter(o=>o.isSkinnedMesh).length,1);
     }
@@ -91,7 +92,7 @@ test('Doubao native actions preserve the face and avoid the source skirt-stretch
           other.fromBufferAttribute(skin.attributes.position,edge.b);actor.mesh.applyBoneTransform(edge.b,other);actor.mesh.localToWorld(other);
           assert.ok(point.distanceTo(other)-edge.rest<.15,`pose ${id}: skirt ${edge.a}/${edge.b} must not regain the 0.64-unit stretch`);
         }
-        const headMatrix=actor.bones[13].matrixWorld.clone().multiply(actor.skeleton.boneInverses[13]);
+        const headMatrix=actor.mesh.skeleton.bones[13].matrixWorld.clone().multiply(actor.mesh.skeleton.boneInverses[13]);
         for(const index of headSamples){
           point.fromBufferAttribute(skin.attributes.position,index);other.copy(point).applyMatrix4(headMatrix);
           actor.mesh.applyBoneTransform(index,point);actor.mesh.localToWorld(point);
@@ -118,6 +119,41 @@ test('Doubao hair uses restrained springs and retains the disabled setting throu
     assert.ok(motion<1e-7,'short hair settles instead of whipping after motion stops');
     actor.setSecondaryMotionEnabled(false);await actor.setAppearance('emilia');await actor.setAppearance('doubao');assert.equal(actor.secondaryMotionStatus.enabled,false);
     actor.setSecondaryMotionEnabled(true);assert.equal(actor.secondaryMotionStatus.enabled,true);
+  }finally{actor.dispose();}
+}));
+
+test('Doubao keeps every original vertex, normal and UV under one uniform transform',async()=>withFetch(async()=>{
+  const source=sourcePmxVertices(await readFile(new URL('assets/source/doubao/豆包模型.pmx',root))),{skin}=await loadEnhancedCharacterData(0,'doubao');
+  let floor=Infinity,top=-Infinity;for(const v of source){floor=Math.min(floor,v.position[1]);top=Math.max(top,v.position[1]);}const scale=39.4/(top-floor);
+  assert.equal(source.length,skin.vertexCount);assert.equal(skin.bodyRig.type,'source-proportions');assert.equal(build.proportionalDisplayRig,true);assert.equal(build.sourceGeometryMaxError,0);
+  for(let i=0;i<source.length;i++){
+    const {position:[x,y,z],normal:[nx,ny,nz],uv}=source[i],expected=[x*scale,z*scale,(y-floor)*scale],normal=[nx,nz,ny],length=Math.hypot(...normal);
+    for(let axis=0;axis<3;axis++){assert.ok(Math.abs(skin.positions[i*3+axis]-expected[axis])<1e-5,'body must keep the source proportions');assert.ok(Math.abs(skin.normals[i*3+axis]-normal[axis]/length)<1e-5);}
+    assert.ok(Math.abs(skin.uvs[i*2]-uv[0])<1e-7&&Math.abs(skin.uvs[i*2+1]-(1-uv[1]))<1e-7);
+  }
+}));
+
+test('Doubao source-pose inspection reproduces the original shape and animation retains original joint lengths',async()=>withFetch(async()=>{
+  const actor=createNativeCharacter(data,{loadTextures:false}),p=new THREE.Vector3(),expected=new THREE.Vector3();
+  try{
+    await actor.setAppearance('doubao');actor.group.position.set(3,1,-2);actor.group.rotation.y=.5;actor.setPoseFrame(0,data.poses[262].end);const native=matrices(actor);
+    assert.equal(actor.setSourceRestPose(true),true);actor.updateSecondaryMotion(1/60);assert.equal(actor.secondaryMotionStatus.enabled,false);
+    for(let i=0;i<actor.mesh.geometry.attributes.position.count;i++){
+      p.fromBufferAttribute(actor.mesh.geometry.attributes.position,i);expected.copy(p).applyMatrix4(actor.mesh.matrixWorld);actor.mesh.applyBoneTransform(i,p);actor.mesh.localToWorld(p);assert.ok(p.distanceTo(expected)<1e-6);
+    }
+    assert.deepEqual(matrices(actor),native);
+    await actor.setAppearance('springfield');await actor.setAppearance('doubao');assert.equal(actor.sourceRestPose,true);assert.equal(actor.secondaryMotionStatus.enabled,false);
+    actor.setSourceRestPose(false);assert.equal(actor.secondaryMotionStatus.enabled,true);
+    const bones=actor.mesh.skeleton.bones.slice(0,30),lengths=bones.map(b=>b.position.length());
+    for(const id of [6,144,151,262])for(const frame of [data.poses[id].start,data.poses[id].end]){
+      actor.setPoseFrame(data.poses[id].source,frame);for(let i=1;i<30;i++)assert.ok(Math.abs(bones[i].position.length()-lengths[i])<1e-6);
+    }
+    const weapon=new THREE.Group(),palm=actor.getAttachment('d_wpnRP');palm.add(weapon);actor.registerVisualAttachment(weapon,'d_wpnRP');
+    for(const id of [6,144,151,262]){
+      actor.setPoseFrame(data.poses[id].source,data.poses[id].start);actor.updateSecondaryMotion(1/60);
+      assert.ok(weapon.getWorldPosition(p).distanceTo(bones[25].getWorldPosition(expected))<.2,'visible grip must follow the source right hand');
+    }
+    await actor.setAppearance('original');assert.equal(weapon.parent,palm);assert.equal(actor.sourceRestAvailable,false);
   }finally{actor.dispose();}
 }));
 

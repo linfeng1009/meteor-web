@@ -22,8 +22,8 @@ def native_pose(source,frame,raw):
     for e in entries:calc(e['name'])
     return [world[e['name']] for e in B]
 
-def build_source_armature(surface,rig,hair):
-    data=bpy.data.armatures.new('Springfield source-length display rig');arm=bpy.data.objects.new('春田 · 原始比例动作骨架',data);bpy.context.collection.objects.link(arm)
+def build_source_armature(surface,rig,hair,label='春田'):
+    data=bpy.data.armatures.new(label+' source-length display rig');arm=bpy.data.objects.new(label+' · 原始比例动作骨架',data);bpy.context.collection.objects.link(arm)
     bpy.context.view_layer.objects.active=arm;arm.select_set(True);surface.select_set(False);bpy.ops.object.mode_set(mode='EDIT')
     for b in rig['bones']:data.edit_bones.new(b['name'])
     rest=[]

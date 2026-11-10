@@ -16,6 +16,12 @@ for(const face of skin.faces)for(let i=0;i<3;i++){
   edges.push({a,b,rest:Math.hypot(...[0,1,2].map(axis=>rest[a*3+axis]-rest[b*3+axis]))*.08});
 }
 const buffer=new Float32Array(rest.length),point=new THREE.Vector3(),reports=[];
+actor.setSourceRestPose(true);actor.updateSecondaryMotion(1/60);
+let sourceRestMaxError=0;const expected=new THREE.Vector3();
+for(let i=0;i<skin.vertexCount;i++){
+  point.fromBufferAttribute(actor.mesh.geometry.attributes.position,i);expected.copy(point).applyMatrix4(actor.mesh.matrixWorld);actor.mesh.applyBoneTransform(i,point);actor.mesh.localToWorld(point);sourceRestMaxError=Math.max(sourceRestMaxError,point.distanceTo(expected));
+}
+actor.setSourceRestPose(false);
 for(const id of [6,16,90,117,144,151,152,200,202,248,262,263,264,279,295]){
   const pose=data.poses[id];
   for(const frame of [pose.start,(pose.start+pose.end)/2,pose.end]){
@@ -37,4 +43,6 @@ for(const id of [6,16,90,117,144,151,152,200,202,248,262,263,264,279,295]){
 actor.dispose();original.dispose();
 await writeFile(new URL('../work/doubao-import-2026-11-10/motion-probe.json',import.meta.url),JSON.stringify(reports,null,2));
 const worst=reports.flatMap(r=>r.worstEdges.map(e=>({...e,pose:r.pose,frame:r.frame}))).sort((a,b)=>b.growth-a.growth).slice(0,8);
-console.log(JSON.stringify({samples:reports.length,allFinite:reports.every(r=>r.finite),nativeJointsUnchanged:reports.every(r=>r.jointsMatch),worst},null,2));
+const summary={vertices:skin.vertexCount,samples:reports.length,sourceRestMaxError,allFinite:reports.every(r=>r.finite),nativeJointsUnchanged:reports.every(r=>r.jointsMatch),worst};
+await writeFile(new URL('../work/doubao-proportions-2026-11-10/motion-summary.json',import.meta.url),JSON.stringify(summary,null,2));
+console.log(JSON.stringify(summary,null,2));

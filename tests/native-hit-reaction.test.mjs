@@ -7,6 +7,8 @@ import { loadNativeCombat, NativeCombatController, NativePoseTimeline, createNat
 import { NativeImpactFeedback } from '../dist/native-impact-feedback.js';
 import { NetworkGame } from '../dist/network-game.js';
 import {bindLocalPlayerControl} from '../dist/player-control.js';
+import {NetworkClient} from '../dist/network-client.js';
+import {NetworkRooms} from '../network-server.mjs';
 
 // Real POS, RES, SKC/BNC/AMB and native weapons on a plain CPU test floor.
 // Textures, browser rendering/audio and NPC retaliation are intentionally absent;
@@ -130,6 +132,22 @@ test('listen-host remote inputs use native movement and hit the actual host, the
     finally{guestSession.dispose();}
     game._placeFighter(hero,{position:v(0,.015,0)});game._placeFighter(target,{position:v(.1,.015,0)});game._separateCharacters(.1);
     assert.ok(Math.abs(Math.abs(hero.root.position.x)-Math.abs(target.root.position.x-.1))<1e-8,'body separation must not give the host the old player-vs-NPC weight advantage');
+  }finally{session.dispose();}
+});
+
+test('reliable transport applies the real remote sword attack once despite lost delivery and acknowledgement',async()=>{
+  const {game,hero,target}=await fixture(),rooms=new NetworkRooms(),a=rooms.create('房主'),b=rooms.join(a.room.code,'客人');
+  const request=(player,op,data={})=>rooms.request(a.room.code,player.token,op,{round:1,...data});
+  request(a,'ready',{ready:true});request(b,'ready',{ready:true});request(a,'start');request(a,'loaded');request(b,'loaded');
+  hero.networkId=a.playerId;target.networkId=b.playerId;await game._equip(target,'sword');target.root.rotation.y=Math.PI;
+  let session,attackCalls=0;const host=new NetworkClient({onInput:batch=>{attackCalls+=batch.filter(x=>x.action==='attack').length;session.inputs(batch);},getFrame:()=>session.snapshot()}),guest=new NetworkClient();
+  for(const [client,player] of [[host,a],[guest,b]]){Object.assign(client,{room:request(player,'sync').room,code:a.room.code,playerId:player.playerId});client.api=async(path,data)=>request(player,'sync',data);}
+  session=new NetworkGame(game,host,host.room);session.play();const api=host.api;let calls=0;
+  host.api=async(path,data)=>{calls++;if(calls===3)throw Error('确认未送达');const result=await api(path,data);if(calls===1)throw Error('投递响应丢失');return result;};
+  try{
+    guest.send('attack');await guest.sync();await host.sync();assert.equal(attackCalls,0);await host.sync();assert.equal(attackCalls,1);
+    for(let i=0;i<90;i++)tick(game);const hp=hero.hp;assert.ok(hp<hero.maxHp,'delivered remote input must really damage the host');
+    await host.sync();await host.sync();await host.sync();assert.equal(attackCalls,1);assert.equal(hero.hp,hp);assert.equal(rooms.rooms.get(a.room.code).players[1].input.length,0);
   }finally{session.dispose();}
 });
 

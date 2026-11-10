@@ -23,7 +23,7 @@ export class NetworkLobby{
   }
   async connect(kind,data){
     if(this.connecting)return;this.connecting=true;this.generation=(this.generation||0)+1;
-    const client=new NetworkClient({getAngle:()=>this.getGame()?.cameraAngle||0,getFrame:()=>this.session?.snapshot(),onRoom:r=>this.roomChanged(r),onInput:inputs=>this.session?.inputs(inputs),onFrame:frame=>this.session?.apply(frame),onError:message=>{this.leave(false);this.onStop('联机中断：'+message);}});
+    const client=new NetworkClient({getAngle:()=>this.getGame()?.cameraAngle||0,getFrame:()=>this.session?.snapshot(),onRoom:r=>this.roomChanged(r),onInput:inputs=>{if(!this.session?.active)throw Error('战斗未就绪，无法应用操作');this.session.inputs(inputs);},onFrame:frame=>this.session?.apply(frame),onError:message=>{this.leave(false);this.onStop('联机中断：'+message);}});
     try{this.client=client;await client.connect(kind,data);this.render();}catch(e){this.client=null;this.render();throw e;}finally{this.connecting=false;}
   }
   async roomChanged(room){

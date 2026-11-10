@@ -86,7 +86,24 @@ export async function loadOriginalSceneModels(desObjects, { scale = .08, collisi
     instance.setActive = active => { instance.attributes.active = Number(!!active); root.visible = !!active && !/^(0|false)$/i.test(String(instance.attributes.visible)); };
     instance.setCollision = active => { instance.attributes.collision = Number(!!active); };
     instance.playPose(0); instance.setFrame(instance.frame); instance.setActive(!/^(0|false)$/i.test(String(attributes.active))); instance.setCollision(!/^(0|false)$/i.test(String(attributes.collision)) && !/^no$/i.test(String(attributes.blockplayer)));
-    instance.bounds.setFromObject(root).expandByScalar(2); instances.set(object.name.toLowerCase(), instance);
+    instance.bounds.setFromObject(root).expandByScalar(2);
+    // A map can stay cached across story, menu and training sessions. Keep its
+    // loaded source state separately from mutable PST attributes / FMC playback
+    // so a broken stone or activated drop cannot leak into the next session.
+    const initial = { attributes: { ...attributes }, position: root.position.clone(), quaternion: root.quaternion.clone(), scale: root.scale.clone(),
+      visible: root.visible, pose: instance.pose, state: instance.state, frame: instance.frame, time: instance.time, playing: instance.playing, loop: instance.loop,
+      bounds: instance.bounds.clone(), meshes: meshRecords.map(({ mesh }) => ({ mesh, matrix: mesh.matrix.clone(), visible: mesh.visible })) };
+    instance.reset = () => {
+      // Restore the original attribute object itself: mission records may hold
+      // a reference to it even if another caller replaced instance.attributes.
+      for (const key of Object.keys(attributes)) delete attributes[key];
+      Object.assign(attributes, initial.attributes); instance.attributes = attributes;
+      root.position.copy(initial.position); root.quaternion.copy(initial.quaternion); root.scale.copy(initial.scale); root.visible = initial.visible;
+      for (const record of initial.meshes) { record.mesh.matrix.copy(record.matrix); record.mesh.visible = record.visible; record.mesh.matrixWorldNeedsUpdate = true; }
+      Object.assign(instance, { pose: initial.pose, state: initial.state, time: initial.time, playing: initial.playing, loop: initial.loop });
+      instance.setFrame(initial.frame); instance.bounds.copy(initial.bounds); return instance;
+    };
+    instances.set(object.name.toLowerCase(), instance);
   }
   const grid = new Map(), cell = 16;
   for (const instance of instances.values()) {
@@ -95,8 +112,11 @@ export async function loadOriginalSceneModels(desObjects, { scale = .08, collisi
   }
   return {
     group, instances, warnings, templates,
-    getInstancesNear(x, z, radius = 1) {
-      const found = new Set(); for (let gx = Math.floor((x - radius) / cell); gx <= Math.floor((x + radius) / cell); gx++) for (let gz = Math.floor((z - radius) / cell); gz <= Math.floor((z + radius) / cell); gz++) for (const item of grid.get(`${gx},${gz}`) || []) if (item.attributes.active !== 0 && item.attributes.collision !== 0) found.add(item);
+    reset() { for (const item of instances.values()) item.reset(); return instances.size; },
+    getInstancesNear(x, z, radius = 1, { attack = false } = {}) {
+      // Original machine objects can disable player blocking while retaining
+      // an attack callback (sn04 gates use separate blocking boxes).
+      const found = new Set(); for (let gx = Math.floor((x - radius) / cell); gx <= Math.floor((x + radius) / cell); gx++) for (let gz = Math.floor((z - radius) / cell); gz <= Math.floor((z + radius) / cell); gz++) for (const item of grid.get(`${gx},${gz}`) || []) if (item.attributes.active !== 0 && (attack ? item.attributes.interactive !== 0 : item.attributes.collision !== 0)) found.add(item);
       return [...found];
     },
     getCollidersNear(x, z, radius = 1) {

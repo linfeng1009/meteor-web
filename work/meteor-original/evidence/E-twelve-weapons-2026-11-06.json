@@ -1,0 +1,983 @@
+{
+  "id": "E-twelve-weapons-2026-11-06",
+  "observedAt": "2026-11-06T21:26:18.521475+08:00",
+  "scope": "work/meteor-original/scope.md",
+  "version": "0.7.0",
+  "original": {
+    "path": "/Users/dulinfeng/Downloads/流星86726/lxhdj_/Meteor.exe",
+    "bytes": 1945600,
+    "sha256": "289afb0aa44a47921d167fc24d6d404c60d6d00c299ac27d45fc61e16231b498",
+    "executed": false,
+    "modified": false
+  },
+  "input": {
+    "sourceQueueTimeoutSeconds": 0.3,
+    "sourceConstant": "VA 0x005aa8b8, bytes333333333333d33f, referenced by004cc130",
+    "webChanges": [
+      "held guard is sampled during reactions and at their end",
+      "single expiring recovery attack slot preserves input without cancelling hitstun",
+      "unlocked melee preserves facing; explicit target lock still aims"
+    ],
+    "notRecovered": [
+      "universal native armor exceptions",
+      "native Burst escape recognizer",
+      "complete group AI pressure and scheduling",
+      "full original key recognizer"
+    ]
+  },
+  "weapons": {
+    "totalFamilies": 12,
+    "catalogEntries": 196,
+    "readyEntryPaths": 165,
+    "pendingEntries": 31,
+    "readyMeaning": "Original pose entry, bone contact / integrated projectile or mode conversion. Not complete native special effects.",
+    "families": {
+      "sword": [
+        21,
+        21,
+        0
+      ],
+      "blade": [
+        19,
+        19,
+        0
+      ],
+      "spear": [
+        18,
+        18,
+        0
+      ],
+      "dagger": [
+        17,
+        16,
+        1
+      ],
+      "dart": [
+        8,
+        5,
+        3
+      ],
+      "dual": [
+        21,
+        20,
+        1
+      ],
+      "hammer": [
+        14,
+        12,
+        2
+      ],
+      "musket": [
+        5,
+        3,
+        2
+      ],
+      "wheel": [
+        6,
+        3,
+        3
+      ],
+      "qiankun": [
+        24,
+        23,
+        1
+      ],
+      "knuckle": [
+        18,
+        14,
+        4
+      ],
+      "ninja": [
+        25,
+        11,
+        14
+      ]
+    },
+    "familyTupleFields": [
+      "total",
+      "readyEntryPaths",
+      "pendingEntries"
+    ],
+    "qiankunNeutralModes": {
+      "blade": 401,
+      "spear": 402,
+      "sheath": 403
+    },
+    "musket": "Native models, source release windows and damage; ray/range/aim are explicit Web adapters.",
+    "wheel": "Native model, release windows and damage; outbound/return/catch physics are explicit Web adapters; one damaging contact per throw."
+  },
+  "audio": {
+    "copiedOriginalWavs": 27,
+    "provenancePath": "work/all-weapons-audit/audio-provenance.json",
+    "provenanceSha256": "6261eab0a3b612c7708df14b98cf29bc8f49ce236d4011dc72d9d0d1ab53041a"
+  },
+  "rageVfx": {
+    "definitions": 54,
+    "texturedShapes": 236,
+    "textures": 49,
+    "manifest": "dist/assets/original/rage-vfx/manifest.json",
+    "manifestSha256": "31531961a09360fa3bc9cfc7604157b5383558c582c5465c59b1a43452764be6",
+    "boundary": "Visual playback only. Unsupported source shapes and effect-only collision are not synthesized."
+  },
+  "snowCity": {
+    "mission": "sn04",
+    "sourceRule": 3,
+    "gateHp": 10000,
+    "gateFinalPose": 8,
+    "sourceEnding": "GameCallBack(\"end\",1) after final collapse state3",
+    "fixtureSeconds": 127.5,
+    "npcsAlive": 7,
+    "kills": 0,
+    "fixtureBoundary": "Player placed beside enemy gate once. NPC combat/navigation frozen. Ordinary movement/attack input then drives native source gate stages; no gate HP, source globals or result assigned. Not a live-AI playthrough.",
+    "weather": "Five source SetScene snow parameters; bounded Web particle presentation."
+  },
+  "futureMissions": {
+    "unregisteredSourceMissions": 4,
+    "itemEffectsAdded": [
+      15,
+      19,
+      20
+    ],
+    "item7Stat10Consumer": "not recovered",
+    "vipSemantics": "Native vip and enemyvip filter same/opposing team. Existing sn15 XiaoAn selector is an adapter, not full original semantics."
+  },
+  "sourceArtifacts": [
+    {
+      "path": "work/all-weapons-audit/native-modes/004e2860_FUN_004e2860.asm",
+      "sha256": "49f62cbe16b9ca34db9c6294e58be6b826e804199891c0fc49f27437f413d3d4"
+    },
+    {
+      "path": "work/all-weapons-audit/native-modes/004e2860_FUN_004e2860.c",
+      "sha256": "606c48b54d3c08700c200b8be82e2743b325f224d16ef66efd970f768313b45d"
+    },
+    {
+      "path": "work/all-weapons-audit/native-modes/004e29d0_FUN_004e29d0.asm",
+      "sha256": "3acb55f327334dc6dec3f5839f7dab7164019f22ef6699da529a0a85c53210ca"
+    },
+    {
+      "path": "work/all-weapons-audit/native-modes/004e29d0_FUN_004e29d0.c",
+      "sha256": "240c560c3c8f20324246a939c377fa8ee4fb561c899bae4bd0a024a77a73fae0"
+    },
+    {
+      "path": "work/all-weapons-audit/native-modes/004e2a40_FUN_004e2a40.asm",
+      "sha256": "3dc7ca0136c162c09864a74dce3b96578df5799618e5c4c68a43481737e934e8"
+    },
+    {
+      "path": "work/all-weapons-audit/native-modes/004e2a40_FUN_004e2a40.c",
+      "sha256": "cb6cf57232895866fe28e6b59475c35795b8ddd00a2a2e3387e298b9a3b09592"
+    },
+    {
+      "path": "work/all-weapons-audit/native-modes/004e2ab0_thunk_FUN_004dcda0.asm",
+      "sha256": "7213b2377de94ac36b19a349351a6da60eb702cf32adedf221231738cf225780"
+    },
+    {
+      "path": "work/all-weapons-audit/native-modes/004e2ab0_thunk_FUN_004dcda0.c",
+      "sha256": "f29cd3c304266f76ec8c37dce1018e2281728661859e19bc6b6cb1a007ee7a00"
+    },
+    {
+      "path": "work/all-weapons-audit/native-modes/004e2bd0_thunk_FUN_004dd010.asm",
+      "sha256": "0c25865673ac2125ce44a9121ca5ae48f1ccf622cb0ea21f6b763c7a3167b89d"
+    },
+    {
+      "path": "work/all-weapons-audit/native-modes/004e2bd0_thunk_FUN_004dd010.c",
+      "sha256": "3c21280841f3782d7dc47e21fa10d7e98813162628b22499b19238267a4cda82"
+    },
+    {
+      "path": "work/all-weapons-audit/native-modes/004e3c00_FUN_004e3c00.asm",
+      "sha256": "3cead9ff1ffe2b52c04d04425db54a093cdb4c9d7f5433cdbf936855c1460271"
+    },
+    {
+      "path": "work/all-weapons-audit/native-modes/004e3c00_FUN_004e3c00.c",
+      "sha256": "27caf655938ee4b47a07610ff1d0b6c06569dd6c2543e01c2e0708fc746530e6"
+    },
+    {
+      "path": "work/all-weapons-audit/native-modes/functions.tsv",
+      "sha256": "8a662c2eea1c63e9e27e2d66122bb830d1cf367c8cacbde38103069c0adf6528"
+    },
+    {
+      "path": "work/all-weapons-audit/native-modes/references.txt",
+      "sha256": "56a4a1466c5a1f6a0c980d4d8e0e32d80b917b487bb6634631e7309e242905d9"
+    },
+    {
+      "path": "work/combat-interruption-audit/burst/pose-immediates.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "work/combat-interruption-audit/burst-mov/004e1910_FUN_004e1910.c",
+      "sha256": "85189c854ff1a6eef1338a8b168ee71d40d5f7612481b9e1a34beadf0446d3f7"
+    },
+    {
+      "path": "work/combat-interruption-audit/burst-mov/pose-immediates.txt",
+      "sha256": "62be51ccf753065f6d5d36f5d8901f4b6863a4ba2895587b99ec59530fe0b89b"
+    },
+    {
+      "path": "work/combat-interruption-audit/flags/004cafb0_FUN_004cafb0.c",
+      "sha256": "03a15255f27ffcd622941c68f530e21331dca5d1343ed25b27d88fcc81ed15ae"
+    },
+    {
+      "path": "work/combat-interruption-audit/flags/004cdd60_FUN_004cdd60.c",
+      "sha256": "c28734de6a1dae6fbc325be5f516505e1a05db481ab794ad71d3cccc8a912790"
+    },
+    {
+      "path": "work/combat-interruption-audit/flags/004ed360_FUN_004ed360.c",
+      "sha256": "8df3abd02e4719d6c399a02675af6e599214990bffd7b664edd997e365c280d3"
+    },
+    {
+      "path": "work/combat-interruption-audit/flags/004ed6e0_FUN_004ed6e0.c",
+      "sha256": "b8075d87d2a32c73fe005a6d104d7c82c0db95a5c11153746373e754a9b9dd0c"
+    },
+    {
+      "path": "work/combat-interruption-audit/flags/pose-immediates.txt",
+      "sha256": "cd8524cdd9c4d8bb4788bf04b073e39a8632dd826c58d16fddf3751e4c69112d"
+    },
+    {
+      "path": "work/combat-interruption-audit/modes/004a9770_FUN_004a9770.asm",
+      "sha256": "6327228ac83fb53299bd0bd4a208fb40c51eda866f03cc4069d98c6af6636e7d"
+    },
+    {
+      "path": "work/combat-interruption-audit/modes/004a9770_FUN_004a9770.c",
+      "sha256": "d47a94abc82b736f341c2f6f61ea562240d456bf41115aa4122d6c3dcb7e5f56"
+    },
+    {
+      "path": "work/combat-interruption-audit/modes/004ce3d0_FUN_004ce3d0.asm",
+      "sha256": "2bbf756c444f50e5e63329a5e5418479575762547414c7d5fcb91f1a3e8140ff"
+    },
+    {
+      "path": "work/combat-interruption-audit/modes/004ce3d0_FUN_004ce3d0.c",
+      "sha256": "341dd45643730ee6cb24136b609f9b32c7213c1243f4b7076cce05b81b439ec6"
+    },
+    {
+      "path": "work/combat-interruption-audit/modes/004d0d00_FUN_004d0d00.asm",
+      "sha256": "4ff35c5628c2ac169ac91c8b3e219cb4c482c66fa3d3ffa10257dda6dc2e0116"
+    },
+    {
+      "path": "work/combat-interruption-audit/modes/004d0d00_FUN_004d0d00.c",
+      "sha256": "815cccbd8d08ba4a2a1800c63f1ca248bcc81002b463b33b124278da2640796b"
+    },
+    {
+      "path": "work/combat-interruption-audit/modes/004e1420_FUN_004e1420.asm",
+      "sha256": "36d72578e7852fb2e1d54e38aeef1caebbcff9fee2b8d9bf72f60f54dc20c079"
+    },
+    {
+      "path": "work/combat-interruption-audit/modes/004e1420_FUN_004e1420.c",
+      "sha256": "dfe0009eda4e8f6f83b01d64a314a2370ed8aed7b64db34dffb82d82ff9d86c2"
+    },
+    {
+      "path": "work/combat-interruption-audit/modes/004ed820_FUN_004ed820.asm",
+      "sha256": "95bbd18c90f8bd7dc007ebf8676d8ffb69b3eb79b57ff38f7bcbaa6252ba7377"
+    },
+    {
+      "path": "work/combat-interruption-audit/modes/004ed820_FUN_004ed820.c",
+      "sha256": "ab156e9a002e1188e8f81d85dac2f8be17e8ab804e745f43e2881e2e5451112e"
+    },
+    {
+      "path": "work/combat-interruption-audit/modes/functions.tsv",
+      "sha256": "27df29df772f4fca628bb9053c244957c349200664be472fb099cbcbee43ab50"
+    },
+    {
+      "path": "work/combat-interruption-audit/modes/references.txt",
+      "sha256": "71d613a23ee49ccb67c8add9c981f99a6335f07883ea81119101c88bcf0d22f5"
+    },
+    {
+      "path": "work/combat-interruption-audit/native/004cde00_FUN_004cde00.asm",
+      "sha256": "f9735819d2c1c80d86386c18333998d73cd28c15a3a64c4dc4e5a4ad99a7c1e7"
+    },
+    {
+      "path": "work/combat-interruption-audit/native/004cde00_FUN_004cde00.c",
+      "sha256": "0efabf4305c7b33f1c5600843a47a039eee3c0729985f863b56120306d828297"
+    },
+    {
+      "path": "work/combat-interruption-audit/native/004d03f0_FUN_004d03f0.asm",
+      "sha256": "cb57aa89217b2cba7b4dca38379179299c353e29d3184897fd95b5d41ebfc051"
+    },
+    {
+      "path": "work/combat-interruption-audit/native/004d03f0_FUN_004d03f0.c",
+      "sha256": "6eac0f9b63229d54c3e6f2f06e315411c44f630f6bae1751dea918a06aa08153"
+    },
+    {
+      "path": "work/combat-interruption-audit/native/004d3290_FUN_004d3290.asm",
+      "sha256": "d9e1f2c9ed077687e205776c720ba2087a76370187fe07e7a1619d0b3fd5d085"
+    },
+    {
+      "path": "work/combat-interruption-audit/native/004d3290_FUN_004d3290.c",
+      "sha256": "05bb59d6e140140e24304b84aad740b81a28f303be05323a9860bc27028fc3b8"
+    },
+    {
+      "path": "work/combat-interruption-audit/native/004ee9a0_FUN_004ee9a0.asm",
+      "sha256": "a4e956c88d1a76330e8e14a42f276a97cfa486a3a78ab5fc9f5f883e176d04c5"
+    },
+    {
+      "path": "work/combat-interruption-audit/native/004ee9a0_FUN_004ee9a0.c",
+      "sha256": "164883c33ee01b5d69f5b22bd8e23548cd3f2b8ae5d063cb1053206d0838ca4d"
+    },
+    {
+      "path": "work/combat-interruption-audit/native/004f1a60_FUN_004f1a60.asm",
+      "sha256": "44355dc6e1d7fa9cac9c1e02b8ed5dc637226ac23646481a13f09784eda3251b"
+    },
+    {
+      "path": "work/combat-interruption-audit/native/004f1a60_FUN_004f1a60.c",
+      "sha256": "e289dd15368117bf5b1f95b7b0cd4d42b7e1a8a237bf50296cbfa37fecd7727a"
+    },
+    {
+      "path": "work/combat-interruption-audit/native/004f2bb0_FUN_004f2bb0.asm",
+      "sha256": "9c38c107b8a8f00db44c3986f2933d09debcc5175aad894ffea673ec2ef7543a"
+    },
+    {
+      "path": "work/combat-interruption-audit/native/004f2bb0_FUN_004f2bb0.c",
+      "sha256": "c25a580d43e92328fa8c3b5656645f1558a16fe0503004d2fe92611290a4e630"
+    },
+    {
+      "path": "work/combat-interruption-audit/native/0055c300_FUN_0055c300.asm",
+      "sha256": "5db5d086b07873e55720abb13c4267065aa2156ad37e845747456cd668582598"
+    },
+    {
+      "path": "work/combat-interruption-audit/native/0055c300_FUN_0055c300.c",
+      "sha256": "ddae8e94da7c945ad3bb179b20a555d11fca0d00f7deece42dbae1a14bb51354"
+    },
+    {
+      "path": "work/combat-interruption-audit/native/functions.tsv",
+      "sha256": "b73b380cdec91ceef573efddb3b7cc75d974d93c85b4e64801af15f560cf7ab8"
+    },
+    {
+      "path": "work/combat-interruption-audit/native/references.txt",
+      "sha256": "5eb182179bbd5b83c73d06c6ac04921060e977ba6a83ae3555a5c51947a44fd7"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004dce50_FUN_004dce50.asm",
+      "sha256": "55566428b926e67c6daa2a8f83bb21b997488afca6d1afaed3750a6f67c916a2"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004dce50_FUN_004dce50.c",
+      "sha256": "601243889435497db451844010e78f50a644b8b9ef8f927ca2fc0e096037d8fd"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004dd370_FUN_004dd370.asm",
+      "sha256": "71b6ccb54305f057242bc79b010ddb1255af107070f58bf9fe1435f5a653c8cc"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004dd370_FUN_004dd370.c",
+      "sha256": "cfd5a1e533ad4801da45a8729fdfb8ef6fec2f508963f6ced60353c3fb41dc59"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004ddac0_FUN_004ddac0.asm",
+      "sha256": "1f652d0a0517a4b1fdf1e76a9f71d10b2b97c1534d954ae65a6f9ca4d89f6c96"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004ddac0_FUN_004ddac0.c",
+      "sha256": "6f8708ddc28732e778512861e721563ec89bdad49f52649eb4135ea95f99208f"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004de220_FUN_004de220.asm",
+      "sha256": "95e876b3786f5944bb3f30525f30dee7f1e7f37c1cf6dbf2c9b4e87e05374a7d"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004de220_FUN_004de220.c",
+      "sha256": "0777181d917dbd4baa66e0984c1b47e320d82712c41bd819751a8a2cfc22e9b3"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004de970_FUN_004de970.asm",
+      "sha256": "3d220c606109b505ac4bc7fd2efe33b687d6729800bc7826acf7d919842bcf02"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004de970_FUN_004de970.c",
+      "sha256": "70604ef4de0575e3a19dd706a4484438e846abfa93b3aaab1d7911ae74d955eb"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004df190_FUN_004df190.asm",
+      "sha256": "3a004cce9c1acc2f20eb4b258ca80bb948867f79632835163450f85b5efad6a4"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004df190_FUN_004df190.c",
+      "sha256": "082da7fb6aedbe0e966e68f0c3012578fd601c55096b866e113e625ef1a2db00"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004df930_FUN_004df930.asm",
+      "sha256": "4b35b444a1e5e1aae4e657ada771a3a47b2f5da91ffe47ba964be9150bb69393"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004df930_FUN_004df930.c",
+      "sha256": "df4829513926070e8eb2a26655044508a7c44bee74cc02e4153fb951e5511bf3"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e0080_FUN_004e0080.asm",
+      "sha256": "3095f2f284389cd8b9f108f4ef9434730a40b6fed9cb1e378caade5b71d9070c"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e0080_FUN_004e0080.c",
+      "sha256": "ede5618a0f3508ab0021256c0ef58d028b133cb836516b420fe3eb54791e3fe2"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e07c0_FUN_004e07c0.asm",
+      "sha256": "2b361ae516988011a0f9e4ee7d1e3ffb061dcc8603ea28c41bb7d1476208eaeb"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e07c0_FUN_004e07c0.c",
+      "sha256": "e4129ca06a2ec70a0049235ccc8845c0453ba2622db4656b8537c3ae1e6d3851"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e0ed0_FUN_004e0ed0.asm",
+      "sha256": "ab4748c34e95b9194372b514c1e427dbc92d7cc072205f565a7608309fdc3d39"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e0ed0_FUN_004e0ed0.c",
+      "sha256": "5f6b08cca490a4a2c2c8cd2d7de532f121752402074e1a209910bf4cc6406abd"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e1910_FUN_004e1910.asm",
+      "sha256": "5507637faeb9f48da4c2cbb108d9b5b79cb9149a5b722bd3ca402024b2a1b71c"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e1910_FUN_004e1910.c",
+      "sha256": "4ba5299c89226c61333e6a3441a0f0f5deb06a303c86c647728c858cf7ed515d"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e2ba0_thunk_FUN_004dce50.asm",
+      "sha256": "5ef236cab5fc3d6d4e0dbd07167774e09d4b0c0db9dc15394b9dd357f95d9757"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e2ba0_thunk_FUN_004dce50.c",
+      "sha256": "031bf4c81dcb2491c3b6b4a4d19e9cd345458dd1de50b986ff8789aff8f94327"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e2eb0_FUN_004e2eb0.asm",
+      "sha256": "5c3ca04ba0326dee50e79e0bcba0f5d03018ede1cdff4d6dedbf3f37581773c2"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e2eb0_FUN_004e2eb0.c",
+      "sha256": "84a522872c502ed56f9b8fc10cca3acf878115c2c31eaa4d93f8f7d5cc1782c9"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e3770_FUN_004e3770.asm",
+      "sha256": "47303c3fa26748d5dc3e694aa6782e3a0a13ad7327db7f53b57c535d9527a4cb"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e3770_FUN_004e3770.c",
+      "sha256": "87a54b4351ca518afa659c0d43de5797471f04908f3b50c2548fc02b5045d42c"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/functions.tsv",
+      "sha256": "236abc9d30965c18baf03c77279b81da34e29273df53ffffd5b21663d36ae9e2"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/references.txt",
+      "sha256": "fd397c4517a700dbd49f73e225c7a9e6a82e05e8e5d6219cbba331fcc4436ec8"
+    },
+    {
+      "path": "work/next-mission-audit/native-contexts/contexts.asm",
+      "sha256": "02b53f60b44db56cbb062270703d64a5f0344ef537d72a0ddfd56abe5787b8cd"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass1/004bf650_FUN_004bf650.asm",
+      "sha256": "15d353d5a060eb4e104848a3fb1b6974880c7c6be1292dc72b44ed17fb372f7b"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass1/004bf650_FUN_004bf650.c",
+      "sha256": "a791ae5a1685e98e313d2c18f5701afeac59d4e5f823b3f8115cf9b885d35129"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass1/004bfc00_FUN_004bfc00.asm",
+      "sha256": "bd24ba6414868b9d7eca4ed55b71f4fb1c942c7f92809106dfc222c6193527dc"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass1/004bfc00_FUN_004bfc00.c",
+      "sha256": "3ed93a7eeba280df8952f38dec572c24c5c3c8b3d0c0be1fa544aaf5ac28b839"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass1/004c33e0_FUN_004c33e0.asm",
+      "sha256": "85fef70b6bbcca5bbc562e583b0c83f339de19b6023ecc7e2bafd330a0838a42"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass1/004c33e0_FUN_004c33e0.c",
+      "sha256": "2ded967d662ccafee8873b26e2b15930ad95b14c8f269f9dea8fb8d87b06d8f9"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass1/0056bb80_FUN_0056bb80.asm",
+      "sha256": "d8a1364c473bf855f8e6345c868bb6ba1f560af2da6eaae00205461ac910ed24"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass1/0056bb80_FUN_0056bb80.c",
+      "sha256": "377db1a32b491f3bb75d74499c5875a8c3759c2f20c16b5dc2a261bf811e795c"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass1/0056c400_FUN_0056c400.asm",
+      "sha256": "41296618bac21f01c108623aaac02d9e2bac3a4ff29d904fcef3d6e4b447ad27"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass1/0056c400_FUN_0056c400.c",
+      "sha256": "107bedf7e3c2d7c7d1ae728f186ef369b314a411fee23497919d4bd7d7f71d6d"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass1/functions.tsv",
+      "sha256": "64280d72529adf1d8ca524bc96e80ac614c534d31235d8d73b762ec0b5c756e7"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass1/references.txt",
+      "sha256": "f098cb66eec1a3e698500beb917e57ccafbd6455fac2d11be68a966245a45a63"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/00406960_FUN_00406960.asm",
+      "sha256": "9624d84273807df504c7657e3de9ce5944d9f436261cfa9419d8eb979f3ef216"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/00406960_FUN_00406960.c",
+      "sha256": "ecff0a9fa5fa73bcf2f894969f613e75d7e541ab0f6e2087e5fbfef0997fcbb1"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/00452af0_FUN_00452af0.asm",
+      "sha256": "35e8c9bca86eee6e9c0d452cecf05b48a6c936245758adad0a01a8bb02636e21"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/00452af0_FUN_00452af0.c",
+      "sha256": "9711cd1819788cf5dbbedfe295b48fab7808b3ba45d4257d04e8af6ac22a52b4"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/00488c89_FUN_00488c89.asm",
+      "sha256": "3d9ba59b2b0860bb0704bfa47d87c028197f92959ac213d4715d584afa1df781"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/00488c89_FUN_00488c89.c",
+      "sha256": "e639d5c90b1f5beb5bc8259959eda75cf602a9b28745ef9b59f7e554ea218b99"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/004ac160_FUN_004ac160.asm",
+      "sha256": "867cc123a437dbd74d507c549b521b39ab9a91cae1d772c79f57dab9759cb0ae"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/004ac160_FUN_004ac160.c",
+      "sha256": "7157977468402a26fd6442301178faff07b340f90bc78f595690b1591703b3f2"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/004ad530_FUN_004ad530.asm",
+      "sha256": "0f1dcae683b432e481c43d2414a9a550e973ebd4dce4b39c01cd629cd22eedf4"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/004ad530_FUN_004ad530.c",
+      "sha256": "33ab14995f7ecd1001d7c62dd46bd8a6c3b64b8b55cb20e698568766f0c51a2f"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/004af110_FUN_004af110.asm",
+      "sha256": "79e36044d3e4577db0e9ca0beac2a0ec2503ed2e5deb9f8de49d40c486238446"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/004af110_FUN_004af110.c",
+      "sha256": "0d2d245a343311efea96ebb2e42005fc3427a29904e66ca8740c6ab6a9f6783c"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/004b0bd0_FUN_004b0bd0.asm",
+      "sha256": "9b535c8fc80c079a81116ebecda0045aa6622c5280c6aa4b0a2e717a52945d81"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/004b0bd0_FUN_004b0bd0.c",
+      "sha256": "e1bbfd206feb281241bca483dfbbf004143e02ebbff398855e964e09d93e9881"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/004bf910_FUN_004bf910.asm",
+      "sha256": "40c472a070f38b8afee4a35a0226498170daa59dc6b703c70bbee083a699a547"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/004bf910_FUN_004bf910.c",
+      "sha256": "d64e5be72852e124fff8b2a8293e6edb2d2e1e0e134d7d2554efdafb8bb1f2e9"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/004d4e30_FUN_004d4e30.asm",
+      "sha256": "1945a697b996f2f29893d6622d355c34de9895b5b447dfdb8084af03aa9ef22d"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/004d4e30_FUN_004d4e30.c",
+      "sha256": "8e3f6323f92784cca57da7e3dc0d90b5b719884432f690b375d65ad110743113"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/004d59d0_FUN_004d59d0.asm",
+      "sha256": "0ef6ea0bb01b761ea8cb23a700563b021ad82138f6cc27ecab0fa3d6dff1ea7b"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/004d59d0_FUN_004d59d0.c",
+      "sha256": "247999dec28e86539b1e2e4396bf9dfad68264f26bd93b9661ec91ac07989e82"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/004d5e30_FUN_004d5e30.asm",
+      "sha256": "40663a42d2acf89a4b191e0e568d57db1e4f9221b5306d14ad3def9b7659e0d4"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/004d5e30_FUN_004d5e30.c",
+      "sha256": "f12b212e0c8025d649d502f7b39ac792f1985067b4dd3300fbe552010db4b1a5"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/004d61c0_FUN_004d61c0.asm",
+      "sha256": "6047813aa084159996a3f6f81f3457f98585fff4bd784550657e31d6cca2cdbd"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/004d61c0_FUN_004d61c0.c",
+      "sha256": "06ce8e6baa90eb61cdee7dc12656c606e6d62895162ab33b7e974fa7627f5773"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/004f8ced_FUN_004f8ced.asm",
+      "sha256": "871ea77734af814a249502c3f4846f6c45640ddb757dd650278981bf3fa727d1"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/004f8ced_FUN_004f8ced.c",
+      "sha256": "d9d7f9885397d2ff5e5aceba3922df3d5257751ea59489d0f073f3d4fb125d17"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/004fb770_FUN_004fb770.asm",
+      "sha256": "d6172a6b0f7d940010e074fbaaeeec2bcf802075217bfa13f5139d4cafcb275c"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/004fb770_FUN_004fb770.c",
+      "sha256": "ec40106b5427b13a5f126a4a72024325f049bbd78db181b4e5c22d50b7fab7dd"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/004fc270_FUN_004fc270.asm",
+      "sha256": "342e76cb90b8bf6f34a3431009391ee749796227a5caa762cffd37dd05bb5ad3"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/004fc270_FUN_004fc270.c",
+      "sha256": "083082a9ac55680903abceb3bede5bb2f56ca4fe3c6861a8bdd9eac8af6585a0"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/0055aed0_FUN_0055aed0.asm",
+      "sha256": "83e8a7744c9d102a135ed3c440396cdace8a04c706a048e31a94e24d9c131b44"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/0055aed0_FUN_0055aed0.c",
+      "sha256": "1027468c24ea9688b76c2df5441fee7e5177cba2bfa99d568aa84e2e98a284fb"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/00563540_FUN_00563540.asm",
+      "sha256": "5ab886b6aa20a44293dd6481fe912fa41f2a95d77401253ac5ca174c9996f6c4"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/00563540_FUN_00563540.c",
+      "sha256": "70aae8fd9d37e4caf554002cdd4917b5d94c9069eb194789f03dd2b42377975e"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/005637d0_FUN_005637d0.asm",
+      "sha256": "fe9f5653acc191d4ed606140248ef2688f0f0086073cc1638b56232ef9d56ca7"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/005637d0_FUN_005637d0.c",
+      "sha256": "84d12d81e774f31f380f03219e5cc5086f07099558445319ca0b4264bfe70883"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/00565090_FUN_00565090.asm",
+      "sha256": "7a1167da1650c6eaa911feda07c5a0d1582865f3aeff2fc84f29dbdf5b246a38"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/00565090_FUN_00565090.c",
+      "sha256": "4da65f98212dec0968295a1bd478783222df3fab28ea4c27f3c176f8ae2eaf4f"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/00565140_FUN_00565140.asm",
+      "sha256": "9d665c2b46935786e45ddc895477e151f0efaf9bf11f61542e20b74c16b3b249"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/00565140_FUN_00565140.c",
+      "sha256": "517c27fcaeea9f035b14612767c92407025d3b637437600ba92ba6133e310ff8"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/005651e0_FUN_005651e0.asm",
+      "sha256": "0f4dc1422779462baae2c1d632a7ff9d178eea941c3060d66a6983a221a67a7e"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/005651e0_FUN_005651e0.c",
+      "sha256": "bf90b9348a7f532d6818433b063891e5365b0bdddb18a65553207abd10943aca"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/0056cb70_FUN_0056cb70.asm",
+      "sha256": "1175d4de6d0fe4cdd0468760545a7fc6a1d41348a74585dcfb59ac6ff61cc0b2"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/0056cb70_FUN_0056cb70.c",
+      "sha256": "592494d8a23a485abfc89a650c0a21a108a958882c08bd91be14abae5afbdc0b"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/0057d930_FUN_0057d930.asm",
+      "sha256": "907b6fa2161e809a3592710c370e5e9e5bfc684ce105d933099bfd2ff802ab71"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/0057d930_FUN_0057d930.c",
+      "sha256": "a2665799c4f973ea50c0248364adb685dfd94615a8cc36164cdbf62d9c41b085"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/0057d950_FUN_0057d950.asm",
+      "sha256": "81123ca8dde8a1697c60596f8bf2232a1d9af91f5a8644959f34349fca4e631e"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/0057d950_FUN_0057d950.c",
+      "sha256": "5aedc5ec61da901656bc73a4e086baf4b531676bf12e99f8ab924e7e67448586"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/0057d970_FUN_0057d970.asm",
+      "sha256": "0b2004c5e5499be72fdf9e2099169ad22f43276a805a71f9bef812c5dad8d9fc"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/0057d970_FUN_0057d970.c",
+      "sha256": "df500c804a838ece62c335d3362fd7264db404e32db22766494ce6fcb1478cd2"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/0057d990_FUN_0057d990.asm",
+      "sha256": "a2aa770fb141c5b315c820295e964a9ae4e32a8765811ef367e6fa175bda9375"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/0057d990_FUN_0057d990.c",
+      "sha256": "8aa62d65d9a01419a37aa98aae5f27ea2f3cca798247cfd90b17447b226c55b9"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/functions.tsv",
+      "sha256": "04872adffe90bc130f50bde2ea16c4207f704149cc94f1af0caa8110f2007ef8"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass2/references.txt",
+      "sha256": "72866626ba8e4283e6283444a48ebe4f196323bdccf58ad5b6178019620441b7"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass3/004aad20_FUN_004aad20.asm",
+      "sha256": "1bbc5c59ba3f15478f469a45fb9034e70ff6fb4d022b4f2caaaf918fe9526916"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass3/004aad20_FUN_004aad20.c",
+      "sha256": "1c82590e8ba30f837e3975761eb8a9bdae36602dc18c457f3d0d1fb1ef2429f6"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass3/004c0020_FUN_004c0020.asm",
+      "sha256": "2b300c46609fc4ad60fa0d0e6e76d46b0e3496fcf37696d64e10f78daa938121"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass3/004c0020_FUN_004c0020.c",
+      "sha256": "cfddeb0f99344a07067c5afc49454c2f0b6fe47c73b96b8531ceac31bf5b9956"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass3/004d8cf0_FUN_004d8cf0.asm",
+      "sha256": "adbd2edc78b8411b99edc82db7e9a9673dac16b822712333fdf01e0fe6630590"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass3/004d8cf0_FUN_004d8cf0.c",
+      "sha256": "2a4cd7fd9037956cd42ab773b6436b4270920413c97aae84b20ede3aa03de7c6"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass3/004d95d0_FUN_004d95d0.asm",
+      "sha256": "4a6904ab15752a450e3200499fe7f532504ff0bd35ef151b9250bace4eb8537c"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass3/004d95d0_FUN_004d95d0.c",
+      "sha256": "ed3c7a373c3a3a798187e054f11c4f4821496faa27cf5230b405be40a51d0a09"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass3/005012f0_FUN_005012f0.asm",
+      "sha256": "72fba84a5436cfd576338cb525008fb785b3165bb69923f91559024373277871"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass3/005012f0_FUN_005012f0.c",
+      "sha256": "60b36ecff47c632dbd71fdf89efde2c52d83a0bfd590134f1e0a61bb92aa8f6d"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass3/00561b60_FUN_00561b60.asm",
+      "sha256": "b5d660530c2d0d961ac4d2e1e92189be2117cba5cb16d0a01366c7068811bf6c"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass3/00561b60_FUN_00561b60.c",
+      "sha256": "165bfa4167df9816dd4e53e6eb418348edc63030477266f218d5738d5972b59c"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass3/functions.tsv",
+      "sha256": "6db806a4636ab1962017ac6138e0dc8675357e6e6f80dec199f1e92bffe1b7bb"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass3/references.txt",
+      "sha256": "5e55534d897dfa93df048ea13a01a77ee869aa9fd98b03ca0a7b99020394a604"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass4/00487830_FUN_00487830.asm",
+      "sha256": "200c5f0afb916bad1bc5f797d304dd2b401add19ed8577262ccee68f4ba1273f"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass4/00487830_FUN_00487830.c",
+      "sha256": "7b6df985a5c508e7046a3355643f18d104388cf6d9da58782e119d6ad0bfb7fe"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass4/004f8950_FUN_004f8950.asm",
+      "sha256": "9db92de2468c7ecc8af994ed86e2a2c2c83fbcbc37d39d26be054a52559309b0"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass4/004f8950_FUN_004f8950.c",
+      "sha256": "824ecfb6604846e1bea67a4ac1300cefea88eaed727ce44af502b758a3dc0106"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass4/functions.tsv",
+      "sha256": "d402ba5930ee1298af4b58c3c45002ac72f9cd0c19f71276d9731581e02eea65"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass4/references.txt",
+      "sha256": "781addc043b3e61da1f8933aaf1023981888e5d24674e6954b858d5f9a60acac"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass5/00486610_FUN_00486610.asm",
+      "sha256": "ae15e20933121665fd87246fffcda4f8cd1ca08ffb76d4cf055eb98115d6e442"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass5/00486610_FUN_00486610.c",
+      "sha256": "052d343c958042d5c23c3c8e76c72d312a1283a1b16997eba650817bd2f3e048"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass5/00491750_FUN_00491750.asm",
+      "sha256": "ea1b0a35eee96b04af3ef15152c6b6dbc86000d1350ac1021d0f0a07aebea0b8"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass5/00491750_FUN_00491750.c",
+      "sha256": "88a6e9d1258cc7d70cbaf95949115fa5d82a9d7d98e52c80f78edea3e0c7decd"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass5/004d95d0_FUN_004d95d0.asm",
+      "sha256": "4a6904ab15752a450e3200499fe7f532504ff0bd35ef151b9250bace4eb8537c"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass5/004d95d0_FUN_004d95d0.c",
+      "sha256": "ed3c7a373c3a3a798187e054f11c4f4821496faa27cf5230b405be40a51d0a09"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass5/004f8950_FUN_004f8950.asm",
+      "sha256": "9db92de2468c7ecc8af994ed86e2a2c2c83fbcbc37d39d26be054a52559309b0"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass5/004f8950_FUN_004f8950.c",
+      "sha256": "824ecfb6604846e1bea67a4ac1300cefea88eaed727ce44af502b758a3dc0106"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass5/functions.tsv",
+      "sha256": "2e4a29966621128ca9677a2cd7e96b0d3e7694ace3f38a29b6390c0acc7d91ad"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass5/references.txt",
+      "sha256": "4b31dc9eda1fc6fd4669113921d45c856a98e32d085e6a7066fb49a366789b4b"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass6/0048b610_FUN_0048b610.asm",
+      "sha256": "399939a8a984e1ea1df18c9a5fa09e88ea7353fc1af0cd9dde2f0170c138dbb5"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass6/0048b610_FUN_0048b610.c",
+      "sha256": "7904437b61b2038eb3afe9b2cf14e6d4351b820917b9933a1252fc07fb72d53d"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass6/00492250_FUN_00492250.asm",
+      "sha256": "6dd1cdaac203a73c59034fd20d8271ebfbcb0dc725410a91017d9653205446ca"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass6/00492250_FUN_00492250.c",
+      "sha256": "a96c0ecb4bc7585a606e1e24f3d75739bb09ff8a8c85771c432fcdf564d1d986"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass6/00492a00_FUN_00492a00.asm",
+      "sha256": "c8e35700884a75b34ba54b4dfa03fdb25f513086cf719f5329a28b03a9d730f7"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass6/00492a00_FUN_00492a00.c",
+      "sha256": "a0d0dd286573d21a012323234e9b95b94bee8898667e7497713b3c9fc6bc6a2c"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass6/00493390_FUN_00493390.asm",
+      "sha256": "d69a430e5d4ab769d283caab09b47fe91ba8755c8d0d942cb7c2bb8d22a3bbb5"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass6/00493390_FUN_00493390.c",
+      "sha256": "1037769a0eb2e7c988a76efee06717f9a881349026881e9712d3017efc96ab63"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass6/004f9d40_FUN_004f9d40.asm",
+      "sha256": "0e774aa1808d7efbb162dc7119e950dfcd252010feca95eafe78d77f77c5cffb"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass6/004f9d40_FUN_004f9d40.c",
+      "sha256": "b279086acc645389244ac47d112a248dcd2511d4b9d698b7bff688ec8f337e59"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass6/functions.tsv",
+      "sha256": "e550fa948e2a360f2d98943bbb7be4a022c9e15222e85aa2da16ddd1aee8f81d"
+    },
+    {
+      "path": "work/next-mission-audit/native-pass6/references.txt",
+      "sha256": "34b53005ecfe37dc3ef7c5273ae6d9713bfc8871acc010c7ea1bdd75e2e5e8d5"
+    },
+    {
+      "path": "work/next-mission-audit/native-role-contexts/contexts.asm",
+      "sha256": "96f01a7ac4737da7c06559d7cb738c367289edfa73f72cd2f8907de08be21469"
+    },
+    {
+      "path": "work/combat-interruption-audit/input-queue-0.3s.r2.txt",
+      "sha256": "0c8d2996600d1b314b3dbcb53d17637f25028c460413a2e4809a47047072fd65"
+    },
+    {
+      "path": "work/all-weapons-audit/audio-provenance.json",
+      "sha256": "6261eab0a3b612c7708df14b98cf29bc8f49ce236d4011dc72d9d0d1ab53041a"
+    },
+    {
+      "path": "work/all-weapons-audit/rage-import.log",
+      "sha256": "a60d3a41b2a790def04a983f010ab1cc664f8601a7d7019ce149f62182404d1d"
+    },
+    {
+      "path": "work/meteor-original/evidence/E-imports.json",
+      "sha256": "b20e79118ee2432a31bb018c2f937fa13e6dfd118740523b74e8b824d3894c5f"
+    }
+  ],
+  "iterationArtifacts": [
+    {
+      "path": "work/all-weapons-audit/iterations/meteor-all-weapons-initial.tap",
+      "sha256": "c68dd1a4fe97c66573aaf5adfe6ed5a5be597305ef5f169b2b927c1e7b6aa70f"
+    },
+    {
+      "path": "work/all-weapons-audit/iterations/meteor-all-weapons-iteration2.tap",
+      "sha256": "f4d209c445ef766630ed84ed750de16533205d48cfe89a701bae8dfe7db344a6"
+    },
+    {
+      "path": "work/all-weapons-audit/iterations/meteor-all-weapons-iteration3.tap",
+      "sha256": "c75fec6e03beac7581acb5e96c72e24d540aa7c5dbae69c981f75648b2e8653f"
+    },
+    {
+      "path": "work/all-weapons-audit/iterations/meteor-all-weapons-iteration4.tap",
+      "sha256": "948dfae8493a14fe3be8bf5c14aff17b2192e03bbc6914ff798ef20a2f36b857"
+    },
+    {
+      "path": "work/all-weapons-audit/iterations/meteor-sn04-gate-approach-final-probe.log",
+      "sha256": "83a8d73647c5f5a3c91faa245e0942b940c61d41e03055b9489d6fe85f8702a6"
+    },
+    {
+      "path": "work/all-weapons-audit/iterations/meteor-sn04-gate-approach-probe.log",
+      "sha256": "e694f46e44f317c0fea1a8be6dd0a3e1c02967a709867ce6b504be5223051455"
+    },
+    {
+      "path": "work/all-weapons-audit/iterations/meteor-sn04-gate-facing-probe.log",
+      "sha256": "517831bf04f929de18b01c5ac37e09aa50f1697ac8402edaa0ab64f32382134c"
+    },
+    {
+      "path": "work/all-weapons-audit/iterations/meteor-sn04-gate-probe.log",
+      "sha256": "b012abfebf2be57c300dedae78e69c09fb0700957938ae2afb15a3b008d494e3"
+    },
+    {
+      "path": "work/all-weapons-audit/iterations/meteor-snow-city-items.tap",
+      "sha256": "ef4d872b263020ac34d31ba0dfaf257c6b5d704965d3be8954a5eae81bffcfbc"
+    },
+    {
+      "path": "work/all-weapons-audit/iterations/meteor-twelve-coverage-final.tap",
+      "sha256": "ae4edf38ca76fc98c53fa20ff3b1f5243957f39f757b952d34246326101226f8"
+    }
+  ],
+  "historicalFailures": [
+    "Initial all-weapon count assertions, form-entry preparation and front-reaction expectations were corrected; failed TAP retained.",
+    "Initial snow RNG assertion counted Three.js UUID allocation as runtime draws; corrected to verify no random draws during updates.",
+    "Earlier sn04 attack drivers timed out; facing fix plus continuous approach produced isolated contact-chain completion.",
+    "Earlier unseeded cave stall remains unexplained despite thirty later seeded reproductions passing."
+  ],
+  "references": [
+    {
+      "url": "https://www.lxres.com/LiuXingBiJi/1559.html",
+      "role": "community command notation; corroborated with local POS/ACT, not complete EXE selector recovery"
+    },
+    {
+      "url": "https://www.lxres.com/LiuXingBiJi/1758.html",
+      "role": "community pose/form cross-check; local native class initialization takes precedence"
+    }
+  ],
+  "browserValidation": false,
+  "deploymentChanged": false,
+  "fullPortGoalComplete": false
+}

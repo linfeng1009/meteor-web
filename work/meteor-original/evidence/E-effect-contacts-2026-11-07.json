@@ -1,0 +1,537 @@
+{
+  "id": "E-effect-contacts-2026-11-07",
+  "observedAt": "2026-11-07T18:52:12.427490+08:00",
+  "scope": "work/meteor-original/scope.md",
+  "version": "0.7.1",
+  "original": {
+    "sha256": "289afb0aa44a47921d167fc24d6d404c60d6d00c299ac27d45fc61e16231b498",
+    "bytes": 1945600,
+    "executed": false,
+    "modified": false
+  },
+  "sourceCallflow": {
+    "effectBone": {
+      "address": "00556910",
+      "identity": "effect=0x1001"
+    },
+    "poseWindow": "0055d540/0055da50 only test the current native POS Attack",
+    "effectQuery": "0056f1d0 accepts first name byte A/a, excludes AUDIO2/PATH10, special-cases PARTICLE9",
+    "orientedBounds": "005818f0/0055d950/00570630; original effect OBB versus whole-actor bound",
+    "sphereBounds": "00584e50: radius on all axes",
+    "cylinderBounds": "00588ed0: max radii, height/2; flag0=1 shifts centerZ by height/2",
+    "boxBounds": "00589a40: dimensions/2; flag0=1 shifts centerZ by dimension1/2",
+    "effectClock": "005663e0 accumulates seconds independently of POS frame speed"
+  },
+  "runtime": {
+    "supportedBoundTypes": [
+      "SPHERE",
+      "CYLINDER",
+      "BOX"
+    ],
+    "sourceShapeMetadata": "Unchanged54-definition original EF manifest; no generated sphere pulse or arbitrary skill radius.",
+    "hitRouting": "Native damage, source AttackType, directional reaction and Move/Value; authored AMB recoil through existing collision host.",
+    "deduplication": "One hit per existing serial/Attack-index/target identity, shared with body and weapon; not one hit per shape or render.",
+    "visuals": "Independent visual/contact systems share transform and key sampling. Missing textures do not disable attack data.",
+    "sampling": "Original crossed frame intervals plus120Hz maximum spacing and authored EF key times; explicit Web temporal sampling.",
+    "body": "Explicit Web actor box radius0.4/halfHeight1.3, not full native actor/bone collider recovery."
+  },
+  "acceptance": {
+    "newTests": 11,
+    "focusedTests": 48,
+    "focusedPassed": 48,
+    "surroundingActors": 3,
+    "sourceAuraDisplacementMeters": [
+      6.573,
+      6.573,
+      6.573
+    ],
+    "surroundingReactionChain": [
+      103,
+      112,
+      119
+    ],
+    "forwardWaveTargetDistanceMeters": 20,
+    "rearTargetDistanceMeters": 20,
+    "rearAndLateralTargetsUnaffected": true,
+    "ragePaid": 100,
+    "payments": 1,
+    "texturesNeededForCollision": false,
+    "fixture": "Original SKC/BNC/AMB/POS/RES and weapons on a CPU plane, normal player S/W/W/J input, NPC combat/navigation paused; not browser/live-AI/manual acceptance."
+  },
+  "pending": [
+    "Other EF bound/node families, particle hit path, MODEL and PATH",
+    "Complete native effect interpolation, binding flags, global clocks and lifecycle",
+    "Effect-to-scene-object attack path and original wall semantics",
+    "Original armor/Burst/group-AI and input recognizer",
+    "All remaining move effects, state modifiers, missions and multiplayer"
+  ],
+  "sourceArtifacts": [
+    {
+      "path": "work/effect-contact-audit/native1/004cabd0_FUN_004cabd0.asm",
+      "sha256": "d9af12075c3a0dec7ec8cb99356b60f9ace5ee7cb7f0cc84ee5dc05b0571eb68"
+    },
+    {
+      "path": "work/effect-contact-audit/native1/004cabd0_FUN_004cabd0.c",
+      "sha256": "ed2060443cd148765a053843feb58668f2a890886d2811c4a164dd8ae52f1d6e"
+    },
+    {
+      "path": "work/effect-contact-audit/native1/004cada0_FUN_004cada0.asm",
+      "sha256": "152734de1bf056d020dd9595acc4ac57cd22a2352c2be7feb67e4390b63f79f6"
+    },
+    {
+      "path": "work/effect-contact-audit/native1/004cada0_FUN_004cada0.c",
+      "sha256": "24558d1817295eaf276c91c3c67b18f3a31ac2107f6ff8405263241c86076482"
+    },
+    {
+      "path": "work/effect-contact-audit/native1/004d0500_FUN_004d0500.asm",
+      "sha256": "06c2f8777a365f3d7dc1a606691f7d38643d8f9a5a37822f5a5bb57a8d1a19e1"
+    },
+    {
+      "path": "work/effect-contact-audit/native1/004d0500_FUN_004d0500.c",
+      "sha256": "96661d3a2d5cdb9580e7a4d5876e9ef808a8f83d79782188539563947fc1e94d"
+    },
+    {
+      "path": "work/effect-contact-audit/native1/004d0510_FUN_004d0510.asm",
+      "sha256": "9ba7d4b54d9e9669d4b7cd5ff601ef62d6c74b9804fcc025138a3d0569c7abe6"
+    },
+    {
+      "path": "work/effect-contact-audit/native1/004d0510_FUN_004d0510.c",
+      "sha256": "e5e35d0416b5b821003288f4cb6992a4abd7dd6403198a108b1c19e71985da30"
+    },
+    {
+      "path": "work/effect-contact-audit/native1/00556910_FUN_00556910.asm",
+      "sha256": "f3cef850f347ba4690b25661d951760fc7bc4559439e64e3af022630c0d40a53"
+    },
+    {
+      "path": "work/effect-contact-audit/native1/00556910_FUN_00556910.c",
+      "sha256": "5e9fd5ab14d26fea8469fca9d7021a7a651da2cc7492f6a6a95125e422835d8c"
+    },
+    {
+      "path": "work/effect-contact-audit/native1/functions.tsv",
+      "sha256": "2704035ff2ab5b891a87a5bd322523ea1376d251917d56305b733c221265c08e"
+    },
+    {
+      "path": "work/effect-contact-audit/native1/references.txt",
+      "sha256": "4b7c842856806ae42d2e8aa93d7986ecc84b687f3ae8833f893dde27c3b94a9d"
+    },
+    {
+      "path": "work/effect-contact-audit/native2/004f3380_FUN_004f3380.asm",
+      "sha256": "3fe7707e8a256a5c6e5b36fc7fac49af80281ab0d5f07b692dabb44f871ea6a1"
+    },
+    {
+      "path": "work/effect-contact-audit/native2/004f3380_FUN_004f3380.c",
+      "sha256": "cdd53bed807bdc7bd930bb78685597d946012cdc5529f480a1e02550a5bdc5cb"
+    },
+    {
+      "path": "work/effect-contact-audit/native2/00556a20_FUN_00556a20.asm",
+      "sha256": "329469a388b706e04f3879e63c189512c585881275384715b3502d2f38a1b5db"
+    },
+    {
+      "path": "work/effect-contact-audit/native2/00556a20_FUN_00556a20.c",
+      "sha256": "325fb66c06c67adbfac9a7cc8befa672c3468697f004b9c1c926cbdeed23aadb"
+    },
+    {
+      "path": "work/effect-contact-audit/native2/0055c580_FUN_0055c580.asm",
+      "sha256": "ee724f79be3cf0afe0d49d4228fcae6d0c2431ee2f4f04d0abbf9c8a19b98872"
+    },
+    {
+      "path": "work/effect-contact-audit/native2/0055c580_FUN_0055c580.c",
+      "sha256": "37d332323c2d7d9eaa710bade289662bbeb01a51c62b153b6b20cf1fc1c9e3c6"
+    },
+    {
+      "path": "work/effect-contact-audit/native2/0055d540_FUN_0055d540.asm",
+      "sha256": "1bd3e5fc651c73c818aa2551da77da9fdb842885ee77ff5063f7acb3bb87b46a"
+    },
+    {
+      "path": "work/effect-contact-audit/native2/0055d540_FUN_0055d540.c",
+      "sha256": "9f1f80711a9db79f66252861381de8f6e9e72400c3d6607a3f6c13b8e67a007c"
+    },
+    {
+      "path": "work/effect-contact-audit/native2/0055dc20_FUN_0055dc20.asm",
+      "sha256": "663695ce46a64f83c6e44ecf5ff4d9fb1b505b2bd45f9b46b86e9cccfeefa36b"
+    },
+    {
+      "path": "work/effect-contact-audit/native2/0055dc20_FUN_0055dc20.c",
+      "sha256": "76ef9174688732cb0df5e1eb8d5ac7800045177c67079a17d19f5cefac9081e5"
+    },
+    {
+      "path": "work/effect-contact-audit/native2/0056b350_FUN_0056b350.asm",
+      "sha256": "4cade6368a8e67483acc08e7b6a06f251e35e3fbf9d4b269f275f164aa5fcc51"
+    },
+    {
+      "path": "work/effect-contact-audit/native2/0056b350_FUN_0056b350.c",
+      "sha256": "1a715d597dfa6eec6a994139121f23c7d06aadd0bf7da2fa251d18808da4cb26"
+    },
+    {
+      "path": "work/effect-contact-audit/native2/0056b4a0_FUN_0056b4a0.asm",
+      "sha256": "772a029166e394b72f3c841075428f2e1286bca387d95000817daffcf07c64af"
+    },
+    {
+      "path": "work/effect-contact-audit/native2/0056b4a0_FUN_0056b4a0.c",
+      "sha256": "b3c6fb71c977e871ddded52bd547acc6d69a477b167b7d29ad7132f123bb2121"
+    },
+    {
+      "path": "work/effect-contact-audit/native2/00584c00_FUN_00584c00.asm",
+      "sha256": "0d8b155f7b8c6f7c00965029da95be0f2244b396fa64282b00efacc7c08a67ff"
+    },
+    {
+      "path": "work/effect-contact-audit/native2/00584c00_FUN_00584c00.c",
+      "sha256": "df55b66680facc22da30e614f6092d17d23ae71c92b6e09b7ef5683090eb42bd"
+    },
+    {
+      "path": "work/effect-contact-audit/native2/functions.tsv",
+      "sha256": "e48bb7d3ef56104fe98778634f6d145728e0a33d3b25910814ddac1f0cd639fc"
+    },
+    {
+      "path": "work/effect-contact-audit/native2/references.txt",
+      "sha256": "a80c63b8bd309b3e4c5f7eeef1714ac08701efa83f071548eb1ff118b5acce8b"
+    },
+    {
+      "path": "work/effect-contact-audit/native3/0055da59_FUN_0055da59.asm",
+      "sha256": "d0b633bbb1aa3e6a3c21746d7cff0c00f0c095976502db3752c7195bcc9bf539"
+    },
+    {
+      "path": "work/effect-contact-audit/native3/0055da59_FUN_0055da59.c",
+      "sha256": "48ad9a360530159a4224b82f019d04523666d79176aa27a02ca8020d13250df2"
+    },
+    {
+      "path": "work/effect-contact-audit/native3/0055ddd0_FUN_0055ddd0.asm",
+      "sha256": "8456274da149f431b5c21a5d8f753a93c3f3e62bdaa8ba482b043c57d69f91bb"
+    },
+    {
+      "path": "work/effect-contact-audit/native3/0055ddd0_FUN_0055ddd0.c",
+      "sha256": "200282308a2b34d74beff857eff6ca418965830804ecafe8b68aa5ba87bdbaee"
+    },
+    {
+      "path": "work/effect-contact-audit/native3/0056f260_FUN_0056f260.asm",
+      "sha256": "efec90d8bba4e516cc2db647c9ab20fa4f303421f41604f8f2aa9b04236762e0"
+    },
+    {
+      "path": "work/effect-contact-audit/native3/0056f260_FUN_0056f260.c",
+      "sha256": "82162cce7c03ff86f38427a8a55babf82053b52afaa1a001edb6e2e7d2473d05"
+    },
+    {
+      "path": "work/effect-contact-audit/native3/00570630_FUN_00570630.asm",
+      "sha256": "5084a2726e5d8ee935de69775f5eb08edb46fc5b9ca0c8d681cf8295acd57226"
+    },
+    {
+      "path": "work/effect-contact-audit/native3/00570630_FUN_00570630.c",
+      "sha256": "bb5b34d8a73212e150b4852adbb012bfa57ae4ae9ccfb0d512022f5bc1881403"
+    },
+    {
+      "path": "work/effect-contact-audit/native3/0057f180_FUN_0057f180.asm",
+      "sha256": "a1af62a14552a4535fa369a1f43b1538217dbdd8feaddc450f5d4986408e9e79"
+    },
+    {
+      "path": "work/effect-contact-audit/native3/0057f180_FUN_0057f180.c",
+      "sha256": "a533c463cde45e80c92d74c2dad8b20fa2934cdf962057990baf2eb97506f924"
+    },
+    {
+      "path": "work/effect-contact-audit/native3/00584d80_FUN_00584d80.asm",
+      "sha256": "0f8ad0f2d2b7873bb5a6e4d68759cd62e8fd947857a1e44930c17d266b52e656"
+    },
+    {
+      "path": "work/effect-contact-audit/native3/00584d80_FUN_00584d80.c",
+      "sha256": "520b3c675de805d743be0823ef57111faf6a5cddb16fdd336cd540d1250be02f"
+    },
+    {
+      "path": "work/effect-contact-audit/native3/00584f60_FUN_00584f60.asm",
+      "sha256": "d71b4c6bc4ea7172b394d33e148861818bf409317d617f41c3594c67baf0860e"
+    },
+    {
+      "path": "work/effect-contact-audit/native3/00584f60_FUN_00584f60.c",
+      "sha256": "e662274b39eb36e2804ad186ca04b3eeb491c9ee7fe1c3ff63d6b13725fa8174"
+    },
+    {
+      "path": "work/effect-contact-audit/native3/functions.tsv",
+      "sha256": "0ace63ca3d970facf5f214e546d09e2f22f59f73e4cec2a0ebdaa9edcbec931e"
+    },
+    {
+      "path": "work/effect-contact-audit/native3/references.txt",
+      "sha256": "cb793456a0e827dc55baad793a28ab0bde58a3514e350cfb2ee7ba924ea74eb1"
+    },
+    {
+      "path": "work/effect-contact-audit/native4/0055ddd0_FUN_0055ddd0.asm",
+      "sha256": "8456274da149f431b5c21a5d8f753a93c3f3e62bdaa8ba482b043c57d69f91bb"
+    },
+    {
+      "path": "work/effect-contact-audit/native4/0055ddd0_FUN_0055ddd0.c",
+      "sha256": "200282308a2b34d74beff857eff6ca418965830804ecafe8b68aa5ba87bdbaee"
+    },
+    {
+      "path": "work/effect-contact-audit/native4/0056f260_FUN_0056f260.asm",
+      "sha256": "efec90d8bba4e516cc2db647c9ab20fa4f303421f41604f8f2aa9b04236762e0"
+    },
+    {
+      "path": "work/effect-contact-audit/native4/0056f260_FUN_0056f260.c",
+      "sha256": "82162cce7c03ff86f38427a8a55babf82053b52afaa1a001edb6e2e7d2473d05"
+    },
+    {
+      "path": "work/effect-contact-audit/native4/005818f0_FUN_005818f0.asm",
+      "sha256": "8e317e8bfcc3147285268ada9374a9331fcef9131f171efd433fda5acffabfe2"
+    },
+    {
+      "path": "work/effect-contact-audit/native4/005818f0_FUN_005818f0.c",
+      "sha256": "27246d8bd20d20d12bb4aba2ba47f7b277830dd64c2206981060aeca4b9662b8"
+    },
+    {
+      "path": "work/effect-contact-audit/native4/00584d80_FUN_00584d80.asm",
+      "sha256": "0f8ad0f2d2b7873bb5a6e4d68759cd62e8fd947857a1e44930c17d266b52e656"
+    },
+    {
+      "path": "work/effect-contact-audit/native4/00584d80_FUN_00584d80.c",
+      "sha256": "520b3c675de805d743be0823ef57111faf6a5cddb16fdd336cd540d1250be02f"
+    },
+    {
+      "path": "work/effect-contact-audit/native4/00588e10_FUN_00588e10.asm",
+      "sha256": "9f1df08b4f9c4f236133cbf132624dec53a8e3e2374e9ab76849d45344d5c273"
+    },
+    {
+      "path": "work/effect-contact-audit/native4/00588e10_FUN_00588e10.c",
+      "sha256": "7a22dc490567bcd62767de2a8bfa4b61627225fcfb366caf0849c3a9acdd7c1d"
+    },
+    {
+      "path": "work/effect-contact-audit/native4/functions.tsv",
+      "sha256": "eff48c945d6d6fc7bdcc8d06d6d83d2e16cd707e23a9eff897f82caee1da3711"
+    },
+    {
+      "path": "work/effect-contact-audit/native4/references.txt",
+      "sha256": "240f8ac1167ffcbb8a11eb384bfac259e68274230bb78898b3654d757cfffabc"
+    },
+    {
+      "path": "work/effect-contact-audit/native5/0055d950_FUN_0055d950.asm",
+      "sha256": "488d02b94ab4ad853908e74ea4e7e81015f3ea66d208245ac5165632ad51d534"
+    },
+    {
+      "path": "work/effect-contact-audit/native5/0055d950_FUN_0055d950.c",
+      "sha256": "2539654c816fd84aecb829cd61fe41ad98aece056cf6a42a2499b64cdcffabac"
+    },
+    {
+      "path": "work/effect-contact-audit/native5/0056f1d0_FUN_0056f1d0.asm",
+      "sha256": "3b9a4d09d6dde9122498f249735c63a5b9f80f0cf69df60fad1da4fcdab79135"
+    },
+    {
+      "path": "work/effect-contact-audit/native5/0056f1d0_FUN_0056f1d0.c",
+      "sha256": "eaf400d0d134c6ec4e40e7a53055e4868fb447b45c666107c244b87d9bd57ac1"
+    },
+    {
+      "path": "work/effect-contact-audit/native5/005706c0_FUN_005706c0.asm",
+      "sha256": "a7367ef40e91b597775aad233c4de5c7a8ad2b0c0ed27d9ec289819159a0ccb0"
+    },
+    {
+      "path": "work/effect-contact-audit/native5/005706c0_FUN_005706c0.c",
+      "sha256": "1912479a823e329028841ae548d5f67cf6d12ce1f9c6c04884109febf51ae610"
+    },
+    {
+      "path": "work/effect-contact-audit/native5/005818f0_FUN_005818f0.asm",
+      "sha256": "8e317e8bfcc3147285268ada9374a9331fcef9131f171efd433fda5acffabfe2"
+    },
+    {
+      "path": "work/effect-contact-audit/native5/005818f0_FUN_005818f0.c",
+      "sha256": "27246d8bd20d20d12bb4aba2ba47f7b277830dd64c2206981060aeca4b9662b8"
+    },
+    {
+      "path": "work/effect-contact-audit/native5/00584cd0_FUN_00584cd0.asm",
+      "sha256": "64605e7a045ea3529da24964b38eacf2b7c300724cb8b15bb79769bec8505a50"
+    },
+    {
+      "path": "work/effect-contact-audit/native5/00584cd0_FUN_00584cd0.c",
+      "sha256": "1441150e48dcdeccc17d6e9a13afc2b6c92ae20e32eec2c7ec51840eb4b41b17"
+    },
+    {
+      "path": "work/effect-contact-audit/native5/functions.tsv",
+      "sha256": "ec2d80c1d28986636c8a82d8360b71634c746a92954992b6cd3fdbd2ff289414"
+    },
+    {
+      "path": "work/effect-contact-audit/native5/references.txt",
+      "sha256": "5af323d57b6681e0cde1eb636095d64e12fc4b44d7c55718ac7c7f3ff63b7d02"
+    },
+    {
+      "path": "work/effect-contact-audit/native6/005663e0_FUN_005663e0.asm",
+      "sha256": "f3cd47a09a5b76bf28243d9268b35f4202ca3a33c3773f8bddec1e3c8616eb20"
+    },
+    {
+      "path": "work/effect-contact-audit/native6/005663e0_FUN_005663e0.c",
+      "sha256": "343b31c2bbe5ba84e7fb198bd772d97b520346cda0ff570037565a8ad32eac43"
+    },
+    {
+      "path": "work/effect-contact-audit/native6/005838f0_FUN_005838f0.asm",
+      "sha256": "23da7255ef41b65617cc923b0a44365ab40651b36b15199f7e41489f08250b79"
+    },
+    {
+      "path": "work/effect-contact-audit/native6/005838f0_FUN_005838f0.c",
+      "sha256": "ddfe04fee33a1ba9dc25d760f6371a52b6400ff6bc543b15fa629bbae024a0b7"
+    },
+    {
+      "path": "work/effect-contact-audit/native6/00588ed0_FUN_00588ed0.asm",
+      "sha256": "bd23932d3d532e9e19a265449d9d25ba6325a47393c6a32f3544b3dc1e931736"
+    },
+    {
+      "path": "work/effect-contact-audit/native6/00588ed0_FUN_00588ed0.c",
+      "sha256": "d5beb0a549254edda7f93d50938548b197454112f858187a105d1844592b6442"
+    },
+    {
+      "path": "work/effect-contact-audit/native6/functions.tsv",
+      "sha256": "1963bdec6faa049c10a43c88b2a0b2063b232b4ebefd8de2a21e21000c948ef6"
+    },
+    {
+      "path": "work/effect-contact-audit/native6/references.txt",
+      "sha256": "1c44ddee0916333f03fe61f858b35d1753160722b5eb5eb88684761ddc73817b"
+    },
+    {
+      "path": "work/effect-contact-audit/native7/0056f1d0_FUN_0056f1d0.asm",
+      "sha256": "3b9a4d09d6dde9122498f249735c63a5b9f80f0cf69df60fad1da4fcdab79135"
+    },
+    {
+      "path": "work/effect-contact-audit/native7/0056f1d0_FUN_0056f1d0.c",
+      "sha256": "eaf400d0d134c6ec4e40e7a53055e4868fb447b45c666107c244b87d9bd57ac1"
+    },
+    {
+      "path": "work/effect-contact-audit/native7/00582000_FUN_00582000.asm",
+      "sha256": "d45a234dad2994f95cbb89c2bb432930234a69a16f949d6aa19a351b1ff5bf32"
+    },
+    {
+      "path": "work/effect-contact-audit/native7/00582000_FUN_00582000.c",
+      "sha256": "457bf4c52b46444ce76d81cd4074b185bd0b42869ba5f264178581e2263a5441"
+    },
+    {
+      "path": "work/effect-contact-audit/native7/00583cb0_FUN_00583cb0.asm",
+      "sha256": "b94507bb59c67cae227efa4f743dae6db4387cc388c030d33e57902d639a2dcf"
+    },
+    {
+      "path": "work/effect-contact-audit/native7/00583cb0_FUN_00583cb0.c",
+      "sha256": "f126db9bf0690b537ac50d59386f596f6afe41f1760285c750cc1b5992a84480"
+    },
+    {
+      "path": "work/effect-contact-audit/native7/functions.tsv",
+      "sha256": "113357b856fd57caffcb8c8b6d75d391c8831f49a874e13f701a1379a7656d4c"
+    },
+    {
+      "path": "work/effect-contact-audit/native7/references.txt",
+      "sha256": "915382e5ce14b6b1d87b331f014b9bd7f797305d1c990618898aee650c8bc014"
+    },
+    {
+      "path": "work/effect-contact-audit/native8/00589a40_FUN_00589a40.asm",
+      "sha256": "4947eabe881dde523e482eb5292bd5c7351e1a0605e934b50be9cb4aa34639dd"
+    },
+    {
+      "path": "work/effect-contact-audit/native8/00589a40_FUN_00589a40.c",
+      "sha256": "9f3237be3735903c39819cfb54a8abf4344565cb1052fc57fa56e8ff4a46c6c8"
+    },
+    {
+      "path": "work/effect-contact-audit/native8/functions.tsv",
+      "sha256": "ebe2bc188b0ebf72cf4738e7a5dfbe4a1243499e8be60a8bbda9f92b86e47bb7"
+    },
+    {
+      "path": "work/effect-contact-audit/native8/references.txt",
+      "sha256": "1cd3c5da02f07b13eaec21ecc784847b94736cef41edc7c56ae5be7ad5a24fb4"
+    },
+    {
+      "path": "work/effect-contact-audit/native9/0055da50_FUN_0055da50.asm",
+      "sha256": "74840952add78c07a180777bf5334174dc81b9874ef661f6853921bfe2112cc7"
+    },
+    {
+      "path": "work/effect-contact-audit/native9/0055da50_FUN_0055da50.c",
+      "sha256": "11016032e253c541dc31858d64c624f50646ccaf0a28bbf8c4a18bf2b5018fb0"
+    },
+    {
+      "path": "work/effect-contact-audit/native9/functions.tsv",
+      "sha256": "ce13dcdd0696b040681692edc03a83976070a9ded6c7083e410fb0ac465c3e8f"
+    },
+    {
+      "path": "work/effect-contact-audit/native9/references.txt",
+      "sha256": "221cc70cfa79a0ef0114a17b7cc66a780ff9db10e081743a6b729d676b326115"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "work/effect-contact-audit/focused-runtime-final.tap",
+      "sha256": "9fbc43846c2e9c599cdbba8316b5187b24e543d3ab5f184ff1a2b739032698f3"
+    },
+    {
+      "path": "work/effect-contact-audit/effect-contacts-first.tap",
+      "sha256": "d707a1a9762bc49c48239aab4f07c3bbbf66176ac20a96a6f031f1c2e303c57d"
+    },
+    {
+      "path": "work/effect-contact-audit/effect-contacts-second.tap",
+      "sha256": "736bed2aa229485d0184716acb483a40d770bbf2eead0351f55fceeffa38729e"
+    },
+    {
+      "path": "work/effect-contact-audit/post-suite-comment-correction.json",
+      "sha256": "b49d739a581fc8f5fd26e90370669911c87c275f22eb9de335d68e7aae9b350f"
+    },
+    {
+      "path": "work/effect-contact-audit/native-effect-contacts-during-full-suite.js.txt",
+      "sha256": "033904196991caddd4a7bc5ecb54504587bab0ebd87dec5eeca9cc69b423ed05"
+    },
+    {
+      "path": "work/meteor-original/evidence/native-effect-contacts-assets-invalid-path-2026-11-07.log",
+      "sha256": "555664e19fa7ed19c58460bb7116a72b7d905f203bd84b3cf6fc56535e8b916f"
+    },
+    {
+      "path": "scripts/analysis/verify-recovered-assets.py",
+      "sha256": "ba824f115bc0bccb0c06c35d8c1b0d13f30f7dd010d52768baf5fa3ba4f9f09e"
+    },
+    {
+      "path": "work/effect-contact-audit/native-effect-contacts-at-306-suite.js.txt",
+      "sha256": "961d74c9793526d1988c645f0507ff28b1d870d72bf713532d0475a390809b7e"
+    },
+    {
+      "path": "work/effect-contact-audit/final-comment-correction.json",
+      "sha256": "8f3f824fca4ca278d507277024d82cb4a556e1f90339687a7ef8374032cf73a1"
+    }
+  ],
+  "corrections": [
+    "First new test expected exact0.25 despite binary floating rounding; changed to a1e-12 tolerance.",
+    "Visual/collider comparison originally supplied no texture, so the renderer intentionally did not place a visible mesh; corrected fixture supplies source texture and same source pose.",
+    "Initial asset-verifier command had the wrong directory. Correct command is python3 scripts/analysis/verify-recovered-assets.py; failed log retained. Earlier report shorthand without /analysis is not a runnable command.",
+    "Controller vtable candidate005aa5d8 rejected; constructors establish005aa6a8. Old candidate bytes retained in the interruption audit.",
+    "Native address in a line comment corrected0055da30 to0055da50. Concurrent infinite-rage implementation and tests then changed five other files; a new complete run covers the final source snapshot.",
+    "Original typeRegistry proves AUDIO2/PATH10 are excluded and PARTICLE9 has a separate native path. Final source change is only that enum label in a comment; exact source copy retained."
+  ],
+  "concurrentWork": {
+    "feature": "Infinite rage debug toggle, UI, preferences and tests; preserved.",
+    "changedFilesAfterInitial304Suite": [
+      "dist/app.js",
+      "dist/engine.js",
+      "dist/index.html",
+      "dist/native-effect-contacts.js",
+      "dist/style.css",
+      "tests/native-command-engine.test.mjs"
+    ],
+    "finalStartSnapshot": "work/meteor-original/evidence/effect-contacts-validation-final-start-2026-11-07.json"
+  },
+  "browserValidated": false,
+  "deploymentChanged": false,
+  "overallGoalComplete": false,
+  "post306SuiteCommentCorrection": {
+    "path": "dist/native-effect-contacts.js",
+    "beforeSha256": "961d74c9793526d1988c645f0507ff28b1d870d72bf713532d0475a390809b7e",
+    "afterSha256": "91f1b01710ee462c1d7adbc266ff8b71cdf6760bc2c1653fc7f8e015731f7017",
+    "fullSuiteSourceCopy": "work/effect-contact-audit/native-effect-contacts-at-306-suite.js.txt",
+    "change": "Corrected only a line-comment enum label: native excludes AUDIO2/PATH10, while PARTICLE9 has its own native query path. No executable JavaScript changed.",
+    "executableContentUnchangedByExactReplacement": true
+  },
+  "dataArtifacts": [
+    {
+      "path": "work/meteor-original/evidence/E-command-projectiles-2026-10-29.json",
+      "sha256": "2318d84e06c097580a0c9b18e495c6f446a6dc0284d1cadbdf60658f77abc11c"
+    },
+    {
+      "path": "dist/assets/native/combat/P0.POS",
+      "sha256": "1e71f945afc6b701f86eb50e500feccca22f20b52f7f3bec073b0247d390a5fb"
+    },
+    {
+      "path": "dist/assets/original/sounds/definitions/pos293.ef",
+      "sha256": "3967531f77057945d9bba315e22998abba6b6a37031d65aebdeb09dcbcd98811"
+    },
+    {
+      "path": "dist/assets/original/sounds/definitions/pos294.ef",
+      "sha256": "d417ab9a14004bbddc5bb39de266ffa7373eb5aec956e73d62eccdb98d4d43f7"
+    },
+    {
+      "path": "dist/assets/original/rage-vfx/manifest.json",
+      "sha256": "31531961a09360fa3bc9cfc7604157b5383558c582c5465c59b1a43452764be6"
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "blender": "5.4.0 Alpha",
+  "restMatrixError": 8.38935375213623e-06,
+  "poseMatrixError": 3.814697265625e-06,
+  "bakedActions": [
+    {
+      "name": "6 · 原版持剑待机",
+      "frames": 49
+    },
+    {
+      "name": "144 · 原版跑步",
+      "frames": 36
+    },
+    {
+      "name": "151 · 原版跳跃局部姿势",
+      "frames": 15
+    },
+    {
+      "name": "262 · 原版持剑攻击",
+      "frames": 27
+    }
+  ],
+  "manifest": {
+    "schema": 1,
+    "characterId": 0,
+    "appearance": "hutao",
+    "label": "胡桃喵 · 完整模型适配",
+    "mesh": "mesh.json",
+    "complete": true,
+    "completeness": {
+      "bodyGeometry": true,
+      "headHairGeometry": true,
+      "eyes": true,
+      "faceGeometry": true,
+      "originalGenshinSkeleton": false,
+      "sourcePmxSkeleton": true
+    },
+    "stats": {
+      "sourceVertices": 20521,
+      "sourceTriangles": 27026,
+      "vertices": 20521,
+      "triangles": 23686,
+      "sourceBones": 248,
+      "bones": 30,
+      "dummies": 6,
+      "textures": 5,
+      "textureResolution": [
+        2048,
+        2048
+      ],
+      "omittedTriangles": 3340
+    },
+    "retarget": {
+      "method": "Japanese PMX bone semantics and source joint positions map limbs to p0 BNC; continuous native-height torso weights avoid short PMX joint spacing shear. Original AMB drives 30 bones.",
+      "provisional": true,
+      "sourceSkeletonMissing": false,
+      "hairPhysics": false,
+      "clothPhysics": false,
+      "fingerArticulation": "PMX fingers follow native hands; no full MMD finger/morph/IK simulation"
+    },
+    "provenance": {
+      "source": "User-provided complete 胡桃喵1.0.pmx; source files read-only; no third-party plugin executed.",
+      "modelProvidedBy": "miHoYo",
+      "modelAdaptedBy": "观海 (PMX embedded readme); 摸鱼大水怪 (user folder attribution)",
+      "face": "Complete authored PMX face, mouth, teeth, lashes, eyebrows and eyes retained; no face parts extracted into another model.",
+      "textures": "Five original 2048x2048 PNG color maps, original PMX UVs retained; incompatible earlier 4K GIMI maps are not mixed.",
+      "license": "Embedded model instructions: noncommercial, no redistribution or extraction of parts for other models. Conversion retained locally.",
+      "limits": [
+        "First-pass native p0 animation retarget",
+        "No MMD/Genshin hair, cloth or rigid-body physics",
+        "No MMD facial morph or finger simulation",
+        "MMD additive sphere-map pass represented by normal Web material specular, not a duplicate mesh"
+      ]
+    },
+    "omittedRenderPasses": [
+      {
+        "material": "发sp+",
+        "triangles": 3340,
+        "reason": "MMD additive sphere/specular overlay duplicates hair triangles; Web PBR uses one surface."
+      }
+    ],
+    "sourceFiles": [
+      {
+        "file": "胡桃喵1.0.pmx",
+        "bytes": 2338461,
+        "sha256": "4e77b1aa5ded16c1256b3b02e910e253b1a5398ee2321aca800991f63bfffa03"
+      },
+      {
+        "file": "tex/面.png",
+        "sha256": "b7ba7f2b1f78698934b60c54ef1e3232942d4cb9aa82456175e24e467d6aedc1",
+        "size": [
+          2048,
+          2048
+        ]
+      },
+      {
+        "file": "tex/发.png",
+        "sha256": "71adc4deabb72e935d02cfddb1f1f5f256da55b0af3a853d1b61ba32bcdf02da",
+        "size": [
+          2048,
+          2048
+        ]
+      },
+      {
+        "file": "tex/发_2.png",
+        "sha256": "8c233339132ea8042367cbba9a18fcfb948325ea31b89da87ec2bf966afa1a3b",
+        "size": [
+          2048,
+          2048
+        ]
+      },
+      {
+        "file": "tex/服.png",
+        "sha256": "ce415c0234f25a489233f6cc0c9ed2009985f5a36f8ad12384f3a6ac0b00de14",
+        "size": [
+          2048,
+          2048
+        ]
+      },
+      {
+        "file": "tex/猫耳_8.png",
+        "sha256": "15ba072ed7de687354379bf61cd1e7c3b7357169fdff0bd59959021196b90f1a",
+        "size": [
+          2048,
+          2048
+        ]
+      }
+    ]
+  },
+  "hashes": {
+    "manifest.json": "f2ea73827544337d83b2c0e6c296ca5ecedec3693e219d768c2e257ddd2f7dff",
+    "mesh.json": "0cf81d88eedd92c529f65a3effc267491138cb8e7ae479519a87b6ab469d2e75"
+  }
+}

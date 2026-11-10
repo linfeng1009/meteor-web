@@ -1,0 +1,232 @@
+TAP version 13
+# Subtest: all twelve visible weapon choices equip their preserved original models and complete the E cycle
+ok 1 - all twelve visible weapon choices equip their preserved original models and complete the E cycle
+  ---
+  duration_ms: 281.756583
+  type: 'test'
+  ...
+# Subtest: qiankun public inputs switch all three source stances and retain distinct A attacks and automatic recovery
+ok 2 - qiankun public inputs switch all three source stances and retain distinct A attacks and automatic recovery
+  ---
+  duration_ms: 35.092084
+  type: 'test'
+  ...
+# Subtest: ninja ordinary foot and blade inputs cause real source contact, including its second A branch
+ok 3 - ninja ordinary foot and blade inputs cause real source contact, including its second A branch
+  ---
+  duration_ms: 7.936625
+  type: 'test'
+  ...
+# Subtest: wheel uses an original model in flight, hits through its release window, returns, and permits a second throw
+ok 4 - wheel uses an original model in flight, hits through its release window, returns, and permits a second throw
+  ---
+  duration_ms: 12.053
+  type: 'test'
+  ...
+# Subtest: actual musket input produces its source shot damage and cannot be replaced by a melee contact
+ok 5 - actual musket input produces its source shot damage and cannot be replaced by a melee contact
+  ---
+  duration_ms: 9.380542
+  type: 'test'
+  ...
+# Subtest: an unlocked free attack keeps its chosen facing even with a nearby opponent behind the player
+ok 6 - an unlocked free attack keeps its chosen facing even with a nearby opponent behind the player
+  ---
+  duration_ms: 57.074292
+  type: 'test'
+  ...
+# Subtest: expansion weapon audio is registered as original byte copies, not merely unresolved EF names
+ok 7 - expansion weapon audio is registered as original byte copies, not merely unresolved EF names
+  ---
+  duration_ms: 18.973458
+  type: 'test'
+  ...
+# Subtest: ordinary directional key actions select each requested original skill without pose shortcuts
+ok 8 - ordinary directional key actions select each requested original skill without pose shortcuts
+  ---
+  duration_ms: 150.867125
+  type: 'test'
+  ...
+# Subtest: blade spin executes its original 374 to 375 automatic finish before returning to stance
+ok 9 - blade spin executes its original 374 to 375 automatic finish before returning to stance
+  ---
+  duration_ms: 19.560875
+  type: 'test'
+  ...
+# Subtest: sword multi-thrust resolves five original bone attack windows and actual damage
+ok 10 - sword multi-thrust resolves five original bone attack windows and actual damage
+  ---
+  duration_ms: 106.557292
+  type: 'test'
+  ...
+# Subtest: jump then down-A selects native down attacks, with sword wind-up held through 342 descent and landing
+ok 11 - jump then down-A selects native down attacks, with sword wind-up held through 342 descent and landing
+  ---
+  duration_ms: 146.744958
+  type: 'test'
+  ...
+# Subtest: every listed ready command has a public-input route from the ground or a natural jump, while pending specials stay blocked
+ok 12 - every listed ready command has a public-input route from the ground or a natural jump, while pending specials stay blocked
+  ---
+  duration_ms: 189.996667
+  type: 'test'
+  ...
+# Subtest: POS attack bone names resolve the actual original BNC bones without renaming the skeleton or inventing effect attachments
+ok 13 - POS attack bone names resolve the actual original BNC bones without renaming the skeleton or inventing effect attachments
+  ---
+  duration_ms: 44.264167
+  type: 'test'
+  ...
+# Subtest: the requested spear left-right-up-A body attack and airborne A kick remove actual HP through original bones
+ok 14 - the requested spear left-right-up-A body attack and airborne A kick remove actual HP through original bones
+  ---
+  duration_ms: 111.953334
+  type: 'test'
+  ...
+# Subtest: native thrusts move the collision root using d_base, retaining the actual authored distance rather than pelvis sway
+ok 15 - native thrusts move the collision root using d_base, retaining the actual authored distance rather than pelvis sway
+  ---
+  duration_ms: 99.648666
+  type: 'test'
+  ...
+# Subtest: authored thrust movement stops at the ordinary collision wall at both render rates
+ok 16 - authored thrust movement stops at the ordinary collision wall at both render rates
+  ---
+  duration_ms: 103.071625
+  type: 'test'
+  ...
+# Subtest: actual heavy-hit TargetMove scales the original recoil and TargetValue holds its authored final frame
+ok 17 - actual heavy-hit TargetMove scales the original recoil and TargetValue holds its authored final frame
+  ---
+  duration_ms: 4.165416
+  type: 'test'
+  ...
+# Subtest: a natural dagger jump can reach all three original air strikes through ordinary attack inputs without altitude overrides
+ok 18 - a natural dagger jump can reach all three original air strikes through ordinary attack inputs without altitude overrides
+  ---
+  duration_ms: 5.289542
+  type: 'test'
+  ...
+# Subtest: paid spear rage commands emit original EF visuals through the real engine animation loop
+ok 19 - paid spear rage commands emit original EF visuals through the real engine animation loop
+  ---
+  duration_ms: 223.378042
+  type: 'test'
+  ...
+# Subtest: infinite rage supports repeated rage commands across weapons without filling NPC rage
+ok 20 - infinite rage supports repeated rage commands across weapons without filling NPC rage
+  ---
+  duration_ms: 121.906375
+  type: 'test'
+  ...
+# Subtest: infinite rage survives weapon changes and respawns, then disabling restores normal spending and resource gates
+ok 21 - infinite rage survives weapon changes and respawns, then disabling restores normal spending and resource gates
+  ---
+  duration_ms: 92.2795
+  type: 'test'
+  ...
+# Subtest: directional darts retain their original single release windows, RES damage and distinct EF sound references
+ok 22 - directional darts retain their original single release windows, RES damage and distinct EF sound references
+  ---
+  duration_ms: 4.112334
+  type: 'test'
+  ...
+# Subtest: command pose 209 releases one original W3_0 only after its native animation reaches the attack window
+ok 23 - command pose 209 releases one original W3_0 only after its native animation reaches the attack window
+  ---
+  duration_ms: 4.683834
+  type: 'test'
+  ...
+# Subtest: command pose 209 cannot damage an opponent behind an original-triangle-style wall
+ok 24 - command pose 209 cannot damage an opponent behind an original-triangle-style wall
+  ---
+  duration_ms: 1.972833
+  type: 'test'
+  ...
+# Subtest: command pose 210 releases one original W3_0 only after its native animation reaches the attack window
+ok 25 - command pose 210 releases one original W3_0 only after its native animation reaches the attack window
+  ---
+  duration_ms: 0.617625
+  type: 'test'
+  ...
+# Subtest: command pose 210 cannot damage an opponent behind an original-triangle-style wall
+ok 26 - command pose 210 cannot damage an opponent behind an original-triangle-style wall
+  ---
+  duration_ms: 1.076334
+  type: 'test'
+  ...
+# Subtest: complex original EF files contain parented attack volumes which cannot be replaced by an invented dart fan
+ok 27 - complex original EF files contain parented attack volumes which cannot be replaced by an invented dart fan
+  ---
+  duration_ms: 2.572084
+  type: 'test'
+  ...
+# Subtest: every advertised manual command addresses preserved native animation and RES data
+ok 28 - every advertised manual command addresses preserved native animation and RES data
+  ---
+  duration_ms: 2.8955
+  type: 'test'
+  ...
+# Subtest: the requested blade spin, sword flurry, spear circles and airborne stabs use distinct original poses
+ok 29 - the requested blade spin, sword flurry, spear circles and airborne stabs use distinct original poses
+  ---
+  duration_ms: 0.78125
+  type: 'test'
+  ...
+# Subtest: separate source command tables resolve the ambiguous spear and blade pose-reference rows
+ok 30 - separate source command tables resolve the ambiguous spear and blade pose-reference rows
+  ---
+  duration_ms: 0.20025
+  type: 'test'
+  ...
+# Subtest: ordinary chains and conditional second stages preserve their distinct command prerequisites
+ok 31 - ordinary chains and conditional second stages preserve their distinct command prerequisites
+  ---
+  duration_ms: 2.475333
+  type: 'test'
+  ...
+# Subtest: catalog scope and unresolved projectile commands are explicit rather than silently substituted
+ok 32 - catalog scope and unresolved projectile commands are explicit rather than silently substituted
+  ---
+  duration_ms: 0.592916
+  type: 'test'
+  ...
+# Subtest: every usable command has a source bone, projectile or supported original effect bound, including its automatic phases
+ok 33 - every usable command has a source bone, projectile or supported original effect bound, including its automatic phases
+  ---
+  duration_ms: 0.743625
+  type: 'test'
+  ...
+# Subtest: the actual guide renders every catalog entry exactly once and rejects unequipped families
+ok 34 - the actual guide renders every catalog entry exactly once and rejects unequipped families
+  ---
+  duration_ms: 3.372083
+  type: 'test'
+  ...
+# Subtest: the reported spins, multi-thrust and four melee plunges show their complete distinct commands
+ok 35 - the reported spins, multi-thrust and four melee plunges show their complete distinct commands
+  ---
+  duration_ms: 1.444584
+  type: 'test'
+  ...
+# Subtest: rage costs and unavailable projectile specials remain visible next to their commands
+ok 36 - rage costs and unavailable projectile specials remain visible next to their commands
+  ---
+  duration_ms: 3.591333
+  type: 'test'
+  ...
+# Subtest: follow-up requirements are explained by move names and arrow commands are screen-reader labeled
+ok 37 - follow-up requirements are explained by move names and arrow commands are screen-reader labeled
+  ---
+  duration_ms: 1.20275
+  type: 'test'
+  ...
+1..37
+# tests 37
+# suites 0
+# pass 37
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1999.54375

@@ -1,0 +1,89 @@
+{
+  "date": "2026-11-06",
+  "restoredHistoricalFiles": [
+    "work/emilia-pmx-model/build-evidence.json",
+    "work/emilia-pmx-model/build.log",
+    "work/emilia-pmx-model/render.log",
+    "work/emilia-pmx-quality/blend-audit-initial.json",
+    "work/emilia-pmx-quality/blend-audit-output.txt",
+    "work/emilia-pmx-quality/blend-audit.json",
+    "work/emilia-pmx-quality/final-hashes.json",
+    "work/hutao-pmx-model/build-actions.log",
+    "work/hutao-pmx-model/build-cloth-seam.log",
+    "work/hutao-pmx-model/build-evidence.json",
+    "work/hutao-pmx-model/build-final.log",
+    "work/hutao-pmx-model/build-smooth.log",
+    "work/hutao-pmx-model/build.log",
+    "work/hutao-pmx-model/emission-probe.log",
+    "work/hutao-pmx-model/render-final.log",
+    "work/hutao-pmx-model/shadow-probe.log",
+    "work/hutao-pmx-model/source-audit.json",
+    "work/hutao-pmx-quality/blend-audit.json",
+    "work/hutao-pmx-quality/final-hashes.json",
+    "work/hutao-pmx-quality/source-audit.json",
+    "work/raiden-pmx-model/build-evidence.json",
+    "work/raiden-pmx-model/build.log",
+    "work/raiden-pmx-model/render.log",
+    "work/raiden-pmx-quality/blend-audit-output.txt",
+    "work/raiden-pmx-quality/blend-audit.json",
+    "work/raiden-pmx-quality/final-hashes.json"
+  ],
+  "correctedPathFiles": [
+    "README.md",
+    "dist/assets/SOURCES.md",
+    "dist/assets/enhanced/hutao/manifest.json",
+    "dist/character-appearances.js",
+    "scripts/blender/build_emilia_pmx.py",
+    "scripts/blender/build_hutao_pmx.py",
+    "scripts/blender/build_raiden_pmx.py",
+    "scripts/blender/pmx_emission_probe.py",
+    "scripts/blender/pmx_render_final.py",
+    "scripts/blender/pmx_shadow_probe.py",
+    "scripts/blender/render_emilia_pmx.py",
+    "scripts/blender/render_raiden_pmx.py",
+    "work/emilia-pmx-model/README.md",
+    "work/emilia-pmx-quality/check-built-blend.py",
+    "work/emilia-pmx/report/2026-10-29_模型转换-爱蜜莉雅-report.md",
+    "work/emilia-pmx/timeline.md",
+    "work/hutao-pmx-model/README.md",
+    "work/hutao-pmx-quality/audit-source.py",
+    "work/hutao-pmx-quality/check-built-blend.py",
+    "work/hutao-pmx-quality/审查记录.md",
+    "work/hutao-pmx/report/2026-10-28_模型转换-胡桃喵-report.md",
+    "work/hutao-pmx/scope.md",
+    "work/hutao-pmx/timeline.md",
+    "work/hutao-pmx/workitems.md",
+    "work/raiden-pmx-model/README.md",
+    "work/raiden-pmx-quality/check-built-blend.py",
+    "work/raiden-pmx/report/2026-10-29_模型转换-雷神影-report.md",
+    "work/raiden-pmx/timeline.md",
+    "work/raiden-pmx/workitems.md"
+  ],
+  "records": [
+    {
+      "family": "hutao",
+      "originalManifestMatchesHistoricalHash": true,
+      "unchangedModelArtifacts": [
+        "dist/assets/enhanced/hutao/mesh.json",
+        "work/hutao-pmx-model/胡桃喵-完整模型-流星动作适配.blend"
+      ]
+    },
+    {
+      "family": "raiden",
+      "originalManifestMatchesHistoricalHash": true,
+      "unchangedModelArtifacts": [
+        "dist/assets/enhanced/raiden/mesh.json",
+        "work/raiden-pmx-model/雷神影-礼服模型-流星动作适配.blend"
+      ]
+    },
+    {
+      "family": "emilia",
+      "originalManifestMatchesHistoricalHash": true,
+      "unchangedModelArtifacts": [
+        "dist/assets/enhanced/emilia/mesh.json",
+        "work/emilia-pmx-model/爱蜜莉雅-完整模型-流星动作适配.blend"
+      ]
+    }
+  ],
+  "externalSourceNote": "The original HuTao PMX download path was already absent before the text replacement; display renaming is not a source file migration."
+}

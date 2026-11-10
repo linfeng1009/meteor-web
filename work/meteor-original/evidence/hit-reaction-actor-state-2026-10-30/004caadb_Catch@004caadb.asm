@@ -1,0 +1,25 @@
+004caadb MOV EAX,dword ptr [EBP + -0x14]
+004caade TEST EAX,EAX
+004caae0 JZ 0x004cab27
+004caae2 LEA EAX,[EAX + EAX*0x2]
+004caae5 SHL EAX,0x2
+004caae8 CMP EAX,0x80
+004caaed JBE 0x004caafd
+004caaef MOV EAX,dword ptr [EBP + -0x18]
+004caaf2 PUSH EAX
+004caaf3 CALL 0x005089fd
+004caaf8 ADD ESP,0x4
+004caafb JMP 0x004cab27
+004caafd ADD EAX,0x7
+004cab00 MOV ECX,0x5d59e8
+004cab05 SHR EAX,0x3
+004cab08 LEA ESI,[EAX*0x4 + 0x5d59a4]
+004cab0f CALL 0x00402330
+004cab14 MOV EAX,dword ptr [EBP + -0x18]
+004cab17 MOV ECX,dword ptr [ESI]
+004cab19 MOV dword ptr [EAX],ECX
+004cab1b MOV dword ptr [ESI],EAX
+004cab1d MOV dword ptr [0x005d59e8],0x0
+004cab27 PUSH 0x0
+004cab29 PUSH 0x0
+004cab2b CALL 0x00509166

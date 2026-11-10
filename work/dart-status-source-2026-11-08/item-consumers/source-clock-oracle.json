@@ -1,0 +1,352 @@
+{
+  "source": "004abe80 timer5Hz → 004b1d60 fixedfloat.2 → 004b24e0 → 004d5020 → 004d4e30",
+  "clockBits": "0x3e4ccccd",
+  "clockFloat32": 0.20000000298023224,
+  "modelBoundary": "Independent source arithmetic only. Item insertion phase, OS timer stalls, actor death, client rendering and game gameplay are not simulated.",
+  "traces": [
+    {
+      "id": 11,
+      "sourcePeriodWord": 3,
+      "sourceLifetime": 150,
+      "rate": 10,
+      "firstTickStep": 16,
+      "tickSteps": [
+        16,
+        32,
+        48,
+        64
+      ],
+      "nominalTickSeconds": [
+        3.2,
+        6.4,
+        9.6,
+        12.8
+      ],
+      "tickCount": 4,
+      "nominalExpirySeconds": 15.0,
+      "states": [
+        {
+          "step": 1,
+          "nominalSeconds": 0.2,
+          "remaining": 148,
+          "counter": 2,
+          "ticked": false
+        },
+        {
+          "step": 2,
+          "nominalSeconds": 0.4,
+          "remaining": 146,
+          "counter": 4,
+          "ticked": false
+        },
+        {
+          "step": 3,
+          "nominalSeconds": 0.6,
+          "remaining": 144,
+          "counter": 6,
+          "ticked": false
+        },
+        {
+          "step": 4,
+          "nominalSeconds": 0.8,
+          "remaining": 142,
+          "counter": 8,
+          "ticked": false
+        },
+        {
+          "step": 5,
+          "nominalSeconds": 1.0,
+          "remaining": 140,
+          "counter": 10,
+          "ticked": false
+        },
+        {
+          "step": 6,
+          "nominalSeconds": 1.2,
+          "remaining": 138,
+          "counter": 12,
+          "ticked": false
+        },
+        {
+          "step": 7,
+          "nominalSeconds": 1.4,
+          "remaining": 136,
+          "counter": 14,
+          "ticked": false
+        },
+        {
+          "step": 8,
+          "nominalSeconds": 1.6,
+          "remaining": 134,
+          "counter": 16,
+          "ticked": false
+        },
+        {
+          "step": 9,
+          "nominalSeconds": 1.8,
+          "remaining": 132,
+          "counter": 18,
+          "ticked": false
+        },
+        {
+          "step": 10,
+          "nominalSeconds": 2.0,
+          "remaining": 130,
+          "counter": 20,
+          "ticked": false
+        },
+        {
+          "step": 11,
+          "nominalSeconds": 2.2,
+          "remaining": 128,
+          "counter": 22,
+          "ticked": false
+        },
+        {
+          "step": 12,
+          "nominalSeconds": 2.4,
+          "remaining": 126,
+          "counter": 24,
+          "ticked": false
+        },
+        {
+          "step": 13,
+          "nominalSeconds": 2.6,
+          "remaining": 124,
+          "counter": 26,
+          "ticked": false
+        },
+        {
+          "step": 14,
+          "nominalSeconds": 2.8,
+          "remaining": 122,
+          "counter": 28,
+          "ticked": false
+        },
+        {
+          "step": 15,
+          "nominalSeconds": 3.0,
+          "remaining": 120,
+          "counter": 30,
+          "ticked": false
+        },
+        {
+          "step": 16,
+          "nominalSeconds": 3.2,
+          "remaining": 118,
+          "counter": 0,
+          "ticked": true
+        },
+        {
+          "step": 17,
+          "nominalSeconds": 3.4,
+          "remaining": 116,
+          "counter": 2,
+          "ticked": false
+        },
+        {
+          "step": 75,
+          "nominalSeconds": 15.0,
+          "expired": true,
+          "remainingBefore": 2,
+          "counterBefore": 20
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "sourcePeriodWord": 2,
+      "sourceLifetime": 600,
+      "rate": 10,
+      "firstTickStep": 11,
+      "tickSteps": [
+        11,
+        22,
+        33,
+        44,
+        55,
+        66,
+        77,
+        88,
+        99,
+        110,
+        121,
+        132,
+        143,
+        154,
+        165,
+        176,
+        187,
+        198,
+        209,
+        220,
+        231,
+        242,
+        253,
+        264,
+        275,
+        286,
+        297
+      ],
+      "nominalTickSeconds": [
+        2.2,
+        4.4,
+        6.6,
+        8.8,
+        11.0,
+        13.2,
+        15.4,
+        17.6,
+        19.8,
+        22.0,
+        24.2,
+        26.4,
+        28.6,
+        30.8,
+        33.0,
+        35.2,
+        37.4,
+        39.6,
+        41.8,
+        44.0,
+        46.2,
+        48.4,
+        50.6,
+        52.8,
+        55.0,
+        57.2,
+        59.4
+      ],
+      "tickCount": 27,
+      "nominalExpirySeconds": 60.0,
+      "states": [
+        {
+          "step": 1,
+          "nominalSeconds": 0.2,
+          "remaining": 598,
+          "counter": 2,
+          "ticked": false
+        },
+        {
+          "step": 2,
+          "nominalSeconds": 0.4,
+          "remaining": 596,
+          "counter": 4,
+          "ticked": false
+        },
+        {
+          "step": 3,
+          "nominalSeconds": 0.6,
+          "remaining": 594,
+          "counter": 6,
+          "ticked": false
+        },
+        {
+          "step": 4,
+          "nominalSeconds": 0.8,
+          "remaining": 592,
+          "counter": 8,
+          "ticked": false
+        },
+        {
+          "step": 5,
+          "nominalSeconds": 1.0,
+          "remaining": 590,
+          "counter": 10,
+          "ticked": false
+        },
+        {
+          "step": 6,
+          "nominalSeconds": 1.2,
+          "remaining": 588,
+          "counter": 12,
+          "ticked": false
+        },
+        {
+          "step": 7,
+          "nominalSeconds": 1.4,
+          "remaining": 586,
+          "counter": 14,
+          "ticked": false
+        },
+        {
+          "step": 8,
+          "nominalSeconds": 1.6,
+          "remaining": 584,
+          "counter": 16,
+          "ticked": false
+        },
+        {
+          "step": 9,
+          "nominalSeconds": 1.8,
+          "remaining": 582,
+          "counter": 18,
+          "ticked": false
+        },
+        {
+          "step": 10,
+          "nominalSeconds": 2.0,
+          "remaining": 580,
+          "counter": 20,
+          "ticked": false
+        },
+        {
+          "step": 11,
+          "nominalSeconds": 2.2,
+          "remaining": 578,
+          "counter": 0,
+          "ticked": true
+        },
+        {
+          "step": 12,
+          "nominalSeconds": 2.4,
+          "remaining": 576,
+          "counter": 2,
+          "ticked": false
+        },
+        {
+          "step": 13,
+          "nominalSeconds": 2.6,
+          "remaining": 574,
+          "counter": 4,
+          "ticked": false
+        },
+        {
+          "step": 14,
+          "nominalSeconds": 2.8,
+          "remaining": 572,
+          "counter": 6,
+          "ticked": false
+        },
+        {
+          "step": 15,
+          "nominalSeconds": 3.0,
+          "remaining": 570,
+          "counter": 8,
+          "ticked": false
+        },
+        {
+          "step": 16,
+          "nominalSeconds": 3.2,
+          "remaining": 568,
+          "counter": 10,
+          "ticked": false
+        },
+        {
+          "step": 17,
+          "nominalSeconds": 3.4,
+          "remaining": 566,
+          "counter": 12,
+          "ticked": false
+        },
+        {
+          "step": 300,
+          "nominalSeconds": 60.0,
+          "expired": true,
+          "remainingBefore": 2,
+          "counterBefore": 4
+        }
+      ]
+    }
+  ]
+}

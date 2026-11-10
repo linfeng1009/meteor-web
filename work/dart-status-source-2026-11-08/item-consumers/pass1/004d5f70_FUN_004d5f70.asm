@@ -1,0 +1,22 @@
+004d5f70 MOV EDX,dword ptr [ESP + 0x4]
+004d5f74 MOV EAX,dword ptr [ECX]
+004d5f76 PUSH ESI
+004d5f77 MOV ESI,dword ptr [ESP + 0xc]
+004d5f7b PUSH ESI
+004d5f7c PUSH EDX
+004d5f7d CALL dword ptr [EAX + 0x3c]
+004d5f80 MOV dword ptr [ESP + 0xc],EAX
+004d5f84 FILD dword ptr [ESP + 0xc]
+004d5f88 FMUL float ptr [ESP + 0x10]
+004d5f8c CALL 0x00509980
+004d5f91 TEST EAX,EAX
+004d5f93 JLE 0x004d5fa3
+004d5f95 MOV EDX,dword ptr [ESI]
+004d5f97 PUSH 0x0
+004d5f99 NEG EAX
+004d5f9b PUSH EAX
+004d5f9c PUSH 0x2
+004d5f9e MOV ECX,ESI
+004d5fa0 CALL dword ptr [EDX + 0x2c]
+004d5fa3 POP ESI
+004d5fa4 RET 0xc

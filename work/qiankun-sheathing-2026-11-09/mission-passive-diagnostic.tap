@@ -1,0 +1,35 @@
+TAP version 13
+# Subtest: walking normally into the source enemies causes player death and one failure, and restart resets accumulated state (jitter seed 3)
+not ok 1 - walking normally into the source enemies causes player death and one failure, and restart resets accumulated state (jitter seed 3)
+  ---
+  duration_ms: 13049.098
+  type: 'test'
+  location: '/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/tests/.sheathing-mission-diagnostic.mjs:195:34'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    345 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 345
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/tests/.sheathing-mission-diagnostic.mjs:233:339)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Jitter seed 3: source enemies caused natural failure after 57.27 seconds; no HP/dead assignment.
+# Passive player hits: [{"pose":104,"text":"90","target":"军枪哨兵长","sourceName":"無名招"},{"pose":105,"text":"75","target":"铁枪哨兵﹒乙","sourceName":"無名招"},{"pose":105,"text":"90","target":"军枪哨兵长","sourceName":"無名招"},{"pose":103,"text":"90","target":"军枪哨兵长","sourceName":"無名招"}]
+# Player move commands: []
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 13250.330958

@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-30",
+  "scope": "CPU original assets; 100ms public attack presses, no NPC retaliation; legacy immediate queue vs explicit Web preserveQueuedStrikes adapter.",
+  "results": [
+    {
+      "preserveQueuedStrikes": false,
+      "hits": [
+        {
+          "poseId": 264,
+          "damage": 57
+        }
+      ],
+      "contacts": 1,
+      "targetPose": 98,
+      "targetHP": 9943
+    },
+    {
+      "preserveQueuedStrikes": true,
+      "hits": [
+        {
+          "poseId": 262,
+          "damage": 24
+        },
+        {
+          "poseId": 263,
+          "damage": 46
+        },
+        {
+          "poseId": 264,
+          "damage": 57
+        }
+      ],
+      "contacts": 3,
+      "targetPose": 98,
+      "targetHP": 9873
+    }
+  ],
+  "files": [
+    {
+      "path": "tests/native-hit-reaction.test.mjs",
+      "sha256": "e71f29c8f70cda05ddae9ce2321ea4eb6ed6adb885e14a602b0e69c3583c6ddd"
+    },
+    {
+      "path": "dist/native-combat.js",
+      "sha256": "3fb3fcb3ff692ded2a2a48bb8a3d8e7f57d7646e0895ef4bccd154ed5cc12baa"
+    },
+    {
+      "path": "dist/engine.js",
+      "sha256": "42ae34a935390055de572a5199f8acd4084f998e439225d4820895aed7789d93"
+    },
+    {
+      "path": "work/hit-queue-adapter-probe.mjs",
+      "sha256": "043db6ff4dd79921a19425620f0e706b42d8ea6e38011e6be2e79280d6c0fad0"
+    }
+  ]
+}

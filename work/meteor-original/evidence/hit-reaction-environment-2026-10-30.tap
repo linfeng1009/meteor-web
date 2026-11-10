@@ -1,0 +1,112 @@
+TAP version 13
+# Subtest: actual sn14 hidden Plane23 is inside the exact original hell volume and a falling-foot sweep detects it
+ok 1 - actual sn14 hidden Plane23 is inside the exact original hell volume and a falling-foot sweep detects it
+  ---
+  duration_ms: 0.741417
+  type: 'test'
+  ...
+# Subtest: the original sn14 player spawn remains outside hell while standing on its actual source floor
+ok 2 - the original sn14 player spawn remains outside hell while standing on its actual source floor
+  ---
+  duration_ms: 0.492583
+  type: 'test'
+  ...
+# Subtest: continuous world-foot contact catches fast falls and complete crossings even when both endpoints are outside
+ok 3 - continuous world-foot contact catches fast falls and complete crossings even when both endpoints are outside
+  ---
+  duration_ms: 2.430291
+  type: 'test'
+  ...
+# Subtest: the exact source class and explicit activation decide eligibility, without guessing from a mesh name or appearance
+ok 4 - the exact source class and explicit activation decide eligibility, without guessing from a mesh name or appearance
+  ---
+  duration_ms: 0.4465
+  type: 'test'
+  ...
+# Subtest: missing meshes, planes, rotated volumes and malformed boxes remain pending rather than using their broad AABB
+ok 5 - missing meshes, planes, rotated volumes and malformed boxes remain pending rather than using their broad AABB
+  ---
+  duration_ms: 0.309791
+  type: 'test'
+  ...
+# Subtest: source world placement is retained and multiple valid volumes return the earliest intersection
+ok 6 - source world placement is retained and multiple valid volumes return the earliest intersection
+  ---
+  duration_ms: 0.188083
+  type: 'test'
+  ...
+# Subtest: real engine falling onto native Plane23 dies at HBox before the hidden floor can keep the actor alive
+ok 7 - real engine falling onto native Plane23 dies at HBox before the hidden floor can keep the actor alive
+  ---
+  duration_ms: 5.588125
+  type: 'test'
+  ...
+# Subtest: environment death produces one mission failure and source foot placement clears the death reason for restart
+ok 8 - environment death produces one mission failure and source foot placement clears the death reason for restart
+  ---
+  duration_ms: 7.789
+  type: 'test'
+  ...
+# Subtest: training hazard death uses the existing respawn interval and restores the actual safe source spawn
+ok 9 - training hazard death uses the existing respawn interval and restores the actual safe source spawn
+  ---
+  duration_ms: 4.68975
+  type: 'test'
+  ...
+# Subtest: a native light-hit reaction discards queued offense and cannot be canceled by normal attack or locomotion input
+ok 10 - a native light-hit reaction discards queued offense and cannot be canceled by normal attack or locomotion input
+  ---
+  duration_ms: 1.29675
+  type: 'test'
+  ...
+# Subtest: native knockdowns keep their POS down links and recover through original animation rather than instantly standing
+ok 11 - native knockdowns keep their POS down links and recover through original animation rather than instantly standing
+  ---
+  duration_ms: 0.640625
+  type: 'test'
+  ...
+# Subtest: airborne prone reactions wait for floor contact and repeated light hits do not snap a prone actor upright
+ok 12 - airborne prone reactions wait for floor contact and repeated light hits do not snap a prone actor upright
+  ---
+  duration_ms: 0.305
+  type: 'test'
+  ...
+# Subtest: a real native sword hit visibly plays its authored target pose and locks ordinary AI movement and offense
+ok 13 - a real native sword hit visibly plays its authored target pose and locks ordinary AI movement and offense
+  ---
+  duration_ms: 107.896625
+  type: 'test'
+  ...
+# Subtest: three ordinary public attack inputs can hit and knock down a real native opponent on the source sword third strike
+ok 14 - three ordinary public attack inputs can hit and knock down a real native opponent on the source sword third strike
+  ---
+  duration_ms: 58.776833
+  type: 'test'
+  ...
+# Subtest: rapid public attack presses retain all three original sword strike windows before the third hit knocks down
+ok 15 - rapid public attack presses retain all three original sword strike windows before the third hit knocks down
+  ---
+  duration_ms: 22.475625
+  type: 'test'
+  ...
+# Subtest: guarded contact does not turn a blocked blow into knockdown, while a lethal blow keeps death priority
+ok 16 - guarded contact does not turn a blocked blow into knockdown, while a lethal blow keeps death priority
+  ---
+  duration_ms: 7.384334
+  type: 'test'
+  ...
+# Subtest: a player receiving a native reaction cannot jump or buffer an attack out of it and regains control after recovery
+ok 17 - a player receiving a native reaction cannot jump or buffer an attack out of it and regains control after recovery
+  ---
+  duration_ms: 10.303167
+  type: 'test'
+  ...
+1..17
+# tests 17
+# suites 0
+# pass 17
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 456.499084

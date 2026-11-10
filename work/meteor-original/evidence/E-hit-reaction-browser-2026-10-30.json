@@ -1,0 +1,58 @@
+{
+  "id": "E-hit-reaction-browser-2026-10-30",
+  "observedAt": "2026-10-30",
+  "url": "http://127.0.0.1:4173/",
+  "environment": "CUA in-app browser, desktop viewport override1280x720; reset after verification",
+  "mode": "training, sn06, original MengXingHun model, sword; ordinary live NPC AI",
+  "input": "UI start, Q lock, W approach, repeated J100ms; pause to preserve observations; resume K650ms then K750ms",
+  "noHiddenGameStateMutation": true,
+  "observed": [
+    {
+      "stage": "third source sword strike contact",
+      "enemy": "冷燕",
+      "hp": 825,
+      "maxHp": 1000,
+      "feedback": "击倒 · 57",
+      "hudReaction": "受击"
+    },
+    {
+      "stage": "after650ms guard input",
+      "enemy": "冷燕",
+      "hp": 825,
+      "hudReaction": "倒地",
+      "playerHP": 772,
+      "contactCounter": 9
+    },
+    {
+      "stage": "after750ms further guard input",
+      "enemy": "冷燕",
+      "hp": 825,
+      "hudReaction": "distance2; standing and active again",
+      "playerHP": 772
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "artifacts/hit-reaction-desktop-2026-10-30.png",
+      "sha256": "3dbd1a45d4d01dbdcc8b5e0b343c1093c62d3faf1a7af22f6cc6e290674bef27"
+    },
+    {
+      "path": "artifacts/hit-knockdown-desktop-2026-10-30.png",
+      "sha256": "47b0088b0fb052226106770c1d79aeba4045d4336057eea26a4cc02998f3c8bb"
+    },
+    {
+      "path": "artifacts/hit-getup-desktop-2026-10-30.png",
+      "sha256": "f01ac816409e3a9feeae0d377b5e3923cb2634f16d3283dcfabcd417e4ce02ab"
+    }
+  ],
+  "console": {
+    "query": "levels error/warn, limit12",
+    "returned": [],
+    "scope": "Only this browser verification session; not exhaustive log coverage"
+  },
+  "limits": [
+    "Nine contacts include other NPCs; not nine hits all against ColdYan.",
+    "Not full manual mission victory or original EXE dynamic comparison.",
+    "Original WAV references and prewarm code verified separately; no measured audio latency or subjective audio-parity claim."
+  ]
+}

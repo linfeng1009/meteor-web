@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: directional darts retain their original single release windows, RES damage and distinct EF sound references
+ok 1 - directional darts retain their original single release windows, RES damage and distinct EF sound references
+  ---
+  duration_ms: 5.917375
+  type: 'test'
+  ...
+# Subtest: command pose 209 releases one original W3_0 only after its native animation reaches the attack window
+ok 2 - command pose 209 releases one original W3_0 only after its native animation reaches the attack window
+  ---
+  duration_ms: 4.322542
+  type: 'test'
+  ...
+# Subtest: command pose 209 cannot damage an opponent behind an original-triangle-style wall
+ok 3 - command pose 209 cannot damage an opponent behind an original-triangle-style wall
+  ---
+  duration_ms: 2.0765
+  type: 'test'
+  ...
+# Subtest: command pose 210 releases one original W3_0 only after its native animation reaches the attack window
+ok 4 - command pose 210 releases one original W3_0 only after its native animation reaches the attack window
+  ---
+  duration_ms: 1.147583
+  type: 'test'
+  ...
+# Subtest: command pose 210 cannot damage an opponent behind an original-triangle-style wall
+ok 5 - command pose 210 cannot damage an opponent behind an original-triangle-style wall
+  ---
+  duration_ms: 0.53725
+  type: 'test'
+  ...
+# Subtest: complex original EF files contain parented attack volumes which cannot be replaced by an invented dart fan
+ok 6 - complex original EF files contain parented attack volumes which cannot be replaced by an invented dart fan
+  ---
+  duration_ms: 5.611125
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 163.774

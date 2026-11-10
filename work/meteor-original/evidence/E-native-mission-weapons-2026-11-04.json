@@ -1,0 +1,667 @@
+{
+  "id": "E-native-mission-weapons-2026-11-04",
+  "date": "2026-11-04",
+  "scope": "Existing meteor-original offline source-resource parse and Web port authorization. Original EXE not executed or modified.",
+  "families": {
+    "dual": {
+      "weaponId": 4,
+      "model": "w8_0r",
+      "stance": 4,
+      "guard": 14,
+      "basic": [
+        230,
+        231,
+        232,
+        233,
+        234
+      ],
+      "air": [
+        226,
+        227,
+        228,
+        229
+      ],
+      "special": [],
+      "family": [
+        226,
+        244
+      ],
+      "sourcePoses": [
+        {
+          "id": 230,
+          "label": "刺輕1  左手揮",
+          "start": 10830,
+          "end": 10849,
+          "evidence": {
+            "file": "P0.POS",
+            "line": 3429,
+            "endLine": 3485
+          },
+          "attacks": [
+            {
+              "bone": [
+                "effect",
+                "bau Head",
+                "bau L UpperArm",
+                "bau L Forearm",
+                "bau L Hand"
+              ],
+              "start": 10832,
+              "end": 10834,
+              "attacktype": 0,
+              "checkfriend": 0,
+              "defensevalue": 0,
+              "defensemove": 4,
+              "targetvalue": 0,
+              "targetmove": 4,
+              "targetpose": 90,
+              "targetposefront": 90,
+              "targetposeback": 94,
+              "targetposeleft": 93,
+              "targetposeright": 92,
+              "bones": [
+                "effect",
+                "bau Head",
+                "bau L UpperArm",
+                "bau L Forearm",
+                "bau L Hand"
+              ],
+              "line": 3454
+            }
+          ]
+        },
+        {
+          "id": 231,
+          "label": "刺輕2  右手揮",
+          "start": 10850,
+          "end": 10873,
+          "evidence": {
+            "file": "P0.POS",
+            "line": 3486,
+            "endLine": 3542
+          },
+          "attacks": [
+            {
+              "bone": [
+                "effect",
+                "bau Head",
+                "bau R UpperArm",
+                "bau R Forearm",
+                "bau R Hand"
+              ],
+              "start": 10855,
+              "end": 10857,
+              "attacktype": 0,
+              "checkfriend": 0,
+              "defensevalue": 0,
+              "defensemove": 5,
+              "targetvalue": 0,
+              "targetmove": 5,
+              "targetpose": 91,
+              "targetposefront": 91,
+              "targetposeback": 94,
+              "targetposeleft": 93,
+              "targetposeright": 92,
+              "bones": [
+                "effect",
+                "bau Head",
+                "bau R UpperArm",
+                "bau R Forearm",
+                "bau R Hand"
+              ],
+              "line": 3511
+            }
+          ]
+        },
+        {
+          "id": 232,
+          "label": "刺輕3  左手揮上",
+          "start": 10874,
+          "end": 10901,
+          "evidence": {
+            "file": "P0.POS",
+            "line": 3543,
+            "endLine": 3599
+          },
+          "attacks": [
+            {
+              "bone": [
+                "effect",
+                "bau Head",
+                "bau L UpperArm",
+                "bau L Forearm",
+                "bau L Hand"
+              ],
+              "start": 10879,
+              "end": 10881,
+              "attacktype": 0,
+              "checkfriend": 0,
+              "defensevalue": 0,
+              "defensemove": 6,
+              "targetvalue": 0,
+              "targetmove": 6,
+              "targetpose": 90,
+              "targetposefront": 90,
+              "targetposeback": 94,
+              "targetposeleft": 93,
+              "targetposeright": 92,
+              "bones": [
+                "effect",
+                "bau Head",
+                "bau L UpperArm",
+                "bau L Forearm",
+                "bau L Hand"
+              ],
+              "line": 3568
+            }
+          ]
+        },
+        {
+          "id": 233,
+          "label": "刺輕4  雙手插",
+          "start": 10909,
+          "end": 10934,
+          "evidence": {
+            "file": "P0.POS",
+            "line": 3600,
+            "endLine": 3663
+          },
+          "attacks": [
+            {
+              "bone": [
+                "weapon",
+                "bau Head",
+                "bau Spine1",
+                "bau R Forearm",
+                "bau R UpperArm",
+                "bau L Forearm",
+                "bau L UpperArm"
+              ],
+              "start": 10915,
+              "end": 10918,
+              "attacktype": 0,
+              "checkfriend": 0,
+              "defensevalue": 0.1,
+              "defensemove": 4,
+              "targetvalue": 0,
+              "targetmove": 4,
+              "targetpose": 110,
+              "targetposefront": 110,
+              "targetposeback": 110,
+              "targetposeleft": 110,
+              "targetposeright": 110,
+              "bones": [
+                "weapon",
+                "bau Head",
+                "bau Spine1",
+                "bau R Forearm",
+                "bau R UpperArm",
+                "bau L Forearm",
+                "bau L UpperArm"
+              ],
+              "line": 3631
+            }
+          ]
+        },
+        {
+          "id": 234,
+          "label": "刺輕4  雙手撕",
+          "start": 10935,
+          "end": 10968,
+          "evidence": {
+            "file": "P0.POS",
+            "line": 3664,
+            "endLine": 3721
+          },
+          "attacks": [
+            {
+              "bone": [
+                "weapon",
+                "bau Head",
+                "bau R Forearm",
+                "bau R Hand",
+                "bau L Forearm",
+                "bau L Hand"
+              ],
+              "start": 10948,
+              "end": 10952,
+              "attacktype": 0,
+              "checkfriend": 0,
+              "defensevalue": 0.1,
+              "defensemove": 5,
+              "targetvalue": 0,
+              "targetmove": 6,
+              "targetpose": 96,
+              "targetposefront": 96,
+              "targetposeback": 99,
+              "targetposeleft": 98,
+              "targetposeright": 97,
+              "bones": [
+                "weapon",
+                "bau Head",
+                "bau R Forearm",
+                "bau R Hand",
+                "bau L Forearm",
+                "bau L Hand"
+              ],
+              "line": 3689
+            }
+          ]
+        },
+        {
+          "id": 226,
+          "label": "刺空輕1  團轉",
+          "start": 10672,
+          "end": 10687,
+          "link": 344,
+          "evidence": {
+            "file": "P0.POS",
+            "line": 3207,
+            "endLine": 3266
+          },
+          "attacks": [
+            {
+              "bone": [
+                "weapon",
+                "bau R Forearm",
+                "bau R Hand",
+                "bau L Forearm",
+                "bau L Hand"
+              ],
+              "start": 10676,
+              "end": 10684,
+              "attacktype": 0,
+              "checkfriend": 0,
+              "defensevalue": 0,
+              "defensemove": 2,
+              "targetvalue": 0,
+              "targetmove": 8,
+              "targetpose": 91,
+              "targetposefront": 91,
+              "targetposeback": 94,
+              "targetposeleft": 93,
+              "targetposeright": 92,
+              "bones": [
+                "weapon",
+                "bau R Forearm",
+                "bau R Hand",
+                "bau L Forearm",
+                "bau L Hand"
+              ],
+              "line": 3233
+            }
+          ]
+        },
+        {
+          "id": 227,
+          "label": "刺空輕2  展臂",
+          "start": 10706,
+          "end": 10723,
+          "link": 345,
+          "evidence": {
+            "file": "P0.POS",
+            "line": 3267,
+            "endLine": 3326
+          },
+          "attacks": [
+            {
+              "bone": [
+                "weapon",
+                "bau R Forearm",
+                "bau R Hand",
+                "bau L Forearm",
+                "bau L Hand"
+              ],
+              "start": 10713,
+              "end": 10715,
+              "attacktype": 0,
+              "checkfriend": 0,
+              "defensevalue": 0,
+              "defensemove": 2,
+              "targetvalue": 0,
+              "targetmove": 1,
+              "targetpose": 103,
+              "targetposefront": 103,
+              "targetposeback": 106,
+              "targetposeleft": 105,
+              "targetposeright": 104,
+              "bones": [
+                "weapon",
+                "bau R Forearm",
+                "bau R Hand",
+                "bau L Forearm",
+                "bau L Hand"
+              ],
+              "line": 3293
+            }
+          ]
+        },
+        {
+          "id": 228,
+          "label": "刺空輕3  腳踢",
+          "start": 10739,
+          "end": 10762,
+          "link": 346,
+          "evidence": {
+            "file": "P0.POS",
+            "line": 3327,
+            "endLine": 3377
+          },
+          "attacks": [
+            {
+              "bone": [
+                "bad L Thigh",
+                "bad L Calf",
+                "bad L Foot",
+                "bau Spine"
+              ],
+              "start": 10750,
+              "end": 10753,
+              "attacktype": 0,
+              "checkfriend": 0,
+              "defensevalue": 0,
+              "defensemove": 3,
+              "targetvalue": 0,
+              "targetmove": 1,
+              "targetpose": 103,
+              "targetposefront": 103,
+              "targetposeback": 106,
+              "targetposeleft": 105,
+              "targetposeright": 104,
+              "bones": [
+                "bad L Thigh",
+                "bad L Calf",
+                "bad L Foot",
+                "bau Spine"
+              ],
+              "line": 3353
+            }
+          ]
+        },
+        {
+          "id": 229,
+          "label": "刺空輕4  腳掛",
+          "start": 10781,
+          "end": 10795,
+          "link": 347,
+          "evidence": {
+            "file": "P0.POS",
+            "line": 3378,
+            "endLine": 3428
+          },
+          "attacks": [
+            {
+              "bone": [
+                "bad L Thigh",
+                "bad L Calf",
+                "bad L Foot",
+                "bau Spine"
+              ],
+              "start": 10785,
+              "end": 10787,
+              "attacktype": 1,
+              "checkfriend": 0,
+              "defensevalue": 0,
+              "defensemove": 0.6,
+              "targetvalue": 0,
+              "targetmove": 0.5,
+              "targetpose": 102,
+              "targetposefront": 102,
+              "targetposeback": 102,
+              "targetposeleft": 102,
+              "targetposeright": 102,
+              "bones": [
+                "bad L Thigh",
+                "bad L Calf",
+                "bad L Foot",
+                "bau Spine"
+              ],
+              "line": 3404
+            }
+          ]
+        }
+      ]
+    },
+    "hammer": {
+      "weaponId": 9,
+      "model": "w4_0",
+      "stance": 9,
+      "guard": 19,
+      "basic": [
+        315,
+        316,
+        317
+      ],
+      "air": [
+        318
+      ],
+      "special": [],
+      "family": [
+        315,
+        328
+      ],
+      "sourcePoses": [
+        {
+          "id": 315,
+          "label": "錘輕1踢",
+          "start": 4465,
+          "end": 4508,
+          "evidence": {
+            "file": "P0.POS",
+            "line": 8676,
+            "endLine": 8725
+          },
+          "attacks": [
+            {
+              "bone": [
+                "bad R Thigh",
+                "bad R Calf",
+                "bad R Foot",
+                "effect"
+              ],
+              "start": 4472,
+              "end": 4476,
+              "attacktype": 0,
+              "checkfriend": 0,
+              "defensevalue": 0.5,
+              "defensemove": 10,
+              "targetvalue": 0.5,
+              "targetmove": 10,
+              "targetpose": 90,
+              "targetposefront": 90,
+              "targetposeback": 94,
+              "targetposeleft": 93,
+              "targetposeright": 92,
+              "bones": [
+                "bad R Thigh",
+                "bad R Calf",
+                "bad R Foot",
+                "effect"
+              ],
+              "line": 8701
+            }
+          ]
+        },
+        {
+          "id": 316,
+          "label": "錘輕2 撞抬",
+          "start": 4510,
+          "end": 4569,
+          "evidence": {
+            "file": "P0.POS",
+            "line": 8726,
+            "endLine": 8787
+          },
+          "attacks": [
+            {
+              "bone": "weapon",
+              "start": 4518,
+              "end": 4521,
+              "attacktype": 0,
+              "checkfriend": 0,
+              "defensevalue": 0.3,
+              "defensemove": 11,
+              "targetvalue": 0.2,
+              "targetmove": 1.5,
+              "targetpose": 100,
+              "targetposefront": 100,
+              "targetposeback": 100,
+              "targetposeleft": 100,
+              "targetposeright": 100,
+              "bones": [
+                "weapon"
+              ],
+              "line": 8757
+            }
+          ]
+        },
+        {
+          "id": 317,
+          "label": "錘輕3 砸",
+          "start": 4570,
+          "end": 4627,
+          "evidence": {
+            "file": "P0.POS",
+            "line": 8788,
+            "endLine": 8849
+          },
+          "attacks": [
+            {
+              "bone": [
+                "weapon",
+                "effect"
+              ],
+              "start": 4582,
+              "end": 4585,
+              "attacktype": 0,
+              "checkfriend": 0,
+              "defensevalue": 0.6,
+              "defensemove": 12,
+              "targetvalue": 0.6,
+              "targetmove": 1.5,
+              "targetpose": 103,
+              "targetposefront": 103,
+              "targetposeback": 106,
+              "targetposeleft": 105,
+              "targetposeright": 104,
+              "bones": [
+                "weapon",
+                "effect"
+              ],
+              "line": 8819
+            }
+          ]
+        },
+        {
+          "id": 318,
+          "label": "錘空下襲",
+          "start": 4628,
+          "end": 4728,
+          "evidence": {
+            "file": "P0.POS",
+            "line": 8850,
+            "endLine": 8905
+          },
+          "attacks": [
+            {
+              "bone": [
+                "weapon",
+                "effect"
+              ],
+              "start": 4647,
+              "end": 4650,
+              "attacktype": 1,
+              "checkfriend": 0,
+              "defensevalue": 0.8,
+              "defensemove": 8,
+              "targetvalue": 0.8,
+              "targetmove": 1,
+              "targetpose": 103,
+              "targetposefront": 103,
+              "targetposeback": 106,
+              "targetposeleft": 105,
+              "targetposeright": 104,
+              "bones": [
+                "weapon",
+                "effect"
+              ],
+              "line": 8875
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "sourceItems": {
+    "13": "w8_1r / w8_1l 刃牙",
+    "18": "w4_1 破山",
+    "36": "w4_3 狼牙"
+  },
+  "tests": {
+    "command": "node --test tests/native-mission-weapons.test.mjs",
+    "total": 7,
+    "passed": 7,
+    "failed": 0,
+    "sourceArithmetic": {
+      "dual13VsSpear7": [
+        31,
+        42,
+        52,
+        72,
+        77
+      ],
+      "hammer18VsSpear7": [
+        88,
+        105,
+        139
+      ]
+    }
+  },
+  "limits": [
+    "Only basic/airborne sequence profiles and actual original equip/guard/RES damage are added. Full directional/rage catalogs remain unimplemented for these families.",
+    "Contact geometry, native weapon-box sampling and host physics remain explicit existing browser adapters; no original EF effects or exact physical impulses claimed.",
+    "CPU tests omit image decode, audio rendering, NPC retaliation and map navigation. No complete mission victory or browser parity implied by this family test."
+  ],
+  "artifacts": [
+    {
+      "path": "dist/native-combat.js",
+      "bytes": 25506,
+      "sha256": "965a39cb82daf535694b9d04c481875451bf14954e022409977f6fb3bc969530"
+    },
+    {
+      "path": "dist/engine.js",
+      "bytes": 67958,
+      "sha256": "405b37111a31d9cf23c322a1a4240ca0c5dd27d893a1ba86f84adad519d6ba7d"
+    },
+    {
+      "path": "dist/assets/native/combat/P0.POS",
+      "bytes": 296888,
+      "sha256": "1e71f945afc6b701f86eb50e500feccca22f20b52f7f3bec073b0247d390a5fb"
+    },
+    {
+      "path": "dist/assets/native/combat/character.act",
+      "bytes": 10389,
+      "sha256": "e52865424fe065e808a73e9f81bb8df5a78e161a43e59e051bd41f0fb4e42eda"
+    },
+    {
+      "path": "dist/assets/original/weapon-models/manifest.json",
+      "bytes": 296396,
+      "sha256": "a906a83f542696e7ab8347e5b6bc49bcf915c0ea3bcd893cf1f9458555018438"
+    },
+    {
+      "path": "dist/assets/original/characters/meteor-res-data.json",
+      "bytes": 524884,
+      "sha256": "7fe60e2d0ea2e42facacb4306010a68a8599baab9fd58e98230c1340b6a8de44"
+    },
+    {
+      "path": "tests/native-mission-weapons.test.mjs",
+      "bytes": 9169,
+      "sha256": "60f83897c9cd22877b54c45a7d0e8401a2e734d66ee7a200818b5e311be5930a"
+    },
+    {
+      "path": "work/meteor-original/evidence/native-mission-weapons-2026-11-04.tap",
+      "bytes": 1949,
+      "sha256": "68690ad95400ecf24bc83f93c134d763f0cf415845c39074fb4ab43eafe24dd4"
+    }
+  ]
+}

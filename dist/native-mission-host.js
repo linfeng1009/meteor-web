@@ -1,5 +1,10 @@
 import * as THREE from './vendor/three.module.js';
 import { NativeScriptVM, NativeScriptError, parsePst, normalizePstPath, createPstIncludeResolver } from './native-script.js';
+import { getNativeMission } from './native-missions.js';
+import { clearNativeScriptItems, NATIVE_SCRIPT_ITEM_PROVENANCE } from './native-items.js';
+import { validNativeWeatherSetting, NATIVE_WEATHER_PROVENANCE } from './native-weather.js';
+import { findNativeEnemy, NATIVE_AWARENESS } from './native-awareness.js';
+import { NATIVE_NPC_COMBAT_PROVENANCE } from './native-npc-combat.js';
 
 const ORIGINAL_ROOT = new URL('./assets/original/', import.meta.url);
 const SCALE = .08;
@@ -16,7 +21,7 @@ export class NativeMissionHost {
     const host = new NativeMissionHost(game, options); await host.initialize(); return host;
   }
   constructor(game, { mapId = game.currentMap?.id, sources = null, fetcher = globalThis.fetch,
-    compatibility = true, onEvent = null, scriptCadence = .05, completionDelay = 1.2 } = {}) {
+    compatibility = true, onEvent = null, scriptCadence = .05, completionDelay = 1.2, random = Math.random } = {}) {
     this.game = game; this.mapId = mapId; this.manifest = game.manifest;
     // Window.fetch requires Window as its receiver in some browsers. Keep that
     // receiver when storing the native function on this host (or injecting it).
@@ -27,6 +32,9 @@ export class NativeMissionHost {
     this.sourcePromises = new Map(); this.programCache = new Map(); this.actors = new Map(); this.npcVms = new Map();
     this.sceneItems = new Map(); this.sceneNames = new Map(); this.targets = new Map(); this.pending = new Set();
     this.nextScriptId = 1; this.clock = 0; this.accumulator = 0; this.idleAccumulator = 0;
+    this.random = random; this.randomSeries = new Map();
+    this.vipName = mapId === 'sn15' ? '萧安' : null;
+    this.mission = getNativeMission(mapId);
     this.scriptCadence = scriptCadence; this.completionDelay = completionDelay; this.started = false; this.disposed = false;
     this.disabledCallbacks = new Set(); this.diagnosticKeys = new Set(); this.diagnostics = []; this.stdout = []; this.dialogues = [];
     this.compatibilityUsed = []; this.nativeCallCount = 0; this.npcScripts = new Map(); this.completionAt = null;
@@ -34,11 +42,20 @@ export class NativeMissionHost {
     this.provenance = {
       scripts: 'Original Level/*.pst, scene PST and PScriptLib includes; source bytes preserved.',
       configuration: 'NPC Model/Weapon/Team/View/Spawn/HP and player Spawn/HP/Weapon read from original globals.',
-      navigation: 'Original Level/*.wp positions and links; browser Dijkstra adapter projects waypoints onto actual collision floors for foot placement (original positions retained).',
-      perception: 'View uses native units × 0.08 and native map collision rays; native sight cone/AI internals remain unverified.',
+      navigation: 'Original Level/*.wp positions and links; browser Dijkstra projects waypoints onto collision floors, and requests original takeoff when a nearby goal is elevated and NPC Jump>0. Original navigation/decision timing remains unverified.',
+      perception: `${NATIVE_AWARENESS.provenance} Native units×0.08; eye points, collision rays and nearest selection are Web adapters. Full AI decisions/timing remain unverified.`,
       timing: 'PST pause/guard numeric durations are treated as seconds; dialogue display duration is a browser reading aid.',
-      rule10: 'All hostile mission NPCs defeated => success is a Rule-10 adapter inference; no GameOver call exists in sn01_.pst.'
+      performAttack: 'NPC Perform attack is a browser single-attack intent, kept until the normal engine target/range/line-of-sight checks accept an attack. Original exact Perform timing remains unverified; PlayerPerform attack remains unsupported.',
+      rule10: 'All hostile mission NPCs defeated => success is a Rule-10 adapter inference; no GameOver call exists in sn01_.pst or sn14_.pst.',
+      sceneClock: 'Misc gettime is integer milliseconds from the host clock, matching sn09 Def.h step1000; native exact clock scheduling remains unverified.',
+      randomSeries: 'Original sn09 four inclusive floor rings are shuffled without repetition using Web Fisher-Yates; original PRNG sequence remains unverified.',
+      vip: 'sn15 vip symbol resolves to source named 萧安. Defeating him completes Rule4 after the host delay; this is an explicit objective adapter, not a recovered EXE Rule4 implementation.',
+      timeout: 'Story RoundTime minutes impose a host timeout fallback; native exact timeout event ordering remains unverified.'
     };
+    this.provenance.scriptItems = NATIVE_SCRIPT_ITEM_PROVENANCE;
+    this.provenance.combatDecisions = NATIVE_NPC_COMBAT_PROVENANCE;
+    this.provenance.weather = NATIVE_WEATHER_PROVENANCE;
+    this.sceneSettings = {};
   }
   emit(event) { this.onEvent(event); }
   diagnostic(code, message, detail = {}) {
@@ -138,7 +155,10 @@ export class NativeMissionHost {
   async flushPending() { while (this.pending.size) await Promise.all([...this.pending]); }
   addNpc(script) {
     const file = normalizePstPath(`level/${String(script).replace(/\.pst$/i, '')}.pst`), scriptId = this.nextScriptId++;
-    const task = this.instantiateNpc(file, scriptId); this.pending.add(task);
+    const task = this.instantiateNpc(file, scriptId).catch(error => {
+      if (!this.disposed) this.diagnostic('NPC_LOAD_FAILED', `原角色载入失败：${script}`, { file, message: error.message });
+      throw error;
+    }); this.pending.add(task);
     task.finally(() => this.pending.delete(task)).catch(() => {}); return scriptId;
   }
   async instantiateNpc(file, scriptId) {
@@ -163,7 +183,7 @@ export class NativeMissionHost {
     Object.assign(actor, { scriptId, name: raw.Name, modelId: raw.Model, weaponId: raw.Weapon, weapon2Id: raw.Weapon2,
       team: raw.Team, hp: raw.HP, maxHp: raw.HP, hpSourceVerified: true, scriptControlled: true, scriptConfig: raw,
       scriptIntent: { mode: 'wait', waypointIds: [], cursor: 0, targetId: null, source: file },
-      scriptQueue: [], scriptPerform: null, missionVm: vm });
+      scriptQueue: [], scriptPerform: null, scriptAttackRequested: false, missionVm: vm });
     this.actors.set(scriptId, actor); this.npcVms.set(scriptId, vm); this.npcScripts.set(scriptId, file);
     if (Array.isArray(this.game.enemies) && !this.game.enemies.includes(actor)) this.game.enemies.push(actor);
     this.call(vm, 'OnInit', [scriptId], true); this.call(vm, 'OnStart', [], true);
@@ -171,6 +191,7 @@ export class NativeMissionHost {
   }
   actor(id, includeDead = true) { const actor = this.actors.get(Number(id)); return actor && !actor.scriptRemoved && !actor.disposed && (includeDead || alive(actor)) ? actor : null; }
   findActor(name, includeDead = false) {
+    if (name === 'vip' && this.vipName) name = this.vipName;
     if (name === 'player') return includeDead || alive(this.actors.get(0)) ? this.actors.get(0) : null;
     return [...this.actors.values()].find(actor => actor.name === name && !actor.scriptRemoved && !actor.disposed && (includeDead || alive(actor))) || null;
   }
@@ -214,11 +235,7 @@ export class NativeMissionHost {
     this.call(this.sceneVm, callback, [item.id]); return true;
   }
   visibleEnemy(actor) {
-    if (!alive(actor)) return null;
-    const view = Number(actor.scriptConfig?.View ?? 500) * SCALE;
-    const enemies = [...this.actors.values()].filter(target => target !== actor && alive(target) && target.team !== actor.team)
-      .sort((a, b) => actor.root.position.distanceToSquared(a.root.position) - actor.root.position.distanceToSquared(b.root.position));
-    return enemies.find(target => actor.root.position.distanceTo(target.root.position) <= view && this.lineOfSight(actor, target)) || null;
+    return findNativeEnemy(actor, [...this.actors.values()], (observer, target) => this.lineOfSight(observer, target));
   }
   lineOfSight(actor, target) {
     if (this.game.hasScriptLineOfSight) return this.game.hasScriptLineOfSight(actor, target);
@@ -230,11 +247,15 @@ export class NativeMissionHost {
   }
   changeBehavior(id, mode, ...args) {
     const actor = this.actor(id, false); if (!actor) return 0;
-    if (!['wait', 'patrol', 'follow', 'attacktarget', 'aggress', 'run', 'kill'].includes(mode)) return this.unsupported(`ChangeBehavior:${mode}`, [id, ...args]);
+    if (!['idle', 'wait', 'patrol', 'follow', 'attacktarget', 'aggress', 'run', 'kill'].includes(mode)) return this.unsupported(`ChangeBehavior:${mode}`, [id, ...args]);
+    const ref = args[0], symbolic = typeof ref === 'string' && !/^[-+]?\d+$/.test(ref);
     actor.scriptIntent = { mode, waypointIds: mode === 'patrol' ? args.map(Number) : [], cursor: 0,
-      targetId: ['follow', 'kill'].includes(mode) ? Number(args[0]) : null,
-      targetSlot: mode === 'attacktarget' ? Number(args[0]) : null, source: this.npcScripts.get(actor.scriptId) };
-    actor.scriptPath = null; return 1;
+      targetId: ['follow', 'kill'].includes(mode) ? symbolic ? this.findActor(ref)?.scriptId ?? -1 : Number(ref) : null,
+      targetRef: ['follow', 'kill'].includes(mode) ? args[0] : null,
+      targetSlot: mode === 'attacktarget' ? Number(args[0]) : null,
+      target: mode === 'attacktarget' && this.targets.has(Number(args[0])) ? { ...this.targets.get(Number(args[0])) } : null,
+      source: this.npcScripts.get(actor.scriptId) };
+    actor.awarenessTarget = null; actor.npcCombat?.reset(); actor.scriptPath = null; return 1;
   }
   enqueue(id, action, ...args) {
     const actor = this.actor(id, false); if (!actor) return 0;
@@ -248,7 +269,7 @@ export class NativeMissionHost {
   }
   processPerformances(dt) {
     for (const actor of this.actors.values()) {
-      if (!alive(actor)) { actor.scriptQueue = []; actor.scriptPerform = null; continue; }
+      if (!alive(actor)) { actor.scriptQueue = []; actor.scriptPerform = null; actor.scriptAttackRequested = false; continue; }
       if (actor.scriptPerform) {
         actor.scriptPerform.remaining -= dt;
         if (actor.scriptPerform.remaining > 0) continue;
@@ -263,7 +284,23 @@ export class NativeMissionHost {
           actor.scriptPerform = { action, mode: action, remaining: Math.max(0, Number(args[0]) || 0) }; actor.guard = action === 'guard';
           if (actor.scriptPerform.remaining > 0) break; actor.scriptPerform = null;
         } else if (action === 'aggress') { actor.scriptAggressive = true; }
+        else if (action === 'attack' && actor.scriptId !== 0) { actor.scriptAggressive = true; actor.scriptAttackRequested = true; }
+        else if (action === 'crouch') { actor.scriptCrouched = Number(args[0]) === 0; }
+        else if (action === 'use') {
+          const itemId = Number(args[0]);
+          const applied = this.game.useScriptItem?.(actor, itemId);
+          if (!applied) this.diagnostic('UNSUPPORTED_ITEM_EFFECT', `原物品效果尚未接入：${itemId}`, { api: 'Perform:use', itemId, scriptId: actor.scriptId });
+        }
         else if (action === 'block' && actor.scriptId === 0) { actor.scriptInputBlocked = Number(args[0]) === 0; }
+        else if (this.compatibility && this.mapId === 'sn15' && args.length === 0 && ['﹒﹒﹒无名﹒﹒﹒', '﹒﹒﹒﹒﹒﹒'].includes(action)) {
+          // Two original sn15 ally lines omit the "say" argument. Keep the
+          // source intact and record this narrow, visible compatibility map.
+          if (!this.compatibilityUsed.some(entry => entry.from === 'Perform:missing-say')) {
+            const entry = { from: 'Perform:missing-say', to: 'Perform:say', file: this.levelVm.contextFile };
+            this.compatibilityUsed.push(entry); this.emit({ type: 'mission-compatibility', text: '原脚本对白兼容：补齐两处缺失的 say', ...entry });
+          }
+          this.dialogue(actor.scriptId, action);
+        }
         else {
           this.diagnostic('UNSUPPORTED_PERFORM', `原角色动作尚未接入：${action}`, { api: 'Perform', arguments: args, scriptId: actor.scriptId });
         }
@@ -314,7 +351,11 @@ export class NativeMissionHost {
       if (actor.scriptId === 0 || !alive(actor)) continue;
       const intent = actor.scriptIntent || { mode: 'wait' }, enemy = this.visibleEnemy(actor);
       let moveTarget = null, attackTarget = enemy, canAttack = !!enemy;
-      if (intent.mode === 'patrol') {
+      if (intent.mode === 'idle') { attackTarget = null; canAttack = false; }
+      // 00503970(wait)→004fdf00→00503e00 enters enemy pursuit after
+      // discovery. Waiting is not a permanent ban on moving toward an enemy.
+      else if (intent.mode === 'wait') moveTarget = enemy?.root.position || null;
+      else if (intent.mode === 'patrol') {
         if (enemy) moveTarget = enemy.root.position;
         else if (intent.waypointIds.length) {
           const goalId = intent.waypointIds[intent.cursor % intent.waypointIds.length], goal = this.points.get(goalId);
@@ -322,20 +363,24 @@ export class NativeMissionHost {
           moveTarget = this.moveViaWaypoint(actor, intent.waypointIds[intent.cursor % intent.waypointIds.length]);
         }
       } else if (intent.mode === 'follow' || intent.mode === 'kill') {
-        const target = this.actor(intent.targetId, false);
+        const ref = intent.targetRef ?? intent.targetId;
+        const target = typeof ref === 'string' && !/^[-+]?\d+$/.test(ref) ? this.findActor(ref) : this.actor(ref, false);
         if (target) {
           if (target.team !== actor.team) { attackTarget = target; canAttack = true; }
           const nearest = this.closestWaypoint(target.root.position);
           moveTarget = this.lineOfSight(actor, target) ? target.root.position : this.moveViaWaypoint(actor, nearest?.id);
         }
       } else if (intent.mode === 'attacktarget') {
-        const target = this.targets.get(intent.targetSlot), point = this.targetPosition(target);
+        // SetTarget slots are also reused for Distance queries. Capture the
+        // target when ChangeBehavior executes: sn15 phase7 immediately reuses
+        // slot0 for the VIP himself, which must not cancel his run to WP116.
+        const target = intent.target || this.targets.get(intent.targetSlot), point = this.targetPosition(target);
         moveTarget = point ? this.moveViaWaypoint(actor, this.closestWaypoint(point)?.id) : null;
         attackTarget = null; canAttack = false;
       } else if (intent.mode === 'aggress' || intent.mode === 'run' || actor.scriptAggressive) moveTarget = enemy?.root.position || null;
       const paused = !!actor.scriptPerform, guard = actor.scriptPerform?.action === 'guard';
       actor.scriptControl = { mode: intent.mode, moveTarget: paused ? null : moveTarget, attackTarget,
-        canAttack: !paused && canAttack, paused, guard, speedScale: 1, enemyId: enemy?.scriptId ?? -1 };
+        canAttack: !paused && canAttack, attackRequested: !!actor.scriptAttackRequested, paused, guard, speedScale: 1, enemyId: enemy?.scriptId ?? -1 };
       if (guard) actor.guard = true;
     }
   }
@@ -357,7 +402,22 @@ export class NativeMissionHost {
     this.processPerformances(0); this.updateControls(); this.checkCompletion(); this.publishState();
   }
   checkCompletion() {
-    if (!alive(this.actor(0))) { this.finish(false, 'player-death', 'PlayerHP reaches zero; mission failure adapter.'); return; }
+    if (this.completed) return;
+    // sn09 deliberately fails when either combatant dies. Its source keeps
+    // dead player identity through GetAnyChar and calls GameOver after2s;
+    // allow that explicit source result to run before a host fallback.
+    if (!alive(this.actor(0)) && this.mapId !== 'sn09') { this.finish(false, 'player-death', 'PlayerHP reaches zero; mission failure adapter.'); return; }
+    if (['sn04', 'sn09', 'sn15'].includes(this.mapId) && this.roundTime > 0 && this.clock >= this.roundTime * 60) {
+      this.finish(false, 'round-timeout', this.provenance.timeout); return;
+    }
+    if (this.mapId === 'sn15') {
+      const vip = this.findActor(this.vipName, true);
+      if (vip && !alive(vip) && !vip.scriptRemoved && !this.pending.size) {
+        if (this.completionAt == null) this.completionAt = this.clock + this.completionDelay;
+        if (this.clock >= this.completionAt) this.finish(true, 'vip-defeated', this.provenance.vip);
+      } else this.completionAt = null;
+      return;
+    }
     const hostile = [...this.actors.values()].filter(actor => actor.scriptId !== 0 && actor.team !== this.actor(0).team && !actor.scriptRemoved);
     if (this.rule === 10 && hostile.length && hostile.every(actor => !alive(actor)) && !this.pending.size) {
       if (this.completionAt == null) this.completionAt = this.clock + this.completionDelay;
@@ -372,11 +432,20 @@ export class NativeMissionHost {
     else this.game._finish?.(win);
   }
   publishState() {
+    const targetName = this.mission?.protectName || this.mission?.vipName;
+    const target = targetName ? [...this.actors.values()].find(actor => actor.name === targetName) : null;
+    const gate = this.mission?.targetObject ? this.sceneItem(this.mission.targetObject) : null;
+    const objective = this.mission ? { type: this.mission.objectiveType, text: this.mission.objective,
+      targetName: target?.name || (gate ? '敌方城门' : null),
+      targetHp: target?.hp ?? (gate ? Math.max(0, this.sceneVm.getGlobal('g_iBPdoorHP')) : null),
+      targetMaxHp: target?.maxHp ?? (gate ? this.sceneVm.getGlobal('g_iPdoorMaxHP') : null),
+      position: target ? { x: target.root.position.x, z: target.root.position.z } : gate ? { x: gate.position.x, z: gate.position.z } : null,
+      escaped: !!target?.scriptRemoved } : null;
     this.game.missionState = { mapId: this.mapId, mode: 'story', rule: this.rule, roundTime: this.roundTime,
       elapsed: this.clock, remaining: this.roundTime > 0 ? Math.max(0, this.roundTime * 60 - this.clock) : null,
       phase: this.completed ? 'complete' : this.started ? 'running' : 'loading', result: this.completed || null,
       npcCount: Math.max(0, this.actors.size - 1), diagnostics: this.diagnostics.length,
-      nativeCalls: this.nativeCallCount, compatibilityUsed: this.compatibilityUsed, provenance: this.provenance };
+      nativeCalls: this.nativeCallCount, compatibilityUsed: this.compatibilityUsed, provenance: this.provenance, objective };
   }
   natives() {
     const host = this;
@@ -395,7 +464,7 @@ export class NativeMissionHost {
       PlayerPerform: (...args) => host.enqueue(0, ...args),
       Say: (...args) => host.dialogue(...args),
       IsPerforming: id => Number(!!host.actor(id)?.scriptPerform || !!host.actor(id)?.scriptQueue?.length),
-      StopPerform: id => { const actor = host.actor(id); if (actor) { actor.scriptQueue = []; actor.scriptPerform = null; actor.guard = false; } return Number(!!actor); },
+      StopPerform: id => { const actor = host.actor(id); if (actor) { actor.scriptQueue = []; actor.scriptPerform = null; actor.scriptAttackRequested = false; actor.guard = false; } return Number(!!actor); },
       SetTarget: (slot, kind, id) => { host.targets.set(Number(slot), { kind, id: Number(id) }); return 1; },
       Distance: (a, b) => { const first = host.targetPosition(host.targets.get(Number(a))), second = host.targetPosition(host.targets.get(Number(b))); return first && second ? Math.trunc(first.distanceTo(second) / SCALE) : -1; },
       MakeString: function (unused, prefix, number) { this.setArg(0, String(prefix) + String(number).padStart(2, '0')); },
@@ -411,10 +480,36 @@ export class NativeMissionHost {
       Output: (...args) => { host.stdout.push(args); if (host.stdout.length > 1000) host.stdout.shift(); host.emit({ type: 'script-output', arguments: args }); },
       Print: (...args) => api.Output(...args),
       GameOver: result => { host.finish(Number(result) > 0, 'script-GameOver', 'Original PST calls GameOver.'); return 1; },
+      GameCallBack: (command, team) => {
+        if (host.mapId !== 'sn04' || command !== 'end' || ![1, 2].includes(Number(team))) return host.unsupported('GameCallBack', [command, team]);
+        host.finish(Number(team) === host.actor(0)?.team, 'script-gate-destroyed', 'Original sn04 scene gate destruction calls end(winning team); Web maps that team to the player result.'); return 1;
+      },
+      SetScene: (name, ...values) => {
+        if (!validNativeWeatherSetting(name, values)) return host.unsupported('SetScene', [name, ...values]);
+        host.sceneSettings[name] = [...values]; host.game.setNativeScene?.(name, ...values); return 1;
+      },
+      Misc: (command, ...args) => {
+        if (command === 'gettime') return Math.floor(host.clock * 1000);
+        if (command === 'randomseries') {
+          const [slot, first, last] = args.map(Number);
+          if (![slot, first, last].every(Number.isInteger) || last < first || last - first > 10000) return host.unsupported('Misc:randomseries', args);
+          const series = Array.from({ length: last - first + 1 }, (_, index) => first + index);
+          for (let index = series.length - 1; index > 0; index--) {
+            const chosen = Math.min(index, Math.max(0, Math.floor(host.random() * (index + 1))));
+            [series[index], series[chosen]] = [series[chosen], series[index]];
+          }
+          host.randomSeries.set(slot, series); return 1;
+        }
+        if (command === 'getseries') {
+          const [slot, index] = args.map(Number), value = host.randomSeries.get(slot)?.[index];
+          return Number.isInteger(value) ? value : host.unsupported('Misc:getseries', args);
+        }
+        return host.unsupported(`Misc:${command}`, args);
+      },
       UpdateAIAttrib: (id, name, value) => { const actor = host.actor(id); if (!actor) return 0; actor.scriptConfig[name] = value; return 1; },
       RemoveNPC: id => {
         const actor = host.actor(id); if (!actor || actor.scriptId === 0) return 0;
-        actor.scriptRemoved = true; actor.scriptQueue = []; actor.scriptPerform = null;
+        actor.scriptRemoved = true; actor.scriptQueue = []; actor.scriptPerform = null; actor.scriptAttackRequested = false;
         if (host.game.removeScriptActor) host.game.removeScriptActor(actor);
         else { actor.root?.removeFromParent(); actor.character?.dispose(); actor.disposed = true; }
         return 1;
@@ -429,12 +524,13 @@ export class NativeMissionHost {
         return to === 'InitBBoxes' ? this.vm.call(to, args) : api[to](...args);
       };
     }
-    for (const name of ['GameCallBack', 'Misc', 'SetScene', 'rand', 'Rand', 'GetLeader']) api[name] = function (...args) { return host.unsupported(name, args, this); };
+    for (const name of ['rand', 'Rand', 'GetLeader']) api[name] = function (...args) { return host.unsupported(name, args, this); };
     return api;
   }
   dispose() {
+    this.game.clearNativeScene?.(); this.sceneSettings = {};
     this.disposed = true; this.started = false;
-    for (const actor of this.actors.values()) { actor.scriptControlled = false; actor.scriptControl = null; actor.scriptIntent = null; actor.scriptPerform = null; actor.scriptQueue = []; }
-    this.actors.clear(); this.npcVms.clear(); this.targets.clear(); this.sourceCache.clear(); this.programCache.clear();
+    for (const actor of this.actors.values()) { clearNativeScriptItems(actor); actor.awarenessTarget = null; actor.scriptControlled = false; actor.scriptControl = null; actor.scriptIntent = null; actor.scriptPerform = null; actor.scriptQueue = []; actor.scriptAttackRequested = false; actor.scriptCrouched = false; }
+    this.actors.clear(); this.npcVms.clear(); this.targets.clear(); this.randomSeries.clear(); this.sourceCache.clear(); this.programCache.clear();
   }
 }

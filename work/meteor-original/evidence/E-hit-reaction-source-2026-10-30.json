@@ -1,0 +1,1162 @@
+{
+  "id": "E-hit-reaction-source-2026-10-30",
+  "date": "2026-10-30",
+  "scope": "work/meteor-original/scope.md; granted offline static analysis/resource parsing/local Web port",
+  "sample": {
+    "path": "/Users/dulinfeng/Downloads/流星86726/lxhdj_/Meteor.exe",
+    "sha256": "289afb0aa44a47921d167fc24d6d404c60d6d00c299ac27d45fc61e16231b498",
+    "executed": false,
+    "modified": false
+  },
+  "method": "Read original PE bytes and existing Ghidra database with -readOnly -noanalysis; compare original P0.POS and byte-copied EF sound definitions.",
+  "verified": {
+    "hitEvent": "004af630 emits actor event 0xb for nonlethal unguarded hit; actor 004ed9d0 dispatches via +f4=004f3f50.",
+    "reaction": "004f3f50 passes packet TargetPose to state-object +48=004d03f0; 004d03f0 starts source pose and changes state to 4 unless current state is 7 or 9.",
+    "down": "State 4 update 004cdd60 reads associated pose (0055c4e0). When 112/113 is associated and native animation status is 4, changes actor state to 0xb; other completed hit animations move to state 1.",
+    "getup": "State 0xb update 004cdf90 can call +f8=004d01f0. 004d01f0 chooses Pose120 from113, Pose119 for other non117 poses, and Pose35 from117. Web uses112→119 /113→120 only.",
+    "guard": "Native guard event 0xe dispatches separately to 004f4010; ordinary TargetPose is not an unconditional guard knockdown.",
+    "direction": "004f3380 chooses attack record+4c(front),+50(back),+54(left),+58(right), using native signed angle cuts ±0.7853975 and ±2.3561925 radians. Original parser005754d0 fills omitted direction pose from TargetPose."
+  },
+  "nativeConstants": {
+    "signedAngleCuts": [
+      -2.3561924999999997,
+      -0.7853975,
+      0.7853975,
+      2.3561924999999997
+    ],
+    "actorVtable": "005ab228",
+    "stateVtable": "005aa6a8"
+  },
+  "poses": [
+    {
+      "id": 90,
+      "name": "",
+      "source": 0,
+      "start": 1694,
+      "end": 1701,
+      "frameCount": 8,
+      "fps": 30,
+      "duration": 0.26666666666666666,
+      "attacks": [],
+      "phases": [],
+      "cancel": [],
+      "links": [],
+      "evidence": {
+        "file": "pmodel/P0.POS",
+        "line": 1182,
+        "endLine": 1191
+      },
+      "loopStart": 1701,
+      "loopEnd": 1701
+    },
+    {
+      "id": 91,
+      "name": "",
+      "source": 0,
+      "start": 1712,
+      "end": 1719,
+      "frameCount": 8,
+      "fps": 30,
+      "duration": 0.26666666666666666,
+      "attacks": [],
+      "phases": [],
+      "cancel": [],
+      "links": [],
+      "evidence": {
+        "file": "pmodel/P0.POS",
+        "line": 1192,
+        "endLine": 1201
+      },
+      "loopStart": 1719,
+      "loopEnd": 1719
+    },
+    {
+      "id": 92,
+      "name": "",
+      "source": 0,
+      "start": 1731,
+      "end": 1738,
+      "frameCount": 8,
+      "fps": 30,
+      "duration": 0.26666666666666666,
+      "attacks": [],
+      "phases": [],
+      "cancel": [],
+      "links": [],
+      "evidence": {
+        "file": "pmodel/P0.POS",
+        "line": 1202,
+        "endLine": 1211
+      },
+      "loopStart": 1738,
+      "loopEnd": 1738
+    },
+    {
+      "id": 93,
+      "name": "",
+      "source": 0,
+      "start": 1748,
+      "end": 1755,
+      "frameCount": 8,
+      "fps": 30,
+      "duration": 0.26666666666666666,
+      "attacks": [],
+      "phases": [],
+      "cancel": [],
+      "links": [],
+      "evidence": {
+        "file": "pmodel/P0.POS",
+        "line": 1212,
+        "endLine": 1221
+      },
+      "loopStart": 1755,
+      "loopEnd": 1755
+    },
+    {
+      "id": 94,
+      "name": "",
+      "source": 0,
+      "start": 1765,
+      "end": 1772,
+      "frameCount": 8,
+      "fps": 30,
+      "duration": 0.26666666666666666,
+      "attacks": [],
+      "phases": [],
+      "cancel": [],
+      "links": [],
+      "evidence": {
+        "file": "pmodel/P0.POS",
+        "line": 1222,
+        "endLine": 1231
+      },
+      "loopStart": 1772,
+      "loopEnd": 1772
+    },
+    {
+      "id": 95,
+      "name": "",
+      "source": 0,
+      "start": 1783,
+      "end": 1799,
+      "frameCount": 17,
+      "fps": 30,
+      "duration": 0.5666666666666667,
+      "attacks": [],
+      "phases": [],
+      "cancel": [],
+      "links": [],
+      "evidence": {
+        "file": "pmodel/P0.POS",
+        "line": 1232,
+        "endLine": 1240
+      }
+    },
+    {
+      "id": 96,
+      "name": "",
+      "source": 0,
+      "start": 1802,
+      "end": 1818,
+      "frameCount": 17,
+      "fps": 30,
+      "duration": 0.5666666666666667,
+      "attacks": [],
+      "phases": [],
+      "cancel": [],
+      "links": [],
+      "evidence": {
+        "file": "pmodel/P0.POS",
+        "line": 1241,
+        "endLine": 1249
+      }
+    },
+    {
+      "id": 97,
+      "name": "",
+      "source": 0,
+      "start": 1844,
+      "end": 1864,
+      "frameCount": 21,
+      "fps": 30,
+      "duration": 0.7,
+      "attacks": [],
+      "phases": [],
+      "cancel": [],
+      "links": [],
+      "evidence": {
+        "file": "pmodel/P0.POS",
+        "line": 1250,
+        "endLine": 1258
+      }
+    },
+    {
+      "id": 98,
+      "name": "",
+      "source": 0,
+      "start": 1820,
+      "end": 1842,
+      "frameCount": 23,
+      "fps": 30,
+      "duration": 0.7666666666666667,
+      "attacks": [],
+      "phases": [],
+      "cancel": [],
+      "links": [],
+      "evidence": {
+        "file": "pmodel/P0.POS",
+        "line": 1259,
+        "endLine": 1267
+      }
+    },
+    {
+      "id": 99,
+      "name": "",
+      "source": 0,
+      "start": 1866,
+      "end": 1884,
+      "frameCount": 19,
+      "fps": 30,
+      "duration": 0.6333333333333333,
+      "attacks": [],
+      "phases": [],
+      "cancel": [],
+      "links": [],
+      "evidence": {
+        "file": "pmodel/P0.POS",
+        "line": 1268,
+        "endLine": 1276
+      }
+    },
+    {
+      "id": 112,
+      "name": "",
+      "source": 0,
+      "start": 11600,
+      "end": 11600,
+      "frameCount": 1,
+      "fps": 30,
+      "duration": 0.03333333333333333,
+      "attacks": [],
+      "phases": [],
+      "cancel": [],
+      "links": [],
+      "evidence": {
+        "file": "pmodel/P0.POS",
+        "line": 1483,
+        "endLine": 1492
+      },
+      "loopStart": 11600,
+      "loopEnd": 11600
+    },
+    {
+      "id": 113,
+      "name": "",
+      "source": 0,
+      "start": 11615,
+      "end": 11615,
+      "frameCount": 1,
+      "fps": 30,
+      "duration": 0.03333333333333333,
+      "attacks": [],
+      "phases": [],
+      "cancel": [],
+      "links": [],
+      "evidence": {
+        "file": "pmodel/P0.POS",
+        "line": 1493,
+        "endLine": 1502
+      },
+      "loopStart": 11615,
+      "loopEnd": 11615
+    },
+    {
+      "id": 117,
+      "name": "",
+      "source": 0,
+      "start": 2451,
+      "end": 2493,
+      "frameCount": 43,
+      "fps": 30,
+      "duration": 1.4333333333333333,
+      "attacks": [],
+      "phases": [],
+      "cancel": [],
+      "links": [],
+      "evidence": {
+        "file": "pmodel/P0.POS",
+        "line": 1551,
+        "endLine": 1558
+      }
+    },
+    {
+      "id": 119,
+      "name": "",
+      "source": 0,
+      "start": 11607,
+      "end": 11614,
+      "frameCount": 8,
+      "fps": 30,
+      "duration": 0.13333333333333333,
+      "attacks": [],
+      "phases": [
+        {
+          "type": "action",
+          "start": 11607,
+          "end": 11614,
+          "speed": 2,
+          "line": 1582
+        }
+      ],
+      "cancel": [],
+      "links": [],
+      "evidence": {
+        "file": "pmodel/P0.POS",
+        "line": 1575,
+        "endLine": 1588
+      }
+    },
+    {
+      "id": 120,
+      "name": "",
+      "source": 0,
+      "start": 11623,
+      "end": 11630,
+      "frameCount": 8,
+      "fps": 30,
+      "duration": 0.13333333333333333,
+      "attacks": [],
+      "phases": [
+        {
+          "type": "action",
+          "start": 11623,
+          "end": 11630,
+          "speed": 2,
+          "line": 1596
+        }
+      ],
+      "cancel": [],
+      "links": [],
+      "evidence": {
+        "file": "pmodel/P0.POS",
+        "line": 1589,
+        "endLine": 1602
+      }
+    },
+    {
+      "id": 248,
+      "name": "匕首輕1 左揮",
+      "source": 0,
+      "start": 8960,
+      "end": 8999,
+      "frameCount": 40,
+      "fps": 30,
+      "duration": 0.8166666666666668,
+      "attacks": [
+        {
+          "bone": [
+            "weapon",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand"
+          ],
+          "start": 8963,
+          "end": 8965,
+          "attacktype": 0,
+          "checkfriend": 0,
+          "defensevalue": 0,
+          "defensemove": 2,
+          "targetvalue": 0,
+          "targetmove": 3,
+          "targetpose": 90,
+          "targetposefront": 90,
+          "targetposeback": 94,
+          "targetposeleft": 93,
+          "targetposeright": 92,
+          "bones": [
+            "weapon",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand"
+          ],
+          "line": 4513
+        }
+      ],
+      "phases": [
+        {
+          "type": "blend",
+          "start": 8960,
+          "end": 8962,
+          "speed": 1,
+          "line": 4495
+        },
+        {
+          "type": "action",
+          "start": 8963,
+          "end": 8968,
+          "speed": 1,
+          "line": 4501
+        },
+        {
+          "type": "blend",
+          "start": 8969,
+          "end": 8999,
+          "speed": 2,
+          "line": 4507
+        }
+      ],
+      "cancel": [
+        {
+          "start": 8963,
+          "end": 8991,
+          "time": 0.15,
+          "bones": [],
+          "line": 4538
+        }
+      ],
+      "links": [],
+      "evidence": {
+        "file": "pmodel/P0.POS",
+        "line": 4488,
+        "endLine": 4544
+      }
+    },
+    {
+      "id": 249,
+      "name": "匕首輕2 迴旋踢",
+      "source": 0,
+      "start": 9024,
+      "end": 9061,
+      "frameCount": 38,
+      "fps": 30,
+      "duration": 0.9666666666666667,
+      "attacks": [
+        {
+          "bone": [
+            "bad L Thigh",
+            "bad L Calf",
+            "bad L Foot",
+            "bau Spine1"
+          ],
+          "start": 9029,
+          "end": 9031,
+          "attacktype": 0,
+          "checkfriend": 0,
+          "defensevalue": 0,
+          "defensemove": 3,
+          "targetvalue": 0,
+          "targetmove": 4,
+          "targetpose": 91,
+          "targetposefront": 91,
+          "targetposeback": 94,
+          "targetposeleft": 93,
+          "targetposeright": 92,
+          "bones": [
+            "bad L Thigh",
+            "bad L Calf",
+            "bad L Foot",
+            "bau Spine1"
+          ],
+          "line": 4570
+        }
+      ],
+      "phases": [
+        {
+          "type": "blend",
+          "start": 9024,
+          "end": 9027,
+          "speed": 1,
+          "line": 4552
+        },
+        {
+          "type": "action",
+          "start": 9028,
+          "end": 9034,
+          "speed": 1,
+          "line": 4558
+        },
+        {
+          "type": "blend",
+          "start": 9035,
+          "end": 9061,
+          "speed": 1.5,
+          "line": 4564
+        }
+      ],
+      "cancel": [
+        {
+          "start": 9028,
+          "end": 9045,
+          "time": 0.3,
+          "bones": [],
+          "line": 4588
+        }
+      ],
+      "links": [],
+      "evidence": {
+        "file": "pmodel/P0.POS",
+        "line": 4545,
+        "endLine": 4594
+      }
+    },
+    {
+      "id": 262,
+      "name": "劍輕1圈",
+      "source": 0,
+      "start": 9762,
+      "end": 9788,
+      "frameCount": 27,
+      "fps": 30,
+      "duration": 0.7666666666666666,
+      "attacks": [
+        {
+          "bone": [
+            "weapon",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand"
+          ],
+          "start": 9768,
+          "end": 9774,
+          "attacktype": 0,
+          "checkfriend": 0,
+          "defensevalue": 0.1,
+          "defensemove": 5,
+          "targetvalue": 0.1,
+          "targetmove": 5,
+          "targetpose": 93,
+          "targetposefront": 93,
+          "targetposeback": 92,
+          "targetposeleft": 94,
+          "targetposeright": 91,
+          "bones": [
+            "weapon",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand"
+          ],
+          "line": 5387
+        }
+      ],
+      "phases": [
+        {
+          "type": "blend",
+          "start": 9762,
+          "end": 9766,
+          "speed": 1,
+          "line": 5369
+        },
+        {
+          "type": "action",
+          "start": 9767,
+          "end": 9776,
+          "speed": 1,
+          "line": 5375
+        },
+        {
+          "type": "blend",
+          "start": 9777,
+          "end": 9788,
+          "speed": 1.5,
+          "line": 5381
+        }
+      ],
+      "cancel": [
+        {
+          "start": 9767,
+          "end": 9786,
+          "time": 0.2,
+          "bones": [],
+          "line": 5412
+        }
+      ],
+      "links": [],
+      "evidence": {
+        "file": "pmodel/P0.POS",
+        "line": 5362,
+        "endLine": 5418
+      }
+    },
+    {
+      "id": 263,
+      "name": "劍輕2擊",
+      "source": 0,
+      "start": 9796,
+      "end": 9829,
+      "frameCount": 34,
+      "fps": 30,
+      "duration": 1.0466666666666666,
+      "attacks": [
+        {
+          "bone": [
+            "weapon",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand",
+            "bau Head",
+            "bau Spine1"
+          ],
+          "start": 9812,
+          "end": 9814,
+          "attacktype": 0,
+          "checkfriend": 0,
+          "defensevalue": 0.1,
+          "defensemove": 5,
+          "targetvalue": 0.1,
+          "targetmove": 5,
+          "targetpose": 91,
+          "targetposefront": 92,
+          "targetposeback": 93,
+          "targetposeleft": 91,
+          "targetposeright": 94,
+          "bones": [
+            "weapon",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand",
+            "bau Head",
+            "bau Spine1"
+          ],
+          "line": 5444
+        }
+      ],
+      "phases": [
+        {
+          "type": "blend",
+          "start": 9796,
+          "end": 9805,
+          "speed": 1,
+          "line": 5426
+        },
+        {
+          "type": "action",
+          "start": 9806,
+          "end": 9816,
+          "speed": 1,
+          "line": 5432
+        },
+        {
+          "type": "blend",
+          "start": 9817,
+          "end": 9829,
+          "speed": 1.25,
+          "line": 5438
+        }
+      ],
+      "cancel": [
+        {
+          "start": 9806,
+          "end": 9820,
+          "time": 0.25,
+          "bones": [],
+          "line": 5470
+        }
+      ],
+      "links": [],
+      "evidence": {
+        "file": "pmodel/P0.POS",
+        "line": 5419,
+        "endLine": 5476
+      }
+    },
+    {
+      "id": 264,
+      "name": "劍輕3左揮",
+      "source": 0,
+      "start": 9835,
+      "end": 9864,
+      "frameCount": 30,
+      "fps": 30,
+      "duration": 1.1526315789473682,
+      "attacks": [
+        {
+          "bone": [
+            "weapon",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand"
+          ],
+          "start": 9844,
+          "end": 9846,
+          "attacktype": 0,
+          "checkfriend": 0,
+          "defensevalue": 0.1,
+          "defensemove": 6,
+          "targetvalue": 0,
+          "targetmove": 4,
+          "targetpose": 98,
+          "targetposefront": 98,
+          "targetposeback": 97,
+          "targetposeleft": 99,
+          "targetposeright": 96,
+          "bones": [
+            "weapon",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand"
+          ],
+          "line": 5508
+        }
+      ],
+      "phases": [
+        {
+          "type": "blend",
+          "start": 9835,
+          "end": 9836,
+          "speed": 0.5,
+          "line": 5484
+        },
+        {
+          "type": "action",
+          "start": 9837,
+          "end": 9847,
+          "speed": 0.95,
+          "line": 5490
+        },
+        {
+          "type": "action",
+          "start": 9848,
+          "end": 9849,
+          "speed": 0.5,
+          "line": 5496
+        },
+        {
+          "type": "blend",
+          "start": 9850,
+          "end": 9864,
+          "speed": 1,
+          "line": 5502
+        }
+      ],
+      "cancel": [
+        {
+          "start": 9837,
+          "end": 9853,
+          "time": 0.25,
+          "bones": [],
+          "line": 5538
+        }
+      ],
+      "links": [],
+      "evidence": {
+        "file": "pmodel/P0.POS",
+        "line": 5477,
+        "endLine": 5544
+      }
+    },
+    {
+      "id": 295,
+      "name": "刀輕右揮",
+      "source": 0,
+      "start": 5747,
+      "end": 5790,
+      "frameCount": 44,
+      "fps": 30,
+      "duration": 1.0055555555555555,
+      "attacks": [
+        {
+          "bone": [
+            "weapon",
+            "bau R Forearm",
+            "bau R Hand"
+          ],
+          "start": 5760,
+          "end": 5763,
+          "attacktype": 0,
+          "checkfriend": 0,
+          "defensevalue": 0.4,
+          "defensemove": 5,
+          "targetvalue": 0.4,
+          "targetmove": 4,
+          "targetpose": 90,
+          "targetposefront": 90,
+          "targetposeback": 94,
+          "targetposeleft": 93,
+          "targetposeright": 92,
+          "bones": [
+            "weapon",
+            "bau R Forearm",
+            "bau R Hand"
+          ],
+          "line": 7572
+        }
+      ],
+      "phases": [
+        {
+          "type": "blend",
+          "start": 5747,
+          "end": 5749,
+          "speed": 2,
+          "line": 7548
+        },
+        {
+          "type": "action",
+          "start": 5750,
+          "end": 5756,
+          "speed": 1.5,
+          "line": 7554
+        },
+        {
+          "type": "action",
+          "start": 5757,
+          "end": 5766,
+          "speed": 1.25,
+          "line": 7560
+        },
+        {
+          "type": "blend",
+          "start": 5767,
+          "end": 5790,
+          "speed": 1.5,
+          "line": 7566
+        }
+      ],
+      "cancel": [
+        {
+          "start": 5757,
+          "end": 5777,
+          "time": 0.2,
+          "bones": [],
+          "line": 7597
+        }
+      ],
+      "links": [],
+      "evidence": {
+        "file": "pmodel/P0.POS",
+        "line": 7541,
+        "endLine": 7603
+      }
+    },
+    {
+      "id": 296,
+      "name": "刀輕左揮 招連302",
+      "source": 0,
+      "start": 5814,
+      "end": 5850,
+      "frameCount": 37,
+      "fps": 30,
+      "duration": 0.9,
+      "attacks": [
+        {
+          "bone": [
+            "weapon",
+            "bau L Forearm",
+            "bau L Hand"
+          ],
+          "start": 5824,
+          "end": 5826,
+          "attacktype": 0,
+          "checkfriend": 0,
+          "defensevalue": 0.4,
+          "defensemove": 6,
+          "targetvalue": 0.4,
+          "targetmove": 5,
+          "targetpose": 91,
+          "targetposefront": 91,
+          "targetposeback": 94,
+          "targetposeleft": 93,
+          "targetposeright": 92,
+          "bones": [
+            "weapon",
+            "bau L Forearm",
+            "bau L Hand"
+          ],
+          "line": 7629
+        }
+      ],
+      "phases": [
+        {
+          "type": "blend",
+          "start": 5814,
+          "end": 5818,
+          "speed": 1.5,
+          "line": 7611
+        },
+        {
+          "type": "action",
+          "start": 5819,
+          "end": 5832,
+          "speed": 1.2,
+          "line": 7617
+        },
+        {
+          "type": "blend",
+          "start": 5833,
+          "end": 5850,
+          "speed": 1.5,
+          "line": 7623
+        }
+      ],
+      "cancel": [
+        {
+          "start": 5818,
+          "end": 5842,
+          "time": 0.25,
+          "bones": [],
+          "line": 7654
+        }
+      ],
+      "links": [],
+      "evidence": {
+        "file": "pmodel/P0.POS",
+        "line": 7604,
+        "endLine": 7660
+      }
+    },
+    {
+      "id": 297,
+      "name": "刀輕前劈",
+      "source": 0,
+      "start": 5858,
+      "end": 5940,
+      "frameCount": 83,
+      "fps": 30,
+      "duration": 2.001269841269841,
+      "attacks": [
+        {
+          "bone": [
+            "weapon",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand",
+            "bau L UpperArm",
+            "bau L Forearm",
+            "bau L Hand"
+          ],
+          "start": 5894,
+          "end": 5896,
+          "attacktype": 0,
+          "checkfriend": 0,
+          "defensevalue": 0.6,
+          "defensemove": 8,
+          "targetvalue": 0,
+          "targetmove": 4,
+          "targetpose": 96,
+          "targetposefront": 96,
+          "targetposeback": 99,
+          "targetposeleft": 98,
+          "targetposeright": 97,
+          "bones": [
+            "weapon",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand",
+            "bau L UpperArm",
+            "bau L Forearm",
+            "bau L Hand"
+          ],
+          "line": 7692
+        }
+      ],
+      "phases": [
+        {
+          "type": "blend",
+          "start": 5858,
+          "end": 5876,
+          "speed": 1.5,
+          "line": 7668
+        },
+        {
+          "type": "blend",
+          "start": 5877,
+          "end": 5882,
+          "speed": 1.25,
+          "line": 7674
+        },
+        {
+          "type": "action",
+          "start": 5883,
+          "end": 5904,
+          "speed": 1,
+          "line": 7680
+        },
+        {
+          "type": "blend",
+          "start": 5905,
+          "end": 5940,
+          "speed": 1.75,
+          "line": 7686
+        }
+      ],
+      "cancel": [
+        {
+          "start": 5876,
+          "end": 5910,
+          "time": 0.3,
+          "bones": [],
+          "line": 7718
+        }
+      ],
+      "links": [],
+      "evidence": {
+        "file": "pmodel/P0.POS",
+        "line": 7661,
+        "endLine": 7724
+      }
+    }
+  ],
+  "sounds": [
+    {
+      "id": "w00bl093",
+      "path": "dist/assets/original/sounds/definitions/w00bl093.ef",
+      "bytes": 415,
+      "sha256": "4ae49d22c0434cbaf0a83a8516197c647b42ec9056c6e1ab32a3597ef1a214e9",
+      "waveNames": [
+        "W00HIT01.wav"
+      ]
+    },
+    {
+      "id": "w00bl098",
+      "path": "dist/assets/original/sounds/definitions/w00bl098.ef",
+      "bytes": 415,
+      "sha256": "d90acb8d5cf696611abdc74d95fb446f1cc087440e2046060b1db5ac7e0fa763",
+      "waveNames": [
+        "W00HIT02.wav"
+      ]
+    },
+    {
+      "id": "w00gd093",
+      "path": "dist/assets/original/sounds/definitions/w00gd093.ef",
+      "bytes": 415,
+      "sha256": "d0d31a9981f5f3dfb705ac41398c7f0282130ca4caf6c88730d862bc141eb03b",
+      "waveNames": [
+        "W00GRD01.wav"
+      ]
+    },
+    {
+      "id": "w05bl096",
+      "path": "dist/assets/original/sounds/definitions/w05bl096.ef",
+      "bytes": 415,
+      "sha256": "79816912b1089bb4fdc4d44cc9a2a4f1b123a8d09dcd166b0951daca7c574fdf",
+      "waveNames": [
+        "W05HIT02.wav"
+      ]
+    }
+  ],
+  "implementationBoundaries": [
+    "Exact mapping from Web world-facing geometry to the original orientation-matrix signed-angle helper is not established here. Base TargetPose is safe; directional selection would be a Web geometry adapter unless further verified.",
+    "No fixed native grounded-down wait duration has been recovered. 004cdf90 uses actor state/input and field[de]; any Web .65s down hold is a declared host adapter.",
+    "Native reaction movement TargetMove/TargetValue complete semantics are pending; do not reinterpret them as HP damage, a no-reaction immunity threshold, or a direct distance constant.",
+    "NextPose.Time exists in original POS and is parsed, but its original runtime blending/timing semantics are not proven by this audit. A Web safeguard preserving a queued basic attack active window is not a recovered native Time implementation.",
+    "Native state 7/9 reaction rejection is verified numerically but the full semantic identities of these states are not recovered here.",
+    "Local contact pause, camera kick, contact visuals, and forced automatic recovery policy are Web feedback adapters.",
+    "TargetPose95–99 have authored links112/113. Not every light attack should knock down; lethal117 remains a separate state."
+  ],
+  "artifacts": [
+    {
+      "path": "dist/assets/native/combat/P0.POS",
+      "bytes": 296888,
+      "sha256": "1e71f945afc6b701f86eb50e500feccca22f20b52f7f3bec073b0247d390a5fb"
+    },
+    {
+      "path": "dist/assets/native/combat/character.act",
+      "bytes": 10389,
+      "sha256": "e52865424fe065e808a73e9f81bb8df5a78e161a43e59e051bd41f0fb4e42eda"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-break-native-2026-10-29/004f3380_FUN_004f3380.asm",
+      "bytes": 15167,
+      "sha256": "3fe7707e8a256a5c6e5b36fc7fac49af80281ab0d5f07b692dabb44f871ea6a1"
+    },
+    {
+      "path": "work/meteor-original/evidence/hit-reaction-owners-2026-10-30/004f1ae0_FUN_004f1ae0.c",
+      "bytes": 1298,
+      "sha256": "69ee8be60072ab2633f7aa3ad78894fb213c84826b243ee56b5e5abf6cda7372"
+    },
+    {
+      "path": "work/meteor-original/evidence/hit-reaction-owners-2026-10-30/004f1ae0_FUN_004f1ae0.asm",
+      "bytes": 1863,
+      "sha256": "aa1dd3f59d2d7d25114e7e09db69f32ed04042ae1d5ed8f3cbc9b9086c4e81c9"
+    },
+    {
+      "path": "work/meteor-original/evidence/hit-reaction-actor-state-2026-10-30/004cabd0_FUN_004cabd0.c",
+      "bytes": 1822,
+      "sha256": "ed2060443cd148765a053843feb58668f2a890886d2811c4a164dd8ae52f1d6e"
+    },
+    {
+      "path": "work/meteor-original/evidence/hit-reaction-actor-state-2026-10-30/004cabd0_FUN_004cabd0.asm",
+      "bytes": 3321,
+      "sha256": "d9af12075c3a0dec7ec8cb99356b60f9ace5ee7cb7f0cc84ee5dc05b0571eb68"
+    },
+    {
+      "path": "work/meteor-original/evidence/hit-reaction-final-state-2026-10-30/004cc130_FUN_004cc130.c",
+      "bytes": 5969,
+      "sha256": "939673a70dde2dd0eef5426fe822dec8d21f20714f65ad1b13493f35f7820a68"
+    },
+    {
+      "path": "work/meteor-original/evidence/hit-reaction-final-state-2026-10-30/004cc130_FUN_004cc130.asm",
+      "bytes": 10798,
+      "sha256": "c764383f119697906e585c3caed5964a60144257657da2669edbe3026fb06c83"
+    },
+    {
+      "path": "work/meteor-original/evidence/hit-reaction-handlers-2026-10-30/004ed9d0_FUN_004ed9d0.c",
+      "bytes": 10272,
+      "sha256": "ade3f8ff99829277f5f5c1960195b9bb4f732218056b17d5c8fcb1ea26cbf65b"
+    },
+    {
+      "path": "work/meteor-original/evidence/hit-reaction-handlers-2026-10-30/004ed9d0_FUN_004ed9d0.asm",
+      "bytes": 16111,
+      "sha256": "43cf70ac8f6780b5ee1b214b5a1a1a065bb8fe38f03f9d1dd1ed365770f9f19f"
+    },
+    {
+      "path": "work/meteor-original/evidence/hit-reaction-state-2026-10-30/004f3f50_FUN_004f3f50.c",
+      "bytes": 933,
+      "sha256": "6c41b08cbee8822e76d7c96a89d9557dc75accea07f127c66a8881df7cc47aea"
+    },
+    {
+      "path": "work/meteor-original/evidence/hit-reaction-state-2026-10-30/004f3f50_FUN_004f3f50.asm",
+      "bytes": 1788,
+      "sha256": "43008a9f1321674e108fbc708b5d9b24243a44f2fc334a7e5d52d43507acc51a"
+    },
+    {
+      "path": "work/meteor-original/evidence/hit-reaction-state-2026-10-30/004f4010_FUN_004f4010.c",
+      "bytes": 1083,
+      "sha256": "c9665750f326f4cc2777b05f0607f0e62f4e2555991cc24593f76a1a2aa739e4"
+    },
+    {
+      "path": "work/meteor-original/evidence/hit-reaction-state-2026-10-30/004f4010_FUN_004f4010.asm",
+      "bytes": 1926,
+      "sha256": "091bb02b2c13720deed4058faa119bc4f44d77845b0cbd3e88df64732d4603f2"
+    },
+    {
+      "path": "work/meteor-original/evidence/hit-reaction-final-state-2026-10-30/004d03f0_FUN_004d03f0.c",
+      "bytes": 769,
+      "sha256": "6eac0f9b63229d54c3e6f2f06e315411c44f630f6bae1751dea918a06aa08153"
+    },
+    {
+      "path": "work/meteor-original/evidence/hit-reaction-final-state-2026-10-30/004d03f0_FUN_004d03f0.asm",
+      "bytes": 1425,
+      "sha256": "cb57aa89217b2cba7b4dca38379179299c353e29d3184897fd95b5d41ebfc051"
+    },
+    {
+      "path": "work/meteor-original/evidence/hit-reaction-selection-2026-10-30/004cdd60_FUN_004cdd60.c",
+      "bytes": 656,
+      "sha256": "b59aacf5f9012ebca9198cc5e17fc3e81d4c7c8c7fd8624297b6fdf68f9d289c"
+    },
+    {
+      "path": "work/meteor-original/evidence/hit-reaction-selection-2026-10-30/004cdd60_FUN_004cdd60.asm",
+      "bytes": 1418,
+      "sha256": "c619db649c6a935f47c8e9235e47136cd769164af5aca8269278cf9f7aa934c7"
+    },
+    {
+      "path": "work/meteor-original/evidence/hit-reaction-recovery-2026-10-30/004cdf90_FUN_004cdf90.c",
+      "bytes": 804,
+      "sha256": "40ac1e5b6bc3f5a16ce6db1354ee12ff4cc4dc2795d97b23b14e70abb3c3bb2d"
+    },
+    {
+      "path": "work/meteor-original/evidence/hit-reaction-recovery-2026-10-30/004cdf90_FUN_004cdf90.asm",
+      "bytes": 1131,
+      "sha256": "2da8a7f0804a6d723dbeaa49f8476d6fc5591bd6b468111fa77299d102ac4dfc"
+    },
+    {
+      "path": "work/meteor-original/evidence/hit-reaction-getup-2026-10-30/004d01f0_FUN_004d01f0.c",
+      "bytes": 517,
+      "sha256": "beeb152af09f83f41f225a9a12ceac0e45ed2ab1a1453a1bd6f490d513372fa1"
+    },
+    {
+      "path": "work/meteor-original/evidence/hit-reaction-getup-2026-10-30/004d01f0_FUN_004d01f0.asm",
+      "bytes": 881,
+      "sha256": "242548484f704057acb1c4e203fe1d52bb9605881f86f01e632d75f2c75780cf"
+    }
+  ]
+}

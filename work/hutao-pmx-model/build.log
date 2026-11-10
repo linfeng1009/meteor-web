@@ -1,0 +1,14 @@
+ ArchWarn: ARCH_CACHE_LINE_SIZE != Arch_ObtainCacheLineSize()
+ Function: Arch_ValidateAssumptions
+     File: /Users/jonas/blender-dev-deps/build_darwin/deps_arm64/build/usd/src/external_usd/pxr/base/arch/assumptions.cpp
+     Line: 140
+/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/scripts/blender/build_hutao_pmx.py:111: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  mat=bpy.data.materials.new(m['name']);mat.use_nodes=True;bs=mat.node_tree.nodes.get('Principled BSDF');bs.inputs['Base Color'].default_value=(*m['diffuse'][:3],1);bs.inputs['Roughness'].default_value=.88;bs.inputs['Specular IOR Level'].default_value=.18
+00:07.265  render           | Saved: '/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/work/hutao-pmx-model/retargeted-stance.png'
+00:14.015  render           | Saved: '/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/work/hutao-pmx-model/retargeted-face.png'
+00:14.040  image.write      | ERROR OpenImageIO write failed: Could not open file "/Users/dulinfeng/.thumbnails/large/blender_76714_39f27cc23604493276579258041e53fa.png.png"
+Info: Saved as "胡桃喵-完整模型-流星动作适配.blend"
+READY {'sourceVertices': 20521, 'sourceTriangles': 27026, 'vertices': 20521, 'triangles': 23686, 'sourceBones': 248, 'bones': 30, 'dummies': 6, 'textures': 5, 'textureResolution': [2048, 2048], 'omittedTriangles': 3340} REST 8.38935375213623e-06 POSE 3.814697265625e-06
+Blender 5.4.0 Alpha (hash 93eeecf73c12 built 2026-10-23 01:52:25)
+
+Blender quit

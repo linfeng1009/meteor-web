@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: walking normally into the source enemies causes player death and one failure, and restart resets accumulated state (jitter seed 3)
+not ok 1 - walking normally into the source enemies causes player death and one failure, and restart resets accumulated state (jitter seed 3)
+  ---
+  duration_ms: 14769.923625
+  type: 'test'
+  location: '/private/tmp/meteor-rage-baseline-20261109-trt9t_lv/tests/mission-acceptance.test.mjs:195:34'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    90 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 90
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///private/tmp/meteor-rage-baseline-20261109-trt9t_lv/tests/mission-acceptance.test.mjs:233:40)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Jitter seed 3: source enemies caused natural failure after 52.83 seconds; no HP/dead assignment.
+# Subtest: sn09 normal movement/jump/guard from the source spawn survives all100 falling floors with living ColdYan and reaches original GameOver
+ok 2 - sn09 normal movement/jump/guard from the source spawn survives all100 falling floors with living ColdYan and reaches original GameOver
+  ---
+  duration_ms: 2220.043125
+  type: 'test'
+  ...
+# Live original-scene survival 199.03s; playerHP2670, ColdYanHP2670; no HP/dead/result assignment.
+1..2
+# tests 2
+# suites 0
+# pass 1
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 15003.641917

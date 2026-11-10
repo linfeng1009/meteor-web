@@ -1,0 +1,175 @@
+{
+  "blender": "5.4.0 Alpha",
+  "restMatrixError": 8.38935375213623e-06,
+  "poseMatrixError": 3.814697265625e-06,
+  "bakedActions": [
+    {
+      "name": "6 · 原版持剑待机",
+      "frames": 49
+    },
+    {
+      "name": "144 · 原版跑步",
+      "frames": 36
+    },
+    {
+      "name": "151 · 原版跳跃局部姿势",
+      "frames": 15
+    },
+    {
+      "name": "262 · 原版持剑攻击",
+      "frames": 27
+    }
+  ],
+  "manifest": {
+    "schema": 1,
+    "characterId": 0,
+    "appearance": "emilia",
+    "label": "爱蜜莉雅 · 完整模型适配",
+    "mesh": "mesh.json",
+    "complete": true,
+    "completeness": {
+      "bodyGeometry": true,
+      "headHairGeometry": true,
+      "eyes": true,
+      "faceGeometry": true,
+      "originalSourceGameSkeleton": false,
+      "sourcePmxSkeleton": true
+    },
+    "stats": {
+      "sourceVertices": 16493,
+      "sourceTriangles": 23854,
+      "vertices": 16493,
+      "triangles": 14236,
+      "sourceBones": 174,
+      "bones": 30,
+      "dummies": 6,
+      "textures": 4,
+      "sourceTextures": 5,
+      "textureResolutions": [
+        [
+          2048,
+          2048
+        ],
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ],
+        [
+          512,
+          512
+        ]
+      ],
+      "sourceTextureResolutions": [
+        [
+          512,
+          512
+        ],
+        [
+          2048,
+          2048
+        ],
+        [
+          1024,
+          1024
+        ],
+        [
+          1024,
+          1024
+        ],
+        [
+          2048,
+          2048
+        ]
+      ],
+      "usedVertices": 9999,
+      "unusedVertices": 6494,
+      "omittedTriangles": 9618
+    },
+    "retarget": {
+      "method": "Japanese PMX bone semantics and source joint positions map limbs to p0 BNC; continuous native-height torso weights avoid short PMX joint spacing shear. Original AMB drives 30 bones.",
+      "provisional": true,
+      "sourceSkeletonMissing": false,
+      "hairPhysics": false,
+      "hairBinding": "rigid native head approximation, no hair physics",
+      "clothPhysics": false,
+      "fingerArticulation": "PMX fingers follow native hands; no full MMD finger/morph/IK simulation"
+    },
+    "provenance": {
+      "source": "User-provided complete Emilia_v1.pmx; source files read-only; no third-party plugin executed.",
+      "sourceGames": "Re:Zero Infinity & Witch's Resurrection",
+      "modelProvidedBy": "Skymoons / Elemental Craft / Kadokawa corp",
+      "modelAdaptedBy": "chenxs / 陈心舒 (PMX embedded credit)",
+      "face": "Complete authored PMX face, mouth, teeth, lashes, eyebrows and eyes retained; no face parts extracted into another model.",
+      "textures": "Authored FACE/HAIR/ACCS colors retained, original transparent SDW shading overlay baked over CLOTH to replace duplicate coincident pass. Four runtime textures from five source PNGs. Hair alpha 229..255 treated opaque, not discarded as cutout.",
+      "license": "PMX supplies credits but no explicit usage license. Local user-requested conversion only, no upload or redistribution.",
+      "limits": [
+        "First-pass native p0 animation retarget",
+        "No MMD/source-game hair, cloth or rigid-body physics",
+        "No MMD facial morph or finger simulation",
+        "MMD sphere/toon shading differs from Web PBR"
+      ]
+    },
+    "omittedRenderPasses": [
+      {
+        "material": "SHADING",
+        "triangles": 9618,
+        "reason": "Coincident Cloth+Skin alpha-color overlay, baked from original SDW over CLOTH; exact matched triangles under 1.907e-6 position/UV tolerance."
+      }
+    ],
+    "sourceFiles": [
+      {
+        "file": "Emilia_v1.pmx",
+        "bytes": 1111769,
+        "sha256": "5014a52ea719546aa1042dfbf0f8bbeedbfcc8eb6795ba048e74552d9ace8558"
+      },
+      {
+        "file": "tex/ACCS.png",
+        "sha256": "cc0fe917e269e94057b57f63c8ca2864b3c0b6c4075b8a23cdb7ea99244878d1",
+        "size": [
+          512,
+          512
+        ]
+      },
+      {
+        "file": "tex/CLOTH.png",
+        "sha256": "a5858b66fd5658e0c7df91cd8849be4c912f8279a5689daf1f20b6351d20c257",
+        "size": [
+          2048,
+          2048
+        ]
+      },
+      {
+        "file": "tex/FACE.png",
+        "sha256": "7e67bbb000da3b9fe679cd8b119ccaaad7d848646f1a93bc29aa2e1779cc6367",
+        "size": [
+          1024,
+          1024
+        ]
+      },
+      {
+        "file": "tex/HAIR.png",
+        "sha256": "6c335f00707e139c950359ea08cb98a21a9b583e103370e9c7e25eae4020fea0",
+        "size": [
+          1024,
+          1024
+        ]
+      },
+      {
+        "file": "tex/SDW.png",
+        "sha256": "367a83ce405551c422ebd3e40983f73fc1bee4d39cc489574f2ff82d23ffab49",
+        "size": [
+          2048,
+          2048
+        ]
+      }
+    ]
+  },
+  "hashes": {
+    "manifest.json": "be51093fe13f591761aabef50f3a716c203d1039345ba476277479278282f607",
+    "mesh.json": "bc6140b989763ffe469dea8de322570123808e4cc9033807061e7bdae8759a03"
+  }
+}

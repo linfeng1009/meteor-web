@@ -1,0 +1,75 @@
+HINT: Relocs not applied, some references may not resolve: use -e bin.relocs.apply=true
+┌ 270: fcn.004781d0 (int32_t arg_8ch, int32_t arg_90h, int32_t arg_94h, int8_t arg_10h);
+│ `- args(sp[0x4..0x10]) vars(5:sp[0x40..0x80])
+│           0x004781d0      8a442410       mov al, byte [arg_10h]
+│           0x004781d4      81ec80000000   sub esp, 0x80
+│           0x004781da      84c0           test al, al
+│           0x004781dc      57             push edi
+│           0x004781dd      8bf9           mov edi, ecx
+│       ┌─< 0x004781df      7454           je 0x478235
+│       │   0x004781e1      56             push esi
+│       │   0x004781e2      8d4c2408       lea ecx, [var_8h]
+│       │   0x004781e6      e815f0ffff     call fcn.00477200
+│       │   0x004781eb      8b84248c00..   mov eax, dword [arg_8ch]
+│       │   0x004781f2      8b8c249000..   mov ecx, dword [arg_90h]
+│       │   0x004781f9      8b94249400..   mov edx, dword [arg_94h]
+│       │   0x00478200      89442438       mov dword [var_38h], eax
+│       │   0x00478204      8d442408       lea eax, [var_8h]
+│       │   0x00478208      894c243c       mov dword [var_3ch], ecx
+│       │   0x0047820c      50             push eax
+│       │   0x0047820d      8d4c244c       lea ecx, [var_4ch]
+│       │   0x00478211      57             push edi
+│       │   0x00478212      51             push ecx
+│       │   0x00478213      8954244c       mov dword [var_4ch_2], edx
+│       │   0x00478217      e8e4ecffff     call fcn.00476f00
+│       │   0x0047821c      b910000000     mov ecx, 0x10               ; 16
+│       │   0x00478221      8d742454       lea esi, [var_4ch]
+│       │   0x00478225      83c40c         add esp, 0xc
+│       │   0x00478228      f3a5           rep movsd dword es:[edi], dword [esi]
+│       │   0x0047822a      5e             pop esi
+│       │   0x0047822b      5f             pop edi
+│       │   0x0047822c      81c480000000   add esp, 0x80
+│       │   0x00478232      c21000         ret 0x10
+│       └─> 0x00478235      d984248c00..   fld dword [esp + 0x8c]
+│           0x0047823c      d84f10         fmul dword [edi + 0x10]
+│           0x0047823f      d984249000..   fld dword [esp + 0x90]
+│           0x00478246      d84f20         fmul dword [edi + 0x20]
+│           0x00478249      dec1           faddp st(1)
+│           0x0047824b      d984248800..   fld dword [esp + 0x88]
+│           0x00478252      d80f           fmul dword [edi]
+│           0x00478254      dec1           faddp st(1)
+│           0x00478256      d84730         fadd dword [edi + 0x30]
+│           0x00478259      d95f30         fstp dword [edi + 0x30]
+│           0x0047825c      d984248800..   fld dword [esp + 0x88]
+│           0x00478263      d84f04         fmul dword [edi + 4]
+│           0x00478266      d984248c00..   fld dword [esp + 0x8c]
+│           0x0047826d      d84f14         fmul dword [edi + 0x14]
+│           0x00478270      dec1           faddp st(1)
+│           0x00478272      d984249000..   fld dword [esp + 0x90]
+│           0x00478279      d84f24         fmul dword [edi + 0x24]
+│           0x0047827c      dec1           faddp st(1)
+│           0x0047827e      d84734         fadd dword [edi + 0x34]
+│           0x00478281      d95f34         fstp dword [edi + 0x34]
+│           0x00478284      d984248800..   fld dword [esp + 0x88]
+│           0x0047828b      d84f08         fmul dword [edi + 8]
+│           0x0047828e      d984248c00..   fld dword [esp + 0x8c]
+│           0x00478295      d84f18         fmul dword [edi + 0x18]
+│           0x00478298      dec1           faddp st(1)
+│           0x0047829a      d984249000..   fld dword [esp + 0x90]
+│           0x004782a1      d84f28         fmul dword [edi + 0x28]
+│           0x004782a4      dec1           faddp st(1)
+│           0x004782a6      d84738         fadd dword [edi + 0x38]
+│           0x004782a9      d95f38         fstp dword [edi + 0x38]
+│           0x004782ac      d984248800..   fld dword [esp + 0x88]
+│           0x004782b3      d84f0c         fmul dword [edi + 0xc]
+│           0x004782b6      d984248c00..   fld dword [esp + 0x8c]
+│           0x004782bd      d84f1c         fmul dword [edi + 0x1c]
+│           0x004782c0      dec1           faddp st(1)
+│           0x004782c2      d984249000..   fld dword [esp + 0x90]
+│           0x004782c9      d84f2c         fmul dword [edi + 0x2c]
+│           0x004782cc      dec1           faddp st(1)
+│           0x004782ce      d8473c         fadd dword [edi + 0x3c]
+│           0x004782d1      d95f3c         fstp dword [edi + 0x3c]
+│           0x004782d4      5f             pop edi
+│           0x004782d5      81c480000000   add esp, 0x80
+└           0x004782db      c21000         ret 0x10

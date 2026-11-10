@@ -1,0 +1,192 @@
+TAP version 13
+# Subtest: original ACT resolves a requested command group through the current allowed list to its actual destination
+ok 1 - original ACT resolves a requested command group through the current allowed list to its actual destination
+  ---
+  duration_ms: 0.480917
+  type: 'test'
+  ...
+# Subtest: group resolution preserves original destination order, not exact requested membership or numeric order
+ok 2 - group resolution preserves original destination order, not exact requested membership or numeric order
+  ---
+  duration_ms: 0.066333
+  type: 'test'
+  ...
+# Subtest: a group does not grant a connection when the current ACT list has no member of that group
+ok 3 - a group does not grant a connection when the current ACT list has no member of that group
+  ---
+  duration_ms: 0.071
+  type: 'test'
+  ...
+# Subtest: queued sword, spear and blade rage group members preserve predecessor strikes and pay their command once
+ok 4 - queued sword, spear and blade rage group members preserve predecessor strikes and pay their command once
+  ---
+  duration_ms: 5.874041
+  type: 'test'
+  ...
+# Subtest: a grouped queued cost remains subject to start-time resource and hit interruption checks
+ok 5 - a grouped queued cost remains subject to start-time resource and hit interruption checks
+  ---
+  duration_ms: 0.425584
+  type: 'test'
+  ...
+# Subtest: an idle group command starts at its original root rather than a combo-only member
+ok 6 - an idle group command starts at its original root rather than a combo-only member
+  ---
+  duration_ms: 0.088292
+  type: 'test'
+  ...
+# Subtest: original direct A chains and held air recovery links survive group resolution without new ground links
+ok 7 - original direct A chains and held air recovery links survive group resolution without new ground links
+  ---
+  duration_ms: 0.3695
+  type: 'test'
+  ...
+# Subtest: spear aura and wave use byte-identical original EF attack nodes and source POS effect windows
+ok 8 - spear aura and wave use byte-identical original EF attack nodes and source POS effect windows
+  ---
+  duration_ms: 4.702625
+  type: 'test'
+  ...
+# Subtest: native EF seconds remain independent of accelerated POS frames and reset at automatic links
+ok 9 - native EF seconds remain independent of accelerated POS frames and reset at automatic links
+  ---
+  duration_ms: 2.370875
+  type: 'test'
+  ...
+# Subtest: dagger YanLuo uses its original effect-only box window, source109 reaction and349 finish through public input
+ok 10 - dagger YanLuo uses its original effect-only box window, source109 reaction and349 finish through public input
+  ---
+  duration_ms: 198.855458
+  type: 'test'
+  ...
+# Source effect-only dagger hit: damage=794, attack259 then finish349; CPU actors with retaliation paused.
+# Subtest: actual aura hits surrounding actors without textures, pays once and applies original recoil, knockdown and recovery
+ok 11 - actual aura hits surrounding actors without textures, pays once and applies original recoil, knockdown and recovery
+  ---
+  duration_ms: 166.659125
+  type: 'test'
+  ...
+# Source aura outward displacement: 6.573, 6.573, 6.573m; isolated actors, not a live-AI playthrough.
+# Subtest: linked forward wave hits beyond spear reach without a mirrored attack behind the caster
+ok 12 - linked forward wave hits beyond spear reach without a mirrored attack behind the caster
+  ---
+  duration_ms: 140.459667
+  type: 'test'
+  ...
+# Subtest: aura cannot hit outside its authored attack bounds, before activation, after interruption or while paused
+ok 13 - aura cannot hit outside its authored attack bounds, before activation, after interruption or while paused
+  ---
+  duration_ms: 102.657833
+  type: 'test'
+  ...
+# Subtest: effect and weapon contact share a POS window identity rather than dealing damage every render or per shape
+ok 14 - effect and weapon contact share a POS window identity rather than dealing damage every render or per shape
+  ---
+  duration_ms: 125.364792
+  type: 'test'
+  ...
+# Subtest: public spear AAA can chain into the original group-selected rage finish and its remote effect without replaying the windup
+ok 15 - public spear AAA can chain into the original group-selected rage finish and its remote effect without replaying the windup
+  ---
+  duration_ms: 87.919083
+  type: 'test'
+  ...
+# Subtest: effect query rejects unresolved parents, zero scales, non-effect windows and disposed systems
+ok 16 - effect query rejects unresolved parents, zero scales, non-effect windows and disposed systems
+  ---
+  duration_ms: 64.981042
+  type: 'test'
+  ...
+# Subtest: native attack nodes remain absent before their first source key and disappear at weapon changes
+ok 17 - native attack nodes remain absent before their first source key and disappear at weapon changes
+  ---
+  duration_ms: 98.073792
+  type: 'test'
+  ...
+# Subtest: source wave contact survives coarse updates by sampling only the crossed original attack intervals
+ok 18 - source wave contact survives coarse updates by sampling only the crossed original attack intervals
+  ---
+  duration_ms: 56.392042
+  type: 'test'
+  ...
+# Subtest: oriented effect bounds do not become an oversized world-axis box when the caster turns
+ok 19 - oriented effect bounds do not become an oversized world-axis box when the caster turns
+  ---
+  duration_ms: 0.173875
+  type: 'test'
+  ...
+# Subtest: visual and attack graphs agree on the source base-anchored cylinder and the elapsed effect clock
+ok 20 - visual and attack graphs agree on the source base-anchored cylinder and the elapsed effect clock
+  ---
+  duration_ms: 47.596083
+  type: 'test'
+  ...
+# Subtest: every advertised manual command addresses preserved native animation and RES data
+ok 21 - every advertised manual command addresses preserved native animation and RES data
+  ---
+  duration_ms: 0.903875
+  type: 'test'
+  ...
+# Subtest: the requested blade spin, sword flurry, spear circles and airborne stabs use distinct original poses
+ok 22 - the requested blade spin, sword flurry, spear circles and airborne stabs use distinct original poses
+  ---
+  duration_ms: 0.589292
+  type: 'test'
+  ...
+# Subtest: separate source command tables resolve the ambiguous spear and blade pose-reference rows
+ok 23 - separate source command tables resolve the ambiguous spear and blade pose-reference rows
+  ---
+  duration_ms: 0.163541
+  type: 'test'
+  ...
+# Subtest: ordinary chains and conditional second stages preserve their distinct command prerequisites
+ok 24 - ordinary chains and conditional second stages preserve their distinct command prerequisites
+  ---
+  duration_ms: 0.217583
+  type: 'test'
+  ...
+# Subtest: catalog scope and unresolved projectile commands are explicit rather than silently substituted
+ok 25 - catalog scope and unresolved projectile commands are explicit rather than silently substituted
+  ---
+  duration_ms: 0.425541
+  type: 'test'
+  ...
+# Subtest: every usable command has a source bone, projectile or supported original effect bound, including its automatic phases
+ok 26 - every usable command has a source bone, projectile or supported original effect bound, including its automatic phases
+  ---
+  duration_ms: 1.628583
+  type: 'test'
+  ...
+# Subtest: the actual guide renders every catalog entry exactly once and rejects unequipped families
+ok 27 - the actual guide renders every catalog entry exactly once and rejects unequipped families
+  ---
+  duration_ms: 3.422625
+  type: 'test'
+  ...
+# Subtest: the reported spins, multi-thrust and four melee plunges show their complete distinct commands
+ok 28 - the reported spins, multi-thrust and four melee plunges show their complete distinct commands
+  ---
+  duration_ms: 1.549
+  type: 'test'
+  ...
+# Subtest: rage costs and unavailable projectile specials remain visible next to their commands
+ok 29 - rage costs and unavailable projectile specials remain visible next to their commands
+  ---
+  duration_ms: 4.306125
+  type: 'test'
+  ...
+# Subtest: follow-up requirements are explained by move names and arrow commands are screen-reader labeled
+ok 30 - follow-up requirements are explained by move names and arrow commands are screen-reader labeled
+  ---
+  duration_ms: 0.995875
+  type: 'test'
+  ...
+1..30
+# tests 30
+# suites 0
+# pass 30
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1227.999292

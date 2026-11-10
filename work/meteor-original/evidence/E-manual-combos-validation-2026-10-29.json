@@ -1,0 +1,204 @@
+{
+  "id": "E-manual-combos-validation-2026-10-29",
+  "date": "2026-10-29",
+  "version": "0.5.0",
+  "status": "validated-local-manual-command-increment",
+  "scope": "work/meteor-original/scope.md",
+  "originalExecuted": false,
+  "originalModified": false,
+  "fullSuite": {
+    "command": "npm test",
+    "total": 182,
+    "passed": 182,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "durationMs": 46175.088583,
+    "artifactPath": "evidence/native-runtime-combos-2026-10-29.tap",
+    "contentHash": "sha256:6a5fb6b2e2a609a68d3c64f07b2b64ab69213eb550187016f128ef26649d4601",
+    "rawTapArchived": true,
+    "runner": "lead"
+  },
+  "syntax": {
+    "command": "npm run check",
+    "runtimeModules": 18,
+    "passed": 18,
+    "failed": 0,
+    "runner": "lead"
+  },
+  "runtime": {
+    "testRunner": "node:test",
+    "nodeVersion": "v22.23.1"
+  },
+  "catalog": {
+    "weapons": 5,
+    "entries": 83,
+    "readyEntries": 79,
+    "pendingEntries": 4,
+    "newReadyManualEntries": 36,
+    "perWeapon": {
+      "dart": {
+        "catalog": 8,
+        "ready": 5,
+        "pending": 3,
+        "addedReady": 3
+      },
+      "dagger": {
+        "catalog": 17,
+        "ready": 16,
+        "pending": 1,
+        "addedReady": 9
+      },
+      "sword": {
+        "catalog": 21,
+        "ready": 21,
+        "pending": 0,
+        "addedReady": 8
+      },
+      "spear": {
+        "catalog": 18,
+        "ready": 18,
+        "pending": 0,
+        "addedReady": 8
+      },
+      "blade": {
+        "catalog": 19,
+        "ready": 19,
+        "pending": 0,
+        "addedReady": 8
+      }
+    },
+    "countingUnit": "weapon plus manual command entry; 338 is shared between blade and spear; available entry does not imply complete remote EF or attached states"
+  },
+  "testGroups": [
+    {
+      "path": "tests/native-input.test.mjs",
+      "passed": 6
+    },
+    {
+      "path": "tests/native-combo-controller.test.mjs",
+      "passed": 12
+    },
+    {
+      "path": "tests/native-move-catalog.test.mjs",
+      "passed": 6
+    },
+    {
+      "path": "tests/native-move-guide.test.mjs",
+      "passed": 4
+    },
+    {
+      "path": "tests/native-command-engine.test.mjs",
+      "passed": 7
+    },
+    {
+      "path": "tests/native-command-projectiles.test.mjs",
+      "passed": 6
+    },
+    {
+      "path": "tests/native-guard-break.test.mjs",
+      "passed": 7
+    }
+  ],
+  "assertions": [
+    "Public direction/attack input enters every ready catalog pose with stance and predecessor checks; four pending effect-only commands reject without fallback or rage consumption.",
+    "Blade left-right-A executes source 374 to 375 and returns to stance; native bones/weapon contact removes actual target HP.",
+    "Sword down-up-up-A uses source pose277 and resolves five original windows at 60FPS and 10FPS with matching damage totals.",
+    "Spear left-right-A selects290 and left-right-up-A selects292; source body bones resolve and292 as well as338 airborne kick remove actual HP.",
+    "Public jump then down-A selects dagger252, sword265 to342, spear282 and blade298; actual native-model hits remove66/68/72/89 HP respectively in the fixed close-target fixture. Sword265 causes no premature damage; damage occurs in342. All chains land naturally.",
+    "Queued ACT transitions retain cancel windows; real-start resource gates, death/weapon queue clearing and source Link fragments remain correct.",
+    "Original POS space-separated body bone names resolve BNC underscore names in actor and scene contacts; nonexistent effect attachments remain unresolved.",
+    "Dart209/210 release only in original attack windows using original weapon geometry and sound references; each causes23 damage in attack75/defense15 fixture and is blocked by nearer world geometry.",
+    "Source attacktype low6 bits decide effective guard; type0 respects guarding, nonzero bypasses it, with native damage/rage and consistent GD/BL audio/events."
+  ],
+  "sourceEvidence": [
+    {
+      "path": "evidence/combo-catalog-audit-2026-10-29.json",
+      "contentHash": "sha256:c70c1b3c734ec6c5c59b993d62e71e85985b0b30faa2dd400a48ae12d1465fa3"
+    },
+    {
+      "path": "evidence/E-command-projectiles-2026-10-29.json",
+      "contentHash": "sha256:2318d84e06c097580a0c9b18e495c6f446a6dc0284d1cadbdf60658f77abc11c"
+    },
+    {
+      "path": "evidence/E-guard-break-2026-10-29.json",
+      "contentHash": "sha256:245fa5bfd69da15125dd4a605ec3c3b9905a25ec9b311ea7750c3e76c9ab1dd2"
+    }
+  ],
+  "browser": {
+    "runner": "lead",
+    "observed": [
+      "Real key inputs for blade left-right-A, sword down-up-up-A, spear left-right-A and left-right-up-A show the expected native moves and move-name feedback.",
+      "HuTao appearance continues to use the live native moves without a character rewrite.",
+      "375x812 guide viewport uses single-column rows, wrapped weapon filters and no observed horizontal overflow.",
+      "Tab plus Enter selects spear guide while retaining focus on the selected filter button.",
+      "Local v0.5 home page loads."
+    ],
+    "artifacts": [
+      {
+        "path": "artifacts/blade-spin-live-2026-10-29.png",
+        "contentHash": "sha256:50197839132f49938341a5370ac4b91d651881d98453480aaf1e5ba414e0a082"
+      },
+      {
+        "path": "artifacts/sword-flurry-live-2026-10-29.png",
+        "contentHash": "sha256:9c5abbd14f672aebca7f1a24cb7b7627e331aea29a8185c838af9a91893c5991"
+      },
+      {
+        "path": "artifacts/spear-circle-live-2026-10-29.png",
+        "contentHash": "sha256:a77b7461255590a3db8bdf2261189d9daca722b2a86e20365d10dfc881bde537"
+      },
+      {
+        "path": "artifacts/combo-guide-desktop-2026-10-29.png",
+        "contentHash": "sha256:bfeac1ea70a113238bd46e8e1822b139a0f0387515b7a5121be2f65051e0ec6d"
+      },
+      {
+        "path": "artifacts/combo-guide-spin-2026-10-29.png",
+        "contentHash": "sha256:66e0ca0d78a66ab4bfb00cffacb39667e075ff8228ebbe75f8ca2725a223a74c"
+      },
+      {
+        "path": "artifacts/combo-guide-mobile-2026-10-29.png",
+        "contentHash": "sha256:591bdbbdb2531ea5adf39a1955a7731aaa0056e8c63413098ecd8bf732f2ed24"
+      }
+    ],
+    "limits": [
+      "Browser key demonstrations had no nearby test opponent; they do not establish manually observed damage.",
+      "Damage claims are from CPU production-engine tests with native assets, isolated retaliation and a simple test floor, not complete original-map live-AI combat.",
+      "Narrow browser viewport and keyboard checks do not establish physical mobile touch combat.",
+      "No final browser console-log collection was performed.",
+      "Browser guide screenshots predate the last dart209/210 ongoing-effect copy clarification; that wording is checked by the separate post-full-suite guide test, not asserted as seen in those screenshots."
+    ]
+  },
+  "assetCoverage": {
+    "sourceRef": "evidence/E-asset-coverage-current.json",
+    "checkedEntries": 3858,
+    "issues": 0,
+    "mainAssetCount": 3037,
+    "musicCount": 5,
+    "soundEffectCount": 130,
+    "runner": "lead"
+  },
+  "boundaries": [
+    "Five weapon families currently equipable; musket, wheel, dual spikes, hammer, qiankun blade, knuckle and ninja remain outside combat integration.",
+    "The command mapping and rage thresholds use cross-checked community references; the full original EXE input recognizer, shortcut rules and rage-consumption event chain are not fully recovered.",
+    "Web input tolerance, movement/actor collision and projectile-flight constants remain explicitly labeled adapters.",
+    "Dart201/551/203 and dagger259 are pending effect-only commands and refuse execution; no ordinary attack or fabricated projectile fan substitutes for them.",
+    "Dart209/210 item10/item11 ongoing status effects remain unresolved; dagger343 rear effect window and other sword waves, spear shockwaves and dagger remote attacks are incomplete.",
+    "Guard type gating is recovered; full native guard angles, reaction motion, knockback and guarding-state transitions are not restored by this numeric branch.",
+    "Original EXE was not executed; full live-AI victory, all missions and multiplayer are not established by this increment.",
+    "All work and validation are local; no new upload or hosted deployment occurred."
+  ],
+  "postFullSuiteGuideCheck": {
+    "command": "node --test tests/native-move-guide.test.mjs",
+    "total": 4,
+    "passed": 4,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "durationMs": 105.436125,
+    "runner": "combo_ui",
+    "sourceRef": "Agent tool response, exec chunk1199aa on2026-10-29; raw standalone TAP not archived.",
+    "rawTapArchived": false,
+    "change": "After the final full-suite process had started, added dart209/210 guide copy stating projectile hits work while ongoing attached effects remain pending; added assertions inside the existing guide case without changing test count.",
+    "claimLimit": "This independent4/4 confirms the final UI copy; the earlier full-suite182 count is not claimed to have executed these newly added text assertions."
+  }
+}

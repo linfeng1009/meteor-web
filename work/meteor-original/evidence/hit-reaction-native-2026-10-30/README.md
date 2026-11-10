@@ -1,0 +1,1 @@
+Exploratory instruction scan only. The broad initial immediate scan also matched memory displacements; 262 unrelated C/ASM exports were discarded. This directory retains the raw scan for reproducibility. Verified findings and retained artifacts are selected in ../E-hit-reaction-source-2026-10-30.json.

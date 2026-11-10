@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: all enabled rage moves and automatic pose links have source-backed effect definitions and PNG textures
+ok 1 - all enabled rage moves and automatic pose links have source-backed effect definitions and PNG textures
+  ---
+  duration_ms: 50.831042
+  type: 'test'
+  ...
+# Subtest: rage visuals follow authored frames, stay absent for ordinary attacks and cannot change combat values
+ok 2 - rage visuals follow authored frames, stay absent for ordinary attacks and cannot change combat values
+  ---
+  duration_ms: 7.54925
+  type: 'test'
+  ...
+# Subtest: original weapon DES dummies bind light to native W7_0 coordinates even when that model is hidden by a skin
+ok 3 - original weapon DES dummies bind light to native W7_0 coordinates even when that model is hidden by a skin
+  ---
+  duration_ms: 1.782666
+  type: 'test'
+  ...
+# Subtest: automatic rage links play their own EF timeline and pay no second cost
+ok 4 - automatic rage links play their own EF timeline and pay no second cost
+  ---
+  duration_ms: 19.651333
+  type: 'test'
+  ...
+# Subtest: hit interruption, weapon changes and clear remove visuals and dispose each owned mesh once
+ok 5 - hit interruption, weapon changes and clear remove visuals and dispose each owned mesh once
+  ---
+  duration_ms: 2.893375
+  type: 'test'
+  ...
+# Subtest: invalid native parent bindings remain hidden instead of emitting at the world origin
+ok 6 - invalid native parent bindings remain hidden instead of emitting at the world origin
+  ---
+  duration_ms: 6.994625
+  type: 'test'
+  ...
+# Subtest: key interpolation retains native endpoints and a normalized quaternion
+ok 7 - key interpolation retains native endpoints and a normalized quaternion
+  ---
+  duration_ms: 0.138792
+  type: 'test'
+  ...
+# Subtest: completed qiankun finale plays all twelve authored slash shapes, independent of the recovering or struck caster
+ok 8 - completed qiankun finale plays all twelve authored slash shapes, independent of the recovering or struck caster
+  ---
+  duration_ms: 5.482
+  type: 'test'
+  ...
+# Subtest: one large update preserves intermediate EF stages and internal parent animations after retirement
+ok 9 - one large update preserves intermediate EF stages and internal parent animations after retirement
+  ---
+  duration_ms: 2.697875
+  type: 'test'
+  ...
+# Subtest: weapon Drag windows draw bounded ribbons from original DES endpoints and restore the final skeleton pose
+ok 10 - weapon Drag windows draw bounded ribbons from original DES endpoints and restore the final skeleton pose
+  ---
+  duration_ms: 0.815541
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 244.138958

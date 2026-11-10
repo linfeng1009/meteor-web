@@ -1,0 +1,13 @@
+004ee340 PUSH ESI
+004ee341 MOV ESI,ECX
+004ee343 MOV EAX,dword ptr [ESI]
+004ee345 CALL dword ptr [EAX + 0x104]
+004ee34b MOV ECX,dword ptr [ESI + 0x1a4]
+004ee351 TEST ECX,ECX
+004ee353 JZ 0x004ee35b
+004ee355 MOV EDX,dword ptr [ECX]
+004ee357 PUSH 0x1
+004ee359 CALL dword ptr [EDX]
+004ee35b MOV dword ptr [ESI + 0x1a4],0x0
+004ee365 POP ESI
+004ee366 RET

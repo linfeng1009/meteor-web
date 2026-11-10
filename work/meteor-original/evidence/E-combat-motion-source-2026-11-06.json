@@ -1,0 +1,416 @@
+{
+  "id": "E-combat-motion-source-2026-11-06",
+  "observedAt": "2026-11-06",
+  "sampleSha256": "289afb0aa44a47921d167fc24d6d404c60d6d00c299ac27d45fc61e16231b498",
+  "originalExecuted": false,
+  "originalModified": false,
+  "scope": "work/meteor-original/scope.md",
+  "method": "Original PE section-mapped byte/table reads, readOnly/noanalysis Ghidra exports, and local Web POS parser. No native execution.",
+  "grammarTables": {
+    "rhsIndex": "005ae9b0",
+    "rhs": "005aeab8",
+    "symbolNames": "005aee80",
+    "lhs": "005af030"
+  },
+  "grammarAssignments": [
+    {
+      "rule": 50,
+      "lhs": "defensevalue",
+      "rhs": [
+        "KEY_defensevalue",
+        "KEY_number"
+      ],
+      "field": "defensevalue",
+      "scratchAddress": "0072b960",
+      "attackRecordOffset": "0x40",
+      "assignmentInstruction": "0057b5ae",
+      "assignmentBytes": "891560b97200"
+    },
+    {
+      "rule": 51,
+      "lhs": "defensemove",
+      "rhs": [
+        "KEY_defensemove",
+        "KEY_number"
+      ],
+      "field": "defensemove",
+      "scratchAddress": "0072b95c",
+      "attackRecordOffset": "0x3c",
+      "assignmentInstruction": "0057b5be",
+      "assignmentBytes": "890d5cb97200"
+    },
+    {
+      "rule": 54,
+      "lhs": "targetspeed",
+      "rhs": [
+        "KEY_targetspeed",
+        "KEY_number"
+      ],
+      "field": "targetspeed",
+      "scratchAddress": "0072b97c",
+      "attackRecordOffset": "0x5c",
+      "assignmentInstruction": "0057b5f6",
+      "assignmentBytes": "89157cb97200"
+    },
+    {
+      "rule": 55,
+      "lhs": "targetmove",
+      "rhs": [
+        "KEY_targetmove",
+        "KEY_number"
+      ],
+      "field": "targetmove",
+      "scratchAddress": "0072b980",
+      "attackRecordOffset": "0x60",
+      "assignmentInstruction": "0057b606",
+      "assignmentBytes": "890d80b97200"
+    },
+    {
+      "rule": 56,
+      "lhs": "targetvalue",
+      "rhs": [
+        "KEY_targetvalue",
+        "KEY_number"
+      ],
+      "field": "targetvalue",
+      "scratchAddress": "0072b984",
+      "attackRecordOffset": "0x64",
+      "assignmentInstruction": "0057b616",
+      "assignmentBytes": "a384b97200"
+    }
+  ],
+  "constants": {
+    "packScale": 100.0,
+    "packRounding": 0.5,
+    "unpackScale": 0.009999999776482582,
+    "verticalIntegerThreshold": 0.10000000149011612
+  },
+  "packet": {
+    "producer": "004f3380",
+    "server": "004af630",
+    "client": "004f3f50",
+    "moveWord": "word3: DefenseMove high16, TargetMove low16",
+    "valueWord": "word4: DefenseValue high16, TargetValue low16",
+    "pack": "uint16(trunc(float32(value)*double100+double.5))",
+    "unpack": "float32(unsigned16*float32(.01))"
+  },
+  "motion": {
+    "targetMoveStorage": "004d03f0 actor+37c",
+    "consumer": "004cdd60 -> 004ce850 reads d_base and character virtual+20 scene vector",
+    "vectorVtable": "005aa9f8+20 -> 0055df00; copies character+304/+308/+30c",
+    "verticalPolicy": "integer truncation then absolute comparison >= float0.1 overrides native vertical velocity",
+    "web": "Raw d_base frame differences, native axes rotated by Web actor yaw, through existing collision/hazard host"
+  },
+  "time": {
+    "storage": "004cfc00 -> 004dbf80 -> 0055d260 animation+608; elapsed at+604",
+    "update": "0055d910/0055d560: looping hit pose minimum duration; zero has no explicit hold",
+    "terminal": "0055d560 mode1 finishes at End; mode0 resets to LoopStart after LoopEnd"
+  },
+  "sourceAttackFields": {
+    "poseCount": 574,
+    "attackCount": 299,
+    "fields": {
+      "targetmove": {
+        "missing": [],
+        "minimum": 0,
+        "negative": []
+      },
+      "targetvalue": {
+        "missing": [],
+        "minimum": 0,
+        "negative": []
+      },
+      "defensemove": {
+        "missing": [
+          {
+            "poseId": 102,
+            "line": 1296
+          },
+          {
+            "poseId": 103,
+            "line": 1316
+          },
+          {
+            "poseId": 104,
+            "line": 1340
+          },
+          {
+            "poseId": 105,
+            "line": 1364
+          },
+          {
+            "poseId": 106,
+            "line": 1388
+          },
+          {
+            "poseId": 111,
+            "line": 1470
+          }
+        ],
+        "minimum": 0,
+        "negative": []
+      },
+      "defensevalue": {
+        "missing": [
+          {
+            "poseId": 102,
+            "line": 1296
+          },
+          {
+            "poseId": 103,
+            "line": 1316
+          },
+          {
+            "poseId": 104,
+            "line": 1340
+          },
+          {
+            "poseId": 105,
+            "line": 1364
+          },
+          {
+            "poseId": 106,
+            "line": 1388
+          },
+          {
+            "poseId": 111,
+            "line": 1470
+          }
+        ],
+        "minimum": 0,
+        "negative": []
+      }
+    },
+    "examples": [
+      {
+        "poseId": 262,
+        "attack": {
+          "bone": [
+            "weapon",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand"
+          ],
+          "start": 9768,
+          "end": 9774,
+          "attacktype": 0,
+          "checkfriend": 0,
+          "defensevalue": 0.1,
+          "defensemove": 5,
+          "targetvalue": 0.1,
+          "targetmove": 5,
+          "targetpose": 93,
+          "targetposefront": 93,
+          "targetposeback": 92,
+          "targetposeleft": 94,
+          "targetposeright": 91,
+          "bones": [
+            "weapon",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand"
+          ],
+          "line": 5387
+        }
+      },
+      {
+        "poseId": 277,
+        "attack": {
+          "bone": [
+            "bau Spine1",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand",
+            "weapon"
+          ],
+          "start": 10511,
+          "end": 10513,
+          "attacktype": 0,
+          "checkfriend": 0,
+          "defensevalue": 0.2,
+          "defensemove": 4,
+          "targetvalue": 0.2,
+          "targetmove": 4,
+          "targetpose": 91,
+          "targetposefront": 91,
+          "targetposeback": 94,
+          "targetposeleft": 93,
+          "targetposeright": 92,
+          "bones": [
+            "bau Spine1",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand",
+            "weapon"
+          ],
+          "line": 6418
+        }
+      },
+      {
+        "poseId": 295,
+        "attack": {
+          "bone": [
+            "weapon",
+            "bau R Forearm",
+            "bau R Hand"
+          ],
+          "start": 5760,
+          "end": 5763,
+          "attacktype": 0,
+          "checkfriend": 0,
+          "defensevalue": 0.4,
+          "defensemove": 5,
+          "targetvalue": 0.4,
+          "targetmove": 4,
+          "targetpose": 90,
+          "targetposefront": 90,
+          "targetposeback": 94,
+          "targetposeleft": 93,
+          "targetposeright": 92,
+          "bones": [
+            "weapon",
+            "bau R Forearm",
+            "bau R Hand"
+          ],
+          "line": 7572
+        }
+      },
+      {
+        "poseId": 315,
+        "attack": {
+          "bone": [
+            "bad R Thigh",
+            "bad R Calf",
+            "bad R Foot",
+            "effect"
+          ],
+          "start": 4472,
+          "end": 4476,
+          "attacktype": 0,
+          "checkfriend": 0,
+          "defensevalue": 0.5,
+          "defensemove": 10,
+          "targetvalue": 0.5,
+          "targetmove": 10,
+          "targetpose": 90,
+          "targetposefront": 90,
+          "targetposeback": 94,
+          "targetposeleft": 93,
+          "targetposeright": 92,
+          "bones": [
+            "bad R Thigh",
+            "bad R Calf",
+            "bad R Foot",
+            "effect"
+          ],
+          "line": 8701
+        }
+      }
+    ]
+  },
+  "boundaries": [
+    "Full scene-vector production, rotation and native air/collision physics remain unresolved; the narrow immediate scan only found unrelated animation-loader bone fields.",
+    "DefenseMove/DefenseValue packet semantics are recovered, but guard animation/recoil are not connected by this change.",
+    "Native directional target-pose coordinate selection, exact forced-hit blending and all EF remain incomplete.",
+    "The queued continuation survives landing by an explicit Web input-host policy, validated against ACT; exact original input scheduling is not asserted.",
+    "All source P0 target Move/Value fields are present and nonnegative. Original generic negative duration sentinels are not implemented for unknown records.",
+    "Loop clamp discards excess update time as in the inspected native branch; universal frame-partition equivalence is not asserted."
+  ],
+  "artifacts": [
+    {
+      "path": "work/meteor-original/evidence/combat-movement-native-2026-11-06/0057aaf0_FUN_0057aaf0.c",
+      "bytes": 24905,
+      "sha256": "2f154f15138c531cf1b690944b953f4b7578c4027776e802f9059442c6049a0a"
+    },
+    {
+      "path": "work/meteor-original/evidence/combat-movement-native-2026-11-06/0057aaf0_FUN_0057aaf0.asm",
+      "bytes": 35425,
+      "sha256": "c0c84ba4193b5c6a2611d533abcb09ef00b015909179ebee460938b85117163f"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-break-native-2026-10-29/004f3380_FUN_004f3380.asm",
+      "bytes": 15167,
+      "sha256": "3fe7707e8a256a5c6e5b36fc7fac49af80281ab0d5f07b692dabb44f871ea6a1"
+    },
+    {
+      "path": "work/meteor-original/evidence/decompiled/004af630_FUN_004af630.c",
+      "bytes": 6614,
+      "sha256": "1a970412cbbae8f8e9c4be28309fd7d188f26bf19a8986abf323606921bb85af"
+    },
+    {
+      "path": "work/meteor-original/evidence/hit-reaction-state-2026-10-30/004f3f50_FUN_004f3f50.asm",
+      "bytes": 1788,
+      "sha256": "43008a9f1321674e108fbc708b5d9b24243a44f2fc334a7e5d52d43507acc51a"
+    },
+    {
+      "path": "work/meteor-original/evidence/combat-movement-native-2026-11-06/004d03f0_FUN_004d03f0.asm",
+      "bytes": 1425,
+      "sha256": "cb57aa89217b2cba7b4dca38379179299c353e29d3184897fd95b5d41ebfc051"
+    },
+    {
+      "path": "work/meteor-original/evidence/combat-motion-bridge-2026-11-06/004cfc00_FUN_004cfc00.c",
+      "bytes": 571,
+      "sha256": "f0868e996fdd10f83e7961d28fe2ccd745246bf351dff1a7c7b8afb878d7bae8"
+    },
+    {
+      "path": "work/meteor-original/evidence/pose-blend-native-2026-11-05/0055d260_FUN_0055d260.c",
+      "bytes": 2064,
+      "sha256": "d7977ac7c7fdbf284615eb0ac583aff48309887a4031f8f1cac1a98f06b2ca8d"
+    },
+    {
+      "path": "work/meteor-original/evidence/combat-dummy-motion-native-2026-11-06/0055d560_FUN_0055d560.c",
+      "bytes": 3734,
+      "sha256": "63e3053ace7d1f483b83b3036f54dc09f12b8d071b6a3e7242fb103211f91201"
+    },
+    {
+      "path": "work/meteor-original/evidence/combat-dummy-motion-native-2026-11-06/0055d560_FUN_0055d560.asm",
+      "bytes": 7521,
+      "sha256": "a85c892044441bc83d1ef15c330d2ba15078b9b1668fb3fb4271e57ddcbac7d0"
+    },
+    {
+      "path": "work/meteor-original/evidence/combat-guard-motion-native-2026-11-06/0055d910_FUN_0055d910.asm",
+      "bytes": 439,
+      "sha256": "58d77e3943e9dd362f52c09d628d683a7fc8db5cf44ed44728c0804ddf9bfdad"
+    },
+    {
+      "path": "work/meteor-original/evidence/hit-reaction-selection-2026-10-30/004cdd60_FUN_004cdd60.c",
+      "bytes": 656,
+      "sha256": "b59aacf5f9012ebca9198cc5e17fc3e81d4c7c8c7fd8624297b6fdf68f9d289c"
+    },
+    {
+      "path": "work/meteor-original/evidence/hit-reaction-getup-2026-10-30/004ce850_FUN_004ce850.asm",
+      "bytes": 6187,
+      "sha256": "3ab74e63e67d4c6cace32f5c6940d15113c9dff169ae1e81f5c2df69bc034f01"
+    },
+    {
+      "path": "work/meteor-original/evidence/combat-dummy-motion-native-2026-11-06/0055df00_FUN_0055df00.asm",
+      "bytes": 357,
+      "sha256": "2f3049dac41a0569469e9e54989815d93c0982bd0383b54f012f4031f309c888"
+    },
+    {
+      "path": "work/meteor-original/evidence/combat-motion-frame-native-2026-11-06/0055c310_FUN_0055c310.c",
+      "bytes": 561,
+      "sha256": "7808dbc3ec958b839b114159d09fc2c582aada41b004b7356dfbb0d4aa2846f2"
+    },
+    {
+      "path": "work/meteor-original/evidence/combat-motion-frame-native-2026-11-06/00574c90_FUN_00574c90.c",
+      "bytes": 2121,
+      "sha256": "7a5041008b888282134d622d51a4c29901ffbf57245df803e791a00077d63e67"
+    },
+    {
+      "path": "work/meteor-original/evidence/jump-motion-native-2026-11-05/00557ef0_FUN_00557ef0.c",
+      "bytes": 367,
+      "sha256": "cfbfc8ca0e282ab9fd1b150560f8392b84b7bf0c7092f3661472570cdddbf8bb"
+    },
+    {
+      "path": "work/meteor-original/evidence/combat-motion-producer-2026-11-06/005570e0_FUN_005570e0.c",
+      "bytes": 1722,
+      "sha256": "83952172075e22f94a8424bad2cec65403c9b279b450926f69de2af2de01b10f"
+    },
+    {
+      "path": "work/meteor-original/evidence/combat-motion-source-audit-2026-11-06.py",
+      "bytes": 8668,
+      "sha256": "2eedb1f192e3f7e1dbe1906fdc7a0607fc56ef00abaae4390cac2043086033e8"
+    }
+  ]
+}

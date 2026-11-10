@@ -1,0 +1,136 @@
+TAP version 13
+# Subtest: sword appearance swaps visuals without changing the active combat state or source weapon model
+ok 1 - sword appearance swaps visuals without changing the active combat state or source weapon model
+  ---
+  duration_ms: 21.995667
+  type: 'test'
+  ...
+# Subtest: reference sword is a finite 3D mesh with its grip and blade on the original attachment axis
+ok 2 - reference sword is a finite 3D mesh with its grip and blade on the original attachment axis
+  ---
+  duration_ms: 11.621
+  type: 'test'
+  ...
+# Subtest: the attackless sword dive startup reaches and holds its source one-frame attack until ground contact
+ok 3 - the attackless sword dive startup reaches and holds its source one-frame attack until ground contact
+  ---
+  duration_ms: 3.302291
+  type: 'test'
+  ...
+# Subtest: the blade automatic chain preserves attackless stages and every original attack segment
+ok 4 - the blade automatic chain preserves attackless stages and every original attack segment
+  ---
+  duration_ms: 0.747292
+  type: 'test'
+  ...
+# Subtest: a buffered input keeps the old Action then uses native NextPose time before entering the next Action
+ok 5 - a buffered input keeps the old Action then uses native NextPose time before entering the next Action
+  ---
+  duration_ms: 0.339291
+  type: 'test'
+  ...
+# Subtest: a queued resource gate is rechecked when its pose starts and cannot overspend changed resources
+ok 6 - a queued resource gate is rechecked when its pose starts and cannot overspend changed resources
+  ---
+  duration_ms: 0.114167
+  type: 'test'
+  ...
+# Subtest: death, weapon switching and an explicit failed start discard queued costs without a charge
+ok 7 - death, weapon switching and an explicit failed start discard queued costs without a charge
+  ---
+  duration_ms: 0.255291
+  type: 'test'
+  ...
+# Subtest: a held air recovery retains its real ACT continuation but cannot receive a forbidden ground attack
+ok 8 - a held air recovery retains its real ACT continuation but cannot receive a forbidden ground attack
+  ---
+  duration_ms: 0.194792
+  type: 'test'
+  ...
+# Subtest: finishing a basic attack resets the next click to its first move rather than reviving an expired continuation
+ok 9 - finishing a basic attack resets the next click to its first move rather than reviving an expired continuation
+  ---
+  duration_ms: 0.157791
+  type: 'test'
+  ...
+# Subtest: automatic links preserve elapsed time and root deltas across coarse and fine frame partitions
+ok 10 - automatic links preserve elapsed time and root deltas across coarse and fine frame partitions
+  ---
+  duration_ms: 1.078
+  type: 'test'
+  ...
+# Subtest: sword rapid thrust applies all five original windows to one overlapping opponent and never repeats a window
+ok 11 - sword rapid thrust applies all five original windows to one overlapping opponent and never repeats a window
+  ---
+  duration_ms: 3.043792
+  type: 'test'
+  ...
+# Subtest: both original blade spin stages can damage the same overlapping opponent when a single update spans their link
+ok 12 - both original blade spin stages can damage the same overlapping opponent when a single update spans their link
+  ---
+  duration_ms: 0.70625
+  type: 'test'
+  ...
+# Subtest: holding the one-frame sword dive does not create repeat hits on the same target
+ok 13 - holding the one-frame sword dive does not create repeat hits on the same target
+  ---
+  duration_ms: 0.393833
+  type: 'test'
+  ...
+# Subtest: a timeline advanced across its final attack frame still reports that native contact window
+ok 14 - a timeline advanced across its final attack frame still reports that native contact window
+  ---
+  duration_ms: 0.197583
+  type: 'test'
+  ...
+# Subtest: mission source items retain their actual dual or hammer models, handedness and original stance
+ok 15 - mission source items retain their actual dual or hammer models, handedness and original stance
+  ---
+  duration_ms: 111.539416
+  type: 'test'
+  ...
+# Subtest: dual ordinary attack inputs traverse actual native bones and each source window once
+ok 16 - dual ordinary attack inputs traverse actual native bones and each source window once
+  ---
+  duration_ms: 27.168208
+  type: 'test'
+  ...
+# Subtest: hammer ordinary attack inputs traverse actual native bones and each source window once
+ok 17 - hammer ordinary attack inputs traverse actual native bones and each source window once
+  ---
+  duration_ms: 12.547833
+  type: 'test'
+  ...
+# Subtest: dual actual blocked first strike preserves HP and selects its source guard sound family
+ok 18 - dual actual blocked first strike preserves HP and selects its source guard sound family
+  ---
+  duration_ms: 8.777083
+  type: 'test'
+  ...
+# Subtest: hammer actual blocked first strike preserves HP and selects its source guard sound family
+ok 19 - hammer actual blocked first strike preserves HP and selects its source guard sound family
+  ---
+  duration_ms: 4.760125
+  type: 'test'
+  ...
+# Subtest: mission weapon profiles keep plain-A separate from the authored directional branches
+ok 20 - mission weapon profiles keep plain-A separate from the authored directional branches
+  ---
+  duration_ms: 0.310375
+  type: 'test'
+  ...
+# Subtest: ordinary jump and attack inputs render the original dual and hammer air poses and return to their source stances
+ok 21 - ordinary jump and attack inputs render the original dual and hammer air poses and return to their source stances
+  ---
+  duration_ms: 29.610833
+  type: 'test'
+  ...
+1..21
+# tests 21
+# suites 0
+# pass 21
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 328.241458

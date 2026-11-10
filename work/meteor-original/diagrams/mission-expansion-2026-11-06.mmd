@@ -1,0 +1,17 @@
+flowchart TD
+  start["原单机入口"] --> scripts["Level / NPC / Scene PST"]
+  scripts --> cave["钟乳洞与炎硫岛"]
+  scripts --> survival["决死阵：双方存活"]
+  scripts --> fortress["飞鹏堡：追击萧安"]
+  cave --> clear["Rule10清敌适配"]
+  survival --> floors["原地板与尸毒 / 登台与防御"]
+  floors --> survival_end["原GameOver正负结算"]
+  fortress --> vip_alive{"萧安状态"}
+  vip_alive -->|"死亡"| win["Rule4指定VIP胜利适配"]
+  vip_alive -->|"原路线抵达出口"| escape["原RemoveNPC与GameOver失败"]
+  fortress --> ally["原低血条件加入无名"]
+  ally --> buff["原嗜战数值"]
+  clear --> result["结算与源状态重开"]
+  survival_end --> result
+  win --> result
+  escape --> result

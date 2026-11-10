@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<title>月蝶剑 · 光效预览</title>
+<style>html,body{margin:0;height:100%;background:#080d13;overflow:hidden}canvas{display:block}</style>
+<canvas id="view"></canvas>
+<script type="module">
+import * as THREE from '../../dist/vendor/three.module.js';
+import { createButterflySword, createSwordEnvironment } from '../../dist/butterfly-sword.js';
+import { ButterflySwordVfx } from '../../dist/butterfly-vfx.js';
+
+const WIDTH = 900, HEIGHT = 1400;
+const canvas = document.getElementById('view');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1); renderer.setSize(WIDTH, HEIGHT);
+renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.NoToneMapping;
+renderer.setClearColor(0x080d13, 1);
+
+const scene = new THREE.Scene();
+const camera = new THREE.OrthographicCamera(-WIDTH / HEIGHT * 15, WIDTH / HEIGHT * 15, 15, -15, .1, 300);
+camera.position.set(0, 0, -70); camera.lookAt(0, 7, 0);
+
+// 与游戏一致的主光，再补两盏冷暖轮廓光，让金属有方向感。
+scene.add(new THREE.HemisphereLight(0xffffff, 0x596675, 2.7));
+const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(-20, 50, 30); scene.add(key);
+const rimCool = new THREE.DirectionalLight(0x9fe8ff, 2.4); rimCool.position.set(6, 1, -8); scene.add(rimCool);
+const rimWarm = new THREE.DirectionalLight(0xffd9a8, 1.5); rimWarm.position.set(-7, 2, 6); scene.add(rimWarm);
+
+const environment = createSwordEnvironment(renderer);
+const sword = createButterflySword({ environment });
+sword.rotation.x = -Math.PI / 2;   // 本地 z（刃长）→ 世界 y（向上），厚度朝相机
+scene.add(sword); sword.updateMatrixWorld(true);
+
+const vfx = new ButterflySwordVfx(scene, { quality: 'high' });
+vfx.bind(sword);
+
+// 跑一段挥砍：绕 z 轴扫过，让剑光条带真正生成，然后停手留一点余韵。
+let time = 0;
+const step = 1 / 60;
+for (let i = 0; i < 22; i++) {
+  sword.rotation.z = -1.05 + (i / 21) * 2.1;
+  sword.updateMatrixWorld(true);
+  time += step; vfx.update(step, { attacking: true, camera });
+}
+// 收势：剑回正，扫过的剑光留在原处继续衰减，形成一道弧形余焰。
+sword.rotation.z = 0; sword.updateMatrixWorld(true);
+vfx.burst(new THREE.Vector3(5.1, 11.2, 1.4), { knockdown: true, camera });
+for (let i = 0; i < 6; i++) { time += step; vfx.update(step, { attacking: false, camera }); }
+
+renderer.render(scene, camera);
+document.body.dataset.ready = environment ? '1' : '0-env-failed';
+document.title = `月蝶剑预览 ready=${document.body.dataset.ready} trail=${vfx.trailGeometry.drawRange.count}`;
+</script>
+</html>

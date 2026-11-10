@@ -1,0 +1,7037 @@
+{
+  "seed": 9,
+  "initialActorOrder": [
+    2,
+    1,
+    3
+  ],
+  "draws": 14107,
+  "dead": true,
+  "timeSinceHit": 0.03333333333333144,
+  "time": 45.76666666666663,
+  "hp": 0,
+  "player": [
+    -45.5864942485038,
+    0.015,
+    -12.086417206618352
+  ],
+  "playerPose": 117,
+  "playerFrame": 2451,
+  "playerGrounded": true,
+  "playerVelocity": [
+    -4.364365910249506,
+    0,
+    -2.123796304053731
+  ],
+  "keys": [],
+  "floor": "Box10",
+  "enemies": [
+    {
+      "id": 2,
+      "position": [
+        -48.697415931219155,
+        0.4150000059604645,
+        -13.730746757044095
+      ],
+      "yaw": 7.414701969371564,
+      "intent": "follow",
+      "intentTarget": 3,
+      "nav": null,
+      "paused": false,
+      "canAttack": false,
+      "distance": 3.5414196858266105,
+      "lineOfSight": true,
+      "moveTarget": [
+        -47.8337585547536,
+        0.4150000059604645,
+        -15.452416740441745
+      ],
+      "pose": 144,
+      "frame": 326,
+      "timer": 0.5336700439453097
+    },
+    {
+      "id": 1,
+      "position": [
+        -48.17602701350644,
+        0.4150000059604645,
+        -14.567768652458533
+      ],
+      "yaw": 0.8322783259707932,
+      "intent": "follow",
+      "intentTarget": 3,
+      "nav": {
+        "goal": 32,
+        "ids": [
+          28,
+          29,
+          30,
+          31,
+          32
+        ],
+        "cursor": 1
+      },
+      "paused": false,
+      "canAttack": false,
+      "distance": 3.608709595348976,
+      "lineOfSight": true,
+      "moveTarget": [
+        -47.8337585547536,
+        0.4150000059604645,
+        -15.452416740441745
+      ],
+      "pose": 144,
+      "frame": 319,
+      "timer": 0.9303070068359357
+    },
+    {
+      "id": 3,
+      "position": [
+        -47.8337585547536,
+        0.4150000059604645,
+        -15.452416740441745
+      ],
+      "yaw": 0.6144909995160481,
+      "intent": "wait",
+      "intentTarget": null,
+      "nav": null,
+      "paused": false,
+      "canAttack": false,
+      "distance": 4.066958289509751,
+      "lineOfSight": true,
+      "pose": 279,
+      "frame": 2698,
+      "timer": 0.9667867024739575
+    }
+  ],
+  "trace": [
+    {
+      "time": 19.533333333333463,
+      "hp": 1404,
+      "player": [
+        -57.832697609585985,
+        0.4150000059604645,
+        -0.9728591763546283
+      ],
+      "playerPose": 144,
+      "playerFrame": 333,
+      "playerGrounded": true,
+      "playerVelocity": [
+        -2.0339960582229093,
+        0,
+        -0.29763703561337845
+      ],
+      "keys": [
+        "forward"
+      ],
+      "floor": "di01",
+      "enemies": [
+        {
+          "id": 2,
+          "position": [
+            -38.13515996688144,
+            0.4150000059604645,
+            -1.3041621920894262
+          ],
+          "yaw": 4.729456001911454,
+          "intent": "follow",
+          "intentTarget": 3,
+          "nav": null,
+          "paused": false,
+          "canAttack": true,
+          "distance": 19.700323623585415,
+          "lineOfSight": true,
+          "moveTarget": [
+            -51.11125816101034,
+            0.4150000059604645,
+            -1.3939844704313422
+          ],
+          "pose": 144,
+          "frame": 327,
+          "timer": -4.433333333333327
+        },
+        {
+          "id": 1,
+          "position": [
+            -60.200249761909696,
+            0.4150000059604645,
+            -18.8797705598169
+          ],
+          "yaw": 0.47933693229906854,
+          "intent": "follow",
+          "intentTarget": 3,
+          "nav": {
+            "goal": 32,
+            "ids": [
+              28,
+              29,
+              30,
+              31,
+              32
+            ],
+            "cursor": 1
+          },
+          "paused": false,
+          "canAttack": false,
+          "distance": 18.062745596645694,
+          "lineOfSight": false,
+          "moveTarget": [
+            -51.11125816101034,
+            0.4150000059604645,
+            -1.3939844704313422
+          ],
+          "pose": 144,
+          "frame": 323,
+          "timer": 0.06666666666666687
+        },
+        {
+          "id": 3,
+          "position": [
+            -51.11125816101034,
+            0.4150000059604645,
+            -1.3939844704313422
+          ],
+          "yaw": -1.503251156805661,
+          "intent": "wait",
+          "intentTarget": null,
+          "nav": null,
+          "paused": false,
+          "canAttack": true,
+          "distance": 6.734619126140695,
+          "lineOfSight": true,
+          "pose": 7,
+          "frame": 304,
+          "timer": 0.7435343424479139
+        }
+      ]
+    },
+    {
+      "time": 24.53333333333371,
+      "hp": 1186,
+      "player": [
+        -45.87160458465134,
+        0.4150000059604645,
+        -1.9206281461753707
+      ],
+      "playerPose": 93,
+      "playerFrame": 1749.4000000804663,
+      "playerGrounded": true,
+      "playerVelocity": [
+        0,
+        0,
+        0
+      ],
+      "keys": [
+        "forward"
+      ],
+      "floor": "di01",
+      "enemies": [
+        {
+          "id": 2,
+          "position": [
+            -45.574017254827396,
+            0.4150000059604645,
+            -3.1544382509832656
+          ],
+          "yaw": 5.8066714858989865,
+          "intent": "follow",
+          "intentTarget": 3,
+          "nav": null,
+          "paused": false,
+          "canAttack": true,
+          "distance": 1.2691909208617163,
+          "lineOfSight": true,
+          "moveTarget": [
+            -47.557934761186964,
+            0.4150000059604645,
+            -3.341631552533094
+          ],
+          "pose": 279,
+          "frame": 2695,
+          "timer": 1.6889699300130203
+        },
+        {
+          "id": 1,
+          "position": [
+            -49.143304794894625,
+            0.4150000059604645,
+            -4.130170757932744
+          ],
+          "yaw": 0.9926554954490668,
+          "intent": "follow",
+          "intentTarget": 3,
+          "nav": {
+            "goal": 32,
+            "ids": [
+              28,
+              29,
+              30,
+              31,
+              32
+            ],
+            "cursor": 1
+          },
+          "paused": false,
+          "canAttack": true,
+          "distance": 3.9479236085412763,
+          "lineOfSight": true,
+          "moveTarget": [
+            -47.557934761186964,
+            0.4150000059604645,
+            -3.341631552533094
+          ],
+          "pose": 144,
+          "frame": 323,
+          "timer": 0.0016621907552054477
+        },
+        {
+          "id": 3,
+          "position": [
+            -47.557934761186964,
+            0.4150000059604645,
+            -3.341631552533094
+          ],
+          "yaw": 0.8662654470933293,
+          "intent": "wait",
+          "intentTarget": null,
+          "nav": null,
+          "paused": false,
+          "canAttack": true,
+          "distance": 2.2052120408647626,
+          "lineOfSight": true,
+          "pose": 279,
+          "frame": 2702.899999976158,
+          "timer": 1.633185831705728
+        }
+      ]
+    },
+    {
+      "time": 29.53333333333396,
+      "hp": 894,
+      "player": [
+        -47.71457496756125,
+        0.4150000059604645,
+        -1.9323084408902702
+      ],
+      "playerPose": 144,
+      "playerFrame": 319,
+      "playerGrounded": true,
+      "playerVelocity": [
+        -2.0881433843929793,
+        0,
+        -4.381930159431981
+      ],
+      "keys": [
+        "forward"
+      ],
+      "floor": "di01",
+      "enemies": [
+        {
+          "id": 2,
+          "position": [
+            -48.44524687593924,
+            0.4150000059604645,
+            -5.4803523342635785
+          ],
+          "yaw": 6.488139648388901,
+          "intent": "follow",
+          "intentTarget": 3,
+          "nav": null,
+          "paused": false,
+          "canAttack": true,
+          "distance": 3.6224987104202486,
+          "lineOfSight": true,
+          "moveTarget": [
+            -49.0224289825704,
+            0.4150000059604645,
+            -4.6032201801472175
+          ],
+          "pose": 279,
+          "frame": 2692,
+          "timer": 1.1920003255208331
+        },
+        {
+          "id": 1,
+          "position": [
+            -50.13455725029536,
+            0.4150000059604645,
+            -4.415464860549799
+          ],
+          "yaw": 0.7617495465723346,
+          "intent": "follow",
+          "intentTarget": 3,
+          "nav": {
+            "goal": 32,
+            "ids": [
+              28,
+              29,
+              30,
+              31,
+              32
+            ],
+            "cursor": 1
+          },
+          "paused": false,
+          "canAttack": true,
+          "distance": 3.4673303928589396,
+          "lineOfSight": true,
+          "moveTarget": [
+            -49.0224289825704,
+            0.4150000059604645,
+            -4.6032201801472175
+          ],
+          "pose": 279,
+          "frame": 2696,
+          "timer": 1.5704101562499995
+        },
+        {
+          "id": 3,
+          "position": [
+            -49.0224289825704,
+            0.4150000059604645,
+            -4.6032201801472175
+          ],
+          "yaw": 0.43194636566897965,
+          "intent": "wait",
+          "intentTarget": null,
+          "nav": null,
+          "paused": false,
+          "canAttack": true,
+          "distance": 2.973928654738735,
+          "lineOfSight": true,
+          "pose": 144,
+          "frame": 319,
+          "timer": 0.5892089843749991
+        }
+      ]
+    },
+    {
+      "time": 34.533333333333935,
+      "hp": 491,
+      "player": [
+        -47.6424754245651,
+        0.4150000059604645,
+        -1.8933664678330469
+      ],
+      "playerPose": 90,
+      "playerFrame": 1700.4000000804663,
+      "playerGrounded": true,
+      "playerVelocity": [
+        0,
+        0,
+        0
+      ],
+      "keys": [
+        "forward"
+      ],
+      "floor": "di01",
+      "enemies": [
+        {
+          "id": 2,
+          "position": [
+            -48.46526215885994,
+            0.4150000059604645,
+            -6.599480331333965
+          ],
+          "yaw": 6.430041760895186,
+          "intent": "follow",
+          "intentTarget": 3,
+          "nav": null,
+          "paused": false,
+          "canAttack": true,
+          "distance": 4.777497849959445,
+          "lineOfSight": true,
+          "moveTarget": [
+            -49.57769168019023,
+            0.4150000059604645,
+            -6.715475337272043
+          ],
+          "pose": 279,
+          "frame": 2706.4999998807907,
+          "timer": 0.6599202473958327
+        },
+        {
+          "id": 1,
+          "position": [
+            -50.09516886345977,
+            0.4150000059604645,
+            -5.690236224636546
+          ],
+          "yaw": 0.5928168169724031,
+          "intent": "follow",
+          "intentTarget": 3,
+          "nav": {
+            "goal": 32,
+            "ids": [
+              28,
+              29,
+              30,
+              31,
+              32
+            ],
+            "cursor": 1
+          },
+          "paused": false,
+          "canAttack": true,
+          "distance": 4.520168697662292,
+          "lineOfSight": true,
+          "moveTarget": [
+            -49.57769168019023,
+            0.4150000059604645,
+            -6.715475337272043
+          ],
+          "pose": 7,
+          "frame": 292,
+          "timer": 1.1340932210286438
+        },
+        {
+          "id": 3,
+          "position": [
+            -49.57769168019023,
+            0.4150000059604645,
+            -6.715475337272043
+          ],
+          "yaw": 0.3720729451296383,
+          "intent": "wait",
+          "intentTarget": null,
+          "nav": null,
+          "paused": false,
+          "canAttack": true,
+          "distance": 5.195940329214528,
+          "lineOfSight": true,
+          "pose": 7,
+          "frame": 294,
+          "timer": 1.0462392171223927
+        }
+      ]
+    },
+    {
+      "time": 39.53333333333365,
+      "hp": 332,
+      "player": [
+        -50.33646863774644,
+        0.4150000059604645,
+        -9.720564172417149
+      ],
+      "playerPose": 90,
+      "playerFrame": 1694.4000000804663,
+      "playerGrounded": true,
+      "playerVelocity": [
+        0,
+        0,
+        0
+      ],
+      "keys": [],
+      "floor": "di01",
+      "enemies": [
+        {
+          "id": 2,
+          "position": [
+            -48.18139177861491,
+            0.4150000059604645,
+            -9.415291967142272
+          ],
+          "yaw": 4.527451367207053,
+          "intent": "follow",
+          "intentTarget": 3,
+          "nav": null,
+          "paused": false,
+          "canAttack": true,
+          "distance": 2.1765907718442667,
+          "lineOfSight": true,
+          "moveTarget": [
+            -49.73325422989148,
+            0.4150000059604645,
+            -11.512915225599432
+          ],
+          "pose": 279,
+          "frame": 2704.6999999284744,
+          "timer": 1.1235229492187484
+        },
+        {
+          "id": 1,
+          "position": [
+            -50.0554671080783,
+            0.4150000059604645,
+            -10.728866492756612
+          ],
+          "yaw": -0.28779612250066217,
+          "intent": "follow",
+          "intentTarget": 3,
+          "nav": {
+            "goal": 32,
+            "ids": [
+              28,
+              29,
+              30,
+              31,
+              32
+            ],
+            "cursor": 1
+          },
+          "paused": false,
+          "canAttack": true,
+          "distance": 1.0467260524501072,
+          "lineOfSight": true,
+          "moveTarget": [
+            -49.73325422989148,
+            0.4150000059604645,
+            -11.512915225599432
+          ],
+          "pose": 279,
+          "frame": 2696,
+          "timer": 1.6712371826171868
+        },
+        {
+          "id": 3,
+          "position": [
+            -49.73325422989148,
+            0.4150000059604645,
+            -11.512915225599432
+          ],
+          "yaw": -0.31844215874872506,
+          "intent": "wait",
+          "intentTarget": null,
+          "nav": null,
+          "paused": false,
+          "canAttack": true,
+          "distance": 1.8911345588528212,
+          "lineOfSight": true,
+          "pose": 279,
+          "frame": 2702,
+          "timer": 1.0277465820312488
+        }
+      ]
+    },
+    {
+      "time": 44.53333333333337,
+      "hp": 40,
+      "player": [
+        -46.23336019114231,
+        0.015,
+        -12.424644772475999
+      ],
+      "playerPose": 90,
+      "playerFrame": 1694,
+      "playerGrounded": true,
+      "playerVelocity": [
+        0,
+        0,
+        0
+      ],
+      "keys": [
+        "forward"
+      ],
+      "floor": "Box10",
+      "enemies": [
+        {
+          "id": 2,
+          "position": [
+            -47.320940538985745,
+            0.4150000059604645,
+            -12.978424268389826
+          ],
+          "yaw": 7.382923855441889,
+          "intent": "follow",
+          "intentTarget": 3,
+          "nav": null,
+          "paused": false,
+          "canAttack": true,
+          "distance": 1.284329688155729,
+          "lineOfSight": true,
+          "moveTarget": [
+            -48.51103569887233,
+            0.4150000059604645,
+            -14.591047068990243
+          ],
+          "pose": 279,
+          "frame": 2699,
+          "timer": 1.7336700439453119
+        },
+        {
+          "id": 1,
+          "position": [
+            -49.16138370860895,
+            0.4150000059604645,
+            -13.766700378433644
+          ],
+          "yaw": 1.1687357723761984,
+          "intent": "follow",
+          "intentTarget": 3,
+          "nav": {
+            "goal": 32,
+            "ids": [
+              28,
+              29,
+              30,
+              31,
+              32
+            ],
+            "cursor": 1
+          },
+          "paused": false,
+          "canAttack": true,
+          "distance": 3.2456794316580986,
+          "lineOfSight": true,
+          "moveTarget": [
+            -48.51103569887233,
+            0.4150000059604645,
+            -14.591047068990243
+          ],
+          "pose": 144,
+          "frame": 329,
+          "timer": 0.2678314208984349
+        },
+        {
+          "id": 3,
+          "position": [
+            -48.51103569887233,
+            0.4150000059604645,
+            -14.591047068990243
+          ],
+          "yaw": 0.8531855669404104,
+          "intent": "wait",
+          "intentTarget": null,
+          "nav": null,
+          "paused": false,
+          "canAttack": true,
+          "distance": 3.1687702083969027,
+          "lineOfSight": true,
+          "pose": 144,
+          "frame": 321,
+          "timer": 0.9316314697265599
+        }
+      ]
+    }
+  ],
+  "sceneContacts": [],
+  "hits": [
+    {
+      "text": "48",
+      "type": "hit",
+      "amount": 48,
+      "x": 432.6027880066575,
+      "y": -51.04665119173519,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 2987,
+          "endOffset": 3182,
+          "type": 1,
+          "id": 16,
+          "name": "偃月",
+          "nameEncodings": {
+            "big5": "偃月",
+            "gbk": "俺る",
+            "hex": "b0b3a4eb"
+          },
+          "model": "W7_1",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 3022,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 3034,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 3046,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 3062,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                140,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 140,
+              "valueOffset": 3086
+            },
+            {
+              "offset": 3102,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                0,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 0,
+              "valueOffset": 3126
+            },
+            {
+              "offset": 3142,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                90,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 90,
+              "valueOffset": 3166
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": -0.23046662737161347
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "48",
+      "type": "hit",
+      "amount": 48,
+      "x": 0.5027235087050145,
+      "y": 0.09918492891632363,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 2987,
+          "endOffset": 3182,
+          "type": 1,
+          "id": 16,
+          "name": "偃月",
+          "nameEncodings": {
+            "big5": "偃月",
+            "gbk": "俺る",
+            "hex": "b0b3a4eb"
+          },
+          "model": "W7_1",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 3022,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 3034,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 3046,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 3062,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                140,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 140,
+              "valueOffset": 3086
+            },
+            {
+              "offset": 3102,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                0,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 0,
+              "valueOffset": 3126
+            },
+            {
+              "offset": 3142,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                90,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 90,
+              "valueOffset": 3166
+            }
+          ]
+        },
+        "selectedTargetPose": 94,
+        "hitDirection": 3,
+        "hitAngle": -2.6017226677546947
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "48",
+      "type": "hit",
+      "amount": 48,
+      "x": 0.5052930762954925,
+      "y": 0.09961624511220563,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 2987,
+          "endOffset": 3182,
+          "type": 1,
+          "id": 16,
+          "name": "偃月",
+          "nameEncodings": {
+            "big5": "偃月",
+            "gbk": "俺る",
+            "hex": "b0b3a4eb"
+          },
+          "model": "W7_1",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 3022,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 3034,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 3046,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 3062,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                140,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 140,
+              "valueOffset": 3086
+            },
+            {
+              "offset": 3102,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                0,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 0,
+              "valueOffset": 3126
+            },
+            {
+              "offset": 3142,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                90,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 90,
+              "valueOffset": 3166
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": -0.000006445316368570514
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "48",
+      "type": "hit",
+      "amount": 48,
+      "x": 0.507570288115461,
+      "y": 0.10215764949082723,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 2987,
+          "endOffset": 3182,
+          "type": 1,
+          "id": 16,
+          "name": "偃月",
+          "nameEncodings": {
+            "big5": "偃月",
+            "gbk": "俺る",
+            "hex": "b0b3a4eb"
+          },
+          "model": "W7_1",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 3022,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 3034,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 3046,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 3062,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                140,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 140,
+              "valueOffset": 3086
+            },
+            {
+              "offset": 3102,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                0,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 0,
+              "valueOffset": 3126
+            },
+            {
+              "offset": 3142,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                90,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 90,
+              "valueOffset": 3166
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": 0.011167707404745661
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "37",
+      "type": "hit",
+      "amount": 37,
+      "x": 0.5043432693875648,
+      "y": 0.10102951907872709,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 1231,
+          "endOffset": 1426,
+          "type": 1,
+          "id": 7,
+          "name": "戰戢",
+          "nameEncodings": {
+            "big5": "戰戢",
+            "gbk": "驹穉",
+            "hex": "bed4b761"
+          },
+          "model": "W7_0",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 1266,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 1278,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 1290,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 1306,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                115,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 115,
+              "valueOffset": 1330
+            },
+            {
+              "offset": 1346,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                15,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 15,
+              "valueOffset": 1370
+            },
+            {
+              "offset": 1386,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                100,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 100,
+              "valueOffset": 1410
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": -0.36609738853937507
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "37",
+      "type": "hit",
+      "amount": 37,
+      "x": 0.5061999145407816,
+      "y": 0.09599374300617391,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 1231,
+          "endOffset": 1426,
+          "type": 1,
+          "id": 7,
+          "name": "戰戢",
+          "nameEncodings": {
+            "big5": "戰戢",
+            "gbk": "驹穉",
+            "hex": "bed4b761"
+          },
+          "model": "W7_0",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 1266,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 1278,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 1290,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 1306,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                115,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 115,
+              "valueOffset": 1330
+            },
+            {
+              "offset": 1346,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                15,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 15,
+              "valueOffset": 1370
+            },
+            {
+              "offset": 1386,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                100,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 100,
+              "valueOffset": 1410
+            }
+          ]
+        },
+        "selectedTargetPose": 93,
+        "hitDirection": 2,
+        "hitAngle": 2.01680570023006
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "48",
+      "type": "hit",
+      "amount": 48,
+      "x": 0.5125065928042013,
+      "y": 0.10225478828431717,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 2987,
+          "endOffset": 3182,
+          "type": 1,
+          "id": 16,
+          "name": "偃月",
+          "nameEncodings": {
+            "big5": "偃月",
+            "gbk": "俺る",
+            "hex": "b0b3a4eb"
+          },
+          "model": "W7_1",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 3022,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 3034,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 3046,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 3062,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                140,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 140,
+              "valueOffset": 3086
+            },
+            {
+              "offset": 3102,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                0,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 0,
+              "valueOffset": 3126
+            },
+            {
+              "offset": 3142,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                90,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 90,
+              "valueOffset": 3166
+            }
+          ]
+        },
+        "selectedTargetPose": 93,
+        "hitDirection": 2,
+        "hitAngle": 1.5634909904740535
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "37",
+      "type": "hit",
+      "amount": 37,
+      "x": 0.5028162989017899,
+      "y": 0.10377523868587057,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 1231,
+          "endOffset": 1426,
+          "type": 1,
+          "id": 7,
+          "name": "戰戢",
+          "nameEncodings": {
+            "big5": "戰戢",
+            "gbk": "驹穉",
+            "hex": "bed4b761"
+          },
+          "model": "W7_0",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 1266,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 1278,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 1290,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 1306,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                115,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 115,
+              "valueOffset": 1330
+            },
+            {
+              "offset": 1346,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                15,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 15,
+              "valueOffset": 1370
+            },
+            {
+              "offset": 1386,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                100,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 100,
+              "valueOffset": 1410
+            }
+          ]
+        },
+        "selectedTargetPose": 93,
+        "hitDirection": 2,
+        "hitAngle": 1.1694993634740953
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "48",
+      "type": "hit",
+      "amount": 48,
+      "x": 0.5175652721725805,
+      "y": 0.10397292632580313,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 2987,
+          "endOffset": 3182,
+          "type": 1,
+          "id": 16,
+          "name": "偃月",
+          "nameEncodings": {
+            "big5": "偃月",
+            "gbk": "俺る",
+            "hex": "b0b3a4eb"
+          },
+          "model": "W7_1",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 3022,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 3034,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 3046,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 3062,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                140,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 140,
+              "valueOffset": 3086
+            },
+            {
+              "offset": 3102,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                0,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 0,
+              "valueOffset": 3126
+            },
+            {
+              "offset": 3142,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                90,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 90,
+              "valueOffset": 3166
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": 0.5211939138158806
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "37",
+      "type": "hit",
+      "amount": 37,
+      "x": 0.5187269405194305,
+      "y": 0.10424309341727767,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 1231,
+          "endOffset": 1426,
+          "type": 1,
+          "id": 7,
+          "name": "戰戢",
+          "nameEncodings": {
+            "big5": "戰戢",
+            "gbk": "驹穉",
+            "hex": "bed4b761"
+          },
+          "model": "W7_0",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 1266,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 1278,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 1290,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 1306,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                115,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 115,
+              "valueOffset": 1330
+            },
+            {
+              "offset": 1346,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                15,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 15,
+              "valueOffset": 1370
+            },
+            {
+              "offset": 1386,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                100,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 100,
+              "valueOffset": 1410
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": -0.3279454666339203
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "48",
+      "type": "hit",
+      "amount": 48,
+      "x": 0.5191291189198441,
+      "y": 0.10330321646235668,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 2987,
+          "endOffset": 3182,
+          "type": 1,
+          "id": 16,
+          "name": "偃月",
+          "nameEncodings": {
+            "big5": "偃月",
+            "gbk": "俺る",
+            "hex": "b0b3a4eb"
+          },
+          "model": "W7_1",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 3022,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 3034,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 3046,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 3062,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                140,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 140,
+              "valueOffset": 3086
+            },
+            {
+              "offset": 3102,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                0,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 0,
+              "valueOffset": 3126
+            },
+            {
+              "offset": 3142,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                90,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 90,
+              "valueOffset": 3166
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": -0.007748020426640095
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "37",
+      "type": "hit",
+      "amount": 37,
+      "x": 0.5096541963186645,
+      "y": 0.10186601587405913,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 1231,
+          "endOffset": 1426,
+          "type": 1,
+          "id": 7,
+          "name": "戰戢",
+          "nameEncodings": {
+            "big5": "戰戢",
+            "gbk": "驹穉",
+            "hex": "bed4b761"
+          },
+          "model": "W7_0",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 1266,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 1278,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 1290,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 1306,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                115,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 115,
+              "valueOffset": 1330
+            },
+            {
+              "offset": 1346,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                15,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 15,
+              "valueOffset": 1370
+            },
+            {
+              "offset": 1386,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                100,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 100,
+              "valueOffset": 1410
+            }
+          ]
+        },
+        "selectedTargetPose": 92,
+        "hitDirection": 1,
+        "hitAngle": -0.8364905462168968
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "37",
+      "type": "hit",
+      "amount": 37,
+      "x": 0.5007550884238189,
+      "y": 0.09748672537335157,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 1231,
+          "endOffset": 1426,
+          "type": 1,
+          "id": 7,
+          "name": "戰戢",
+          "nameEncodings": {
+            "big5": "戰戢",
+            "gbk": "驹穉",
+            "hex": "bed4b761"
+          },
+          "model": "W7_0",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 1266,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 1278,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 1290,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 1306,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                115,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 115,
+              "valueOffset": 1330
+            },
+            {
+              "offset": 1346,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                15,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 15,
+              "valueOffset": 1370
+            },
+            {
+              "offset": 1386,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                100,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 100,
+              "valueOffset": 1410
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": -0.16377440039334543
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "48",
+      "type": "hit",
+      "amount": 48,
+      "x": 0.5207941987171154,
+      "y": 0.10015486266408724,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 2987,
+          "endOffset": 3182,
+          "type": 1,
+          "id": 16,
+          "name": "偃月",
+          "nameEncodings": {
+            "big5": "偃月",
+            "gbk": "俺る",
+            "hex": "b0b3a4eb"
+          },
+          "model": "W7_1",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 3022,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 3034,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 3046,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 3062,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                140,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 140,
+              "valueOffset": 3086
+            },
+            {
+              "offset": 3102,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                0,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 0,
+              "valueOffset": 3126
+            },
+            {
+              "offset": 3142,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                90,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 90,
+              "valueOffset": 3166
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": -0.4196949279231047
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "37",
+      "type": "hit",
+      "amount": 37,
+      "x": 0.503533805806733,
+      "y": 0.09737628976337553,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 1231,
+          "endOffset": 1426,
+          "type": 1,
+          "id": 7,
+          "name": "戰戢",
+          "nameEncodings": {
+            "big5": "戰戢",
+            "gbk": "驹穉",
+            "hex": "bed4b761"
+          },
+          "model": "W7_0",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 1266,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 1278,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 1290,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 1306,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                115,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 115,
+              "valueOffset": 1330
+            },
+            {
+              "offset": 1346,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                15,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 15,
+              "valueOffset": 1370
+            },
+            {
+              "offset": 1386,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                100,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 100,
+              "valueOffset": 1410
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": 0.298952259384748
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "37",
+      "type": "hit",
+      "amount": 37,
+      "x": 0.5065341867609262,
+      "y": 0.09758453320115468,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 1231,
+          "endOffset": 1426,
+          "type": 1,
+          "id": 7,
+          "name": "戰戢",
+          "nameEncodings": {
+            "big5": "戰戢",
+            "gbk": "驹穉",
+            "hex": "bed4b761"
+          },
+          "model": "W7_0",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 1266,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 1278,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 1290,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 1306,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                115,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 115,
+              "valueOffset": 1330
+            },
+            {
+              "offset": 1346,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                15,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 15,
+              "valueOffset": 1370
+            },
+            {
+              "offset": 1386,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                100,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 100,
+              "valueOffset": 1410
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": -0.3051790419956853
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "48",
+      "type": "hit",
+      "amount": 48,
+      "x": 0.5133313551807654,
+      "y": 0.0973891894949756,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 2987,
+          "endOffset": 3182,
+          "type": 1,
+          "id": 16,
+          "name": "偃月",
+          "nameEncodings": {
+            "big5": "偃月",
+            "gbk": "俺る",
+            "hex": "b0b3a4eb"
+          },
+          "model": "W7_1",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 3022,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 3034,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 3046,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 3062,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                140,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 140,
+              "valueOffset": 3086
+            },
+            {
+              "offset": 3102,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                0,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 0,
+              "valueOffset": 3126
+            },
+            {
+              "offset": 3142,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                90,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 90,
+              "valueOffset": 3166
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": 0.18559362803284357
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "37",
+      "type": "hit",
+      "amount": 37,
+      "x": 0.5063100561180229,
+      "y": 0.09815947057534646,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 1231,
+          "endOffset": 1426,
+          "type": 1,
+          "id": 7,
+          "name": "戰戢",
+          "nameEncodings": {
+            "big5": "戰戢",
+            "gbk": "驹穉",
+            "hex": "bed4b761"
+          },
+          "model": "W7_0",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 1266,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 1278,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 1290,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 1306,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                115,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 115,
+              "valueOffset": 1330
+            },
+            {
+              "offset": 1346,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                15,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 15,
+              "valueOffset": 1370
+            },
+            {
+              "offset": 1386,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                100,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 100,
+              "valueOffset": 1410
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": -0.13709296465376877
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "48",
+      "type": "hit",
+      "amount": 48,
+      "x": 0.5318011250098905,
+      "y": 0.09989014529153739,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 2987,
+          "endOffset": 3182,
+          "type": 1,
+          "id": 16,
+          "name": "偃月",
+          "nameEncodings": {
+            "big5": "偃月",
+            "gbk": "俺る",
+            "hex": "b0b3a4eb"
+          },
+          "model": "W7_1",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 3022,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 3034,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 3046,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 3062,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                140,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 140,
+              "valueOffset": 3086
+            },
+            {
+              "offset": 3102,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                0,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 0,
+              "valueOffset": 3126
+            },
+            {
+              "offset": 3142,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                90,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 90,
+              "valueOffset": 3166
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": -0.2834999138160825
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "37",
+      "type": "hit",
+      "amount": 37,
+      "x": 0.5236432663902095,
+      "y": 0.09989925008287925,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 1231,
+          "endOffset": 1426,
+          "type": 1,
+          "id": 7,
+          "name": "戰戢",
+          "nameEncodings": {
+            "big5": "戰戢",
+            "gbk": "驹穉",
+            "hex": "bed4b761"
+          },
+          "model": "W7_0",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 1266,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 1278,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 1290,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 1306,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                115,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 115,
+              "valueOffset": 1330
+            },
+            {
+              "offset": 1346,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                15,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 15,
+              "valueOffset": 1370
+            },
+            {
+              "offset": 1386,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                100,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 100,
+              "valueOffset": 1410
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": 0.01228680593189555
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "37",
+      "type": "hit",
+      "amount": 37,
+      "x": 0.5172568606842547,
+      "y": 0.09683687182998207,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 1231,
+          "endOffset": 1426,
+          "type": 1,
+          "id": 7,
+          "name": "戰戢",
+          "nameEncodings": {
+            "big5": "戰戢",
+            "gbk": "驹穉",
+            "hex": "bed4b761"
+          },
+          "model": "W7_0",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 1266,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 1278,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 1290,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 1306,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                115,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 115,
+              "valueOffset": 1330
+            },
+            {
+              "offset": 1346,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                15,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 15,
+              "valueOffset": 1370
+            },
+            {
+              "offset": 1386,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                100,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 100,
+              "valueOffset": 1410
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": -0.6620286981044012
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "48",
+      "type": "hit",
+      "amount": 48,
+      "x": 0.5403150134411505,
+      "y": 0.1007791068553488,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 2987,
+          "endOffset": 3182,
+          "type": 1,
+          "id": 16,
+          "name": "偃月",
+          "nameEncodings": {
+            "big5": "偃月",
+            "gbk": "俺る",
+            "hex": "b0b3a4eb"
+          },
+          "model": "W7_1",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 3022,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 3034,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 3046,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 3062,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                140,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 140,
+              "valueOffset": 3086
+            },
+            {
+              "offset": 3102,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                0,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 0,
+              "valueOffset": 3126
+            },
+            {
+              "offset": 3142,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                90,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 90,
+              "valueOffset": 3166
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": -0.4240246958653807
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "37",
+      "type": "hit",
+      "amount": 37,
+      "x": 0.5172706254225011,
+      "y": 0.09667712991833921,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 1231,
+          "endOffset": 1426,
+          "type": 1,
+          "id": 7,
+          "name": "戰戢",
+          "nameEncodings": {
+            "big5": "戰戢",
+            "gbk": "驹穉",
+            "hex": "bed4b761"
+          },
+          "model": "W7_0",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 1266,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 1278,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 1290,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 1306,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                115,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 115,
+              "valueOffset": 1330
+            },
+            {
+              "offset": 1346,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                15,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 15,
+              "valueOffset": 1370
+            },
+            {
+              "offset": 1386,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                100,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 100,
+              "valueOffset": 1410
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": 0.11222324087510188
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "37",
+      "type": "hit",
+      "amount": 37,
+      "x": 0.5225570123881038,
+      "y": 0.0966926670247455,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 1231,
+          "endOffset": 1426,
+          "type": 1,
+          "id": 7,
+          "name": "戰戢",
+          "nameEncodings": {
+            "big5": "戰戢",
+            "gbk": "驹穉",
+            "hex": "bed4b761"
+          },
+          "model": "W7_0",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 1266,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 1278,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 1290,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 1306,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                115,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 115,
+              "valueOffset": 1330
+            },
+            {
+              "offset": 1346,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                15,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 15,
+              "valueOffset": 1370
+            },
+            {
+              "offset": 1386,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                100,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 100,
+              "valueOffset": 1410
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": -0.5586551145680959
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "37",
+      "type": "hit",
+      "amount": 37,
+      "x": 0.5486156092913985,
+      "y": 0.10094101282210055,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 1231,
+          "endOffset": 1426,
+          "type": 1,
+          "id": 7,
+          "name": "戰戢",
+          "nameEncodings": {
+            "big5": "戰戢",
+            "gbk": "驹穉",
+            "hex": "bed4b761"
+          },
+          "model": "W7_0",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 1266,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 1278,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 1290,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 1306,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                115,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 115,
+              "valueOffset": 1330
+            },
+            {
+              "offset": 1346,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                15,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 15,
+              "valueOffset": 1370
+            },
+            {
+              "offset": 1386,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                100,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 100,
+              "valueOffset": 1410
+            }
+          ]
+        },
+        "selectedTargetPose": 92,
+        "hitDirection": 1,
+        "hitAngle": -1.3056114870643105
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "37",
+      "type": "hit",
+      "amount": 37,
+      "x": 0.5480050622249184,
+      "y": 0.09920763376010305,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 1231,
+          "endOffset": 1426,
+          "type": 1,
+          "id": 7,
+          "name": "戰戢",
+          "nameEncodings": {
+            "big5": "戰戢",
+            "gbk": "驹穉",
+            "hex": "bed4b761"
+          },
+          "model": "W7_0",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 1266,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 1278,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 1290,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 1306,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                115,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 115,
+              "valueOffset": 1330
+            },
+            {
+              "offset": 1346,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                15,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 15,
+              "valueOffset": 1370
+            },
+            {
+              "offset": 1386,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                100,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 100,
+              "valueOffset": 1410
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": -0.09308578152369051
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "37",
+      "type": "hit",
+      "amount": 37,
+      "x": 0.5562532782647818,
+      "y": 0.09844899328424389,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 1231,
+          "endOffset": 1426,
+          "type": 1,
+          "id": 7,
+          "name": "戰戢",
+          "nameEncodings": {
+            "big5": "戰戢",
+            "gbk": "驹穉",
+            "hex": "bed4b761"
+          },
+          "model": "W7_0",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 1266,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 1278,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 1290,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 1306,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                115,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 115,
+              "valueOffset": 1330
+            },
+            {
+              "offset": 1346,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                15,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 15,
+              "valueOffset": 1370
+            },
+            {
+              "offset": 1386,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                100,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 100,
+              "valueOffset": 1410
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": -0.712597485222554
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "48",
+      "type": "hit",
+      "amount": 48,
+      "x": 0.5759387645186245,
+      "y": 0.09881943664043175,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 2987,
+          "endOffset": 3182,
+          "type": 1,
+          "id": 16,
+          "name": "偃月",
+          "nameEncodings": {
+            "big5": "偃月",
+            "gbk": "俺る",
+            "hex": "b0b3a4eb"
+          },
+          "model": "W7_1",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 3022,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 3034,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 3046,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 3062,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                140,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 140,
+              "valueOffset": 3086
+            },
+            {
+              "offset": 3102,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                0,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 0,
+              "valueOffset": 3126
+            },
+            {
+              "offset": 3142,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                90,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 90,
+              "valueOffset": 3166
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": -0.006553692389822495
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "37",
+      "type": "hit",
+      "amount": 37,
+      "x": 0.5713350227809033,
+      "y": 0.10007520841068812,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 1231,
+          "endOffset": 1426,
+          "type": 1,
+          "id": 7,
+          "name": "戰戢",
+          "nameEncodings": {
+            "big5": "戰戢",
+            "gbk": "驹穉",
+            "hex": "bed4b761"
+          },
+          "model": "W7_0",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 1266,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 1278,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 1290,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 1306,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                115,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 115,
+              "valueOffset": 1330
+            },
+            {
+              "offset": 1346,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                15,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 15,
+              "valueOffset": 1370
+            },
+            {
+              "offset": 1386,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                100,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 100,
+              "valueOffset": 1410
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": 0.025617571304022375
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "48",
+      "type": "hit",
+      "amount": 48,
+      "x": 0.5825323445609734,
+      "y": 0.09907901393106877,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 2987,
+          "endOffset": 3182,
+          "type": 1,
+          "id": 16,
+          "name": "偃月",
+          "nameEncodings": {
+            "big5": "偃月",
+            "gbk": "俺る",
+            "hex": "b0b3a4eb"
+          },
+          "model": "W7_1",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 3022,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 3034,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 3046,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 3062,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                140,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 140,
+              "valueOffset": 3086
+            },
+            {
+              "offset": 3102,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                0,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 0,
+              "valueOffset": 3126
+            },
+            {
+              "offset": 3142,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                90,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 90,
+              "valueOffset": 3166
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": -0.0926621861627133
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "37",
+      "type": "hit",
+      "amount": 37,
+      "x": 0.5866335660158142,
+      "y": 0.10329610680031759,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 1231,
+          "endOffset": 1426,
+          "type": 1,
+          "id": 7,
+          "name": "戰戢",
+          "nameEncodings": {
+            "big5": "戰戢",
+            "gbk": "驹穉",
+            "hex": "bed4b761"
+          },
+          "model": "W7_0",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 1266,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 1278,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 1290,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 1306,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                115,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 115,
+              "valueOffset": 1330
+            },
+            {
+              "offset": 1346,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                15,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 15,
+              "valueOffset": 1370
+            },
+            {
+              "offset": 1386,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                100,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 100,
+              "valueOffset": 1410
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": -0.000301039105800798
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "48",
+      "type": "hit",
+      "amount": 48,
+      "x": 0.5814539854432784,
+      "y": 0.09771745496616646,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 2987,
+          "endOffset": 3182,
+          "type": 1,
+          "id": 16,
+          "name": "偃月",
+          "nameEncodings": {
+            "big5": "偃月",
+            "gbk": "俺る",
+            "hex": "b0b3a4eb"
+          },
+          "model": "W7_1",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 3022,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 3034,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 3046,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 3062,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                140,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 140,
+              "valueOffset": 3086
+            },
+            {
+              "offset": 3102,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                0,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 0,
+              "valueOffset": 3126
+            },
+            {
+              "offset": 3142,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                90,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 90,
+              "valueOffset": 3166
+            }
+          ]
+        },
+        "selectedTargetPose": 93,
+        "hitDirection": 2,
+        "hitAngle": 1.586816458832061
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "37",
+      "type": "hit",
+      "amount": 37,
+      "x": 0.5813152893200298,
+      "y": 0.09829212967211665,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 1231,
+          "endOffset": 1426,
+          "type": 1,
+          "id": 7,
+          "name": "戰戢",
+          "nameEncodings": {
+            "big5": "戰戢",
+            "gbk": "驹穉",
+            "hex": "bed4b761"
+          },
+          "model": "W7_0",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 1266,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 1278,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 1290,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 1306,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                115,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 115,
+              "valueOffset": 1330
+            },
+            {
+              "offset": 1346,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                15,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 15,
+              "valueOffset": 1370
+            },
+            {
+              "offset": 1386,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                100,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 100,
+              "valueOffset": 1410
+            }
+          ]
+        },
+        "selectedTargetPose": 93,
+        "hitDirection": 2,
+        "hitAngle": 0.9764089487725971
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "48",
+      "type": "hit",
+      "amount": 48,
+      "x": 0.6002538949629137,
+      "y": 0.10105223924820467,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 2987,
+          "endOffset": 3182,
+          "type": 1,
+          "id": 16,
+          "name": "偃月",
+          "nameEncodings": {
+            "big5": "偃月",
+            "gbk": "俺る",
+            "hex": "b0b3a4eb"
+          },
+          "model": "W7_1",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 3022,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 3034,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 3046,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 3062,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                140,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 140,
+              "valueOffset": 3086
+            },
+            {
+              "offset": 3102,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                0,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 0,
+              "valueOffset": 3126
+            },
+            {
+              "offset": 3142,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                90,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 90,
+              "valueOffset": 3166
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": -0.019747050929059477
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "37",
+      "type": "hit",
+      "amount": 37,
+      "x": 0.5956394767575023,
+      "y": 0.10269209251022537,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 1231,
+          "endOffset": 1426,
+          "type": 1,
+          "id": 7,
+          "name": "戰戢",
+          "nameEncodings": {
+            "big5": "戰戢",
+            "gbk": "驹穉",
+            "hex": "bed4b761"
+          },
+          "model": "W7_0",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 1266,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 1278,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 1290,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 1306,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                115,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 115,
+              "valueOffset": 1330
+            },
+            {
+              "offset": 1346,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                15,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 15,
+              "valueOffset": 1370
+            },
+            {
+              "offset": 1386,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                100,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 100,
+              "valueOffset": 1410
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": 0.0011390239160893477
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "37",
+      "type": "hit",
+      "amount": 37,
+      "x": 0.6032504407691823,
+      "y": 0.10152671013826009,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 1231,
+          "endOffset": 1426,
+          "type": 1,
+          "id": 7,
+          "name": "戰戢",
+          "nameEncodings": {
+            "big5": "戰戢",
+            "gbk": "驹穉",
+            "hex": "bed4b761"
+          },
+          "model": "W7_0",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 1266,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 1278,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 1290,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 1306,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                115,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 115,
+              "valueOffset": 1330
+            },
+            {
+              "offset": 1346,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                15,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 15,
+              "valueOffset": 1370
+            },
+            {
+              "offset": 1386,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                100,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 100,
+              "valueOffset": 1410
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": -0.4161957021868419
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    },
+    {
+      "text": "48",
+      "type": "hit",
+      "amount": 48,
+      "x": 0.5963885095223566,
+      "y": 0.09952110580168594,
+      "poseId": 279,
+      "raw": {
+        "targetValue": 0,
+        "targetMove": 5,
+        "defenseValue": 0.1,
+        "defenseMove": 5,
+        "attackType": 0,
+        "targetPose": 90,
+        "moveRecord": {
+          "offset": 28238,
+          "endOffset": 28335,
+          "type": 3,
+          "id": 279,
+          "name": "槍輕一",
+          "nameEncodings": {
+            "big5": "槍輕一",
+            "gbk": "簀淮�@",
+            "hex": "ba6abbb4a440"
+          },
+          "model": "NoneName",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 28279,
+              "words": [
+                1,
+                100,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 28295,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                1,
+                45,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 1,
+              "value": 45,
+              "valueOffset": 28319
+            }
+          ]
+        },
+        "weaponRecord": {
+          "offset": 2987,
+          "endOffset": 3182,
+          "type": 1,
+          "id": 16,
+          "name": "偃月",
+          "nameEncodings": {
+            "big5": "偃月",
+            "gbk": "俺る",
+            "hex": "b0b3a4eb"
+          },
+          "model": "W7_1",
+          "flag": 1,
+          "byteFlag": 0,
+          "parameters": [
+            {
+              "offset": 3022,
+              "words": [
+                11,
+                7,
+                0
+              ]
+            },
+            {
+              "offset": 3034,
+              "words": [
+                13,
+                75,
+                0
+              ]
+            },
+            {
+              "offset": 3046,
+              "words": [
+                14,
+                672,
+                0
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "offset": 3062,
+              "words": [
+                2,
+                0,
+                3,
+                0,
+                -1,
+                0,
+                140,
+                1,
+                0,
+                0
+              ],
+              "statKey": 3,
+              "mode": 0,
+              "value": 140,
+              "valueOffset": 3086
+            },
+            {
+              "offset": 3102,
+              "words": [
+                2,
+                0,
+                4,
+                0,
+                -1,
+                0,
+                0,
+                1,
+                0,
+                0
+              ],
+              "statKey": 4,
+              "mode": 0,
+              "value": 0,
+              "valueOffset": 3126
+            },
+            {
+              "offset": 3142,
+              "words": [
+                2,
+                0,
+                5,
+                0,
+                -1,
+                1,
+                90,
+                1,
+                0,
+                0
+              ],
+              "statKey": 5,
+              "mode": 1,
+              "value": 90,
+              "valueOffset": 3166
+            }
+          ]
+        },
+        "selectedTargetPose": 90,
+        "hitDirection": 0,
+        "hitAngle": -0.5052543883629231
+      },
+      "guarded": false,
+      "guardBypassed": false,
+      "knockdown": false,
+      "attackerHero": false,
+      "targetHero": true,
+      "targetName": "孟星魂"
+    }
+  ]
+}

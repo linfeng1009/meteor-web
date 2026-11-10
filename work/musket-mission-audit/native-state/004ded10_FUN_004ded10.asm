@@ -1,0 +1,11 @@
+004ded10 MOV EAX,dword ptr [ESP + 0x4]
+004ded14 MOV ECX,dword ptr [EAX + 0x80]
+004ded1a TEST ECX,ECX
+004ded1c JNZ 0x004ded2d
+004ded1e MOV ECX,dword ptr [EAX + 0x36c]
+004ded24 TEST ECX,ECX
+004ded26 JNZ 0x004ded2d
+004ded28 XOR EAX,EAX
+004ded2a RET 0x4
+004ded2d MOV EAX,0x1
+004ded32 RET 0x4

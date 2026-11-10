@@ -1,0 +1,11 @@
+flowchart LR
+  pos[原POS攻击字段] --> packet[原Move/Value消息]
+  packet --> move[Move轨迹倍率]
+  packet --> time[Value最低时长]
+  amb[原AMB d_base] --> sample[Web场景轨迹采样]
+  move --> sample
+  time --> player[原帧边界播放器]
+  player --> sample
+  sample --> collision[统一墙体/地面/险地检测]
+  collision --> actor[碰撞根与镜头]
+  player --> skin[原骨骼/挂点/攻击窗]

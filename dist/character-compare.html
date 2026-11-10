@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101719">
+  <title>人物工坊 · 外观对照</title>
+  <link rel="stylesheet" href="./character-compare.css">
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="./index.html"><span>流</span>流星蝴蝶剑<small>人物工坊</small></a><a class="back" href="./index.html">返回游戏 <span aria-hidden="true">↗</span></a></header>
+  <main>
+    <div class="intro"><div><p class="eyebrow">CHARACTER WORKSHOP · APPEARANCE STUDY</p><h1><strong id="compare-name">孟星魂</strong><span>外观对照</span></h1><p class="description"><span id="compare-description">原版与高清改良试版。两侧共用视角、灯光和动作进度。</span></p></div><button id="apply-hd" class="primary" disabled>使用此外观进入游戏 <span aria-hidden="true">↗</span></button></div>
+    <section class="comparison" aria-label="原版与所选外观三维对照">
+      <div class="pane-label original"><span class="number">01</span><div><h2>孟星魂 · 原版</h2><p>ORIGINAL 2002</p></div><span class="badge">原始素材</span></div>
+      <div class="pane-label enhanced"><span class="number">02</span><div><h2 id="variant-title">高清改良试版</h2><p id="variant-kicker">BLENDER STUDY</p></div><span class="badge" id="variant-badge">HD · 试作</span></div>
+      <canvas id="compare-world" tabindex="0" aria-label="人物三维模型对照。拖动同步旋转，滚轮缩放；方向键微调视角，空格暂停或播放。"></canvas>
+      <div class="divider" aria-hidden="true"></div>
+      <div id="compare-loading" role="status"><span class="loader"></span><strong>正在准备人物对照</strong><p>读取模型、原版骨骼与人物材质…</p></div>
+      <div class="stage-notes"><span>拖动同步旋转 · 滚轮缩放</span><span id="frame-label">相同动作 · 相同帧</span></div>
+      <div class="pane-stat left" id="original-stats">1,482 三角面<br>身体 256² · 脸部 128²</div><div class="pane-stat right" id="hd-stats">高清资源载入中</div>
+    </section>
+    <section class="toolbar" aria-label="共同对照控制">
+      <label class="variant-picker" for="compare-appearance">右侧外观<select id="compare-appearance" disabled><option value="hd">孟星魂 · 高清试版</option><option value="hutao">YS-胡桃 · 模型适配</option><option value="raiden">YS-影 · 模型适配</option><option value="emilia">RE0-爱蜜莉雅 · 模型适配</option></select></label><div class="control-group"><span class="control-label">动作</span><div class="segmented" id="motion-controls"><button data-motion="idle" aria-pressed="true">站姿</button><button data-motion="run" aria-pressed="false">跑步</button><button data-motion="attack" aria-pressed="false">出招</button><button data-motion="jump" aria-pressed="false">跳跃</button><button data-motion="guard" aria-pressed="false">防御</button></div></div>
+      <div class="control-group view-controls"><span class="control-label">取景</span><div class="segmented"><button data-view="full" aria-pressed="true">全身</button><button data-view="face" aria-pressed="false">脸部</button></div><button id="reset-view" class="subtle">复位视角</button><button id="play-toggle" class="subtle" aria-pressed="false">播放动作</button></div>
+      <label class="timeline-label" for="motion-frame">动作进度 <span id="progress-label">0%</span></label><input id="motion-frame" type="range" min="0" max="1000" value="0" aria-label="两侧共同动作进度">
+    </section>
+    <div class="details"><p><span class="dot"></span>保留原版骨架与武器挂点<span class="dot"></span>相同灯光与曝光<span class="dot"></span>可编辑 Blender 源文件</p><p id="appearance-note">本版为原模型基础上的几何与材质改良，脸部贴图使用 AI 辅助细化。尚属试作。</p></div>
+  </main>
+  <script type="module" src="./character-compare.js"></script>
+</body>
+</html>

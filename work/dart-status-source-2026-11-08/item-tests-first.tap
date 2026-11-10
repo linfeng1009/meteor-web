@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: attack-item resolution follows original parameter16 and exact source effect data
+ok 1 - attack-item resolution follows original parameter16 and exact source effect data
+  ---
+  duration_ms: 0.771375
+  type: 'test'
+  ...
+# Subtest: 气丧 immediately clamps rage to the original maximum without retaining a timed modifier
+ok 2 - 气丧 immediately clamps rage to the original maximum without retaining a timed modifier
+  ---
+  duration_ms: 0.464167
+  type: 'test'
+  ...
+# Subtest: 七星 and 蛊毒 retain their distinct original periods and lifetimes with the elapsed-time host
+ok 3 - 七星 and 蛊毒 retain their distinct original periods and lifetimes with the elapsed-time host
+  ---
+  duration_ms: 2.542833
+  type: 'test'
+  ...
+# Subtest: repeat poison hits refresh only the lifetime while preserving period progress and independent poison identities
+ok 4 - repeat poison hits refresh only the lifetime while preserving period progress and independent poison identities
+  ---
+  duration_ms: 0.19625
+  type: 'test'
+  ...
+# Subtest: source item effects reject dead, removed and disposed actors without an application
+ok 5 - source item effects reject dead, removed and disposed actors without an application
+  ---
+  duration_ms: 0.225375
+  type: 'test'
+  ...
+# Subtest: story items read source lifetime, refresh mode and periodic stat effects without guessing from names
+ok 6 - story items read source lifetime, refresh mode and periodic stat effects without guessing from names
+  ---
+  duration_ms: 1.010334
+  type: 'test'
+  ...
+# Subtest: 嗜战 affects actual native effective attack, refreshes without stacking, and expires after60 seconds
+ok 7 - 嗜战 affects actual native effective attack, refreshes without stacking, and expires after60 seconds
+  ---
+  duration_ms: 0.30625
+  type: 'test'
+  ...
+# Subtest: 尸毒 waits a full period, retains fractional Web time, and gives the same HP across frame rates
+ok 8 - 尸毒 waits a full period, retains fractional Web time, and gives the same HP across frame rates
+  ---
+  duration_ms: 1.295458
+  type: 'test'
+  ...
+# Subtest: poison refresh preserves its current period and cannot underflow source HP
+ok 9 - poison refresh preserves its current period and cannot underflow source HP
+  ---
+  duration_ms: 0.108708
+  type: 'test'
+  ...
+# Subtest: restart/mission disposal clears only script-owned effects and leaves no periodic damage behind
+ok 10 - restart/mission disposal clears only script-owned effects and leaves no periodic damage behind
+  ---
+  duration_ms: 0.233583
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 60.359667

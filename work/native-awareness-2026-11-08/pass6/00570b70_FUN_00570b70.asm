@@ -1,0 +1,73 @@
+00570b70 SUB ESP,0x24
+00570b73 MOV EAX,dword ptr [ESP + 0x2c]
+00570b77 MOV ECX,dword ptr [ESP + 0x34]
+00570b7b FLD float ptr [EAX]
+00570b7d FSUB float ptr [ECX]
+00570b7f FSTP float ptr [ESP + 0xc]
+00570b83 FLD float ptr [EAX + 0x4]
+00570b86 FSUB float ptr [ECX + 0x4]
+00570b89 FSTP float ptr [ESP + 0x10]
+00570b8d FLD float ptr [EAX + 0x8]
+00570b90 FSUB float ptr [ECX + 0x8]
+00570b93 MOV EAX,dword ptr [ESP + 0xc]
+00570b97 MOV ECX,dword ptr [ESP + 0x10]
+00570b9b MOV dword ptr [ESP],EAX
+00570b9f MOV EAX,dword ptr [ESP + 0x28]
+00570ba3 MOV dword ptr [ESP + 0x4],ECX
+00570ba7 MOV ECX,dword ptr [ESP + 0x30]
+00570bab FSTP float ptr [ESP + 0x14]
+00570baf FLD float ptr [EAX]
+00570bb1 FADD float ptr [ECX]
+00570bb3 FLD float ptr [EAX + 0x4]
+00570bb6 FADD float ptr [ECX + 0x4]
+00570bb9 MOV EDX,dword ptr [ESP + 0x14]
+00570bbd MOV dword ptr [ESP + 0x8],EDX
+00570bc1 FSTP float ptr [ESP + 0x1c]
+00570bc5 FLD float ptr [EAX + 0x8]
+00570bc8 FADD float ptr [ECX + 0x8]
+00570bcb FSTP float ptr [ESP + 0x20]
+00570bcf FLD float ptr [ESP + 0xc]
+00570bd3 FCOMP float ptr [0x005a83e4]
+00570bd9 FNSTSW AX
+00570bdb TEST AH,0x5
+00570bde JP 0x00570be8
+00570be0 FLD float ptr [ESP + 0xc]
+00570be4 FCHS
+00570be6 JMP 0x00570bec
+00570be8 FLD float ptr [ESP]
+00570bec FLD float ptr [ESP + 0x4]
+00570bf0 FCOMP float ptr [0x005a83e4]
+00570bf6 FNSTSW AX
+00570bf8 TEST AH,0x5
+00570bfb JP 0x00570c07
+00570bfd FLD float ptr [ESP + 0x4]
+00570c01 FCHS
+00570c03 FSTP float ptr [ESP + 0x4]
+00570c07 FLD float ptr [ESP + 0x8]
+00570c0b FCOMP float ptr [0x005a83e4]
+00570c11 FNSTSW AX
+00570c13 TEST AH,0x5
+00570c16 JP 0x00570c22
+00570c18 FLD float ptr [ESP + 0x8]
+00570c1c FCHS
+00570c1e FSTP float ptr [ESP + 0x8]
+00570c22 FCOMPP
+00570c24 FNSTSW AX
+00570c26 TEST AH,0x41
+00570c29 JP 0x00570c4f
+00570c2b FLD float ptr [ESP + 0x4]
+00570c2f FCOMP float ptr [ESP + 0x1c]
+00570c33 FNSTSW AX
+00570c35 TEST AH,0x41
+00570c38 JP 0x00570c4f
+00570c3a FLD float ptr [ESP + 0x8]
+00570c3e FCOMP float ptr [ESP + 0x20]
+00570c42 FNSTSW AX
+00570c44 TEST AH,0x41
+00570c47 JP 0x00570c4f
+00570c49 MOV AL,0x1
+00570c4b ADD ESP,0x24
+00570c4e RET
+00570c4f XOR AL,AL
+00570c51 ADD ESP,0x24
+00570c54 RET

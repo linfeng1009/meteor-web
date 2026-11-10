@@ -1,0 +1,48 @@
+TAP version 13
+# Subtest: original discovery requires View, a forward half-space beyond80 native units, and line of sight
+ok 1 - original discovery requires View, a forward half-space beyond80 native units, and line of sight
+  ---
+  duration_ms: 0.72425
+  type: 'test'
+  ...
+# Subtest: native nearby awareness is omnidirectional but never bypasses range or an occluding wall
+ok 2 - native nearby awareness is omnidirectional but never bypasses range or an occluding wall
+  ---
+  duration_ms: 0.195916
+  type: 'test'
+  ...
+# Subtest: an unknown actor is not a target; a known nearby enemy is retained and lost at the original200-unit boundary
+ok 3 - an unknown actor is not a target; a known nearby enemy is retained and lost at the original200-unit boundary
+  ---
+  duration_ms: 0.192583
+  type: 'test'
+  ...
+# Subtest: actual training start with original四方阵 spawns wakes only the enemy that discovers the player and permits public combos
+ok 4 - actual training start with original四方阵 spawns wakes only the enemy that discovers the player and permits public combos
+  ---
+  duration_ms: 243.649708
+  type: 'test'
+  ...
+# Source DES starts on a CPU floor with live NPC AI: displacement=5.095,0.000,0.000; awareness=true,false,false; public262→263.
+# Subtest: unseen training enemies cannot discover through real collision triangles and respawn clears their cached target
+ok 5 - unseen training enemies cannot discover through real collision triangles and respawn clears their cached target
+  ---
+  duration_ms: 61.386459
+  type: 'test'
+  ...
+# Subtest: original四方阵 geometry and normal start preserve discovery-gated live AI rather than an opening three-enemy rush
+ok 6 - original四方阵 geometry and normal start preserve discovery-gated live AI rather than an opening three-enemy rush
+  ---
+  duration_ms: 145.856542
+  type: 'test'
+  ...
+# Originalsn06 model/colliders/spawns plus live AI: displacement=5.095,0.000,0.000; one enemy discovers the player, two remain unaware. CPU; no browser rendering.
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 601.104166

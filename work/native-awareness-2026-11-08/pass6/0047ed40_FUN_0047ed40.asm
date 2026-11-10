@@ -1,0 +1,47 @@
+0047ed40 PUSH ECX
+0047ed41 FLD float ptr [ECX + 0xc]
+0047ed44 FLD float ptr [ECX + 0x8]
+0047ed47 FLD float ptr [ECX + 0x4]
+0047ed4a FLD float ptr [ECX]
+0047ed4c FLD ST0
+0047ed4e FMUL ST1
+0047ed50 FLD ST2
+0047ed52 FMUL ST3
+0047ed54 FADDP
+0047ed56 FLD ST3
+0047ed58 FMUL ST4
+0047ed5a FADDP
+0047ed5c FLD ST4
+0047ed5e FMUL ST5
+0047ed60 FADDP
+0047ed62 FSTP float ptr [ESP]
+0047ed66 FSTP ST0
+0047ed68 FSTP ST0
+0047ed6a FSTP ST0
+0047ed6c FSTP ST0
+0047ed6e FLD float ptr [ESP]
+0047ed72 FCOMP float ptr [0x005a83f4]
+0047ed78 FNSTSW AX
+0047ed7a TEST AH,0x44
+0047ed7d JNP 0x0047edb8
+0047ed7f FLD float ptr [ESP]
+0047ed83 FCOMP float ptr [0x005a83e4]
+0047ed89 FNSTSW AX
+0047ed8b TEST AH,0x44
+0047ed8e JNP 0x0047edb8
+0047ed90 FLD float ptr [ESP]
+0047ed94 FSQRT
+0047ed96 FDIVR float ptr [0x005a83f4]
+0047ed9c FLD ST0
+0047ed9e FMUL float ptr [ECX]
+0047eda0 FSTP float ptr [ECX]
+0047eda2 FLD ST0
+0047eda4 FMUL float ptr [ECX + 0x4]
+0047eda7 FSTP float ptr [ECX + 0x4]
+0047edaa FLD ST0
+0047edac FMUL float ptr [ECX + 0x8]
+0047edaf FSTP float ptr [ECX + 0x8]
+0047edb2 FMUL float ptr [ECX + 0xc]
+0047edb5 FSTP float ptr [ECX + 0xc]
+0047edb8 POP ECX
+0047edb9 RET

@@ -1,0 +1,84 @@
+{
+  "observedAt": "2026-11-07T19:09:55.841221+08:00",
+  "task": "ACT group-aware combo entry recovery",
+  "source": "Offline source POS/ACT and preexisting read-only Meteor.exe exports; native sample not executed",
+  "findings": [
+    {
+      "id": "F-GROUP-01",
+      "status": "validated",
+      "evidence": [
+        "0055d020",
+        "0055d130",
+        "before.json",
+        "after.json",
+        "group-tests-final.tap",
+        "engine-reaction-tests.tap"
+      ],
+      "statement": "Native request identifies an ACT group; current pose destinations are scanned in source order and the first matching group member is selected. Root-pose-only permission rejects legal combos."
+    }
+  ],
+  "tests": {
+    "new": 7,
+    "newPlusExistingController": 19,
+    "engineReaction": 42,
+    "overlap": "These subsets overlap existing full-suite coverage; do not sum as independent new tests."
+  },
+  "artifacts": [
+    {
+      "path": "dist/native-combat.js",
+      "sha256": "26ac49cb7bf40c1d8ee0a66d71e133dca658e7f06323019e90325029636cbb0d"
+    },
+    {
+      "path": "tests/native-act-group.test.mjs",
+      "sha256": "327914cfdc84dbfdd11fc228fc6358188298bd7cf8c13b7e26bfa955194424dd"
+    },
+    {
+      "path": "dist/assets/native/combat/P0.POS",
+      "sha256": "1e71f945afc6b701f86eb50e500feccca22f20b52f7f3bec073b0247d390a5fb"
+    },
+    {
+      "path": "dist/assets/native/combat/character.act",
+      "sha256": "e52865424fe065e808a73e9f81bb8df5a78e161a43e59e051bd41f0fb4e42eda"
+    },
+    {
+      "path": "work/meteor-original/evidence/pose-controller-native-2026-11-05/0055d020_FUN_0055d020.c",
+      "sha256": "e630fbb9d6aa00f562dc5a3a26589ccb99af13d4add512509c65aecf39dc9bb6"
+    },
+    {
+      "path": "work/meteor-original/evidence/pose-controller-native-2026-11-05/0055d130_FUN_0055d130.c",
+      "sha256": "ffd5f3c617bc6070fea96ae9c8059c9399c5ec4e996e79dc34ee694bcc73f83e"
+    },
+    {
+      "path": "work/meteor-original/evidence/pose-controller-native-2026-11-05/0055d130_FUN_0055d130.asm",
+      "sha256": "2b0fa41fe8433718421409e73b6f05d2f05802a517d511df2993958b943eefda"
+    },
+    {
+      "path": "work/meteor-original/evidence/pose-blend-native-2026-11-05/0055d450_FUN_0055d450.c",
+      "sha256": "9445cf90d6e317261a5eca7d6eecc76ca10ba282e007f52b70e48900b35e6c2e"
+    },
+    {
+      "path": "work/combo-continuity-audit/after.json",
+      "sha256": "2374c311f5df65ee56ed39ff418d323a1c6ec1ba1ab1e79fff3b2afd31d9ab52"
+    },
+    {
+      "path": "work/combo-continuity-audit/before.json",
+      "sha256": "4505795f5d6f78591abb74bbd1382a1e6c4564959e972b8f9c7f5d20f571093a"
+    },
+    {
+      "path": "work/combo-continuity-audit/engine-reaction-tests.tap",
+      "sha256": "a5dba30af2c04ce97e148556f730fd790c72154d8f5b2fe2cada67a484c47fad"
+    },
+    {
+      "path": "work/combo-continuity-audit/group-tests-final.tap",
+      "sha256": "f737848b811e134bf94da0b2e3bab5e765c57391b6ec4bdc618fcbc4e2c312ee"
+    },
+    {
+      "path": "work/combo-continuity-audit/group-tests-first.tap",
+      "sha256": "6d0bd0d3636a6eef1a072708784d26eb6a7fd0191869e5d73f9ccbb636c69599"
+    },
+    {
+      "path": "work/combo-continuity-audit/probe-act-groups.mjs",
+      "sha256": "d4c591254ecdbf3e6c3a7eb421c84ec044ea69a1b8e0f1aa47532a3336bb4cde"
+    }
+  ]
+}

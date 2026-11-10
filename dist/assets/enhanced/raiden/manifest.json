@@ -1,0 +1,144 @@
+{
+  "schema": 1,
+  "characterId": 0,
+  "appearance": "raiden",
+  "label": "YS-影 · 礼服 · 完整模型适配",
+  "mesh": "mesh.json",
+  "complete": true,
+  "completeness": {
+    "bodyGeometry": true,
+    "headHairGeometry": true,
+    "eyes": true,
+    "faceGeometry": true,
+    "originalGenshinSkeleton": false,
+    "sourcePmxSkeleton": true
+  },
+  "stats": {
+    "sourceVertices": 24203,
+    "sourceTriangles": 30604,
+    "vertices": 24203,
+    "triangles": 30604,
+    "sourceBones": 363,
+    "bones": 30,
+    "dummies": 6,
+    "textures": 7,
+    "textureResolutions": [
+      [
+        2048,
+        2048
+      ],
+      [
+        2048,
+        2048
+      ],
+      [
+        2048,
+        2048
+      ],
+      [
+        2048,
+        2048
+      ],
+      [
+        2048,
+        2048
+      ],
+      [
+        2048,
+        2048
+      ],
+      [
+        1024,
+        1024
+      ]
+    ],
+    "omittedTriangles": 0
+  },
+  "retarget": {
+    "method": "Japanese PMX bone semantics and source joint positions map limbs to p0 BNC; continuous native-height torso weights avoid short PMX joint spacing shear. Original AMB drives 30 bones.",
+    "provisional": true,
+    "sourceSkeletonMissing": false,
+    "hairPhysics": false,
+    "hairBinding": "rigid native head approximation, no hair physics",
+    "clothPhysics": false,
+    "fingerArticulation": "PMX fingers follow native hands; no full MMD finger/morph/IK simulation"
+  },
+  "provenance": {
+    "source": "User-provided complete 礼服影.pmx; source files read-only; no third-party plugin executed.",
+    "modelProvidedBy": "miHoYo",
+    "modelAdaptedBy": "观海/花咲十七夜 (PMX comment); head credits miHoYo/ota, ash.k, manashiku; body miHoYo/观海子; edit 花咲十七夜 (external readme)",
+    "face": "Complete authored PMX face, mouth, teeth, lashes, eyebrows and eyes retained; no face parts extracted into another model.",
+    "textures": "Seven original PNG color maps with authored UVs and alpha; skin materials use depth-writing alphaTest .35; MMD sphere/toon maps are not PBR normals.",
+    "license": "Embedded model instructions: noncommercial, no redistribution or extraction of parts for other models. Conversion retained locally.",
+    "limits": [
+      "First-pass native p0 animation retarget",
+      "No MMD/Genshin hair, cloth or rigid-body physics",
+      "No MMD facial morph or finger simulation",
+      "MMD sphere/toon shading differs from Web PBR"
+    ]
+  },
+  "omittedRenderPasses": [],
+  "sourceFiles": [
+    {
+      "file": "礼服影.pmx",
+      "bytes": 2820530,
+      "sha256": "35018683b79528d95b6ecf49eab4d46848174947b65f8a81a3bfa5efdc94c20f"
+    },
+    {
+      "file": "tex/髪.png",
+      "sha256": "975471fecd30af5798b27da0623186649226b43101d50e21b6d475e31aa47021",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "tex/体.png",
+      "sha256": "0179df096988f189d9f837d076726afbdad094a3f864b9adc72101f61d5d6bdf",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "tex/肌1.png",
+      "sha256": "e003fa58e5c86fa933bb76555a9facdb741207b836bc76bcf215e797340b3d24",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "tex/肌2.png",
+      "sha256": "7ee139bcb9776a9890a974fe4fe2364f51f75f48ea3b166b4a56e7de431fdc8d",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "tex/面.png",
+      "sha256": "3d2447a3d28a765e19e261a5caac8bd09e0f63f27740dcca1293ca61d3f61ff4",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "tex/发.png",
+      "sha256": "6a6abc7df5be6155fff4bc34f766c2baeb54688ea61b8ce80af4f0d2c5b6a8e0",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "tex/Monster_Shougun_Mitakenarukami_Hair_Tex_Diffuse.png",
+      "sha256": "7f3b3c2b2797b9bf07c9a619bb0dc55d243f6961a3d1f2162a4e1d251102f568",
+      "size": [
+        1024,
+        1024
+      ]
+    }
+  ]
+}

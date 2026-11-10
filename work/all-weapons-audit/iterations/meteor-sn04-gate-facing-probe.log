@@ -1,0 +1,27 @@
+source {"hp":2000,"weapon":16,"actors":[["孟星魂",2000,16,1],["禁卫侍官长",5000,17,2],["禁卫士兵﹒甲",2500,17,2],["火铳兵﹒甲",1500,12,2],["火铳兵﹒乙",1500,12,2],["禁卫士兵﹒乙",2500,18,2],["金枪侍卫﹒乙",2500,25,2],["金枪侍卫﹒甲",2500,25,2]],"diagnostics":[]}
+D_APdoor {"position":[-79.55584,0,-0.37335999999999997],"min":[-81.8564764440918,-0.07663101196289114,-9.004497695312498],"max":[-77.37077301391602,5.064453124999999,8.257777695312498],"colliders":14,"attr":{"active":1,"collision":0,"interactive":1,"model":"\"Pdoor02\"","name":"\"damage30\"","blockplayer":"no","ticket":"3","effect":"\"GoalBlue\"","damage":0,"damagevalue":30},"poses":[{"id":0,"start":0,"end":0,"valid":true},{"id":1,"start":0,"end":7,"valid":true},{"id":2,"start":7,"end":12,"valid":true},{"id":3,"start":12,"end":19,"valid":true},{"id":4,"start":19,"end":24,"valid":true},{"id":5,"start":24,"end":31,"valid":true},{"id":6,"start":31,"end":36,"valid":true},{"id":7,"start":36,"end":43,"valid":true},{"id":8,"start":43,"end":93,"valid":true}]}
+D_BPdoor {"position":[88.4532,0,-0.61768],"min":[86.26813301391601,-0.07663101196289109,-9.248817695312498],"max":[90.75383644409179,5.064453125000001,8.013457695312498],"colliders":14,"attr":{"active":1,"collision":0,"interactive":1,"model":"\"Pdoor02\"","name":"\"damage30\"","blockplayer":"no","ticket":"3,6","effect":"\"GoalRed\"","damage":0,"damagevalue":30},"poses":[{"id":0,"start":0,"end":0,"valid":true},{"id":1,"start":0,"end":7,"valid":true},{"id":2,"start":7,"end":12,"valid":true},{"id":3,"start":12,"end":19,"valid":true},{"id":4,"start":19,"end":24,"valid":true},{"id":5,"start":24,"end":31,"valid":true},{"id":6,"start":31,"end":36,"valid":true},{"id":7,"start":36,"end":43,"valid":true},{"id":8,"start":43,"end":93,"valid":true}]}
+D_BPd02Box {"position":[88.4532,0,-0.61768],"min":[87.8303464920044,1.19143817296954e-8,-7.404036201171874],"max":[89.20181320495605,3.359324951171876,5.877017265625],"colliders":1,"attr":{"active":1,"collision":1,"interactive":1,"visible":"0","model":"\"Pd02Box\"","ticket":"3,6"},"poses":[]}
+intro 25.0000000000004 false [] {
+  snow: [ 1 ],
+  snowdensity: [ 200 ],
+  winddir: [ 50, 0, 0 ],
+  snowspeed: [ 20, 100 ],
+  snowsize: [ 5, 5 ]
+}
+gate-hit 8 9937 [ 86.2532, 0.015, -0.617679947499955 ] 1 1
+gate-hit 262 8936 [ 87.31986666030886, 0.015, -0.6176793990613915 ] 1 1
+gate-hit 522 7921 [ 87.31986666030886, 0.015, -0.6176788606024947 ] 1 1
+gate-hit 762 6997 [ 87.31986666030886, 0.015, -0.6176783542036034 ] 3 1
+gate-hit 1042 5933 [ 87.31986666030886, 0.015, -0.6176777532649949 ] 3 1
+gate-hit 1302 4918 [ 87.31986666030886, 0.015, -0.617677214806098 ] 4 1
+gate-hit 1542 3994 [ 87.31986666030886, 0.015, -0.6176767084072068 ] 5 1
+gate-hit 1822 2930 [ 87.31986666030886, 0.015, -0.6176761074685982 ] 5 1
+gate-hit 2167 1985 [ 87.31986666030886, 0.015, -0.6176754093423714 ] 7 1
+gate-hit 2602 928 [ 87.31986666030886, 0.015, -0.6176744616722016 ] 7 1
+gate-hit 3022 -52 [ 87.31986666030886, 0.015, -0.6176735754741419 ] 8 1
+gate-end 127.49999999999532 -52 {
+  win: true,
+  reason: 'script-gate-destroyed',
+  provenance: 'Original sn04 scene gate destruction calls end(winning team); Web maps that team to the player result.'
+} 2000 []

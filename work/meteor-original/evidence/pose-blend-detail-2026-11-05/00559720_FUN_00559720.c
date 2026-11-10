@@ -1,0 +1,26 @@
+/* Original Meteor.exe static export @ 00559720; original sample not executed. */
+/* XREF 004904b0 UNCONDITIONAL_CALL */
+/* XREF 0049050d UNCONDITIONAL_CALL */
+/* XREF 00490749 UNCONDITIONAL_CALL */
+/* XREF 004dbf06 UNCONDITIONAL_CALL */
+/* XREF 005563f7 UNCONDITIONAL_CALL */
+/* XREF 0055d617 UNCONDITIONAL_CALL */
+/* XREF 0055d70e UNCONDITIONAL_CALL */
+/* XREF 0055d4a0 UNCONDITIONAL_CALL */
+/* XREF 004cfc59 UNCONDITIONAL_CALL */
+/* XREF 0048d2f7 UNCONDITIONAL_CALL */
+/* XREF 0048d457 UNCONDITIONAL_CALL */
+/* XREF 0048d565 UNCONDITIONAL_CALL */
+/* XREF 0048d631 UNCONDITIONAL_CALL */
+
+void __thiscall FUN_00559720(int param_1,undefined4 param_2)
+
+{
+  undefined4 uVar1;
+  
+  *(undefined4 *)(param_1 + 0x128) = param_2;
+  uVar1 = __ftol();
+  *(undefined4 *)(param_1 + 0x124) = uVar1;
+  return;
+}
+

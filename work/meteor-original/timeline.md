@@ -152,3 +152,110 @@
 - artifacts: [evidence/scene-meatbun-chain-2026-10-26.mjs, evidence/scene-meatbun-chain-2026-10-26.json, evidence/E-local-package-2026-10-26.json]
 - linked_workitems: [WI-014, WI-016, WI-024]
 - next: 本地v0.3完整运行包已备，3962文件与源逐项一致；外部上传等待明确授权，未重试被拒绝的上传。
+
+## 2026-11-05 | lead | 既有记录恢复与继续关卡
+- action: 复用 case-init.sh 时该脚本覆盖了 scope、timeline、workitems 和案件 README；恢复 Git 中已存的原授权及历史正文。未提交的阶段记录按留存证据补录，以下为重建记录，不冒充原逐时记录。
+- result_summary: 10月26日炎硫岛与机关/环境、10月29日招式/防御/投射、10月30日受击/击倒/反馈的阶段证据及报告仍完整保留。11月4日决死阵/飞鹏堡处于接线未验收；11月5日动作混合为进行中工作。
+- artifacts: [evidence/E-validation-current.json, evidence/E-native-island-2026-10-26.md, evidence/E-manual-combos-validation-2026-10-29.json, evidence/E-combat-impact-integration-2026-10-30.md, evidence/mission-catalog-audit-2026-11-04.md]
+- decision_delta: [existing-scope-restored, user-prioritizes-other-missions, preserve-combat-work]
+- carry_forward_refs: [scope.md, evidence/E-new-mission-host-current-2026-11-04.json]
+- next: 完成 sn09/sn15 原任务机制与独立验收。
+
+## 2026-11-06 | lead | 决死阵与飞鹏堡阶段交付
+- action: 接通两关原脚本/原资源；恢复两种RES脚本道具、原AMB起跳曲线与NPC登台请求；修复attacktarget被距离查询覆盖；区分援军阵营/HUD。
+- result_summary: 决死阵原出生点正常输入+活AI约199.03秒胜利；飞鹏堡指定VIP7500HP真实伤害胜利链、实际原路径逃脱失败、原条件援军分别通过；冻结系统边界单列。最终228/228测试、19模块语法、3858资源记录核验通过。
+- artifacts: [evidence/E-new-missions-2026-11-06.json, evidence/native-runtime-new-missions-2026-11-06.tap, report/2026-11-06_逆向-决死阵与飞鹏堡-report.md, diagrams/mission-expansion-2026-11-06.mmd]
+- evidence_ids: [E-M01, E-M02, E-M03, E-M04, E-M05]
+- linked_workitems: [WI-020, WI-022, WI-024, WI-027, WI-031, WI-032]
+- decision_delta: [two-additional-playable-missions, preserve-native-objectives, snapshot-navigation-target, native-takeoff-to-collision-root, browser-verification-unavailable]
+- carry_forward_refs: [scope.md, evidence/E-validation-current.json, evidence/E-new-missions-2026-11-06.json]
+- limitations: 内置预览连接超时；Computer Use访问Chrome未批准且未给出进一步原因。无本轮浏览器试玩/人工通关/线上部署。全原版战斗还原目标与其余任务仍开放。Mermaid渲染器缺失，仅保留源码。
+- next: 继续其余原剧情及火枪/飞轮/完整EF，恢复原战斗物理和输入语义；不将两关验收等同完整移植完成。
+
+## 2026-11-06 | lead | 原场景位移与受击时长
+- action: 只读追踪d_base/角色场景向量及Move/Value语法、消息、运动和计时链；接入原轨迹，统一碰撞/险地路径；修复原帧终点和跨落地队列。
+- command_or_ref: combat-motion-source-audit-2026-11-06.py；既有Ghidra项目-readOnly/-noanalysis；npm test；npm run check；verify-recovered-assets.py。
+- result_summary: 最终234/234通过、28.71611525秒；19运行模块语法、3858资源记录核验零异常。111可用指令从地面/自然起跳进入，移除旧目录额外100高度；原突刺、近墙、重锤反应、无攻击窗下降及匕首三空击覆盖。
+- artifacts: [evidence/E-combat-motion-source-2026-11-06.json, evidence/native-runtime-motion-fidelity-2026-11-06.tap, report/2026-11-06_逆向-原位移与受击时长-report.md, field-journal/2026-11-06_combat-motion.md]
+- evidence_ids: [E-MO01, E-MO02, E-MO03, E-MO04]
+- linked_workitems: [WI-021, WI-022, WI-027, WI-032, WI-033]
+- decision_delta: [d_base-not-pelvis-motion, move-multiplier-and-value-duration-separated, native-wire-float-rounding, exact-frame-terminal, accepted-continuation-survives-landing-web-policy]
+- limitations: 完整向量生产、旋转/方向受击、护架运动、强制受击混合、原物理及EF仍未恢复。窄扫只命中无关骨骼加载字段，不误认producer。无新浏览器/人工/线上结论，未绕过此前访问拒绝。
+- next: 继续完整战斗还原及其余原任务；总体目标保持active。
+
+## 2026-11-06 | lead | 十二兵器、群战恢复输入与炽雪城
+- action: 优先处理用户提出的围攻中持续打断与隐藏兵器选择；补全十二类UI/原动作入口、乾坤刀三架式、火铳/飞轮和27份原WAV；接入sn04原城门及落雪。
+- command_or_ref: 既有Ghidra只读项目；r2只读004cc130/005aa8b8；npm test；npm run check；verify-recovered-assets.py。
+- result_summary: 293/293通过、52.510207042秒；25运行模块语法、3885资产记录零新异常。68份代码/测试/导入脚本与5清单在全套前后保持一致。196目录入口中165可执行、31待补；不等同165完整技能。sn04隔离原兵器接触10000门耐久，经pose8/state3后127.50秒唯一胜利，7NPC存活/0击杀，重开通过。
+- artifacts: [evidence/E-twelve-weapons-2026-11-06.json, evidence/native-runtime-twelve-weapons-2026-11-06.tap, report/2026-11-06_逆向-十二兵器与群战输入-report.md, field-journal/2026-11-06_twelve-weapons-input.md, diagrams/twelve-weapons-input-2026-11-06.mmd]
+- evidence_ids: [E-TW01, E-TW02, E-TW03, E-TW04]
+- linked_workitems: [WI-020, WI-021, WI-022, WI-023, WI-024, WI-027, WI-032, WI-034, WI-035, WI-036]
+- decision_delta: [held-defense-survives-hitstun, expiring-recovery-attack-slot, unlocked-melee-preserves-facing, all-twelve-weapon-selection, qiankun-three-forms, sn04-source-gate-ending, explicit-web-projectile-physics]
+- limitations: 原霸体/爆气/完整AI时序未确认；完整EF和原投射物理仍缺。sn04验收冻结NPC战斗/导航并放置玩家一次，不是出生点活AI通关。原vip/enemyvip区分阵营，现sn15选择器仍待完整恢复。原未播种钟乳洞停滞仍未解释。无浏览器、人工或线上新结论，未重试被拒绝的浏览器访问。
+- next: 继续原打断状态、识别器、完整技能效果与其余剧情，保持总体目标active。
+
+## 2026-11-07 | lead | 长枪气罩与原EF效果命中
+- action: 按用户反馈恢复effect=0x1001攻击查询、原A/a攻击节点的球/柱/盒有向包围盒；共用原伤害/方向受击/AMB位移；分离EF秒时钟与POS帧速度，修正底端柱体锚点。
+- command_or_ref: 既有Ghidra项目-readOnly/-noanalysis；npm test；npm run check；python3 scripts/analysis/verify-recovered-assets.py。
+- result_summary: 新增11项，48项针对性检查通过。最初304项全套通过后工作区同期新增无限怒气UI/引擎/测试，再冻结74文件/5清单，最终306/306通过、49.282581秒；27模块语法与3885资产记录零新异常。三名3.5米处目标气罩命中后原轨迹外移约6.573米并倒地/起身；20米前方冲击命中，后方及侧面远处不命中，按原Attack身份去重。
+- artifacts: [evidence/E-effect-contacts-2026-11-07.json, evidence/native-runtime-effect-contacts-final-2026-11-07.tap, report/2026-11-07_逆向-长枪气罩与效果命中-report.md, field-journal/2026-11-07_effect-contacts.md, diagrams/effect-contacts-2026-11-07.mmd]
+- evidence_ids: [E-EF01, E-EF02, E-EF03, E-EF04]
+- linked_workitems: [WI-021, WI-022, WI-023, WI-027, WI-032, WI-037]
+- decision_delta: [native-effect-attack-node-path, native-oriented-bounds, shared-visual-contact-transforms, independent-effect-seconds, base-anchored-cylinder, preserve-concurrent-infinite-rage-debug, full-regression-after-concurrent-changes]
+- corrections: 虚表候选更正为构造函数证明的005aa6a8，未据错误候选实现霸体；校验脚本真实路径含analysis/；浮点/视觉夹具失败均保留。最终全套后只改一处注释类型名，保留全套源副本并确认可执行语句未变，当前文件语法通过。
+- limitations: CPU平面和暂停NPC反击/导航，不是浏览器或活AI人工通关；Web人物包围盒、插值和时间采样明确。其他EF类型/粒子、效果对机关、原穿墙/全局时钟、霸体/爆气/完整AI、其余技能及剧情仍开放，无上传或部署。
+- next: 继续原效果分支、附加状态、原战斗/输入语义和完整实战验证；总体目标保持active。
+
+## 2026-11-08 | lead / parallel audits | ACT组衔接与阎罗效果入口
+- action: 按原0055d020/0055d130恢复组请求到实际允许成员的选择顺序，保留根指令context与单次扣怒；恢复匕首259原effect攻击盒、109反应及349收招，补生产输入长枪三连接294的实际命中检查。
+- command_or_ref: 既有Ghidra项目只读导出；node work/combo-continuity-audit/integration-review-2026-11-08.mjs；npm test；npm run check；python3 scripts/analysis/verify-recovered-assets.py。
+- result_summary: v0.7.2最终315/315通过、48.212891459秒；27运行模块语法、3885资产记录零新异常。75份代码/测试/导入脚本及5清单从全套开始保持一致。160组、191前招、43357次独立原ACT比对零差异；1005合法目录连接含136个不同实际成员。196目录入口现166可执行、30待补，不等同166完整技能。
+- artifacts: [evidence/E-act-groups-2026-11-08.json, evidence/native-runtime-act-groups-2026-11-08.tap, report/2026-11-08_逆向-ACT连招与阎罗-report.md, field-journal/2026-11-08_act-groups.md, diagrams/act-groups-2026-11-08.mmd]
+- evidence_ids: [E-AG01, E-AG02, E-AG03, E-AG04]
+- linked_workitems: [WI-021, WI-022, WI-023, WI-027, WI-032, WI-038, WI-039]
+- decision_delta: [original-group-order-not-root-only, preserve-root-context-and-one-payment, original-dagger-effect-entry, root-motion-required-for-range, independent-default-import-reproduction]
+- corrections: 阎罗固定根探针不能代替突进实战射程；原d_base在攻击帧前进约7.281米，5米目标在生产输入下命中一次，夹具伤害794、原反应109、收招349。原state7为死亡、state9有死亡后等待入口，不能据此添加通用出招霸体。默认55EF/240纹理形状/49纹理记录（45PNG、4IFL），46生成文件隔离复现一致。
+- limitations: 实际命中检查在CPU平面暂停NPC反击/导航，不是浏览器或活AI人工验收。八方绝与落樱雪的道具状态消费者未恢复，仍禁用；完整原输入、物理、保护掩码/爆气、AI及其他剧情继续开放。图渲染缺mmdc仅保留源与失败日志；无新浏览器访问、上传或部署。
+- next: 继续开放工单；整体战斗还原目标保持active。
+
+## 2026-11-08 | lead | 敌人发现后追击与七星暂停工作收尾
+- action: 用户恢复目标并优先反馈开局全体围攻。追踪原View/前方/近处/遮挡/缓存与wait状态；修复演武无条件追踪、单机全向远处发现、wait不追击、出生朝向/行为及重生缓存。保留原剧情的明确追击和增援命令。
+- command_or_ref: 既有Ghidra项目-readOnly/-noanalysis；ReadOnlyAwarenessTrace.java及ReadOnlyHitReactionTrace.java；node --test tests/native-awareness.test.mjs tests/native-mission-host.test.mjs；npm test；npm run check；verify-recovered-assets.py。
+- result_summary: v0.7.3最后338/338通过、52.268831292秒；28模块语法、3885资产记录零新异常。79代码/测试/导入脚本和5清单全套前后一致。原sn06几何/碰撞/DES/正常start及三名活AI首秒位移5.095/0/0，仅一人发现；同原出生点CPU平面公开262→263通过。旧引擎隔离三个生产检查均失败，当前6项发现检查及20项发现/脚本专项通过。
+- artifacts: [evidence/E-awareness-2026-11-08.json, evidence/native-runtime-awareness-delivery-2026-11-08.tap, report/2026-11-08_逆向-敌人发现与七星状态-report.md, field-journal/2026-11-08_awareness-and-status.md, diagrams/awareness-2026-11-08.mmd]
+- evidence_ids: [E-AW01, E-AW02, E-AW03, E-AW04]
+- linked_workitems: [WI-021, WI-022, WI-023, WI-024, WI-027, WI-032, WI-040, WI-041, WI-042]
+- decision_delta: [perception-before-auto-pursuit, native-nearby-and-forward-gates, native-known-target-retention, source-wait-to-pursuit, preserve-explicit-script-orders, source-fixed-item-clock, exact-attack-item-order, independent-effect-parent-bases]
+- corrections: 完成暂停前七星201/551/203及210附加状态整合；196入口中169可执行/27待补。蛊毒周期word3=2，原服务器/客户端固定.2f更新，计数先判后加、到期≤先删除；不沿用旧连续计时。初次337套1个旧断言仍把203当pending，改为同时验证可用203和仍待补567；337通过后补源wait追击，最终338通过。失败与各起点快照保留。
+- limitations: 真实地图开局使用CPU运行，纹理/音频/渲染替代；技能命中夹具另暂停NPC反击/导航，二者不混称。眼点/射线、最近目标、观察时序、攻击决策/随机环顾/战术、完整原状态与粒子仍开放。原未播种钟乳洞停滞未被追溯解释。无新浏览器/人工/线上结论；缺mmdc只留图源与失败日志。
+- next: 继续原AI决策/全部技能、原输入/物理与其余剧情；完整战斗目标保持active。
+
+
+## 2026-11-09 | lead | rage-and-grip-fix
+- action: inspect native rage gates, self items and qiankun visible grip
+- command_or_ref: ReadOnlyProjectileTrace.java -readOnly -noanalysis; native-command-engine/effect-contacts; npm test; npm run check; verify-recovered-assets.py; npm run package
+- result_summary: 10 pending怒招接通，原item34/40/13/37进入属性与计时；乾坤刀可见模型使用原RP/LP手部点，原R/L控制轨道保留。369/369测试、29模块、3885资产无问题；77测试输入冻结。v0.7.4本地包4088文件校验通过。
+- evidence_ids: [E-RG01, E-RG02, E-RG03, E-RG04]
+- artifacts: [evidence/E-rage-and-grip-2026-11-09.json, evidence/E-validation-rage-and-grip-2026-11-09.json, report/2026-11-09_逆向-五类怒招与乾坤刀握持-report.md]
+- decision_delta: [restore-real-source-effect-contacts-before-enabling, deferred-self-buffs-on-completion, keep-weapon-baseline-speed, explicit-qiankun-mode-feedback, visible-palm-grip-binding]
+- limitations: 原护体/霸体、PLANE/粒子/MODEL、完整原dummy补偿/触发时序/物理仍开放；仅本地交付，未远端发布。其他同期NPC修改保留，不归为本轮实现。
+
+
+## 2026-11-09 | lead | qiankun-sheathing
+- action: correct visible blade seating after public down-down-A
+- command_or_ref: read-only Ghidra pose/loader exploration; native DES sockets/POS stages; grip-tests58; npm test; npm run check; verify-recovered-assets.py; npm run package
+- result_summary: 举刀保持握持，431/441收刀、403待发、拔刀后485/486回鞘均有可见几何验收；四款刀，实际刀尖在鞘体内、刀柄外露。最终370/370、30模块、3885资产；77最终输入冻结；v0.7.5包4089文件校验。
+- evidence_ids: [E-QS01, E-QS02, E-QS03]
+- artifacts: [evidence/E-qiankun-sheathing-2026-11-09.json, evidence/E-validation-sheathing-2026-11-09.json, report/2026-11-09_逆向-乾坤刀收刀入鞘-report.md]
+- corrections: 旧所有帧跟手断言漏测入鞘；另将单机无主动攻击验收与原受击身体撞伤区分，保留首次370中1失败与诊断，未改伤害规则。
+- limitations: 原绑定/装载完整算法未恢复；收鞘插值标为Web适配。未远端发布。
+
+
+## 2026-11-10 | lead | skill-vfx
+- action: restore complete source-authored skill visual tails and original POS/DES weapon trails
+- command_or_ref: node work/skill-vfx-2026-11-10/audit.mjs; npm test; npm run check; verify-recovered-assets.py; CUA dark/bright and weapon-trail comparison; npm run package
+- result_summary: 审计32个怒招/76EF，修正20组视觉尾段截断；乾坤刀末击12个原刀光形状完整显示。143段原Drag窗接入柔边光带；一次扣怒、实际接触和收招保持。最终381/381、32模块、3885资产；79输入未变；v0.7.6包4095文件校验，含转换网格和16PNG。
+- evidence_ids: [E-VFX01, E-VFX02, E-VFX03]
+- artifacts: [evidence/E-skill-vfx-2026-11-10.json, evidence/E-validation-vfx-2026-11-10.json, report/2026-11-10_逆向-技能光效与刀光补全-report.md]
+- corrections: 首轮380/381，给同期地图显示接口所需的旧投射物换图测试补renderer夹具及显示恢复检查，未改生产显示或战斗规则。失败TAP保留；原素材不变；同期地图/NPC工作保留。
+- limitations: 亮度、脱离挂点和柔边光带为Web显示适配；完整PARTICLE/DONUT/MODEL/材质仍开放。未运行原EXE、上传或远端部署。

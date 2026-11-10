@@ -1,0 +1,133 @@
+{
+  "id": "E-guard-break-2026-10-29",
+  "date": "2026-10-29",
+  "scope": "work/meteor-original/scope.md; granted offline static analysis and local Web port",
+  "sampleSha256": "289afb0aa44a47921d167fc24d6d404c60d6d00c299ac27d45fc61e16231b498",
+  "method": "Original PE byte and Bison debug grammar reads; existing/new Ghidra readOnly/noanalysis exports; source EXE never executed.",
+  "keyword": {
+    "token": 263,
+    "tokenAddress": "005d1974",
+    "nameAddress": "005d1978",
+    "name": "attacktype"
+  },
+  "grammar": {
+    "rule": 48,
+    "rhs": [
+      "KEY_attacktype",
+      "KEY_number"
+    ],
+    "lhs": "attacktype",
+    "rhsIndexTable": "005ae9b0",
+    "rhsTable": "005aeab8",
+    "symbolNameTable": "005aee80",
+    "lhsTable": "005af030"
+  },
+  "parseAssignment": {
+    "parser": "0057aaf0",
+    "semanticCase": "0x30",
+    "scratchAddress": "0072b950",
+    "writeInstruction": "0057b58b",
+    "writeBytes": "a350b97200",
+    "source": "KEY_number -> __ftol -> MOV [0072b950],EAX"
+  },
+  "attackRecord": {
+    "scratchBase": "0072b920",
+    "initMovAddress": "0057b73a",
+    "initCall": "0057b73f -> 00574c90",
+    "offsetOfAttackType": 48,
+    "initBytes": "b920b97200e84c95ffff",
+    "append": "005754d0 copies the 0x68-byte attack record"
+  },
+  "packet": {
+    "builder": "004f3380",
+    "load": "004f3548 MOV EDX,[ESI+0x30]",
+    "shift": "004f3555 SHL EDX,0xa",
+    "consumer": "004af630",
+    "decode": "(word1 >> 10) & 0x3f"
+  },
+  "guardCondition": {
+    "consumerBranch": "004af78a TEST decodedType; 004af794 JNZ 004af881; 004af79a CMP victim+0x20c,1",
+    "condition": "decodedAttackType == 0 && victim.guardFlag == 1",
+    "otherwise": "normal source HP damage path at 004af881",
+    "web": "guarded = !!target.guard && ((attack.attacktype ?? 0) & 0x3f) === 0"
+  },
+  "tests": {
+    "command": "node --test tests/native-guard-break.test.mjs",
+    "pass": 7,
+    "fail": 0,
+    "sourcePoseDamage": {
+      "blade298": 89,
+      "blade300": 50,
+      "spear286EachWindow": 37,
+      "spear291": 122
+    },
+    "targetDefense": 15,
+    "typeZeroBlade295": {
+      "guardedDamage": 0,
+      "guardRage": 1,
+      "unguardedDamage": 44
+    }
+  },
+  "boundaries": [
+    "No recovered hit-reaction displacement or knockback implementation is claimed.",
+    "The Web guard boolean remains a host state; original complete guard angles, animation/state transitions and multiplayer events are not implemented by this change.",
+    "A bypass hit selects ordinary impact audio and reports guardBypassed but does not invent a persistent target.guard state change."
+  ],
+  "artifacts": [
+    {
+      "path": "work/meteor-original/evidence/guard-break-native-2026-10-29/004af630_FUN_004af630.asm",
+      "bytes": 11202,
+      "sha256": "5494194bd7d9670b375bb9120f3ab6f9edc18e7e8d0e7607f8aba42da41af9d5"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-break-native-2026-10-29/004af630_FUN_004af630.c",
+      "bytes": 6666,
+      "sha256": "6a3e210fe506197ee6254559ee16461aa242ebcb2851d23c1063cc6665d7de58"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-break-native-2026-10-29/004f3380_FUN_004f3380.asm",
+      "bytes": 15167,
+      "sha256": "3fe7707e8a256a5c6e5b36fc7fac49af80281ab0d5f07b692dabb44f871ea6a1"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-break-native-2026-10-29/004f3380_FUN_004f3380.c",
+      "bytes": 9129,
+      "sha256": "cdd53bed807bdc7bd930bb78685597d946012cdc5529f480a1e02550a5bdc5cb"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-break-native-2026-10-29/functions.tsv",
+      "bytes": 54,
+      "sha256": "dd1ef8e92ff9547a9711b2efd06e48743c01dd88e8a0b583766736e1cc7b2fab"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-break-native-2026-10-29/references.txt",
+      "bytes": 2113,
+      "sha256": "15e5e739aa9391416525777924258d7951d0c9ee831d1dac84e6a92128bb64de"
+    },
+    {
+      "path": "work/meteor-original/evidence/decompiled/0057aaf0_FUN_0057aaf0.c",
+      "bytes": 24992,
+      "sha256": "bb2102823c7ee2d4ccc391764d38a798cde4934bd5de1335aa5bf1dba85d6b01"
+    },
+    {
+      "path": "work/meteor-original/evidence/decompiled/00574c90_FUN_00574c90.c",
+      "bytes": 2095,
+      "sha256": "83337571ea5c315d1176b987a992db4e42885ad5e14197821c59f5c7cdb16c5e"
+    },
+    {
+      "path": "work/meteor-original/evidence/decompiled/005754d0_FUN_005754d0.c",
+      "bytes": 1101,
+      "sha256": "a8ec06c0ec3f72acf885e53dbaff36575e0eed41ae58cba619fa07740f94758b"
+    },
+    {
+      "path": "work/meteor-original/evidence/native-guard-break-2026-10-29.tap",
+      "bytes": 1800,
+      "sha256": "49e5153ced6d44d975ebabc8c5324309e08cb8c5519037416d13d9ca273545bc"
+    },
+    {
+      "path": "tests/native-guard-break.test.mjs",
+      "bytes": 4328,
+      "sha256": "37b2d1bc8a5430a0787da142ed9e46420406e0dd00ab468c8b0b2b81da0d4d9e"
+    }
+  ]
+}

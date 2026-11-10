@@ -1,0 +1,54 @@
+0051714f PUSH EBP
+00517150 MOV EBP,ESP
+00517152 SUB ESP,0x10
+00517155 FLD float ptr [EBP + 0xc]
+00517158 LEA EAX,[EBP + 0xc]
+0051715b FMUL float ptr [0x005a83e8]
+00517161 MOV dword ptr [EBP + -0xc],EAX
+00517164 LEA EAX,[EBP + -0x4]
+00517167 MOV dword ptr [EBP + -0x10],EAX
+0051716a FSTP float ptr [EBP + -0x8]
+0051716d MOV EAX,dword ptr [EBP + -0x10]
+00517170 MOV EDX,dword ptr [EBP + -0xc]
+00517173 FLD float ptr [EBP + -0x8]
+00517176 FSINCOS
+00517178 FSTP float ptr [EDX]
+0051717a FSTP float ptr [EAX]
+0051717c FLD float ptr [EBP + 0xc]
+0051717f MOV EAX,dword ptr [EBP + 0x8]
+00517182 FDIV float ptr [EBP + -0x4]
+00517185 MOV dword ptr [EAX + 0x2c],0xbf800000
+0051718c FLD float ptr [EBP + 0x10]
+0051718f FDIVR ST0,ST1
+00517191 FSTP float ptr [EAX]
+00517193 FLDZ
+00517195 FSTP float ptr [EAX + 0x4]
+00517198 FLDZ
+0051719a FSTP float ptr [EAX + 0x8]
+0051719d FLDZ
+0051719f FSTP float ptr [EAX + 0xc]
+005171a2 FLDZ
+005171a4 FSTP float ptr [EAX + 0x10]
+005171a7 FSTP float ptr [EAX + 0x14]
+005171aa FLDZ
+005171ac FSTP float ptr [EAX + 0x18]
+005171af FLDZ
+005171b1 FSTP float ptr [EAX + 0x1c]
+005171b4 FLDZ
+005171b6 FSTP float ptr [EAX + 0x20]
+005171b9 FLDZ
+005171bb FSTP float ptr [EAX + 0x24]
+005171be FLD float ptr [EBP + 0x14]
+005171c1 FSUB float ptr [EBP + 0x18]
+005171c4 FDIVR float ptr [EBP + 0x18]
+005171c7 FST float ptr [EAX + 0x28]
+005171ca FLDZ
+005171cc FSTP float ptr [EAX + 0x30]
+005171cf FLDZ
+005171d1 FSTP float ptr [EAX + 0x34]
+005171d4 FMUL float ptr [EBP + 0x14]
+005171d7 FSTP float ptr [EAX + 0x38]
+005171da FLDZ
+005171dc FSTP float ptr [EAX + 0x3c]
+005171df LEAVE
+005171e0 RET 0x14

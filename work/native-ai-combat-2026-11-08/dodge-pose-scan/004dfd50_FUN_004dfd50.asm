@@ -1,0 +1,32 @@
+004dfd50 PUSH ESI
+004dfd51 MOV ESI,dword ptr [ESP + 0xc]
+004dfd55 CMP ESI,0xad
+004dfd5b JA 0x004dfdad
+004dfd5d XOR EAX,EAX
+004dfd5f MOV AL,byte ptr [ESI + 0x4dfdcc]
+004dfd65 JMP dword ptr [EAX*0x4 + 0x4dfdb4]
+004dfd6c MOV ECX,dword ptr [ESP + 0x8]
+004dfd70 MOV EDX,dword ptr [ECX]
+004dfd72 CALL dword ptr [EDX + 0x138]
+004dfd78 TEST EAX,EAX
+004dfd7a JZ 0x004dfdad
+004dfd7c MOV ESI,0x3
+004dfd81 MOV EAX,ESI
+004dfd83 POP ESI
+004dfd84 RET 0x8
+004dfd87 MOV ESI,0xa6
+004dfd8c MOV EAX,ESI
+004dfd8e POP ESI
+004dfd8f RET 0x8
+004dfd92 MOV ESI,0xa9
+004dfd97 MOV EAX,ESI
+004dfd99 POP ESI
+004dfd9a RET 0x8
+004dfd9d MOV ESI,0xac
+004dfda2 MOV EAX,ESI
+004dfda4 POP ESI
+004dfda5 RET 0x8
+004dfda8 MOV ESI,0xaf
+004dfdad MOV EAX,ESI
+004dfdaf POP ESI
+004dfdb0 RET 0x8

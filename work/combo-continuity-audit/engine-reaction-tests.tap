@@ -1,0 +1,262 @@
+TAP version 13
+# Subtest: all twelve visible weapon choices equip their preserved original models and complete the E cycle
+ok 1 - all twelve visible weapon choices equip their preserved original models and complete the E cycle
+  ---
+  duration_ms: 290.076792
+  type: 'test'
+  ...
+# Subtest: qiankun public inputs switch all three source stances and retain distinct A attacks and automatic recovery
+ok 2 - qiankun public inputs switch all three source stances and retain distinct A attacks and automatic recovery
+  ---
+  duration_ms: 35.580042
+  type: 'test'
+  ...
+# Subtest: ninja ordinary foot and blade inputs cause real source contact, including its second A branch
+ok 3 - ninja ordinary foot and blade inputs cause real source contact, including its second A branch
+  ---
+  duration_ms: 7.996959
+  type: 'test'
+  ...
+# Subtest: wheel uses an original model in flight, hits through its release window, returns, and permits a second throw
+ok 4 - wheel uses an original model in flight, hits through its release window, returns, and permits a second throw
+  ---
+  duration_ms: 11.640417
+  type: 'test'
+  ...
+# Subtest: actual musket input produces its source shot damage and cannot be replaced by a melee contact
+ok 5 - actual musket input produces its source shot damage and cannot be replaced by a melee contact
+  ---
+  duration_ms: 9.388458
+  type: 'test'
+  ...
+# Subtest: an unlocked free attack keeps its chosen facing even with a nearby opponent behind the player
+ok 6 - an unlocked free attack keeps its chosen facing even with a nearby opponent behind the player
+  ---
+  duration_ms: 57.933417
+  type: 'test'
+  ...
+# Subtest: expansion weapon audio is registered as original byte copies, not merely unresolved EF names
+ok 7 - expansion weapon audio is registered as original byte copies, not merely unresolved EF names
+  ---
+  duration_ms: 22.936833
+  type: 'test'
+  ...
+# Subtest: ordinary directional key actions select each requested original skill without pose shortcuts
+ok 8 - ordinary directional key actions select each requested original skill without pose shortcuts
+  ---
+  duration_ms: 149.278208
+  type: 'test'
+  ...
+# Subtest: blade spin executes its original 374 to 375 automatic finish before returning to stance
+ok 9 - blade spin executes its original 374 to 375 automatic finish before returning to stance
+  ---
+  duration_ms: 19.405792
+  type: 'test'
+  ...
+# Subtest: sword multi-thrust resolves five original bone attack windows and actual damage
+ok 10 - sword multi-thrust resolves five original bone attack windows and actual damage
+  ---
+  duration_ms: 106.533709
+  type: 'test'
+  ...
+# Subtest: jump then down-A selects native down attacks, with sword wind-up held through 342 descent and landing
+ok 11 - jump then down-A selects native down attacks, with sword wind-up held through 342 descent and landing
+  ---
+  duration_ms: 131.773959
+  type: 'test'
+  ...
+# Subtest: every listed ready command has a public-input route from the ground or a natural jump, while pending specials stay blocked
+ok 12 - every listed ready command has a public-input route from the ground or a natural jump, while pending specials stay blocked
+  ---
+  duration_ms: 193.298958
+  type: 'test'
+  ...
+# Subtest: POS attack bone names resolve the actual original BNC bones without renaming the skeleton or inventing effect attachments
+ok 13 - POS attack bone names resolve the actual original BNC bones without renaming the skeleton or inventing effect attachments
+  ---
+  duration_ms: 44.429708
+  type: 'test'
+  ...
+# Subtest: the requested spear left-right-up-A body attack and airborne A kick remove actual HP through original bones
+ok 14 - the requested spear left-right-up-A body attack and airborne A kick remove actual HP through original bones
+  ---
+  duration_ms: 112.086958
+  type: 'test'
+  ...
+# Subtest: native thrusts move the collision root using d_base, retaining the actual authored distance rather than pelvis sway
+ok 15 - native thrusts move the collision root using d_base, retaining the actual authored distance rather than pelvis sway
+  ---
+  duration_ms: 99.645709
+  type: 'test'
+  ...
+# Subtest: authored thrust movement stops at the ordinary collision wall at both render rates
+ok 16 - authored thrust movement stops at the ordinary collision wall at both render rates
+  ---
+  duration_ms: 102.209375
+  type: 'test'
+  ...
+# Subtest: actual heavy-hit TargetMove scales the original recoil and TargetValue holds its authored final frame
+ok 17 - actual heavy-hit TargetMove scales the original recoil and TargetValue holds its authored final frame
+  ---
+  duration_ms: 4.112333
+  type: 'test'
+  ...
+# Subtest: a natural dagger jump can reach all three original air strikes through ordinary attack inputs without altitude overrides
+ok 18 - a natural dagger jump can reach all three original air strikes through ordinary attack inputs without altitude overrides
+  ---
+  duration_ms: 5.601292
+  type: 'test'
+  ...
+# Subtest: paid spear rage commands emit original EF visuals through the real engine animation loop
+ok 19 - paid spear rage commands emit original EF visuals through the real engine animation loop
+  ---
+  duration_ms: 218.073459
+  type: 'test'
+  ...
+# Subtest: infinite rage supports repeated rage commands across weapons without filling NPC rage
+ok 20 - infinite rage supports repeated rage commands across weapons without filling NPC rage
+  ---
+  duration_ms: 121.903583
+  type: 'test'
+  ...
+# Subtest: infinite rage survives weapon changes and respawns, then disabling restores normal spending and resource gates
+ok 21 - infinite rage survives weapon changes and respawns, then disabling restores normal spending and resource gates
+  ---
+  duration_ms: 94.328708
+  type: 'test'
+  ...
+# Subtest: native Move/Value packing preserves their separate motion/time meanings and original float32 wire rounding
+ok 22 - native Move/Value packing preserves their separate motion/time meanings and original float32 wire rounding
+  ---
+  duration_ms: 0.868625
+  type: 'test'
+  ...
+# Subtest: one-frame airborne source loops hold exactly one transform and cannot sample another pose or generate endless vertical velocity
+ok 23 - one-frame airborne source loops hold exactly one transform and cannot sample another pose or generate endless vertical velocity
+  ---
+  duration_ms: 0.55575
+  type: 'test'
+  ...
+# Subtest: source reaction selection uses native signed angles, exact sector boundaries and append-time fallback
+ok 24 - source reaction selection uses native signed angles, exact sector boundaries and append-time fallback
+  ---
+  duration_ms: 0.244334
+  type: 'test'
+  ...
+# Subtest: source guard selection retains each weapon-state list, all four front variants and its fixed side/back entries
+ok 25 - source guard selection retains each weapon-state list, all four front variants and its fixed side/back entries
+  ---
+  duration_ms: 0.317375
+  type: 'test'
+  ...
+# Subtest: front guard follows the original CRT53-bit draw distribution, including the maximum draw selecting slot4
+ok 26 - front guard follows the original CRT53-bit draw distribution, including the maximum draw selecting slot4
+  ---
+  duration_ms: 2.759458
+  type: 'test'
+  ...
+# Subtest: real hit events, original animation and impact sound all use the selected front/back/side source pose
+ok 27 - real hit events, original animation and impact sound all use the selected front/back/side source pose
+  ---
+  duration_ms: 319.712875
+  type: 'test'
+  ...
+# Subtest: an interrupted native hit blend starts from the actual displayed bones and weapon attachments without a pose pop
+ok 28 - an interrupted native hit blend starts from the actual displayed bones and weapon attachments without a pose pop
+  ---
+  duration_ms: 53.555209
+  type: 'test'
+  ...
+# Subtest: a blocked rear blow plays the defender sword guard pose, moves by native DefenseMove, holds DefenseValue and returns to guard
+ok 29 - a blocked rear blow plays the defender sword guard pose, moves by native DefenseMove, holds DefenseValue and returns to guard
+  ---
+  duration_ms: 55.767625
+  type: 'test'
+  ...
+# Subtest: public held guard can be released and pressed during block stun, repeated blocks preserve HP and a source break-guard hit interrupts it
+ok 30 - public held guard can be released and pressed during block stun, repeated blocks preserve HP and a source break-guard hit interrupts it
+  ---
+  duration_ms: 48.254834
+  type: 'test'
+  ...
+# Subtest: a native light-hit reaction discards queued offense and cannot be canceled by normal attack or locomotion input
+ok 31 - a native light-hit reaction discards queued offense and cannot be canceled by normal attack or locomotion input
+  ---
+  duration_ms: 1.880291
+  type: 'test'
+  ...
+# Subtest: native knockdowns keep their POS down links and recover through original animation rather than instantly standing
+ok 32 - native knockdowns keep their POS down links and recover through original animation rather than instantly standing
+  ---
+  duration_ms: 0.709541
+  type: 'test'
+  ...
+# Subtest: airborne prone reactions wait for floor contact and repeated light hits do not snap a prone actor upright
+ok 33 - airborne prone reactions wait for floor contact and repeated light hits do not snap a prone actor upright
+  ---
+  duration_ms: 0.312292
+  type: 'test'
+  ...
+# Subtest: a real native sword hit visibly plays its authored target pose and locks ordinary AI movement and offense
+ok 34 - a real native sword hit visibly plays its authored target pose and locks ordinary AI movement and offense
+  ---
+  duration_ms: 47.54425
+  type: 'test'
+  ...
+# Subtest: three ordinary public attack inputs can hit and knock down a real native opponent on the source sword third strike
+ok 35 - three ordinary public attack inputs can hit and knock down a real native opponent on the source sword third strike
+  ---
+  duration_ms: 75.0925
+  type: 'test'
+  ...
+# Subtest: rapid public attack presses retain all three original sword strike windows before the third hit knocks down
+ok 36 - rapid public attack presses retain all three original sword strike windows before the third hit knocks down
+  ---
+  duration_ms: 55.913625
+  type: 'test'
+  ...
+# Subtest: guarded contact does not turn a blocked blow into knockdown, while a lethal blow keeps death priority
+ok 37 - guarded contact does not turn a blocked blow into knockdown, while a lethal blow keeps death priority
+  ---
+  duration_ms: 45.901875
+  type: 'test'
+  ...
+# Subtest: native hitstun cannot be cancelled by jumping; held defense engages on recovery without another input event
+ok 38 - native hitstun cannot be cancelled by jumping; held defense engages on recovery without another input event
+  ---
+  duration_ms: 54.584417
+  type: 'test'
+  ...
+# Subtest: real impact feedback freezes only the contacting actors and consumes only its pause portion of the next update
+ok 39 - real impact feedback freezes only the contacting actors and consumes only its pause portion of the next update
+  ---
+  duration_ms: 47.706292
+  type: 'test'
+  ...
+# Subtest: one defense press during hitstun survives repeated ordinary incoming hits after recovery and release still works
+ok 40 - one defense press during hitstun survives repeated ordinary incoming hits after recovery and release still works
+  ---
+  duration_ms: 53.011125
+  type: 'test'
+  ...
+# Subtest: a near-recovery attack input starts only after hitstun and expires instead of replaying after a long knockdown
+ok 41 - a near-recovery attack input starts only after hitstun and expires instead of replaying after a long knockdown
+  ---
+  duration_ms: 54.001667
+  type: 'test'
+  ...
+# Subtest: misses produce no contact freeze, guarded impact keeps HP and death interrupts an existing freeze immediately
+ok 42 - misses produce no contact freeze, guarded impact keeps HP and death interrupts an existing freeze immediately
+  ---
+  duration_ms: 53.377375
+  type: 'test'
+  ...
+1..42
+# tests 42
+# suites 0
+# pass 42
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1984.13225

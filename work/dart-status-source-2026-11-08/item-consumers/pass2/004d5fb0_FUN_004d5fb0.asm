@@ -1,0 +1,2 @@
+004d5fb0 XOR EAX,EAX
+004d5fb2 RET

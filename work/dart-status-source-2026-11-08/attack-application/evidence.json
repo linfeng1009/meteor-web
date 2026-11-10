@@ -1,0 +1,157 @@
+{
+  "id": "E-dart-attack-item-2026-11-08",
+  "observedAt": "2026-11-08T16:42:56.408721+08:00",
+  "scope": "work/meteor-original/scope.md",
+  "sample": {
+    "path": "/Users/dulinfeng/Downloads/流星86726/lxhdj_/Meteor.exe",
+    "sha256": "289afb0aa44a47921d167fc24d6d404c60d6d00c299ac27d45fc61e16231b498"
+  },
+  "originalExecuted": false,
+  "method": "Ghidra12.1.4 headless -readOnly -noanalysis existing project; exact original x86 ASM cross-check. No runtime or test edits.",
+  "hitFunction": "004af630",
+  "sourceItemResolver": "004d5fc0",
+  "serverVtable": "005a9bf8",
+  "serverItemSlot": "005a9cf4",
+  "serverItemFunction": "004afcf0",
+  "statItemFunction": "004d59d0",
+  "order": [
+    "server target/attacker validity and pre-existing hit checks",
+    "guard branch returns without attached item",
+    "non-guard direct HP damage (team factor1 or0.2)",
+    "victim rage gain from actual HP delta",
+    "death branch skips attached item",
+    "surviving victim resolves actual pose parameter16 to type2 item",
+    "server resolves victim and item, applies stats+24",
+    "broadcast0x3d on successful application"
+  ],
+  "zeroDirectDamageStillApplies": true,
+  "guardApplies": false,
+  "lethalHitApplies": false,
+  "sourceArtifacts": [
+    {
+      "path": "scripts/analysis/ReadOnlyHitReactionTrace.java",
+      "sha256": "36fd53b8fb1205a5482e336cbb1ca545a377c13d82454fde6419ee518934af1f"
+    },
+    {
+      "path": "work/meteor-original/scope.md",
+      "sha256": "dce9296c758af591119086e98715db3f3bbc7abc90d70d22caddc254757b9dc6"
+    },
+    {
+      "path": "work/meteor-original/evidence/E-imports.json",
+      "sha256": "b20e79118ee2432a31bb018c2f937fa13e6dfd118740523b74e8b824d3894c5f"
+    },
+    {
+      "path": "work/meteor-original/evidence/E-exe-combat-formulas.json",
+      "sha256": "ed62a44fbea278976a36138e492505c0f1b3468afae57c70a52b5347ec2e851a"
+    },
+    {
+      "path": "work/meteor-original/evidence/E-native-machine-damage.json",
+      "sha256": "00d6c29e9a7b68b296f62e7fbe0a21a334b35bf5bbf7adb05d43c6533b9323c5"
+    },
+    {
+      "path": "work/meteor-original/evidence/mission-items-native-2026-11-05/004d59d0_FUN_004d59d0.c",
+      "sha256": "247999dec28e86539b1e2e4396bf9dfad68264f26bd93b9661ec91ac07989e82"
+    },
+    {
+      "path": "work/meteor-original/evidence/mission-items-native-2026-11-05/004d59d0_FUN_004d59d0.asm",
+      "sha256": "0ef6ea0bb01b761ea8cb23a700563b021ad82138f6cc27ecab0fa3d6dff1ea7b"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/README.md",
+      "sha256": "c3b722ecd97d4f0cd79f261f244ec048d5c08c2fc4859556628e30e41d25ad00"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass1/004af630_FUN_004af630.asm",
+      "sha256": "5494194bd7d9670b375bb9120f3ab6f9edc18e7e8d0e7607f8aba42da41af9d5"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass1/004af630_FUN_004af630.c",
+      "sha256": "6a3e210fe506197ee6254559ee16461aa242ebcb2851d23c1063cc6665d7de58"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass1/004d5fc0_FUN_004d5fc0.asm",
+      "sha256": "30d695ae310c8b7c7448cfaf32e045643c9974431fa23434eedf6f2334f26f60"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass1/004d5fc0_FUN_004d5fc0.c",
+      "sha256": "bee9ced0b2eff22318ed75166188217fe3f0a05ad77ef69f7f017926df653cfd"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass1/functions.tsv",
+      "sha256": "9194d350108c31fcb4fc1b4a845cf6fd5531ab7720f07c3dd434b8f6013777ad"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass1/references.txt",
+      "sha256": "5cb24ad45b724be0c686f1a239f99812991ed93c72c8b5d9cff391debf578581"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass1.log",
+      "sha256": "0a20e8f1192774f446cd4cc86e4a51dcf8b311606f5dc522fd135c4cb7007de2"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass2-retry/004abaa0_FUN_004abaa0.asm",
+      "sha256": "9abc234fcb2f746ebc1323df1ae689923ba76d17cfed6bffa8b4009c6874793f"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass2-retry/004abaa0_FUN_004abaa0.c",
+      "sha256": "a124b16c84cc9dcc078e0e9e07facac22a01bf113241b8e6ede40485a78b42a7"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass2-retry/004abf50_FUN_004abf50.asm",
+      "sha256": "2ff2c51e0c774da765034b65f2425bb5899f1178df485756f15cdf668ef9b8eb"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass2-retry/004abf50_FUN_004abf50.c",
+      "sha256": "f17e6df9ab9c5beb06a25268180f4720aaf3d04106ef425341cdc53253e56ec7"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass2-retry/004acae0_FUN_004acae0.asm",
+      "sha256": "ec45a22b22a8ab5367ae2e5f9ac591d20b7ccee25c68d84cb4ba0a013ab8de58"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass2-retry/004acae0_FUN_004acae0.c",
+      "sha256": "7486e9d5b758d6900af034280db4ee4ce0930125a7223f8f37159a22d89101b8"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass2-retry/004afcf0_FUN_004afcf0.asm",
+      "sha256": "3abeff0b6bba6c90929c652c12fb4ae41356d564234d05db3a956283d3b597b0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass2-retry/004afcf0_FUN_004afcf0.c",
+      "sha256": "d9eeef67c3616d1e8fd3b9d01fd3448595d58fa5072a245b4c962a3f4d1fda64"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass2-retry/004d5fc0_FUN_004d5fc0.asm",
+      "sha256": "30d695ae310c8b7c7448cfaf32e045643c9974431fa23434eedf6f2334f26f60"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass2-retry/004d5fc0_FUN_004d5fc0.c",
+      "sha256": "bee9ced0b2eff22318ed75166188217fe3f0a05ad77ef69f7f017926df653cfd"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass2-retry/functions.tsv",
+      "sha256": "9bde203137fca39a2454eaffe582169c677a5d48f27ab707f091403af8367373"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass2-retry/references.txt",
+      "sha256": "9b6ca7c16474567f63fd95e2eeee3d710fd7e6659e718047ddca1aa907b27410"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass2-retry.log",
+      "sha256": "471488507bad449d55fc827b893933cd17bfac69b1f6fa4b311de8687b8b809d"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass2.log",
+      "sha256": "271c686bec11a470ad5a3ef417086f6f9d1672358577c16c0db2d8e66f5a9ff3"
+    }
+  ],
+  "limitations": [
+    "Static source only; no original EXE execution.",
+    "Existing native hit validity/timer/mask producers and all network deduplication were not fully recovered here.",
+    "Does not prove one damage event per source EF node or per frame.",
+    "Item lifetimes, periodic clocks and clamps are documented by the sibling stat-consumer audit.",
+    "No browser/manual/live-AI acceptance."
+  ]
+}

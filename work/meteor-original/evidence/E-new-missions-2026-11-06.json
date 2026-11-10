@@ -1,0 +1,217 @@
+{
+  "id": "E-new-missions-2026-11-06",
+  "observedAt": "2026-11-06",
+  "version": "0.6.0",
+  "scope": "../scope.md",
+  "sampleSha256": "289afb0aa44a47921d167fc24d6d404c60d6d00c299ac27d45fc61e16231b498",
+  "originalExecuted": false,
+  "originalModified": false,
+  "missions": {
+    "sn09": {
+      "rule": 1,
+      "playerHP": 3000,
+      "protect": "冷燕",
+      "method": "Live original scene, actor AI, source clocks, collisions and ordinary movement/jump/guard; no HP/dead/result/actor placement assignment after source spawn.",
+      "end": {
+        "timeSeconds": 199.0333333333246,
+        "playerHP": 2660,
+        "coldYanHP": 2660,
+        "collapsedFloors": 100,
+        "win": true,
+        "reason": "script-GameOver"
+      },
+      "failure": "Real source spawn floor collapse and gravity produce HP0 and original delayed GameOver(-1).",
+      "restart": "Source HP/weapons, all100 floor poses/collision/visibility, item timers and input gate reset."
+    },
+    "sn15": {
+      "rule": 4,
+      "playerHP": 2500,
+      "vipHP": 7500,
+      "initialNPCs": 7,
+      "conditionalAlly": "无名: Model10, Weapon23, HP9999, Team1",
+      "victory": "Actual original dual bones/contact/RES damage removes7500VIP HP; six enemies remain alive. NPC retaliation and movement frozen during victory preparation, player placed nearVIP after combos.",
+      "victoryProvenance": "Rule4 named-VIP death is a Web adapter; not a recovered native GameRule.",
+      "escape": "Actual damage to1783HP triggers PST phases3→8, real VIP walking through79/107/115/53/116, original RemoveNPC and delayed GameOver(-1); other actors frozen during escape; no VIP position/HP/dead override.",
+      "escapeFailureTimeSeconds": 242.0333333333218,
+      "ally": "Actual source left-guard damage lowers player below1/3HP; PST adds exactly one friendly ally and applies source嗜战.",
+      "targetSlotFix": "ChangeBehavior attacktarget copies target kind/id at command time; later Distance SetTarget queries no longer overwrite the active destination."
+    }
+  },
+  "items": {
+    "4": {
+      "name": "嗜战",
+      "attackAdd": 25,
+      "durationSeconds": 60,
+      "parameters": {
+        "2": 600,
+        "8": 10
+      }
+    },
+    "14": {
+      "name": "尸毒",
+      "hpChange": -10,
+      "periodSeconds": 5,
+      "durationSeconds": 9999.9,
+      "parameters": {
+        "2": 99999,
+        "8": 10
+      }
+    },
+    "timer": "Web fractional elapsed-second accumulation; native per-server-tick truncation/scheduling not recovered.",
+    "refresh": "Same item resets remaining lifetime without stacking; periodic accumulator retained; dispose/start clears script-owned modifiers.",
+    "effectVisuals": "Complete original EF presentation remains pending."
+  },
+  "jump": {
+    "nativeEvidence": "004ce850 reads d_base transform/motion and drives scene movement; AMB takeoff carries approximately5.9 world units at scale0.08.",
+    "implemented": "Sample the per-character source151 takeoff d_base curve to move the same collision root and keep render d_base in-place. NPC navigation may request that takeoff for nearby elevated targets with Jump>0.",
+    "remaining": "Interrupted flight, freefall gravity, collision, jump decision timing and full native movement are Web adapters. Natural full air-chain parity is not asserted; catalog routing fixture uses controlled high altitude."
+  },
+  "validation": {
+    "total": 228,
+    "passed": 228,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 29351.317708,
+    "runtimeModules": 19,
+    "assetEntries": 3858,
+    "assetIssues": 0,
+    "missionIntegrationTests": 8,
+    "scriptItemTests": 5
+  },
+  "browser": {
+    "completed": false,
+    "inApp": "Timed out waiting for Browser webview to attach.",
+    "chrome": "Computer Use was not approved to use Google Chrome; no further reason returned.",
+    "hiddenGameStateManipulated": false,
+    "screenshot": null,
+    "manualCompletionAsserted": false
+  },
+  "deployment": {
+    "changed": false,
+    "note": "Local working tree only; no publishing or asset upload attempted."
+  },
+  "artifacts": {
+    "native-runtime-new-missions-2026-11-06.tap": "0d12ad5d82dad9acc8c879c3bb6904c7870575d6120c8699e931cd45c2efd292",
+    "native-mission-expansion-2026-11-06.tap": "9fb547a22cc586d2e5ff7c89bc217c2cc5c7d87dad6b458e67dfcea7bd968696",
+    "native-new-missions-syntax-2026-11-06.log": "006a07ffb3e47a7177a463afc35cdd5ac55e6739ce8e8e0326d5503b6fcc9fbb",
+    "native-new-missions-label-regression-2026-11-06.tap": "299acfeffcae70c3de13ea8b58039eabf0fe113b355abb529f95cf0b12f3b67b",
+    "native-new-missions-air-regression-2026-11-06.tap": "82659d531e56e6897ae51922b0a1b7c88c11d3ea20f5df8094755f97beed6aa1",
+    "native-new-missions-failed-iteration-2026-11-06.tap": "f8fd123019a4015314ecba663acf1943b9479788b551d48651b9061bb7d247e1",
+    "sn15-escape-cpu-2026-11-06.log": "f9932e500629bd9a337bd27ce0914ac71f5a945f03f6f450b2cd351436eee922",
+    "sn15-victory-cpu-2026-11-06.log": "fedaa852cd00cfef44088fe996933e5b9b45c25226eea9cad67780e05aa8d28f"
+  },
+  "moduleSha256": {
+    "dist/native-missions.js": "6c80c3b2b6e26b60c1c768cdef9dd9bd37a2de3dfcae930ae8363ce2020eefc2",
+    "dist/native-mission-host.js": "939bb594186961044719eec7dfe18fea98a25488adf1700c27de9b816cda8d1c",
+    "dist/native-items.js": "77cf3168a19656877148f59fd5c7f44181c5d3fe44b51290ecae73367da3e5dd",
+    "dist/native-character.js": "16e530ee59b21efd5296572d7e48febb20ec97a7f8ec9cff99db87f9a1c5e89b",
+    "dist/native-combat.js": "843b5abce20a10e3dcc0446a34c3f310dd1f3bc40673a02903ba3f386b217935",
+    "dist/native-input.js": "0300733187353aad0ebb8598212846e8cec11ef673a1f1ea09d920825b299b33",
+    "dist/native-move-catalog.js": "e01051c7f778800408f034a402bf6ff87965902ec04b1df5a00a1a9327fda921",
+    "dist/native-move-guide.js": "18803efd31b424651da2a012ebec1999b53afda8b93fa33f95da94ca5660eb68",
+    "dist/engine.js": "c442494980aeb24f7730e17aee027b2cd2747386eb511f76a322d5a6a935f3fb",
+    "dist/app.js": "70e36aa4ea42ebdd5a9de0b6a78395a84084ace53be7e3932fac6501b4b1dadb",
+    "dist/index.html": "e400ae6213fa1083c060c683136204df112fba81cb5c11dc85b8caf7f3130e54",
+    "dist/style.css": "b7704d5570cc7b31e594072216bca49241478c1b29eaa4c81e32240f6f93973b",
+    "package.json": "8aebb2fbf40050c7fc97edce0572cdd2ab2489fa7280e8d84dd0fc76933c25ae",
+    "tests/native-mission-expansion.test.mjs": "00c7caa7aa24b1f40d007ec0288bc7bd27198d1f5ca801c0728e8df648e81e1f",
+    "tests/helpers/native-mission-fixture.mjs": "1af9712c62fc8b91e8829f86469cf49b8241e0b95680d54f034e2bf21bffa6b4",
+    "tests/native-script-items.test.mjs": "f9e60f2889a0c5b681e6c2a340466df215066051eaf3fcaddde61297f02606dd",
+    "tests/native-jump-camera.test.mjs": "ec1312468c7b6275f2593e5bcc6c4a29f4bc6fe15ac82d22b343e043cdb384df",
+    "tests/native-command-engine.test.mjs": "2c2588f9c40399c1a397a03ba721dbb4a7f3cf4f07365ccf84b18f183dfa824d",
+    "tests/mission-acceptance.test.mjs": "a0050003995e1533bc08cbaaefde4246c64abd349bf4dde4dc87000c0836cf9f"
+  },
+  "nativeArtifactSha256": {
+    "mission-items-native-2026-11-05/004d4e30_FUN_004d4e30.asm": "1945a697b996f2f29893d6622d355c34de9895b5b447dfdb8084af03aa9ef22d",
+    "mission-items-native-2026-11-05/004d5020_FUN_004d5020.asm": "45378aa9e8d4868e9610c7575ca581edb41cacfade5e5154e7eb72d57e3a4fb2",
+    "mission-items-native-2026-11-05/004d59d0_FUN_004d59d0.c": "247999dec28e86539b1e2e4396bf9dfad68264f26bd93b9661ec91ac07989e82",
+    "hit-reaction-getup-2026-10-30/004ce850_FUN_004ce850.asm": "3ab74e63e67d4c6cace32f5c6940d15113c9dff169ae1e81f5c2df69bc034f01",
+    "jump-motion-native-2026-11-05/00557ef0_FUN_00557ef0.c": "cfbfc8ca0e282ab9fd1b150560f8392b84b7bf0c7092f3661472570cdddbf8bb"
+  },
+  "originalScripts": {
+    "Level/npc09_01.pst": {
+      "imported": "scripts/level/npc09_01.pst.utf8.txt",
+      "sourceSha256": "25d06b22deaecadc83cf7f12e16259262fd4c1917ee790f9ff68fa8e0b0d98c5",
+      "utf8Sha256": "9a4ee29c7b707f20537af48978cec062d5dd3e00555ec713a43452044098da0e"
+    },
+    "Level/npc09_02.pst": {
+      "imported": "scripts/level/npc09_02.pst.utf8.txt",
+      "sourceSha256": "d93a1a41d699bee5702370e16c35793c108d7163339bf5d7aa5be875d3594191",
+      "utf8Sha256": "68ed3777f452eaadd496adb62f7d11e7407a185ac1586c35e257da6209e834b7"
+    },
+    "Level/npc15_01.pst": {
+      "imported": "scripts/level/npc15_01.pst.utf8.txt",
+      "sourceSha256": "f52a5e42225f6c6c34ff94df22e4ee91eba7f501d863c05c382033f2c929d4ab",
+      "utf8Sha256": "63de56309c8c278b289f3b4b0e333338f4b02d9170d9a311baa9378828b1fd1c"
+    },
+    "Level/npc15_02.pst": {
+      "imported": "scripts/level/npc15_02.pst.utf8.txt",
+      "sourceSha256": "91df7534d6db9ec47fcd23339973315cb398847fd8a4d4591aa0f6471893c582",
+      "utf8Sha256": "6283fe7a78de3bf93e49dd193a541874fbe434a97a0f48ecd2f428eec5545b24"
+    },
+    "Level/npc15_03.pst": {
+      "imported": "scripts/level/npc15_03.pst.utf8.txt",
+      "sourceSha256": "6f9ad4596a573bc9f50017ff81d1933aa6d089e4a9b24a1ebaa6c648b4753ea0",
+      "utf8Sha256": "c96227fe2cc174f6e1a1a919162ac2689de9c6205bde12ccfce062ad2b86a21e"
+    },
+    "Level/npc15_04.pst": {
+      "imported": "scripts/level/npc15_04.pst.utf8.txt",
+      "sourceSha256": "9b1549e338773c163e8e3cdc34555ca18c9297eff9dde4d2645f7ac77f57af69",
+      "utf8Sha256": "fe79598951512c7c45e591dca2d84748214b1f3a40a9710b58be3f4ad133cfde"
+    },
+    "Level/npc15_05.pst": {
+      "imported": "scripts/level/npc15_05.pst.utf8.txt",
+      "sourceSha256": "22bae28dc0467e634eaa36b45d8dca7d6d92e7038c9d163a1ed453bf1082fd9d",
+      "utf8Sha256": "63e3ea8d672bb6156f8b643fa96f36e0e329c2b37b88f882779be179cbc95fe8"
+    },
+    "Level/npc15_06.pst": {
+      "imported": "scripts/level/npc15_06.pst.utf8.txt",
+      "sourceSha256": "1265dfdf9cd544f76ffc54e82c6e35bc03c2dcbceb6ae9b1079475116910e452",
+      "utf8Sha256": "20a1d5cc7886f773328fd666a89ae365a89589f57735436dcc12de955c2e68f9"
+    },
+    "Level/npc15_07.pst": {
+      "imported": "scripts/level/npc15_07.pst.utf8.txt",
+      "sourceSha256": "99c190ad47ce01fef22eced39a179841a9d118c1c477ba83fed311b718e43ed9",
+      "utf8Sha256": "b10323f062851ca46a9b77a632652654ff9ba044e01c625d38b354ceb82db552"
+    },
+    "Level/npc15_08.pst": {
+      "imported": "scripts/level/npc15_08.pst.utf8.txt",
+      "sourceSha256": "70840c91a3c33a348ffc703fd65941cf97caa40dde070fca63c7e5104012519e",
+      "utf8Sha256": "06a9ec8feed1f8bd7a25feabc8a16cd3e8aac17d4864ec57a98bf60c363000cd"
+    },
+    "Level/sn09_.pst": {
+      "imported": "scripts/level/sn09_.pst.utf8.txt",
+      "sourceSha256": "0aa4a8e796255e9ff3909cd334c4c1cac428c9c0460dafdbde99c23e8f1f8886",
+      "utf8Sha256": "d0458546afb1f9b9a063d763b40084ca77784947dc772debb6b79ca7093dd0a4"
+    },
+    "Level/sn15_.pst": {
+      "imported": "scripts/level/sn15_.pst.utf8.txt",
+      "sourceSha256": "65e4b1d64d6f75e99caa9247f19bf512211328320d5dcfb804f835a7991480f5",
+      "utf8Sha256": "36628f59b32a87bed4108d1a38dce8f546ca4c02966a79dc9d783d565398ef65"
+    },
+    "sn09/sn09.pst": {
+      "imported": "maps/sn09/sn09.pst.utf8.txt",
+      "sourceSha256": "6607a311e09b31411e893414e50e8edbe40b4847c5ebe188ef13265596d933f3",
+      "utf8Sha256": "86c4c50e5a43e1fc1cd7d28b3280620cfe834affbedc8c4e61a99e6c907fc4cf"
+    },
+    "sn15/sn15.pst": {
+      "imported": "maps/sn15/sn15.pst.utf8.txt",
+      "sourceSha256": "7ed2291b342fdddf66b95f592f239fca5bf18117273cd9dbc533513e0f9589dd",
+      "utf8Sha256": "bdfaecbf91266101a0aa7a873c9062268e651331ee0c2c4e22fe1fea0b1674df"
+    }
+  },
+  "limits": [
+    "Five other source story missions remain outside the playable registry; non-script maps are not presented as story missions.",
+    "NPC secondary gun/flywheel behavior, complete EF, original PRNG/navigation/clock scheduling and full native combat/input fidelity remain incomplete.",
+    "sn09 uses a waypoint-directed CPU input driver, not a human browser playthrough; sn15 win/escape isolate specified systems.",
+    "The previous combat-fidelity goal remains active; these mission checks do not complete the full port."
+  ],
+  "reportSha256": "d90e14ee88bc7a1b37b6fe93e403315c490439c4374145cb2d42269f911e23c9",
+  "diagram": {
+    "source": "../diagrams/mission-expansion-2026-11-06.mmd",
+    "sha256": "5b4afd6a3de4a9dd3984245b316549780364282dae5d1e55288bbd5fee54685b",
+    "rendered": false,
+    "reason": "mmdc unavailable",
+    "log": "mission-diagram-render-2026-11-06.log"
+  }
+}

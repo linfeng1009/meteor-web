@@ -1,0 +1,367 @@
+{
+  "id": "E-native-controller-interruption-2026-11-07",
+  "observedAt": "2026-11-07T19:09:10.851387+08:00",
+  "scope": "work/meteor-original/scope.md",
+  "originalSha256": "289afb0aa44a47921d167fc24d6d404c60d6d00c299ac27d45fc61e16231b498",
+  "originalExecuted": false,
+  "runtimeFilesModified": false,
+  "verifiedControllerVtable": "005aa6a8",
+  "getter": "004d0510 reads controller+dc",
+  "setter": "004d0500 writes controller+dc",
+  "normalHitReceiver": "004d03f0 excludes state7/state9, otherwise starts supplied reaction and sets state4",
+  "state7": {
+    "status": "validated death-animation path",
+    "path": [
+      "004af630 sees HPstat2==0, sends victim message0x18",
+      "004ed9d0 handles0x18 by actor+dc",
+      "actor+dc=004f0140 calls controller+16c",
+      "controller+16c=004cc0a0 plays pose117 and writes7"
+    ],
+    "update": "004cc130 case7 ->004cde00",
+    "end": "004cde00 waits for0055c300 result4; dispatches local actor command0x0f then0x15, latter success writes9"
+  },
+  "state9": {
+    "status": "validated narrow post-death transition; complete enum name remains unresolved",
+    "knownEntry": "004cde00 writes9 after death pose ends and local command0x15 returns nonzero",
+    "localCommand": "004efb20 case0x15 returns manager(+2b4)(manager+2260)==0",
+    "update": "004cc130 has no case9; this switch does not update normal motion in that state",
+    "notProven": "Not proven that all computed/dynamic assignments to9 exclusively mean one global state. No gameplay-wide enum name assigned."
+  },
+  "candidateScan": {
+    "method": "Instruction CALL [reg+12c] preceded within10 non-CALL instructions by immediatePUSH7 orPUSH9; object identity checked manually",
+    "hits": [
+      "004cc0d1 owner004cc0a0 PUSH7",
+      "004cde56 owner004cde00 PUSH9"
+    ],
+    "boundary": "Does not cover arguments formed in a register, far data-flow or different offsets/objects."
+  },
+  "preHitFilter": {
+    "path": "004f3380+128 ->004f2ad0 ->global2278 override OR actor+170=004f2b10",
+    "condition": "target record exists and attacker record+1f0 mask AND target record+208 ==0",
+    "notPresentInInspectedFunctions": [
+      "target current attack pose",
+      "target controller attack state",
+      "per-move superarmor switch"
+    ],
+    "boundary": "Mask producers, script/status modifications and every alternate collider are not exhaustively recovered; do not claim absence of all original armor."
+  },
+  "ordinaryHitConsequence": "The inspected normal network hit path goes004f3f50 ->controller+48=004d03f0. States7/9 are not evidence for ordinary attack superarmor. No blanket armor patch is justified.",
+  "burst": {
+    "pose367": "Original POS label一般氣爆 with authored103/104/105/106 target directions and effect/body windows",
+    "recognizer": "Input/eligibility path remains unresolved; do not map full rage command0x10/0x11 to Burst without tracing its callers."
+  },
+  "artifacts": [
+    {
+      "path": "dist/assets/native/combat/P0.POS",
+      "sha256": "1e71f945afc6b701f86eb50e500feccca22f20b52f7f3bec073b0247d390a5fb"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/ReadOnlyControllerStateScan.java",
+      "sha256": "2887b9a9238b343b306afc340349872cc58023a48161f6e7c3d5af1811d89024"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/actor-vtable-candidates.json",
+      "sha256": "68c26e9c87b24582cad94da5094b72378aa8d255a938325179fe17678fd98290"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/controller-vtable.r2.txt",
+      "sha256": "31d914b4cbec4f24e0a8eb34eee6f123f02f852b9ec903a8ff3ea62113a1ca51"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass/004b96c0_FUN_004b96c0.asm",
+      "sha256": "01a8fcccd5c8d4eaabef44a44b7fef2f20cb9ea51a367cf6861c967c7a2430c9"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass/004b96c0_FUN_004b96c0.c",
+      "sha256": "a5d62488f25c9b225dd551dd25f86fb81f88d792de3ed7281fb57d620a964a14"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass/004b9890_FUN_004b9890.asm",
+      "sha256": "5491bad3645f62eee5d92227251e90fbb4e322c4b78fb1c5f384412248caa93a"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass/004b9890_FUN_004b9890.c",
+      "sha256": "2f69d833a3563f9d125306b8b8f05929ad1835f27e9d6c3c467d4695e0dfd86c"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass/004cc0a0_FUN_004cc0a0.asm",
+      "sha256": "1ab42dce80c4b7f060ca3e17ee64710d7f4fccee7ad18bcee9fa5ed0d0a1ab1e"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass/004cc0a0_FUN_004cc0a0.c",
+      "sha256": "76c9877f7fd4b149501cbb92d9f25bab73a14ae344f35327189d8279c8c4f8c7"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass/004cde00_FUN_004cde00.asm",
+      "sha256": "f9735819d2c1c80d86386c18333998d73cd28c15a3a64c4dc4e5a4ad99a7c1e7"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass/004cde00_FUN_004cde00.c",
+      "sha256": "0efabf4305c7b33f1c5600843a47a039eee3c0729985f863b56120306d828297"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass/004dc618_thunk_FUN_0055da50.asm",
+      "sha256": "fde599504c6a5860b840c1d2e44a995046bc5d50085e7dd702bc1bdc7c38e670"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass/004dc618_thunk_FUN_0055da50.c",
+      "sha256": "12c84c85f415869a550ecb5caedeba3cee03303f291136a4c04b93aa82d60bac"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass/004ecb80_FUN_004ecb80.asm",
+      "sha256": "f04594bd906cf0073fe108bdc461157c1def599d68b0d2ab782d097c735fd029"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass/004ecb80_FUN_004ecb80.c",
+      "sha256": "405e26057448b3775dead326951d2ee31e41cc0c568c20fb97c6a19bc597762c"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass/004ecc00_FUN_004ecc00.asm",
+      "sha256": "1e892be89a39f7364355cbf5434bf475946d019be0c5feb7f6b44c497082b5fc"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass/004ecc00_FUN_004ecc00.c",
+      "sha256": "15b9b515f5f39dc1aa16f23348edd26355dcada91875d11c1805f8fbe510b36b"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass/004ed1e0_FUN_004ed1e0.asm",
+      "sha256": "cf288cdd324020a9ceaa35ae676527fc71583b82a0f9b42c31b9b0ea2728bacc"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass/004ed1e0_FUN_004ed1e0.c",
+      "sha256": "e603b5d71593c023a236666bd2309f2c6d3594b8db17c58cb09fd51d313d3c5c"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass/004ed450_FUN_004ed450.asm",
+      "sha256": "6ab881e5092be39d360c68b18fe938f1f51aa63765e179c54d0ed4a0e4019581"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass/004ed450_FUN_004ed450.c",
+      "sha256": "59d26e6225c086dbead73f36fa3e8015a047d2f74724bc736a12da67343a1c2c"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass/004f3ad0_FUN_004f3ad0.asm",
+      "sha256": "64c80a92afaca002d761aaea5dcf958e0db46fa2d938551a12002e5e112a3469"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass/004f3ad0_FUN_004f3ad0.c",
+      "sha256": "54b9014d571dc3822b3cbe5e4b9a17182c1028b190c82f42524bb33d05c5f654"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass/00500840_FUN_00500840.asm",
+      "sha256": "defe6361aaee3e0189b3e7cbb2e9020503d432a4148fbcfe907c1dc80becc470"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass/00500840_FUN_00500840.c",
+      "sha256": "d79a68b9300addfa46b2df80306fd52119877d17026a875406c88f751b501ecc"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass/005009d0_FUN_005009d0.asm",
+      "sha256": "a7350e4930750db11b46593e918d7b148f2045d415926b23f522e5edf8b74bb1"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass/005009d0_FUN_005009d0.c",
+      "sha256": "75e182a34d0fcf140c72b5d61f7d870290839904929d61b60c0c00a42c6224ca"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass/functions.tsv",
+      "sha256": "07854131fb1fbb7d711899ee32f61548520877dbaad4616accd41d402d6fa2a4"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass/references.txt",
+      "sha256": "f419cda7a5b4b7b8ebb45ed65d42cb278f7ebb6125f67e8ecfe4ec35cb315a57"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass-ghidra.log",
+      "sha256": "6214b26d85ce648bb056befa808df0d296e6185d8f5bc3c146431f54a6ad6211"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/004ce010_FUN_004ce010.asm",
+      "sha256": "d27ef02327e12c7874f100b3274d5fa7819c6f2e968cbdc3e3b7fe6d6c54b04b"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/004ce010_FUN_004ce010.c",
+      "sha256": "fabddd168f4ceb21e247cefe45e492c33b489f1a7523ecf7c19e8b00e2700c39"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/004cfca0_FUN_004cfca0.asm",
+      "sha256": "9f46962af26ecf17c1e66fd4292e9e6a5b363995738b2aaea9f412321e45c324"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/004cfca0_FUN_004cfca0.c",
+      "sha256": "8f1fd772d6e2c906de4fd10bc6b439182e40b316e7bacc815580effafc232ab4"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/004d0500_FUN_004d0500.asm",
+      "sha256": "06c2f8777a365f3d7dc1a606691f7d38643d8f9a5a37822f5a5bb57a8d1a19e1"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/004d0500_FUN_004d0500.c",
+      "sha256": "96661d3a2d5cdb9580e7a4d5876e9ef808a8f83d79782188539563947fc1e94d"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/004d0510_FUN_004d0510.asm",
+      "sha256": "9ba7d4b54d9e9669d4b7cd5ff601ef62d6c74b9804fcc025138a3d0569c7abe6"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/004d0510_FUN_004d0510.c",
+      "sha256": "e5e35d0416b5b821003288f4cb6992a4abd7dd6403198a108b1c19e71985da30"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/004d0520_FUN_004d0520.asm",
+      "sha256": "c6bc4c9837ac7458847ca94b9b30042c519bc438ead8dffadae46a6ed91cfaac"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/004d0520_FUN_004d0520.c",
+      "sha256": "bc69aa4d5740bed09ff82c4b22f384c14740f1ce890fdf8c79b9721aad0870ee"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/004d0530_FUN_004d0530.asm",
+      "sha256": "e0899557488cebb0d8824ef1a65e2fd396f5cc68f5bcf524df4a7a5e976a9f24"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/004d0530_FUN_004d0530.c",
+      "sha256": "f38e7f12d2db9f19a03089041b828120bdc9823e1d5c358f55aaa48250c3bf38"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/004dc9a0_FUN_004dc9a0.asm",
+      "sha256": "37c0d50720bf1b3a5a958bda181bdcaac7b9f9e59bfc4a9891fc4cb3e36c3a6a"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/004dc9a0_FUN_004dc9a0.c",
+      "sha256": "3195d3ba02be274c3e940448073311f89e224c894032d019ef9e81de608d0371"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/004ef080_FUN_004ef080.asm",
+      "sha256": "3c42589250337e4194ba35563e9b0387105d66d3a399f71b4f4a26969a1bcb0e"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/004ef080_FUN_004ef080.c",
+      "sha256": "6c02aa191407f0602b5546c38a63b35f8aa769c7b2dc625707ecfd74ea9b0aae"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/004ef380_FUN_004ef380.asm",
+      "sha256": "208b6821b67f3c838986e30f4728404b462e610c348eb083ed0a844d93b8c44d"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/004ef380_FUN_004ef380.c",
+      "sha256": "4b76727d66d0356da45c0052ecf3ecf21dd129a97b002ccef6f1b56717b0de6c"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/004f0140_FUN_004f0140.asm",
+      "sha256": "5a6c313103555683cc34e7936e08d600af2b0d1760cbbb7f0064fe00782ecde4"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/004f0140_FUN_004f0140.c",
+      "sha256": "8981f14e6497de7450d418cd5d6f6285b49d0d25d78360923c0fe9b452fc0ab8"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/004f1d90_FUN_004f1d90.asm",
+      "sha256": "f102e114b71551ea54d5fa3d4ec68c62fc8373ca1826209433440974fa8c7e9c"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/004f1d90_FUN_004f1d90.c",
+      "sha256": "cd28ce052247148faf3ec9c0f7490849d6182a7fc53cbb0f03633be9b5765d86"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/004f1e10_FUN_004f1e10.asm",
+      "sha256": "7f46c55d5a0fe31237394adb66218b57f7d2dc871c8bea79189bc0bc8ac23ef0"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/004f1e10_FUN_004f1e10.c",
+      "sha256": "8f3e71836ca33087a59d2dafb07c69ee78ec4de1871262a49684a1ceb2343bcd"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/004f26d0_FUN_004f26d0.asm",
+      "sha256": "835094ed2109378b3c742fb9d19760d4b096c5fd9e8f4422846a32698624d1b3"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/004f26d0_FUN_004f26d0.c",
+      "sha256": "c86d8623d975e80930d932e1bc80116a40efcf4111af10b779623aaa88bb6c3d"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/004f2b10_FUN_004f2b10.asm",
+      "sha256": "bbb65769ddbb0edb20533feba7ded25dd0826733acc7b4c68fc672e6b5742f69"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/004f2b10_FUN_004f2b10.c",
+      "sha256": "ea25eafbc91510db98ad4453353cf93078e8ba2e0c47652c885668cde110d755"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/functions.tsv",
+      "sha256": "354399aaefd48b905467b6b062271282116b717c7e44dbeb98ed0fb9a5196125"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2/references.txt",
+      "sha256": "f1f9bd20a96004c624c93b452a862fa8c2fafd18eb47199921013fa2a665a0ac"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/filter-pass2-ghidra.log",
+      "sha256": "ddc9b9c6250cd6e60577781baf88b7f016f1f89bed470f0e9bcf0cf703dcb10d"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/state-writes/004cc0a0_FUN_004cc0a0.asm",
+      "sha256": "1ab42dce80c4b7f060ca3e17ee64710d7f4fccee7ad18bcee9fa5ed0d0a1ab1e"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/state-writes/004cc0a0_FUN_004cc0a0.c",
+      "sha256": "4f703a992a06d2ecc25bfa98f148692c708ecbc39f8927245ff2cc3cbe050fcf"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/state-writes/004cde00_FUN_004cde00.asm",
+      "sha256": "f9735819d2c1c80d86386c18333998d73cd28c15a3a64c4dc4e5a4ad99a7c1e7"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/state-writes/004cde00_FUN_004cde00.c",
+      "sha256": "a29fc48b74d44704e4260491cc9b7107eb271596afdd3561a1204fbc6f8c9c5e"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/state-writes/004d03f0_FUN_004d03f0.asm",
+      "sha256": "cb57aa89217b2cba7b4dca38379179299c353e29d3184897fd95b5d41ebfc051"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/state-writes/004d03f0_FUN_004d03f0.c",
+      "sha256": "519a1bc17552cc12bcd84dfebe3f2ae3270eb114caff21bf71558efe8769374b"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/state-writes/functions.tsv",
+      "sha256": "0635c268c918b50d028bf3f5bc04f0d04464461a7609f1ebf0b6204fef82348a"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/state-writes/state-setter-candidates.txt",
+      "sha256": "e98b5dc56e60127ad8af7186c00ca55d219ee25ec9bebab0ebc393cc5e085aaa"
+    },
+    {
+      "path": "work/combat-interruption-audit/continued-2026-11-07/state-writes-ghidra.log",
+      "sha256": "46251d2782944ea0fa55f6297a49cf9ec2be66cf1fe34e45581796c70f0f7239"
+    },
+    {
+      "path": "work/meteor-original/evidence/decompiled/004efb20_FUN_004efb20.c",
+      "sha256": "f66e1cec0b02b21bc04974322afa88e839dde0ce61eacf61f8af23a2c924cf5a"
+    },
+    {
+      "path": "work/meteor-original/evidence/decompiled/004f25b0_FUN_004f25b0.c",
+      "sha256": "eebfdf623dd7a9f8a6b3e30b443e5eaa0d5d947f75ae074520b7433ed75c8a2d"
+    },
+    {
+      "path": "work/meteor-original/evidence/decompiled/004f26b0_FUN_004f26b0.c",
+      "sha256": "b04923eac9b306a4469b9ba1f2336c35aa83ab58475416d50293fe71917b0fa1"
+    },
+    {
+      "path": "work/meteor-original/evidence/decompiled/004f2ad0_FUN_004f2ad0.c",
+      "sha256": "83d245e9890a6c651c4e503b548ca00b063f6c9726b4d70e2698e226937dfa3f"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-break-native-2026-10-29/004af630_FUN_004af630.c",
+      "sha256": "6a3e210fe506197ee6254559ee16461aa242ebcb2851d23c1063cc6665d7de58"
+    },
+    {
+      "path": "work/meteor-original/evidence/hit-reaction-final-state-2026-10-30/004cc130_FUN_004cc130.c",
+      "sha256": "939673a70dde2dd0eef5426fe822dec8d21f20714f65ad1b13493f35f7820a68"
+    },
+    {
+      "path": "work/meteor-original/evidence/hit-reaction-handlers-2026-10-30/004ed9d0_FUN_004ed9d0.c",
+      "sha256": "ade3f8ff99829277f5f5c1960195b9bb4f732218056b17d5c8fcb1ea26cbf65b"
+    }
+  ]
+}

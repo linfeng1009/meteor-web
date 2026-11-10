@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: an original type-zero blade strike remains guarded with no HP loss and the native guard-rage branch
+ok 1 - an original type-zero blade strike remains guarded with no HP loss and the native guard-rage branch
+  ---
+  duration_ms: 1.638292
+  type: 'test'
+  ...
+# Subtest: original blade pose298 type-one attack bypasses a raised guard and deals89
+ok 2 - original blade pose298 type-one attack bypasses a raised guard and deals89
+  ---
+  duration_ms: 0.463291
+  type: 'test'
+  ...
+# Subtest: original blade pose300 type-one attack bypasses a raised guard and deals50
+ok 3 - original blade pose300 type-one attack bypasses a raised guard and deals50
+  ---
+  duration_ms: 0.1195
+  type: 'test'
+  ...
+# Subtest: original spear pose286 type-one attack bypasses a raised guard and deals37
+ok 4 - original spear pose286 type-one attack bypasses a raised guard and deals37
+  ---
+  duration_ms: 0.189125
+  type: 'test'
+  ...
+# Subtest: original spear pose291 type-one attack bypasses a raised guard and deals122
+ok 5 - original spear pose291 type-one attack bypasses a raised guard and deals122
+  ---
+  duration_ms: 0.354542
+  type: 'test'
+  ...
+# Subtest: guard recognition matches the original six-bit packet field rather than testing only the literal value one
+ok 6 - guard recognition matches the original six-bit packet field rather than testing only the literal value one
+  ---
+  duration_ms: 0.700917
+  type: 'test'
+  ...
+# Subtest: both original spear-spin type-one windows bypass guard using the same recovered damage path
+ok 7 - both original spear-spin type-one windows bypass guard using the same recovered damage path
+  ---
+  duration_ms: 0.263792
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 163.876667

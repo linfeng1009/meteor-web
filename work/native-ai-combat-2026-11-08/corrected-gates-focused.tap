@@ -1,0 +1,121 @@
+TAP version 13
+# Subtest: original discovery requires View, a forward half-space beyond80 native units, and line of sight
+ok 1 - original discovery requires View, a forward half-space beyond80 native units, and line of sight
+  ---
+  duration_ms: 0.715792
+  type: 'test'
+  ...
+# Subtest: native nearby awareness is omnidirectional but never bypasses range or an occluding wall
+ok 2 - native nearby awareness is omnidirectional but never bypasses range or an occluding wall
+  ---
+  duration_ms: 0.209541
+  type: 'test'
+  ...
+# Subtest: an unknown actor is not a target; a known nearby enemy is retained and lost at the original200-unit boundary
+ok 3 - an unknown actor is not a target; a known nearby enemy is retained and lost at the original200-unit boundary
+  ---
+  duration_ms: 0.199708
+  type: 'test'
+  ...
+# Subtest: actual training start with original四方阵 spawns wakes only the enemy that discovers the player and permits public combos
+ok 4 - actual training start with original四方阵 spawns wakes only the enemy that discovers the player and permits public combos
+  ---
+  duration_ms: 258.623042
+  type: 'test'
+  ...
+# Source DES starts on a CPU floor with live NPC AI: displacement=5.095,0.000,0.000; awareness=true,false,false; public262→263.
+# Subtest: unseen training enemies cannot discover through real collision triangles and respawn clears their cached target
+ok 5 - unseen training enemies cannot discover through real collision triangles and respawn clears their cached target
+  ---
+  duration_ms: 61.22075
+  type: 'test'
+  ...
+# Subtest: original四方阵 geometry and normal start preserve discovery-gated live AI rather than an opening three-enemy rush
+ok 6 - original四方阵 geometry and normal start preserve discovery-gated live AI rather than an opening three-enemy rush
+  ---
+  duration_ms: 153.876833
+  type: 'test'
+  ...
+# Originalsn06 model/colliders/spawns plus live AI: displacement=5.095,0.000,0.000; one enemy discovers the player, two remain unaware. CPU; no browser rendering.
+# Subtest: NPC source Guard weight drives real guard reactions instead of always restarting a basic attack
+ok 7 - NPC source Guard weight drives real guard reactions instead of always restarting a basic attack
+  ---
+  duration_ms: 126.457541
+  type: 'test'
+  ...
+# Subtest: NPC Attack2 chooses the original spear forward program and damages through its real285 pose
+ok 8 - NPC Attack2 chooses the original spear forward program and damages through its real285 pose
+  ---
+  duration_ms: 57.731333
+  type: 'test'
+  ...
+# Live NPC sourceAttack2→f→285 actual damage=60; source weapon and SKC/AMB; other NPCs remain out of view.
+# Subtest: NPC long commands retain pending and rage gates, then pay once across the original293→294 link
+ok 9 - NPC long commands retain pending and rage gates, then pay once across the original293→294 link
+  ---
+  duration_ms: 101.811709
+  type: 'test'
+  ...
+# Subtest: source NPC asset contains all twelve distinct weapon tables,36 vectors and127 ground programs
+ok 10 - source NPC asset contains all twelve distinct weapon tables,36 vectors and127 ground programs
+  ---
+  duration_ms: 2.127333
+  type: 'test'
+  ...
+# Subtest: source action gate and attack category use independent100-way rolls, including unnormalized remainder
+ok 11 - source action gate and attack category use independent100-way rolls, including unnormalized remainder
+  ---
+  duration_ms: 2.524791
+  type: 'test'
+  ...
+# Subtest: source defense delays the next decision, and angle rejection consumes no command/category draw
+ok 12 - source defense delays the next decision, and angle rejection consumes no command/category draw
+  ---
+  duration_ms: 1.867875
+  type: 'test'
+  ...
+# Subtest: native weapon decision range is separate from damage geometry and preserves the strict boundary and angle gate
+ok 13 - native weapon decision range is separate from damage geometry and preserves the strict boundary and angle gate
+  ---
+  duration_ms: 0.340125
+  type: 'test'
+  ...
+# Subtest: native Think scales the source base delay and clamps the low speed without fabricating a cooldown range
+ok 14 - native Think scales the source base delay and clamps the low speed without fabricating a cooldown range
+  ---
+  duration_ms: 0.2395
+  type: 'test'
+  ...
+# Subtest: NPC clock preserves randomized source startup, one decision per update, pause and dropped overshoot
+ok 15 - NPC clock preserves randomized source startup, one decision per update, pause and dropped overshoot
+  ---
+  duration_ms: 0.303875
+  type: 'test'
+  ...
+# Subtest: source fifty-percent repetition retains previous category/index and clamps it after weapon changes
+ok 16 - source fifty-percent repetition retains previous category/index and clamps it after weapon changes
+  ---
+  duration_ms: 0.185708
+  type: 'test'
+  ...
+# Subtest: native controllerstate0 selects the distinct original17-entry air program table without changing ground memory
+ok 17 - native controllerstate0 selects the distinct original17-entry air program table without changing ground memory
+  ---
+  duration_ms: 0.054791
+  type: 'test'
+  ...
+# Subtest: NPC direction programs use actual catalog roots, prerequisites and existing ACT continuation gates
+ok 18 - NPC direction programs use actual catalog roots, prerequisites and existing ACT continuation gates
+  ---
+  duration_ms: 1.27
+  type: 'test'
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 914.528333

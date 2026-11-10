@@ -1,0 +1,92 @@
+{
+  "date": "2026-11-06",
+  "appearanceTests": {
+    "command": "node --test tests/native-hutao-assets.test.mjs tests/native-hutao-character.test.mjs tests/native-raiden-assets.test.mjs tests/native-raiden-character.test.mjs tests/native-emilia-assets.test.mjs tests/native-emilia-character.test.mjs tests/native-hd-character.test.mjs",
+    "passed": 39,
+    "failed": 0,
+    "tap": "appearance-tests.tap"
+  },
+  "syntax": {
+    "command": "npm run check",
+    "runtimeModules": 23,
+    "passed": true
+  },
+  "currentHashes": {
+    "families": 3,
+    "files": 9,
+    "passed": true
+  },
+  "originalBuildRecordsAndArchivedManifestHashesMatch": true,
+  "readmeLinksValid": true,
+  "existingBlendPathsValid": true,
+  "displayNamesAndSeals": [
+    {
+      "id": "hutao",
+      "name": "YS-胡桃",
+      "seal": "胡",
+      "vertices": 20521,
+      "textures": 5,
+      "loadedFromExtractedPackage": true
+    },
+    {
+      "id": "raiden",
+      "name": "YS-影",
+      "seal": "影",
+      "vertices": 24203,
+      "textures": 7,
+      "loadedFromExtractedPackage": true
+    },
+    {
+      "id": "emilia",
+      "name": "RE0-爱蜜莉雅",
+      "seal": "爱",
+      "vertices": 16493,
+      "textures": 4,
+      "loadedFromExtractedPackage": true
+    }
+  ],
+  "browser": {
+    "checked": "Actual character-picker DOM",
+    "seals": [
+      "孟",
+      "孟",
+      "胡",
+      "影",
+      "爱"
+    ],
+    "screenshot": "browser-character-picker.png"
+  },
+  "packaging": {
+    "archive": "artifacts/meteor-web-v0.6.2.zip",
+    "version": "0.6.2",
+    "bytes": 122100693,
+    "sha256": "ff8bfbbe1a15055c0c9868830b577550164d67c98e776a2e199c0285c24edb98",
+    "verifiedFiles": 4013,
+    "characters": [
+      {
+        "id": "hutao",
+        "label": "YS-胡桃 · 完整模型适配",
+        "mesh": "dist/assets/enhanced/hutao/mesh.json",
+        "textures": 5
+      },
+      {
+        "id": "raiden",
+        "label": "YS-影 · 礼服 · 完整模型适配",
+        "mesh": "dist/assets/enhanced/raiden/mesh.json",
+        "textures": 7
+      },
+      {
+        "id": "emilia",
+        "label": "RE0-爱蜜莉雅 · 完整模型适配",
+        "mesh": "dist/assets/enhanced/emilia/mesh.json",
+        "textures": 4
+      }
+    ],
+    "originalPmxRequired": false
+  },
+  "extractedPackageCheck": {
+    "passed": true,
+    "allReadsRestrictedToExtractedDist": true,
+    "originalPmxAndBlendExcluded": true
+  }
+}

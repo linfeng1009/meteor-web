@@ -1,0 +1,382 @@
+TAP version 13
+# Subtest: all twelve visible weapon choices equip their preserved original models and complete the E cycle
+ok 1 - all twelve visible weapon choices equip their preserved original models and complete the E cycle
+  ---
+  duration_ms: 529.01475
+  type: 'test'
+  ...
+# Subtest: qiankun public inputs switch all three source stances and retain distinct A attacks and automatic recovery
+ok 2 - qiankun public inputs switch all three source stances and retain distinct A attacks and automatic recovery
+  ---
+  duration_ms: 54.801167
+  type: 'test'
+  ...
+# Subtest: qiankun visible knife and sheath stay in the actual palms when raised and across all three stances
+not ok 3 - qiankun visible knife and sheath stay in the actual palms when raised and across all three stances
+  ---
+  duration_ms: 11.126042
+  type: 'test'
+  location: '/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/tests/native-command-engine.test.mjs:114:1'
+  failureType: 'testCodeFailure'
+  error: 'w9_0r: visible hilt must follow the palm'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    checkGrip (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/tests/native-command-engine.test.mjs:121:14)
+    TestContext.<anonymous> (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/tests/native-command-engine.test.mjs:132:81)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: ninja ordinary foot and blade inputs cause real source contact, including its second A branch
+ok 4 - ninja ordinary foot and blade inputs cause real source contact, including its second A branch
+  ---
+  duration_ms: 9.005208
+  type: 'test'
+  ...
+# Subtest: wheel uses an original model in flight, hits through its release window, returns, and permits a second throw
+ok 5 - wheel uses an original model in flight, hits through its release window, returns, and permits a second throw
+  ---
+  duration_ms: 11.105
+  type: 'test'
+  ...
+# Subtest: actual musket input produces its source shot damage and cannot be replaced by a melee contact
+ok 6 - actual musket input produces its source shot damage and cannot be replaced by a melee contact
+  ---
+  duration_ms: 8.016042
+  type: 'test'
+  ...
+# Subtest: an unlocked free attack keeps its chosen facing even with a nearby opponent behind the player
+ok 7 - an unlocked free attack keeps its chosen facing even with a nearby opponent behind the player
+  ---
+  duration_ms: 51.662834
+  type: 'test'
+  ...
+# Subtest: expansion weapon audio is registered as original byte copies, not merely unresolved EF names
+ok 8 - expansion weapon audio is registered as original byte copies, not merely unresolved EF names
+  ---
+  duration_ms: 23.186292
+  type: 'test'
+  ...
+# Subtest: ordinary directional key actions select each requested original skill without pose shortcuts
+ok 9 - ordinary directional key actions select each requested original skill without pose shortcuts
+  ---
+  duration_ms: 163.911375
+  type: 'test'
+  ...
+# Subtest: blade spin executes its original 374 to 375 automatic finish before returning to stance
+ok 10 - blade spin executes its original 374 to 375 automatic finish before returning to stance
+  ---
+  duration_ms: 23.693458
+  type: 'test'
+  ...
+# Subtest: sword multi-thrust resolves five original bone attack windows and actual damage
+ok 11 - sword multi-thrust resolves five original bone attack windows and actual damage
+  ---
+  duration_ms: 111.356917
+  type: 'test'
+  ...
+# Subtest: jump then down-A selects native down attacks, with sword wind-up held through 342 descent and landing
+ok 12 - jump then down-A selects native down attacks, with sword wind-up held through 342 descent and landing
+  ---
+  duration_ms: 138.715916
+  type: 'test'
+  ...
+# Subtest: every listed ready command has a public-input route from the ground or a natural jump, while pending specials stay blocked
+ok 13 - every listed ready command has a public-input route from the ground or a natural jump, while pending specials stay blocked
+  ---
+  duration_ms: 198.535833
+  type: 'test'
+  ...
+# Subtest: POS attack bone names resolve the actual original BNC bones without renaming the skeleton or inventing effect attachments
+ok 14 - POS attack bone names resolve the actual original BNC bones without renaming the skeleton or inventing effect attachments
+  ---
+  duration_ms: 45.727042
+  type: 'test'
+  ...
+# Subtest: the requested spear left-right-up-A body attack and airborne A kick remove actual HP through original bones
+ok 15 - the requested spear left-right-up-A body attack and airborne A kick remove actual HP through original bones
+  ---
+  duration_ms: 123.99625
+  type: 'test'
+  ...
+# Subtest: native thrusts move the collision root using d_base, retaining the actual authored distance rather than pelvis sway
+ok 16 - native thrusts move the collision root using d_base, retaining the actual authored distance rather than pelvis sway
+  ---
+  duration_ms: 116.133875
+  type: 'test'
+  ...
+# Subtest: authored thrust movement stops at the ordinary collision wall at both render rates
+ok 17 - authored thrust movement stops at the ordinary collision wall at both render rates
+  ---
+  duration_ms: 106.582541
+  type: 'test'
+  ...
+# Subtest: actual heavy-hit TargetMove scales the original recoil and TargetValue holds its authored final frame
+ok 18 - actual heavy-hit TargetMove scales the original recoil and TargetValue holds its authored final frame
+  ---
+  duration_ms: 3.903208
+  type: 'test'
+  ...
+# Subtest: a natural dagger jump can reach all three original air strikes through ordinary attack inputs without altitude overrides
+ok 19 - a natural dagger jump can reach all three original air strikes through ordinary attack inputs without altitude overrides
+  ---
+  duration_ms: 5.56425
+  type: 'test'
+  ...
+# Subtest: paid spear rage commands emit original EF visuals through the real engine animation loop
+ok 20 - paid spear rage commands emit original EF visuals through the real engine animation loop
+  ---
+  duration_ms: 215.31275
+  type: 'test'
+  ...
+# Subtest: infinite rage supports repeated rage commands across weapons without filling NPC rage
+ok 21 - infinite rage supports repeated rage commands across weapons without filling NPC rage
+  ---
+  duration_ms: 125.712166
+  type: 'test'
+  ...
+# Subtest: infinite rage survives weapon changes and respawns, then disabling restores normal spending and resource gates
+ok 22 - infinite rage survives weapon changes and respawns, then disabling restores normal spending and resource gates
+  ---
+  duration_ms: 97.008209
+  type: 'test'
+  ...
+# Subtest: spear aura and wave use byte-identical original EF attack nodes and source POS effect windows
+ok 23 - spear aura and wave use byte-identical original EF attack nodes and source POS effect windows
+  ---
+  duration_ms: 6.674417
+  type: 'test'
+  ...
+# Subtest: native EF seconds remain independent of accelerated POS frames and reset at automatic links
+ok 24 - native EF seconds remain independent of accelerated POS frames and reset at automatic links
+  ---
+  duration_ms: 2.827084
+  type: 'test'
+  ...
+# Subtest: dagger YanLuo uses its original effect-only box window, source109 reaction and349 finish through public input
+ok 25 - dagger YanLuo uses its original effect-only box window, source109 reaction and349 finish through public input
+  ---
+  duration_ms: 439.641541
+  type: 'test'
+  ...
+# Source effect-only dagger hit: damage=794, attack259 then finish349; CPU actors with retaliation paused.
+# Subtest: ground 八方绝 uses source effect contacts, gains victim rage before draining20, and skips guarded and rear actors
+ok 26 - ground 八方绝 uses source effect contacts, gains victim rage before draining20, and skips guarded and rear actors
+  ---
+  duration_ms: 118.079708
+  type: 'test'
+  ...
+# Ground201 effect: Attack101; damage=67; rage100→80 after the capped victim gain.
+# Subtest: 八方绝 respects source dynamic max rage, applies its item on zero damage, and skips lethal hits
+ok 27 - 八方绝 respects source dynamic max rage, applies its item on zero damage, and skips lethal hits
+  ---
+  duration_ms: 83.971875
+  type: 'test'
+  ...
+# Subtest: air 八方绝 starts from a natural jump, uses its independent source effect and returns through211
+ok 28 - air 八方绝 starts from a natural jump, uses its independent source effect and returns through211
+  ---
+  duration_ms: 81.11725
+  type: 'test'
+  ...
+# Natural-jump551 effect: Attack301; source211 observed; ordinary landing completed.
+# Subtest: 落樱雪 follows203→204→205→329 and poisons actual near and remote effect targets without stacking
+ok 29 - 落樱雪 follows203→204→205→329 and poisons actual near and remote effect targets without stacking
+  ---
+  duration_ms: 104.752958
+  type: 'test'
+  ...
+# Source204 remote hit: AttackWave06; item12 tick counts=4,4; CPU NPC retaliation/navigation paused.
+# Subtest: ordinary 赤练牙 applies its own source poison through a real released dart
+ok 30 - ordinary 赤练牙 applies its own source poison through a real released dart
+  ---
+  duration_ms: 70.896583
+  type: 'test'
+  ...
+# Subtest: periodic damage pauses with game time, does not award an attacker kill, and clears at respawn
+ok 31 - periodic damage pauses with game time, does not award an attacker kill, and clears at respawn
+  ---
+  duration_ms: 75.600541
+  type: 'test'
+  ...
+# Subtest: actual aura hits surrounding actors without textures, pays once and applies original recoil, knockdown and recovery
+ok 32 - actual aura hits surrounding actors without textures, pays once and applies original recoil, knockdown and recovery
+  ---
+  duration_ms: 146.595375
+  type: 'test'
+  ...
+# Source aura outward displacement: 6.573, 6.573, 6.573m; isolated actors, not a live-AI playthrough.
+# Subtest: linked forward wave hits beyond spear reach without a mirrored attack behind the caster
+ok 33 - linked forward wave hits beyond spear reach without a mirrored attack behind the caster
+  ---
+  duration_ms: 137.986625
+  type: 'test'
+  ...
+# Subtest: aura cannot hit outside its authored attack bounds, before activation, after interruption or while paused
+ok 34 - aura cannot hit outside its authored attack bounds, before activation, after interruption or while paused
+  ---
+  duration_ms: 92.058167
+  type: 'test'
+  ...
+# Subtest: effect and weapon contact share a POS window identity rather than dealing damage every render or per shape
+ok 35 - effect and weapon contact share a POS window identity rather than dealing damage every render or per shape
+  ---
+  duration_ms: 121.8465
+  type: 'test'
+  ...
+# Subtest: public spear AAA can chain into the original group-selected rage finish and its remote effect without replaying the windup
+ok 36 - public spear AAA can chain into the original group-selected rage finish and its remote effect without replaying the windup
+  ---
+  duration_ms: 90.003375
+  type: 'test'
+  ...
+# Subtest: effect query rejects unresolved parents, zero scales, non-effect windows and disposed systems
+ok 37 - effect query rejects unresolved parents, zero scales, non-effect windows and disposed systems
+  ---
+  duration_ms: 66.153916
+  type: 'test'
+  ...
+# Subtest: native attack nodes remain absent before their first source key and disappear at weapon changes
+ok 38 - native attack nodes remain absent before their first source key and disappear at weapon changes
+  ---
+  duration_ms: 99.173709
+  type: 'test'
+  ...
+# Subtest: source wave contact survives coarse updates by sampling only the crossed original attack intervals
+ok 39 - source wave contact survives coarse updates by sampling only the crossed original attack intervals
+  ---
+  duration_ms: 58.155167
+  type: 'test'
+  ...
+# Subtest: oriented effect bounds do not become an oversized world-axis box when the caster turns
+ok 40 - oriented effect bounds do not become an oversized world-axis box when the caster turns
+  ---
+  duration_ms: 0.168833
+  type: 'test'
+  ...
+# Subtest: visual and attack graphs agree on the source base-anchored cylinder and the elapsed effect clock
+ok 41 - visual and attack graphs agree on the source base-anchored cylinder and the elapsed effect clock
+  ---
+  duration_ms: 62.528208
+  type: 'test'
+  ...
+# Subtest: reported weapon specials use public inputs, original attack contacts, one rage charge and complete recovery
+    # Subtest: hammer/325
+    ok 1 - hammer/325
+      ---
+      duration_ms: 134.157625
+      type: 'test'
+      ...
+    # Subtest: musket/216
+    ok 2 - musket/216
+      ---
+      duration_ms: 64.031584
+      type: 'test'
+      ...
+    # Subtest: musket/215
+    ok 3 - musket/215
+      ---
+      duration_ms: 75.791834
+      type: 'test'
+      ...
+    # Subtest: wheel/552
+    ok 4 - wheel/552
+      ---
+      duration_ms: 67.543208
+      type: 'test'
+      ...
+    # Subtest: wheel/224
+    ok 5 - wheel/224
+      ---
+      duration_ms: 77.460917
+      type: 'test'
+      ...
+    # Subtest: wheel/554
+    ok 6 - wheel/554
+      ---
+      duration_ms: 65.063916
+      type: 'test'
+      ...
+    # Subtest: knuckle/416
+    ok 7 - knuckle/416
+      ---
+      duration_ms: 64.874208
+      type: 'test'
+      ...
+    # Subtest: knuckle/421
+    ok 8 - knuckle/421
+      ---
+      duration_ms: 98.184833
+      type: 'test'
+      ...
+    # Subtest: qiankun/570
+    ok 9 - qiankun/570
+      ---
+      duration_ms: 73.759417
+      type: 'test'
+      ...
+    # Subtest: qiankun/451
+    ok 10 - qiankun/451
+      ---
+      duration_ms: 96.349292
+      type: 'test'
+      ...
+    1..10
+ok 42 - reported weapon specials use public inputs, original attack contacts, one rage charge and complete recovery
+  ---
+  duration_ms: 818.533583
+  type: 'test'
+  ...
+# hammer/325: 4 source contacts; chain 325→326→327→328
+# musket/216: 3 source contacts; chain 216→217→212
+# musket/215: 1 source contacts; chain 215→212
+# wheel/552: 3 source contacts; chain 552
+# wheel/224: 3 source contacts; chain 224→3
+# wheel/554: 3 source contacts; chain 554→555
+# knuckle/416: 3 source contacts; chain 416
+# knuckle/421: 12 source contacts; chain 421→422→423→424→425→426→488
+# qiankun/570: 1 source contacts; chain 570
+# qiankun/451: 5 source contacts; chain 451→452→453→454→455→456→487
+# Subtest: 金钟罩 and 嗜血 finish on a miss, change real damage, refresh without stacking and clear on respawn
+    # Subtest: hammer/567
+    ok 1 - hammer/567
+      ---
+      duration_ms: 53.187375
+      type: 'test'
+      ...
+    # Subtest: knuckle/489
+    ok 2 - knuckle/489
+      ---
+      duration_ms: 53.17975
+      type: 'test'
+      ...
+    1..2
+ok 43 - 金钟罩 and 嗜血 finish on a miss, change real damage, refresh without stacking and clear on respawn
+  ---
+  duration_ms: 106.708417
+  type: 'test'
+  ...
+# Subtest: interruption and insufficient rage cannot grant self buffs, and wrong-mode qiankun input never becomes plain A
+ok 44 - interruption and insufficient rage cannot grant self buffs, and wrong-mode qiankun input never becomes plain A
+  ---
+  duration_ms: 51.19975
+  type: 'test'
+  ...
+# Subtest: source wheel slow scales actual walking, expires, and rage loss uses the original immediate item
+ok 45 - source wheel slow scales actual walking, expires, and rage loss uses the original immediate item
+  ---
+  duration_ms: 50.131125
+  type: 'test'
+  ...
+1..45
+# tests 57
+# suites 0
+# pass 56
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3124.059667

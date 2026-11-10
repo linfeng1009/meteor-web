@@ -1,0 +1,121 @@
+{
+  "id": "E-item-status-consumers-2026-11-08",
+  "observedAt": "2026-11-08T16:50:15.490041+08:00",
+  "scope": "work/meteor-original/scope.md",
+  "originalSha256": "289afb0aa44a47921d167fc24d6d404c60d6d00c299ac27d45fc61e16231b498",
+  "originalExecuted": false,
+  "runtimeModified": false,
+  "sourceClock": {
+    "frequencyHz": 5,
+    "stepFloat32Bits": "0x3e4ccccd",
+    "timerSetup": "004abec4–004abeec",
+    "serverUpdate": "004b1d60→004b24e0→004d5020→004d4e30",
+    "expiryComparison": "remaining<=rate*dt:delete before periodic",
+    "counter": "compare first against word3*10; else ftol(counter+10*dt); one delta maximum per source invocation",
+    "refresh": "same type2/id refreshes only parameter2; retains effect counter"
+  },
+  "rage": {
+    "stat": 6,
+    "maxStat": 7,
+    "defaultMax": 100,
+    "defaultSource": "004d4b7e/004d4b85/004d4b8d",
+    "deltaItem22": -20,
+    "clamp": "0..effective stat7"
+  },
+  "periodic": {
+    "item11": {
+      "lifetimeSeconds": 15,
+      "thresholdWord": 3,
+      "firstTickStep": 16,
+      "ticksBeforeExpiry": 4
+    },
+    "item12": {
+      "lifetimeSeconds": 60,
+      "thresholdWord": 2,
+      "firstTickStep": 11,
+      "ticksBeforeExpiry": 27
+    }
+  },
+  "death": {
+    "source": "004affd0",
+    "message": 24,
+    "broadcast": 44,
+    "attackerCredited": false,
+    "boundary": "Only the inspected periodic/environment death branch; no blanket conclusion for other damage paths."
+  },
+  "boundaries": [
+    "Static source and independent arithmetic only; no EXE, browser or live-AI execution.",
+    "QPC phase, real timer jitter/stall coalescing, per-actor Web timing and full client presentation remain host boundaries.",
+    "Dead actor attribute trees are not skipped by004b24e0; automatic status clearing at death was not proved."
+  ],
+  "artifacts": [
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/original-item-records.json",
+      "sha256": "9972adea63dabe23cea61b1dca7084171eaf49019676ca28b56166734da65be6"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/ReadOnlyItemConsumerTrace.java",
+      "sha256": "7ddd3985b1b350659283536c7c20619242da2f110e28b35990a745fba6cea358"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/ReadOnlyItemSchedulerTrace.java",
+      "sha256": "0deb08e699761e19cd3a9e3cbf6521d77fc1cdf30915f1c887ab7426569e0b0a"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/source-clock-oracle.py",
+      "sha256": "e4b72c00aedcd504859527b9a1dbd722111d4eee968349716fc430f967f07824"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/source-clock-oracle.json",
+      "sha256": "60e1a6ddebd6a2d5297be005402de76c19522705d263fed69267e77ec3104c9b"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/README.md",
+      "sha256": "ec2e45a2e11d53b40b6431b5ad31ca569d37dc96e5faa0a455c10c6fef9457c1"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d4a70_FUN_004d4a70.asm",
+      "sha256": "9c8afb25387c81a39019eb71cf35976c600d984953d85b21a30e234e8d4ca1f0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d4d30_FUN_004d4d30.asm",
+      "sha256": "a3547041d6576545b22dfeb427d7b74f071bf78fc0f2b91f27160533d366ecca"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d59d0_FUN_004d59d0.asm",
+      "sha256": "0ef6ea0bb01b761ea8cb23a700563b021ad82138f6cc27ecab0fa3d6dff1ea7b"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d5020_FUN_004d5020.asm",
+      "sha256": "45378aa9e8d4868e9610c7575ca581edb41cacfade5e5154e7eb72d57e3a4fb2"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d4e30_FUN_004d4e30.asm",
+      "sha256": "1945a697b996f2f29893d6622d355c34de9895b5b447dfdb8084af03aa9ef22d"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004b24e0_FUN_004b24e0.asm",
+      "sha256": "c2ce5e29711450fa5f5fe1307b5fbdada552ad84dc6b8e2188bddb21b1f909e4"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler/004abe80_FUN_004abe80.asm",
+      "sha256": "227f326737d0b72c51cb0abbfd18926a694c233bf164e0c8e26805df7d59bf30"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler-targets/004b1d60_FUN_004b1d60.asm",
+      "sha256": "652379b4128fef265596d43a368f88d48f83b5ce569958959c7b0c13260a447f"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler-targets/00549950_FUN_00549950.asm",
+      "sha256": "2276f3946777a5c67ff361ec3d696c5775b0fdda61d61831f9242134eda20098"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler/005499a0_FUN_005499a0.asm",
+      "sha256": "f0cfbb97e0f360fc3eff09793875a07cebb8f9cd6e8a01dd9574e2cb79b41cf0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/death/004affd0_FUN_004affd0.asm",
+      "sha256": "79ddeb51793570b203580493134957026634b3acc43e2fcd79ce1f25574f5f3c"
+    }
+  ]
+}

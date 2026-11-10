@@ -1,0 +1,132 @@
+TAP version 13
+# Subtest: spear aura and wave use byte-identical original EF attack nodes and source POS effect windows
+ok 1 - spear aura and wave use byte-identical original EF attack nodes and source POS effect windows
+  ---
+  duration_ms: 5.80575
+  type: 'test'
+  ...
+# Subtest: native EF seconds remain independent of accelerated POS frames and reset at automatic links
+ok 2 - native EF seconds remain independent of accelerated POS frames and reset at automatic links
+  ---
+  duration_ms: 2.421292
+  type: 'test'
+  ...
+# Subtest: dagger YanLuo uses its original effect-only box window, source109 reaction and349 finish through public input
+ok 3 - dagger YanLuo uses its original effect-only box window, source109 reaction and349 finish through public input
+  ---
+  duration_ms: 208.152917
+  type: 'test'
+  ...
+# Source effect-only dagger hit: damage=794, attack259 then finish349; CPU actors with retaliation paused.
+# Subtest: actual aura hits surrounding actors without textures, pays once and applies original recoil, knockdown and recovery
+ok 4 - actual aura hits surrounding actors without textures, pays once and applies original recoil, knockdown and recovery
+  ---
+  duration_ms: 164.567834
+  type: 'test'
+  ...
+# Source aura outward displacement: 6.573, 6.573, 6.573m; isolated actors, not a live-AI playthrough.
+# Subtest: linked forward wave hits beyond spear reach without a mirrored attack behind the caster
+ok 5 - linked forward wave hits beyond spear reach without a mirrored attack behind the caster
+  ---
+  duration_ms: 140.91975
+  type: 'test'
+  ...
+# Subtest: aura cannot hit outside its authored attack bounds, before activation, after interruption or while paused
+ok 6 - aura cannot hit outside its authored attack bounds, before activation, after interruption or while paused
+  ---
+  duration_ms: 102.277209
+  type: 'test'
+  ...
+# Subtest: effect and weapon contact share a POS window identity rather than dealing damage every render or per shape
+ok 7 - effect and weapon contact share a POS window identity rather than dealing damage every render or per shape
+  ---
+  duration_ms: 121.767416
+  type: 'test'
+  ...
+# Subtest: public spear AAA can chain into the original group-selected rage finish and its remote effect without replaying the windup
+ok 8 - public spear AAA can chain into the original group-selected rage finish and its remote effect without replaying the windup
+  ---
+  duration_ms: 86.596375
+  type: 'test'
+  ...
+# Subtest: effect query rejects unresolved parents, zero scales, non-effect windows and disposed systems
+ok 9 - effect query rejects unresolved parents, zero scales, non-effect windows and disposed systems
+  ---
+  duration_ms: 66.724834
+  type: 'test'
+  ...
+# Subtest: native attack nodes remain absent before their first source key and disappear at weapon changes
+ok 10 - native attack nodes remain absent before their first source key and disappear at weapon changes
+  ---
+  duration_ms: 99.64575
+  type: 'test'
+  ...
+# Subtest: source wave contact survives coarse updates by sampling only the crossed original attack intervals
+ok 11 - source wave contact survives coarse updates by sampling only the crossed original attack intervals
+  ---
+  duration_ms: 55.6165
+  type: 'test'
+  ...
+# Subtest: oriented effect bounds do not become an oversized world-axis box when the caster turns
+ok 12 - oriented effect bounds do not become an oversized world-axis box when the caster turns
+  ---
+  duration_ms: 0.212833
+  type: 'test'
+  ...
+# Subtest: visual and attack graphs agree on the source base-anchored cylinder and the elapsed effect clock
+ok 13 - visual and attack graphs agree on the source base-anchored cylinder and the elapsed effect clock
+  ---
+  duration_ms: 47.653042
+  type: 'test'
+  ...
+# Subtest: all enabled rage moves and automatic pose links have source-backed effect definitions and PNG textures
+ok 14 - all enabled rage moves and automatic pose links have source-backed effect definitions and PNG textures
+  ---
+  duration_ms: 31.051459
+  type: 'test'
+  ...
+# Subtest: rage visuals follow authored frames, stay absent for ordinary attacks and cannot change combat values
+ok 15 - rage visuals follow authored frames, stay absent for ordinary attacks and cannot change combat values
+  ---
+  duration_ms: 5.219416
+  type: 'test'
+  ...
+# Subtest: original weapon DES dummies bind light to native W7_0 coordinates even when that model is hidden by a skin
+ok 16 - original weapon DES dummies bind light to native W7_0 coordinates even when that model is hidden by a skin
+  ---
+  duration_ms: 1.376542
+  type: 'test'
+  ...
+# Subtest: automatic rage links play their own EF timeline and pay no second cost
+ok 17 - automatic rage links play their own EF timeline and pay no second cost
+  ---
+  duration_ms: 7.707916
+  type: 'test'
+  ...
+# Subtest: hit interruption, weapon changes and clear remove visuals and dispose each owned mesh once
+ok 18 - hit interruption, weapon changes and clear remove visuals and dispose each owned mesh once
+  ---
+  duration_ms: 1.677958
+  type: 'test'
+  ...
+# Subtest: invalid native parent bindings remain hidden instead of emitting at the world origin
+ok 19 - invalid native parent bindings remain hidden instead of emitting at the world origin
+  ---
+  duration_ms: 3.630917
+  type: 'test'
+  ...
+# Subtest: key interpolation retains native endpoints and a normalized quaternion
+ok 20 - key interpolation retains native endpoints and a normalized quaternion
+  ---
+  duration_ms: 0.126167
+  type: 'test'
+  ...
+1..20
+# tests 20
+# suites 0
+# pass 20
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1241.443459

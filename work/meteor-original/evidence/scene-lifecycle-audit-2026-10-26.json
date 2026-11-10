@@ -1,0 +1,72 @@
+{
+  "date": "2026-10-26",
+  "kind": "scene-state-lifecycle-audit",
+  "leakPresent": false,
+  "originalState": {
+    "stone": {
+      "pose": 0,
+      "state": 3,
+      "active": 1,
+      "collision": 1
+    },
+    "drop": {
+      "active": 0,
+      "interactive": 0
+    },
+    "mode": "story"
+  },
+  "destroyed": {
+    "stone": {
+      "pose": 1,
+      "state": 3,
+      "active": 0,
+      "collision": 0
+    },
+    "drop": {
+      "active": 1,
+      "interactive": 1
+    },
+    "mode": "story"
+  },
+  "afterMenu": {
+    "stone": {
+      "pose": 0,
+      "state": 3,
+      "active": 1,
+      "collision": 1
+    },
+    "drop": {
+      "active": 1,
+      "interactive": 1
+    },
+    "mode": "training"
+  },
+  "afterTraining": {
+    "stone": {
+      "pose": 0,
+      "state": 3,
+      "active": 1,
+      "collision": 1
+    },
+    "drop": {
+      "active": 1,
+      "interactive": 1
+    },
+    "mode": "training"
+  },
+  "afterStoryRestart": {
+    "stone": {
+      "pose": 0,
+      "state": 3,
+      "active": 1,
+      "collision": 1
+    },
+    "drop": {
+      "active": 0,
+      "interactive": 0
+    },
+    "mode": "story"
+  },
+  "finding": "Cached scene source state now resets at menu and training boundaries; original story initialization still restores the mission-specific state.",
+  "scope": "Original sn01 DES/cmodel/FMC/PST and production menu/start; synthetic attack callback and lightweight actors, no browser or ordinary combat claim."
+}

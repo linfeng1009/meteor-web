@@ -1,0 +1,194 @@
+TAP version 13
+# Subtest: spear aura and wave use byte-identical original EF attack nodes and source POS effect windows
+ok 1 - spear aura and wave use byte-identical original EF attack nodes and source POS effect windows
+  ---
+  duration_ms: 4.92475
+  type: 'test'
+  ...
+# Subtest: native EF seconds remain independent of accelerated POS frames and reset at automatic links
+ok 2 - native EF seconds remain independent of accelerated POS frames and reset at automatic links
+  ---
+  duration_ms: 2.442958
+  type: 'test'
+  ...
+# Subtest: dagger YanLuo uses its original effect-only box window, source109 reaction and349 finish through public input
+not ok 3 - dagger YanLuo uses its original effect-only box window, source109 reaction and349 finish through public input
+  ---
+  duration_ms: 200.572
+  type: 'test'
+  location: '/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/tests/native-effect-contacts.test.mjs:86:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/tests/native-effect-contacts.test.mjs:96:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: actual aura hits surrounding actors without textures, pays once and applies original recoil, knockdown and recovery
+ok 4 - actual aura hits surrounding actors without textures, pays once and applies original recoil, knockdown and recovery
+  ---
+  duration_ms: 166.416458
+  type: 'test'
+  ...
+# Source aura outward displacement: 6.573, 6.573, 6.573m; isolated actors, not a live-AI playthrough.
+# Subtest: linked forward wave hits beyond spear reach without a mirrored attack behind the caster
+ok 5 - linked forward wave hits beyond spear reach without a mirrored attack behind the caster
+  ---
+  duration_ms: 141.153792
+  type: 'test'
+  ...
+# Subtest: aura cannot hit outside its authored attack bounds, before activation, after interruption or while paused
+ok 6 - aura cannot hit outside its authored attack bounds, before activation, after interruption or while paused
+  ---
+  duration_ms: 102.311709
+  type: 'test'
+  ...
+# Subtest: effect and weapon contact share a POS window identity rather than dealing damage every render or per shape
+ok 7 - effect and weapon contact share a POS window identity rather than dealing damage every render or per shape
+  ---
+  duration_ms: 132.288917
+  type: 'test'
+  ...
+# Subtest: effect query rejects unresolved parents, zero scales, non-effect windows and disposed systems
+ok 8 - effect query rejects unresolved parents, zero scales, non-effect windows and disposed systems
+  ---
+  duration_ms: 66.069
+  type: 'test'
+  ...
+# Subtest: native attack nodes remain absent before their first source key and disappear at weapon changes
+ok 9 - native attack nodes remain absent before their first source key and disappear at weapon changes
+  ---
+  duration_ms: 98.381
+  type: 'test'
+  ...
+# Subtest: source wave contact survives coarse updates by sampling only the crossed original attack intervals
+ok 10 - source wave contact survives coarse updates by sampling only the crossed original attack intervals
+  ---
+  duration_ms: 55.8705
+  type: 'test'
+  ...
+# Subtest: oriented effect bounds do not become an oversized world-axis box when the caster turns
+ok 11 - oriented effect bounds do not become an oversized world-axis box when the caster turns
+  ---
+  duration_ms: 0.249916
+  type: 'test'
+  ...
+# Subtest: visual and attack graphs agree on the source base-anchored cylinder and the elapsed effect clock
+ok 12 - visual and attack graphs agree on the source base-anchored cylinder and the elapsed effect clock
+  ---
+  duration_ms: 47.906125
+  type: 'test'
+  ...
+# Subtest: every advertised manual command addresses preserved native animation and RES data
+ok 13 - every advertised manual command addresses preserved native animation and RES data
+  ---
+  duration_ms: 0.807292
+  type: 'test'
+  ...
+# Subtest: the requested blade spin, sword flurry, spear circles and airborne stabs use distinct original poses
+ok 14 - the requested blade spin, sword flurry, spear circles and airborne stabs use distinct original poses
+  ---
+  duration_ms: 0.624125
+  type: 'test'
+  ...
+# Subtest: separate source command tables resolve the ambiguous spear and blade pose-reference rows
+ok 15 - separate source command tables resolve the ambiguous spear and blade pose-reference rows
+  ---
+  duration_ms: 0.208041
+  type: 'test'
+  ...
+# Subtest: ordinary chains and conditional second stages preserve their distinct command prerequisites
+ok 16 - ordinary chains and conditional second stages preserve their distinct command prerequisites
+  ---
+  duration_ms: 0.2275
+  type: 'test'
+  ...
+# Subtest: catalog scope and unresolved projectile commands are explicit rather than silently substituted
+ok 17 - catalog scope and unresolved projectile commands are explicit rather than silently substituted
+  ---
+  duration_ms: 0.45175
+  type: 'test'
+  ...
+# Subtest: every usable command has a real bone/weapon hit or an implemented projectile emitter, including its automatic phases
+not ok 18 - every usable command has a real bone/weapon hit or an implemented projectile emitter, including its automatic phases
+  ---
+  duration_ms: 0.483083
+  type: 'test'
+  location: '/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/tests/native-move-catalog.test.mjs:104:1'
+  failureType: 'testCodeFailure'
+  error: 'dagger-259: a pure effect window cannot be advertised as a functioning hit'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/tests/native-move-catalog.test.mjs:113:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: the actual guide renders every catalog entry exactly once and rejects unequipped families
+ok 19 - the actual guide renders every catalog entry exactly once and rejects unequipped families
+  ---
+  duration_ms: 2.844208
+  type: 'test'
+  ...
+# Subtest: the reported spins, multi-thrust and four melee plunges show their complete distinct commands
+ok 20 - the reported spins, multi-thrust and four melee plunges show their complete distinct commands
+  ---
+  duration_ms: 1.455583
+  type: 'test'
+  ...
+# Subtest: rage costs and unavailable projectile specials remain visible next to their commands
+not ok 21 - rage costs and unavailable projectile specials remain visible next to their commands
+  ---
+  duration_ms: 2.861
+  type: 'test'
+  location: '/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/tests/native-move-guide.test.mjs:46:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /17 项指令 · 17 项可用/. Input:
+    
+    '<div class="combo-weapon-heading"><h3 id="guide-weapon-heading">匕首招式</h3><span>17 项指令</span></div><section class="combo-group" aria-labelledby="combo-group-ground"><h4 id="combo-group-ground">地面招式<span>按顺序连续输入</span></h4><ul class="combo-move-list"><li data-move-id="dagger-248"><div class="combo-move-title"><strong>太岁</strong></div><span class="combo-command" aria-label="攻击"><span aria-hidden="true"><kbd>A</kbd></span></span></li><li data-move-id="dagger-249"><div class="combo-move-title"><strong>九尾</strong></div><span class="combo-command" aria-label="攻击 攻击"><span aria-hidden="true"><kbd>A</kbd><kbd>A</kbd></span></span><p>衔接「太岁」。</p></li><li data-move-id="dagger-250"><div class="combo-move-title"><strong>夜叉</strong></div><span class="combo-command" aria-label="上 攻击"><span aria-hidden="true"><kbd>↑</kbd><kbd>A</kbd></span></span></li><li data-move-id="dagger-251"><div class="combo-move-title"><strong>旱魃</strong></div><span class="combo-command" aria-label="上 攻击 上 攻击"><span aria-hidden="true"><kbd>↑</kbd><kbd>A</kbd><kbd>↑</kbd><kbd>A</kbd></span></span><p>衔接「夜叉」。</p></li><li data-move-id="dagger-253"><div class="combo-move-title"><strong>曹沫举顶</strong></div><span class="combo-command" aria-label="上 上 攻击"><span aria-hidden="true"><kbd>↑</kbd><kbd>↑</kbd><kbd>A</kbd></span></span></li><li data-move-id="dagger-370"><div class="combo-move-title"><strong>荆轲现匕</strong></div><span class="combo-command" aria-label="左 攻击"><span aria-hidden="true"><kbd>←</kbd><kbd>A</kbd></span></span><p>回踢会自动衔接。</p></li><li data-move-id="dagger-255"><div class="combo-move-title"><strong>聂政屠犬</strong></div><span class="combo-command" aria-label="右 攻击"><span aria-hidden="true"><kbd>→</kbd><kbd>A</kbd></span></span></li><li data-move-id="dagger-343"><div class="combo-move-title"><strong>专诸鱼肠</strong></div><span class="combo-command" aria-label="下 攻击"><span aria-hidden="true"><kbd>↓</kbd><kbd>A</kbd></span></span><p>近身首击可用，后半段特效攻击待补。</p></li><li data-move-id="dagger-257"><div class="combo-move-title"><strong>豫让三伏</strong></div><span class="combo-command" aria-label="下 上 攻击"><span aria-hidden="true"><kbd>↓</kbd><kbd>↑</kbd><kbd>A</kbd></span></span><p>后续的血祭会自动衔接。</p></li></ul></section><section class="combo-group" aria-labelledby="combo-group-air"><h4 id="combo-group-air">空中招式<span>先跃起，再输入</span></h4><ul class="combo-move-list"><li data-move-id="dagger-245"><div class="combo-move-title"><strong>姑获</strong></div><span class="combo-command" aria-label="空 中   攻击"><span aria-hidden="true">空中 <kbd>A</kbd></span></span></li><li data-move-id="dagger-246"><div class="combo-move-title"><strong>奔云</strong></div><span class="combo-command" aria-label="空 中   攻击 攻击"><span aria-hidden="true">空中 <kbd>A</kbd><kbd>A</kbd></span></span><p>衔接「姑获」。</p></li><li data-move-id="dagger-247"><div class="combo-move-title"><strong>鹏翼</strong></div><span class="combo-command" aria-label="空 中   攻击 攻击 攻击"><span aria-hidden="true">空中 <kbd>A</kbd><kbd>A</kbd><kbd>A</kbd></span></span><p>衔接「奔云」。</p></li><li data-move-id="dagger-252"><div class="combo-move-title"><strong>罗刹</strong></div><span class="combo-command" aria-label="空 中   下 攻击"><span aria-hidden="true">空中 <kbd>↓</kbd><kbd>A</kbd></span></span></li><li data-move-id="dagger-256"><div class="combo-move-title"><strong>鬼弹</strong></div><span class="combo-command" aria-label="空 中   上 下 攻击"><span aria-hidden="true">空中 <kbd>↑</kbd><kbd>↓</kbd><kbd>A</kbd></span></span></li></ul></section><section class="combo-group" aria-labelledby="combo-group-rage"><h4 id="combo-group-rage">怒气招式<span>怒气满足条件后施展</span></h4><ul class="combo-move-list"><li data-move-id="dagger-558"><div class="combo-move-title"><strong>暗犽</strong><span class="combo-rage">怒气 60</span></div><span class="combo-command" aria-label="下 下 攻击"><span aria-hidden="true"><kbd>↓</kbd><kbd>↓</kbd><kbd>A</kbd></span></span></li><li data-move-id="dagger-259"><div class="combo-move-title"><strong>阎罗</strong><span class="combo-rage">怒气 100</span></div><span class="combo-command" aria-label="下 上 上 攻击"><span aria-hidden="true"><kbd>↓</kbd><kbd>↑</kbd><kbd>↑</kbd><kbd>A</kbd></span></span></li><li data-move-id="dagger-559"><div class="combo-move-title"><strong>降神</strong><span class="combo-rage">怒气 60</span></div><span class="combo-command" aria-label="空 中   下 下 攻击"><span aria-hidden="true">空中 <kbd>↓</kbd><kbd>↓</kbd><kbd>A</kbd></span></span><p>近身攻击可用，远端破空弹效果待补。</p></li></ul></section>'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: '<div class="combo-weapon-heading"><h3 id="guide-weapon-heading">匕首招式</h3><span>17 项指令</span></div><section class="combo-group" aria-labelledby="combo-group-ground"><h4 id="combo-group-ground">地面招式<span>按顺序连续输入</span></h4><ul class="combo-move-list"><li data-move-id="dagger-248"><div class="combo-move-title"><strong>太岁</strong></div><span class="combo-command" aria-label="攻击"><span aria-hidden="true"><kbd>A</kbd></span></span></li><li data-move-id="dagger-249"><div class="combo-move-title"><strong>九尾</strong></div><span class="combo-command" aria-label="攻击 攻击"><span aria-hidden="true"><kbd>A</kbd><kbd>A</kbd></span></span><p>衔接「太岁」。</p></li><li data-move-id="dagger-250"><div class="combo-move-title"><strong>夜叉</strong></div><span class="combo-command" aria-label="上 攻击"><span aria-hidden="true"><kbd>↑</kbd><kbd>A</kbd></span></span></li><li data-move-id="dagger-251"><div class="combo-move-title"><strong>旱魃</strong></div><span class="combo-command" aria-label="上 攻击 上 攻击"><span aria-hidden="true"><kbd>↑</kbd><kbd>A</kbd><kbd>↑</kbd><kbd>A</kbd></span></span><p>衔接「夜叉」。</p></li><li data-move-id="dagger-253"><div class="combo-move-title"><strong>曹沫举顶</strong></div><span class="combo-command" aria-label="上 上 攻击"><span aria-hidden="true"><kbd>↑</kbd><kbd>↑</kbd><kbd>A</kbd></span></span></li><li data-move-id="dagger-370"><div class="combo-move-title"><strong>荆轲现匕</strong></div><span class="combo-command" aria-label="左 攻击"><span aria-hidden="true"><kbd>←</kbd><kbd>A</kbd></span></span><p>回踢会自动衔接。</p></li><li data-move-id="dagger-255"><div class="combo-move-title"><strong>聂政屠犬</strong></div><span class="combo-command" aria-label="右 攻击"><span aria-hidden="true"><kbd>→</kbd><kbd>A</kbd></span></span></li><li data-move-id="dagger-343"><div class="combo-move-title"><strong>专诸鱼肠</strong></div><span class="combo-command" aria-label="下 攻击"><span aria-hidden="true"><kbd>↓</kbd><kbd>A</kbd></span></span><p>近身首击可用，后半段特效攻击待补。</p></li><li data-move-id="dagger-257"><div class="combo-move-title"><strong>豫让三伏</strong></div><span class="combo-command" aria-label="下 上 攻击"><span aria-hidden="true"><kbd>↓</kbd><kbd>↑</kbd><kbd>A</kbd></span></span><p>后续的血祭会自动衔接。</p></li></ul></section><section class="combo-group" aria-labelledby="combo-group-air"><h4 id="combo-group-air">空中招式<span>先跃起，再输入</span></h4><ul class="combo-move-list"><li data-move-id="dagger-245"><div class="combo-move-title"><strong>姑获</strong></div><span class="combo-command" aria-label="空 中   攻击"><span aria-hidden="true">空中 <kbd>A</kbd></span></span></li><li data-move-id="dagger-246"><div class="combo-move-title"><strong>奔云</strong></div><span class="combo-command" aria-label="空 中   攻击 攻击"><span aria-hidden="true">空中 <kbd>A</kbd><kbd>A</kbd></span></span><p>衔接「姑获」。</p></li><li data-move-id="dagger-247"><div class="combo-move-title"><strong>鹏翼</strong></div><span class="combo-command" aria-label="空 中   攻击 攻击 攻击"><span aria-hidden="true">空中 <kbd>A</kbd><kbd>A</kbd><kbd>A</kbd></span></span><p>衔接「奔云」。</p></li><li data-move-id="dagger-252"><div class="combo-move-title"><strong>罗刹</strong></div><span class="combo-command" aria-label="空 中   下 攻击"><span aria-hidden="true">空中 <kbd>↓</kbd><kbd>A</kbd></span></span></li><li data-move-id="dagger-256"><div class="combo-move-title"><strong>鬼弹</strong></div><span class="combo-command" aria-label="空 中   上 下 攻击"><span aria-hidden="true">空中 <kbd>↑</kbd><kbd>↓</kbd><kbd>A</kbd></span></span></li></ul></section><section class="combo-group" aria-labelledby="combo-group-rage"><h4 id="combo-group-rage">怒气招式<span>怒气满足条件后施展</span></h4><ul class="combo-move-list"><li data-move-id="dagger-558"><div class="combo-move-title"><strong>暗犽</strong><span class="combo-rage">怒气 60</span></div><span class="combo-command" aria-label="下 下 攻击"><span aria-hidden="true"><kbd>↓</kbd><kbd>↓</kbd><kbd>A</kbd></span></span></li><li data-move-id="dagger-259"><div class="combo-move-title"><strong>阎罗</strong><span class="combo-rage">怒气 100</span></div><span class="combo-command" aria-label="下 上 上 攻击"><span aria-hidden="true"><kbd>↓</kbd><kbd>↑</kbd><kbd>↑</kbd><kbd>A</kbd></span></span></li><li data-move-id="dagger-559"><div class="combo-move-title"><strong>降神</strong><span class="combo-rage">怒气 60</span></div><span class="combo-command" aria-label="空 中   下 下 攻击"><span aria-hidden="true">空中 <kbd>↓</kbd><kbd>↓</kbd><kbd>A</kbd></span></span><p>近身攻击可用，远端破空弹效果待补。</p></li></ul></section>'
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/tests/native-move-guide.test.mjs:57:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: follow-up requirements are explained by move names and arrow commands are screen-reader labeled
+ok 22 - follow-up requirements are explained by move names and arrow commands are screen-reader labeled
+  ---
+  duration_ms: 1.104458
+  type: 'test'
+  ...
+1..22
+# tests 22
+# suites 0
+# pass 19
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1149.361709

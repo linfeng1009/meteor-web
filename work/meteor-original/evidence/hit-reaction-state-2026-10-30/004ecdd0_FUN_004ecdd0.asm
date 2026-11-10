@@ -1,0 +1,10 @@
+004ecdd0 PUSH ESI
+004ecdd1 MOV ESI,ECX
+004ecdd3 CALL 0x004ed920
+004ecdd8 MOV EAX,dword ptr [ESI]
+004ecdda PUSH 0x0
+004ecddc MOV ECX,ESI
+004ecdde CALL dword ptr [EAX + 0x198]
+004ecde4 MOV EAX,0x1
+004ecde9 POP ESI
+004ecdea RET

@@ -1,0 +1,321 @@
+{
+  "date": "2026-10-26",
+  "mapId": "sn14",
+  "mapName": "炎硫岛",
+  "readyForNamedMission": true,
+  "campaignOrder": {
+    "established": false,
+    "localMenu": "menu.res lists map IDs/names only",
+    "save": "singlerec.ini contains ten level14 entries and is not authoritative campaign-order evidence",
+    "note": "Do not label this second campaign mission without independent order evidence."
+  },
+  "sn02": {
+    "mapName": "秦皇陵",
+    "rule": 5,
+    "npcScripts": 0,
+    "callbacks": 0,
+    "note": "Not an original second-story mission; level config only."
+  },
+  "initial": {
+    "player": {
+      "hp": 1000,
+      "maxHp": 1000,
+      "weaponId": 6,
+      "weapon2Id": 0,
+      "position": [
+        17.2532,
+        7.847117515848748,
+        -48.49112
+      ]
+    },
+    "npc": [
+      {
+        "scriptId": 1,
+        "name": "大刀哨兵",
+        "modelId": 2,
+        "weaponId": 8,
+        "weapon2Id": 2,
+        "hp": 1000,
+        "spawn": 0,
+        "position": [
+          5.3810400000000005,
+          -1.149788842201233,
+          -6.91448
+        ],
+        "intent": "patrol",
+        "patrol": [
+          0
+        ]
+      },
+      {
+        "scriptId": 2,
+        "name": "铁枪哨兵",
+        "modelId": 8,
+        "weaponId": 7,
+        "weapon2Id": 2,
+        "hp": 1000,
+        "spawn": 33,
+        "position": [
+          11.65872,
+          -1.1253493041995,
+          -5.33328
+        ],
+        "intent": "patrol",
+        "patrol": [
+          16,
+          18,
+          19,
+          20,
+          21
+        ]
+      }
+    ],
+    "globals": {
+      "Rule": 10,
+      "RoundTime": 10,
+      "PlayerSpawn": 34,
+      "PlayerSpawnDir": 180,
+      "PlayerWeapon": 6,
+      "PlayerWeapon2": 0,
+      "PlayerHP": 1000,
+      "trg0": 1,
+      "trg1": 0,
+      "trg2": 0,
+      "trg3": 0,
+      "trg4": 0
+    },
+    "diagnostics": []
+  },
+  "startup": {
+    "player": {
+      "hp": 1000,
+      "maxHp": 1000,
+      "weaponId": 6,
+      "weapon2Id": 0,
+      "position": [
+        17.2532,
+        7.847117515848748,
+        -48.49112
+      ]
+    },
+    "npc": [
+      {
+        "scriptId": 1,
+        "name": "大刀哨兵",
+        "modelId": 2,
+        "weaponId": 8,
+        "weapon2Id": 2,
+        "hp": 1000,
+        "spawn": 0,
+        "position": [
+          5.3810400000000005,
+          -1.149788842201233,
+          -6.91448
+        ],
+        "intent": "patrol",
+        "patrol": [
+          0
+        ]
+      },
+      {
+        "scriptId": 2,
+        "name": "铁枪哨兵",
+        "modelId": 8,
+        "weaponId": 7,
+        "weapon2Id": 2,
+        "hp": 1000,
+        "spawn": 33,
+        "position": [
+          11.65872,
+          -1.1253493041995,
+          -5.33328
+        ],
+        "intent": "patrol",
+        "patrol": [
+          16,
+          18,
+          19,
+          20,
+          21
+        ]
+      }
+    ],
+    "globals": {
+      "Rule": 10,
+      "RoundTime": 10,
+      "PlayerSpawn": 34,
+      "PlayerSpawnDir": 180,
+      "PlayerWeapon": 6,
+      "PlayerWeapon2": 0,
+      "PlayerHP": 1000,
+      "trg0": 1,
+      "trg1": 0,
+      "trg2": 0,
+      "trg3": 0,
+      "trg4": 0
+    },
+    "diagnostics": []
+  },
+  "floorChecks": [
+    {
+      "name": "孟星魂",
+      "floor": true,
+      "offset": 0.01499999999999968
+    },
+    {
+      "name": "大刀哨兵",
+      "floor": true,
+      "offset": 0.014999999999999902
+    },
+    {
+      "name": "铁枪哨兵",
+      "floor": true,
+      "offset": 0.014999999999999236
+    }
+  ],
+  "routes": [
+    {
+      "from": 34,
+      "to": 0,
+      "route": [
+        34,
+        4,
+        31,
+        0
+      ]
+    },
+    {
+      "from": 34,
+      "to": 33,
+      "route": [
+        34,
+        4,
+        31,
+        33
+      ]
+    }
+  ],
+  "walkedRoute": [
+    {
+      "waypoint": 34,
+      "frames": 1,
+      "reached": true,
+      "remaining": 0,
+      "actorPosition": [
+        17.2532,
+        7.847117515848748,
+        -48.49112
+      ],
+      "goal": [
+        17.2532,
+        7.847117515848748,
+        -48.49112
+      ]
+    },
+    {
+      "waypoint": 4,
+      "frames": 62,
+      "reached": true,
+      "remaining": 0.6014158038155394,
+      "actorPosition": [
+        18.158521094173583,
+        7.393446886542956,
+        -40.9190669195607
+      ],
+      "goal": [
+        18.22896,
+        7.295236720077312,
+        -40.32992
+      ]
+    },
+    {
+      "waypoint": 31,
+      "frames": 194,
+      "reached": true,
+      "remaining": 0.5898583109869804,
+      "actorPosition": [
+        28.114303268923504,
+        -0.3722772830281914,
+        -17.211253533136965
+      ],
+      "goal": [
+        28.3444,
+        -0.4363683231377259,
+        -16.67192
+      ]
+    },
+    {
+      "waypoint": 0,
+      "frames": 188,
+      "reached": true,
+      "remaining": 0.5245268856729687,
+      "actorPosition": [
+        5.8632559329819856,
+        -1.149788842201233,
+        -7.12086858440354
+      ],
+      "goal": [
+        5.3810400000000005,
+        -1.149788842201233,
+        -6.91448
+      ]
+    },
+    {
+      "waypoint": 33,
+      "frames": 49,
+      "reached": true,
+      "remaining": 0.5683315942170895,
+      "actorPosition": [
+        11.107272458749847,
+        -1.1045230999337854,
+        -5.4691942356428545
+      ],
+      "goal": [
+        11.65872,
+        -1.1253493041995,
+        -5.33328
+      ]
+    }
+  ],
+  "killed": [
+    {
+      "name": "大刀哨兵",
+      "attacks": 42,
+      "hp": 0
+    },
+    {
+      "name": "铁枪哨兵",
+      "attacks": 42,
+      "hp": 0
+    }
+  ],
+  "totalDamage": 2000,
+  "kills": 2,
+  "result": {
+    "win": true,
+    "reason": "hostile-npcs-defeated",
+    "provenance": "All hostile mission NPCs defeated => success is a Rule-10 adapter inference; no GameOver call exists in the supported sn01_.pst or sn14_.pst."
+  },
+  "deathLines": [
+    {
+      "speaker": "大刀哨兵",
+      "text": "想不到你这小子还有两三下功夫﹒﹒﹒﹒﹒﹒﹒呜﹒﹒﹒"
+    },
+    {
+      "speaker": "铁枪哨兵",
+      "text": "你这小子，杀了我的挚友！要你偿命！"
+    },
+    {
+      "speaker": "铁枪哨兵",
+      "text": "大胡子﹒﹒﹒帮﹒﹒﹒帮我报﹒﹒仇﹒﹒﹒"
+    }
+  ],
+  "diagnostics": [],
+  "missingPerform": [],
+  "limits": [
+    "NPC retaliation frozen during kill acceptance; player placed at source NPC positions",
+    "Rule10 win remains host inference, no explicit GameOver in source sn14_.pst",
+    "No full manual/live-AI win or exact native AI/physics asserted",
+    "NPC Perform attack is an explicit browser single-attack intent; exact EXE Perform timing is not recovered"
+  ]
+}

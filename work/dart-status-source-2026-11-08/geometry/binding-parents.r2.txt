@@ -1,0 +1,113 @@
+HINT: Relocs not applied, some references may not resolve: use -e bin.relocs.apply=true
+┌ 116: fcn.00582780 (int32_t arg_8h);
+│ `- args(sp[0x4..0x4])
+│           0x00582780      56             push esi
+│           0x00582781      8bf1           mov esi, ecx
+│           0x00582783      8b4c2408       mov ecx, dword [arg_8h]
+│           0x00582787      57             push edi
+│           0x00582788      8b96ec010000   mov edx, dword [esi + 0x1ec]
+│           0x0058278e      8b4104         mov eax, dword [ecx + 4]
+│           0x00582791      8bbae4000000   mov edi, dword [edx + 0xe4]
+│           0x00582797      4f             dec edi
+│           0x00582798      3bc7           cmp eax, edi
+│       ┌─< 0x0058279a      7d1f           jge 0x5827bb
+│      ┌──> 0x0058279c      8b92e8000000   mov edx, dword [edx + 0xe8]
+│      ╎│   0x005827a2      40             inc eax
+│      ╎│   0x005827a3      8b3c82         mov edi, dword [edx + eax*4]
+│      ╎│   0x005827a6      897c82fc       mov dword [edx + eax*4 - 4], edi
+│      ╎│   0x005827aa      8b96ec010000   mov edx, dword [esi + 0x1ec]
+│      ╎│   0x005827b0      8bbae4000000   mov edi, dword [edx + 0xe4]
+│      ╎│   0x005827b6      4f             dec edi
+│      ╎│   0x005827b7      3bc7           cmp eax, edi
+│      └──< 0x005827b9      7ce1           jl 0x58279c
+│       └─> 0x005827bb      8b86ec010000   mov eax, dword [esi + 0x1ec]
+│           0x005827c1      6a01           push 1                      ; 1
+│           0x005827c3      05e8000000     add eax, 0xe8               ; 232
+│           0x005827c8      8b5004         mov edx, dword [eax + 4]
+│           0x005827cb      83c2fc         add edx, 0xfffffffc
+│           0x005827ce      895004         mov dword [eax + 4], edx
+│           0x005827d1      8b86ec010000   mov eax, dword [esi + 0x1ec]
+│           0x005827d7      8bb8e4000000   mov edi, dword [eax + 0xe4]
+│           0x005827dd      4f             dec edi
+│           0x005827de      89b8e4000000   mov dword [eax + 0xe4], edi
+│           0x005827e4      8b01           mov eax, dword [ecx]
+│           0x005827e6      ff10           call dword [eax]
+│           0x005827e8      8b16           mov edx, dword [esi]
+│           0x005827ea      8bce           mov ecx, esi
+│           0x005827ec      ff5238         call dword [edx + 0x38]     ; 56
+│           0x005827ef      5f             pop edi
+│           0x005827f0      5e             pop esi
+└           0x005827f1      c20400         ret 4
+┌ 70: fcn.00582a90 (int32_t arg_1ch);
+│ `- args() vars(4:sp[0x4..0x14])
+│           0x00582a90      83ec0c         sub esp, 0xc
+│           0x00582a93      8d442400       lea eax, [esp]
+│           0x00582a97      83c158         add ecx, 0x58               ; 88
+│           0x00582a9a      56             push esi
+│           0x00582a9b      57             push edi
+│           0x00582a9c      50             push eax
+│           0x00582a9d      6a03           push 3                      ; 3
+│           0x00582a9f      e88c52efff     call fcn.00477d30
+│           0x00582aa4      8b44241c       mov eax, dword [arg_1ch]
+│           0x00582aa8      8b4c2410       mov ecx, dword [var_10h]
+│           0x00582aac      8b54240c       mov edx, dword [var_ch]
+│           0x00582ab0      8b742408       mov esi, dword [var_8h]
+│           0x00582ab4      85c0           test eax, eax
+│       ┌─< 0x00582ab6      7408           je 0x582ac0
+│       │   0x00582ab8      8930           mov dword [eax], esi
+│       │   0x00582aba      895004         mov dword [eax + 4], edx
+│       │   0x00582abd      894808         mov dword [eax + 8], ecx
+│       └─> 0x00582ac0      8b442418       mov eax, dword [var_18h]
+│           0x00582ac4      8bf8           mov edi, eax
+│           0x00582ac6      8937           mov dword [edi], esi
+│           0x00582ac8      895704         mov dword [edi + 4], edx
+│           0x00582acb      894f08         mov dword [edi + 8], ecx
+│           0x00582ace      5f             pop edi
+│           0x00582acf      5e             pop esi
+│           0x00582ad0      83c40c         add esp, 0xc
+└           0x00582ad3      c20800         ret 8
+┌ 4: fcn.00582870 ();
+│           0x00582870      8d4158         lea eax, [ecx + 0x58]
+└           0x00582873      c3             ret
+┌ 150: fcn.00582000 ();
+│           0x00582000      53             push ebx
+│           0x00582001      56             push esi
+│           0x00582002      8bf1           mov esi, ecx
+│           0x00582004      33db           xor ebx, ebx
+│           0x00582006      8b86ec010000   mov eax, dword [esi + 0x1ec]
+│           0x0058200c      385828         cmp byte [eax + 0x28], bl
+│       ┌─< 0x0058200f      7440           je 0x582051
+│       │   0x00582011      8b4e08         mov ecx, dword [esi + 8]
+│       │   0x00582014      385958         cmp byte [ecx + 0x58], bl
+│      ┌──< 0x00582017      7438           je 0x582051
+│      ││   0x00582019      8b80fc010000   mov eax, dword [eax + 0x1fc]
+│      ││   0x0058201f      3bc3           cmp eax, ebx
+│     ┌───< 0x00582021      7415           je 0x582038
+│     │││   0x00582023      50             push eax
+│     │││   0x00582024      e82758f8ff     call fcn.00507850
+│     │││   0x00582029      8b96ec010000   mov edx, dword [esi + 0x1ec]
+│     │││   0x0058202f      83c404         add esp, 4
+│     │││   0x00582032      899afc010000   mov dword [edx + 0x1fc], ebx
+│     └───> 0x00582038      68b0040000     push 0x4b0                  ; 1200
+│      ││   0x0058203d      e8f66af8ff     call fcn.00508b38
+│      ││   0x00582042      8b8eec010000   mov ecx, dword [esi + 0x1ec]
+│      ││   0x00582048      83c404         add esp, 4
+│      ││   0x0058204b      8981fc010000   mov dword [ecx + 0x1fc], eax
+│      └└─> 0x00582051      8b86ec010000   mov eax, dword [esi + 0x1ec]
+│           0x00582057      8b16           mov edx, dword [esi]
+│           0x00582059      8b480c         mov ecx, dword [eax + 0xc]
+│           0x0058205c      51             push ecx
+│           0x0058205d      8bce           mov ecx, esi
+│           0x0058205f      ff12           call dword [edx]
+│           0x00582061      8b8eec010000   mov ecx, dword [esi + 0x1ec]
+│           0x00582067      83c138         add ecx, 0x38               ; 56
+│           0x0058206a      e8d1c40000     call fcn.0058e540
+│           0x0058206f      899ef8010000   mov dword [esi + 0x1f8], ebx
+│           0x00582075      899ef4010000   mov dword [esi + 0x1f4], ebx
+│           0x0058207b      899ef0010000   mov dword [esi + 0x1f0], ebx
+│           0x00582081      899e04020000   mov dword [esi + 0x204], ebx
+│           0x00582087      899e00020000   mov dword [esi + 0x200], ebx
+│           0x0058208d      899efc010000   mov dword [esi + 0x1fc], ebx
+│           0x00582093      5e             pop esi
+│           0x00582094      5b             pop ebx
+└           0x00582095      c3             ret

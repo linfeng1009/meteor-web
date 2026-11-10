@@ -1,0 +1,67 @@
+TAP version 13
+# Subtest: original instant healing clamps to current effective maxHP and never installs a timed modifier
+ok 1 - original instant healing clamps to current effective maxHP and never installs a timed modifier
+  ---
+  duration_ms: 0.542417
+  type: 'test'
+  ...
+# Subtest: original attack boost19 applies150, refreshes without stacking and expires from the effective stat calculation
+ok 2 - original attack boost19 applies150, refreshes without stacking and expires from the effective stat calculation
+  ---
+  duration_ms: 0.233291
+  type: 'test'
+  ...
+# Subtest: original maxHP boost20 changes the clamp used by subsequent healing; clear restores the base limit without inventing immediate damage
+ok 3 - original maxHP boost20 changes the clamp used by subsequent healing; clear restores the base limit without inventing immediate damage
+  ---
+  duration_ms: 0.340125
+  type: 'test'
+  ...
+# Subtest: snow city starts with source seven guards, both original weapons, five weather settings and10000HP gates
+ok 4 - snow city starts with source seven guards, both original weapons, five weather settings and10000HP gates
+  ---
+  duration_ms: 477.320959
+  type: 'test'
+  ...
+# Subtest: source spear contacts break the enemy gate through all source stages and wait for its final FMC frame before victory
+ok 5 - source spear contacts break the enemy gate through all source stages and wait for its final FMC frame before victory
+  ---
+  duration_ms: 3172.89225
+  type: 'test'
+  ...
+# Source gate victory at127.50s; isolated contact fixture, not live-AI completion.
+# Subtest: weather stays independent of combat randomness and disposes when the mission ends or leaves
+not ok 6 - weather stays independent of combat randomness and disposes when the mission ends or leaves
+  ---
+  duration_ms: 1.00375
+  type: 'test'
+  location: '/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/tests/native-mission-snow-city.test.mjs:55:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    36 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 36
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/tests/native-mission-snow-city.test.mjs:60:41)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 5
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3751.954833

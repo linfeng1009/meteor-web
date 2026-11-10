@@ -1,0 +1,2736 @@
+{
+  "id": "E-command-projectiles-2026-10-29",
+  "date": "2026-10-29",
+  "scope": "work/meteor-original/scope.md; granted offline static sample and local Web port",
+  "sampleSha256": "289afb0aa44a47921d167fc24d6d404c60d6d00c299ac27d45fc61e16231b498",
+  "method": "Preserved PonEF bytes and local original x86 PE reads; Ghidra readOnly/noanalysis; original Meteor.exe never executed.",
+  "typeRegistry": [
+    {
+      "address": "005d2f88",
+      "typeId": 2,
+      "typeName": "AUDIO"
+    },
+    {
+      "address": "005d2f9c",
+      "typeId": 3,
+      "typeName": "BOX"
+    },
+    {
+      "address": "005d2fb0",
+      "typeId": 4,
+      "typeName": "BILLBOARD"
+    },
+    {
+      "address": "005d2fc4",
+      "typeId": 5,
+      "typeName": "CYLINDER"
+    },
+    {
+      "address": "005d2fd8",
+      "typeId": 6,
+      "typeName": "DRAG"
+    },
+    {
+      "address": "005d2fec",
+      "typeId": 7,
+      "typeName": "DONUT"
+    },
+    {
+      "address": "005d3000",
+      "typeId": 8,
+      "typeName": "MODEL"
+    },
+    {
+      "address": "005d3014",
+      "typeId": 9,
+      "typeName": "PARTICLE"
+    },
+    {
+      "address": "005d3028",
+      "typeId": 10,
+      "typeName": "PATH"
+    },
+    {
+      "address": "005d303c",
+      "typeId": 11,
+      "typeName": "PLANE"
+    },
+    {
+      "address": "005d3050",
+      "typeId": 12,
+      "typeName": "SPHERE"
+    },
+    {
+      "address": "005d3064",
+      "typeId": 13,
+      "typeName": "TRAPE"
+    }
+  ],
+  "effects": [
+    {
+      "path": "dist/assets/original/sounds/definitions/pos200.ef",
+      "bytes": 3239,
+      "sha256": "5fe764c2007833cf2a18d113a9b5130bb03f5ca41335099b7a76ad3584a2f08a",
+      "poseId": 200,
+      "declaredNodeCount": 6,
+      "nodes": [
+        {
+          "offset": 15,
+          "type": "BILLBOARD",
+          "name": "Board_2",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "ROOT"
+          ],
+          "channelDataOffset": 78
+        },
+        {
+          "offset": 759,
+          "type": "AUDIO",
+          "name": "Audio_5",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 810
+        },
+        {
+          "offset": 1156,
+          "type": "BILLBOARD",
+          "name": "Board_2",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "ROOT"
+          ],
+          "channelDataOffset": 1219
+        },
+        {
+          "offset": 1900,
+          "type": "AUDIO",
+          "name": "Audio_4",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 1951
+        },
+        {
+          "offset": 2300,
+          "type": "SPHERE",
+          "name": "Sphere_3",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Character",
+            "Character"
+          ],
+          "channelDataOffset": 2370
+        },
+        {
+          "offset": 2731,
+          "type": "PARTICLE",
+          "name": "Particle_3",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 2785
+        }
+      ],
+      "sounds": [
+        "MMRun.wav",
+        "W03FIR01.wav"
+      ]
+    },
+    {
+      "path": "dist/assets/original/sounds/definitions/pos202.ef",
+      "bytes": 3239,
+      "sha256": "d2f27bba4367c79cd0218ee291a8365284dc83ffd45bff86d7cad7f09c76ee2c",
+      "poseId": 202,
+      "declaredNodeCount": 6,
+      "nodes": [
+        {
+          "offset": 15,
+          "type": "AUDIO",
+          "name": "Audio_4",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 66
+        },
+        {
+          "offset": 415,
+          "type": "SPHERE",
+          "name": "Sphere_3",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Character",
+            "Character"
+          ],
+          "channelDataOffset": 485
+        },
+        {
+          "offset": 846,
+          "type": "BILLBOARD",
+          "name": "Board_2",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "ROOT"
+          ],
+          "channelDataOffset": 909
+        },
+        {
+          "offset": 1590,
+          "type": "BILLBOARD",
+          "name": "Board_2",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "ROOT"
+          ],
+          "channelDataOffset": 1653
+        },
+        {
+          "offset": 2334,
+          "type": "AUDIO",
+          "name": "Audio_5",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 2385
+        },
+        {
+          "offset": 2731,
+          "type": "PARTICLE",
+          "name": "Particle_3",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 2785
+        }
+      ],
+      "sounds": [
+        "MMRun.wav",
+        "W03FIR01.wav"
+      ]
+    },
+    {
+      "path": "dist/assets/original/sounds/definitions/pos209.ef",
+      "bytes": 3239,
+      "sha256": "639e3a33e2b5d3e7ae487565fe0a55b127bb9b020f0cabd10feeae6c649b7cbe",
+      "poseId": 209,
+      "declaredNodeCount": 6,
+      "nodes": [
+        {
+          "offset": 15,
+          "type": "AUDIO",
+          "name": "Audio_4",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 66
+        },
+        {
+          "offset": 415,
+          "type": "SPHERE",
+          "name": "Sphere_3",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Character",
+            "Character"
+          ],
+          "channelDataOffset": 485
+        },
+        {
+          "offset": 846,
+          "type": "BILLBOARD",
+          "name": "Board_2",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "ROOT"
+          ],
+          "channelDataOffset": 909
+        },
+        {
+          "offset": 1590,
+          "type": "BILLBOARD",
+          "name": "Board_2",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "ROOT"
+          ],
+          "channelDataOffset": 1653
+        },
+        {
+          "offset": 2334,
+          "type": "AUDIO",
+          "name": "Audio_5",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 2385
+        },
+        {
+          "offset": 2731,
+          "type": "PARTICLE",
+          "name": "Particle_3",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 2785
+        }
+      ],
+      "sounds": [
+        "MMRun.wav",
+        "W03FIR02.wav"
+      ]
+    },
+    {
+      "path": "dist/assets/original/sounds/definitions/pos210.ef",
+      "bytes": 3239,
+      "sha256": "7e8fe063990b868b5916fd2890cd561b142eabbcf21cef1cfb59a5cd434d4ac6",
+      "poseId": 210,
+      "declaredNodeCount": 6,
+      "nodes": [
+        {
+          "offset": 15,
+          "type": "SPHERE",
+          "name": "Sphere_3",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Character",
+            "Character"
+          ],
+          "channelDataOffset": 85
+        },
+        {
+          "offset": 446,
+          "type": "BILLBOARD",
+          "name": "Board_2",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "ROOT"
+          ],
+          "channelDataOffset": 509
+        },
+        {
+          "offset": 1190,
+          "type": "BILLBOARD",
+          "name": "Board_2",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "ROOT"
+          ],
+          "channelDataOffset": 1253
+        },
+        {
+          "offset": 1934,
+          "type": "AUDIO",
+          "name": "Audio_5",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 1985
+        },
+        {
+          "offset": 2331,
+          "type": "AUDIO",
+          "name": "Audio_4",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 2382
+        },
+        {
+          "offset": 2731,
+          "type": "PARTICLE",
+          "name": "Particle_3",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 2785
+        }
+      ],
+      "sounds": [
+        "MMRun.wav",
+        "W03FIR03.wav"
+      ]
+    },
+    {
+      "path": "dist/assets/original/sounds/definitions/pos201.ef",
+      "bytes": 18654,
+      "sha256": "08c6983e4a8c155e080f9f5067019cf73fa86d94ec6164f4be5ca1927d79e986",
+      "poseId": 201,
+      "declaredNodeCount": 36,
+      "nodes": [
+        {
+          "offset": 15,
+          "type": "AUDIO",
+          "name": "Audio_5",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Character",
+            "Character"
+          ],
+          "channelDataOffset": 84
+        },
+        {
+          "offset": 433,
+          "type": "BILLBOARD",
+          "name": "Board_2",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "bau_L_Hand",
+            "Character"
+          ],
+          "channelDataOffset": 503
+        },
+        {
+          "offset": 1072,
+          "type": "SPHERE",
+          "name": "Attack102",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Rectangle_102",
+            "Rectangle_102"
+          ],
+          "channelDataOffset": 1151
+        },
+        {
+          "offset": 1732,
+          "type": "SPHERE",
+          "name": "Sphere_3",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Character",
+            "Character"
+          ],
+          "channelDataOffset": 1802
+        },
+        {
+          "offset": 2163,
+          "type": "PLANE",
+          "name": "Rectangle_204",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "Sphere_3"
+          ],
+          "channelDataOffset": 2236
+        },
+        {
+          "offset": 2573,
+          "type": "PLANE",
+          "name": "Rectangle_102",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "Sphere_3"
+          ],
+          "channelDataOffset": 2646
+        },
+        {
+          "offset": 2983,
+          "type": "PLANE",
+          "name": "Rectangle_101",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "Sphere_3"
+          ],
+          "channelDataOffset": 3056
+        },
+        {
+          "offset": 3393,
+          "type": "PLANE",
+          "name": "Rectangle_203",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "Sphere_3"
+          ],
+          "channelDataOffset": 3466
+        },
+        {
+          "offset": 3803,
+          "type": "PLANE",
+          "name": "Rectangle_103",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "Sphere_3"
+          ],
+          "channelDataOffset": 3876
+        },
+        {
+          "offset": 4213,
+          "type": "PLANE",
+          "name": "Rectangle_201",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "Sphere_3"
+          ],
+          "channelDataOffset": 4286
+        },
+        {
+          "offset": 4623,
+          "type": "SPHERE",
+          "name": "Attack201",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Rectangle_201",
+            "Rectangle_201"
+          ],
+          "channelDataOffset": 4702
+        },
+        {
+          "offset": 5283,
+          "type": "SPHERE",
+          "name": "Attack101",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Rectangle_101",
+            "Rectangle_101"
+          ],
+          "channelDataOffset": 5362
+        },
+        {
+          "offset": 5943,
+          "type": "SPHERE",
+          "name": "Attack203",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Rectangle_203",
+            "Rectangle_203"
+          ],
+          "channelDataOffset": 6022
+        },
+        {
+          "offset": 6603,
+          "type": "PLANE",
+          "name": "Rectangle_202",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "Sphere_3"
+          ],
+          "channelDataOffset": 6676
+        },
+        {
+          "offset": 7013,
+          "type": "SPHERE",
+          "name": "Attack202",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Rectangle_202",
+            "Rectangle_202"
+          ],
+          "channelDataOffset": 7092
+        },
+        {
+          "offset": 7673,
+          "type": "SPHERE",
+          "name": "Attack103",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Rectangle_103",
+            "Rectangle_103"
+          ],
+          "channelDataOffset": 7752
+        },
+        {
+          "offset": 8333,
+          "type": "PLANE",
+          "name": "Rectangle_302",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "Sphere_3"
+          ],
+          "channelDataOffset": 8406
+        },
+        {
+          "offset": 8743,
+          "type": "AUDIO",
+          "name": "Audio_4",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 8794
+        },
+        {
+          "offset": 9143,
+          "type": "BILLBOARD",
+          "name": "Board_2",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "bau_L_Hand",
+            "Character"
+          ],
+          "channelDataOffset": 9213
+        },
+        {
+          "offset": 9782,
+          "type": "PLANE",
+          "name": "Rectangle_301",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "Sphere_3"
+          ],
+          "channelDataOffset": 9855
+        },
+        {
+          "offset": 10192,
+          "type": "SPHERE",
+          "name": "Attack301",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Rectangle_301",
+            "Rectangle_301"
+          ],
+          "channelDataOffset": 10271
+        },
+        {
+          "offset": 10852,
+          "type": "PLANE",
+          "name": "Rectangle_305",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "Sphere_3"
+          ],
+          "channelDataOffset": 10925
+        },
+        {
+          "offset": 11262,
+          "type": "SPHERE",
+          "name": "Attack305",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Rectangle_305",
+            "Rectangle_305"
+          ],
+          "channelDataOffset": 11341
+        },
+        {
+          "offset": 11922,
+          "type": "PLANE",
+          "name": "Rectangle_303",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "Sphere_3"
+          ],
+          "channelDataOffset": 11995
+        },
+        {
+          "offset": 12332,
+          "type": "SPHERE",
+          "name": "Attack303",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Rectangle_303",
+            "Rectangle_303"
+          ],
+          "channelDataOffset": 12411
+        },
+        {
+          "offset": 12992,
+          "type": "PLANE",
+          "name": "Rectangle_304",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "Sphere_3"
+          ],
+          "channelDataOffset": 13065
+        },
+        {
+          "offset": 13402,
+          "type": "SPHERE",
+          "name": "Attack304",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Rectangle_304",
+            "Rectangle_304"
+          ],
+          "channelDataOffset": 13481
+        },
+        {
+          "offset": 14062,
+          "type": "SPHERE",
+          "name": "Attack204",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Rectangle_204",
+            "Rectangle_204"
+          ],
+          "channelDataOffset": 14141
+        },
+        {
+          "offset": 14722,
+          "type": "SPHERE",
+          "name": "Attack302",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Rectangle_302",
+            "Rectangle_302"
+          ],
+          "channelDataOffset": 14801
+        },
+        {
+          "offset": 15382,
+          "type": "AUDIO",
+          "name": "Audio_31",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Attack101",
+            "Attack101"
+          ],
+          "channelDataOffset": 15452
+        },
+        {
+          "offset": 15801,
+          "type": "AUDIO",
+          "name": "Audio_32",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Attack201",
+            "Attack201"
+          ],
+          "channelDataOffset": 15871
+        },
+        {
+          "offset": 16220,
+          "type": "AUDIO",
+          "name": "Audio_33",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Attack301",
+            "Attack301"
+          ],
+          "channelDataOffset": 16290
+        },
+        {
+          "offset": 16639,
+          "type": "BILLBOARD",
+          "name": "Board_33",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "bau_L_Hand",
+            "bau_L_Hand"
+          ],
+          "channelDataOffset": 16711
+        },
+        {
+          "offset": 17172,
+          "type": "BILLBOARD",
+          "name": "Board_34",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "bau_Spine",
+            "bau_Spine"
+          ],
+          "channelDataOffset": 17242
+        },
+        {
+          "offset": 17699,
+          "type": "AUDIO",
+          "name": "Audio_35",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Character",
+            "Character"
+          ],
+          "channelDataOffset": 17769
+        },
+        {
+          "offset": 18118,
+          "type": "PARTICLE",
+          "name": "Particle_3",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 18172
+        }
+      ],
+      "sounds": [
+        "SFHiJump.wav",
+        "SFPowUP0.wav",
+        "W02HIT01.wav",
+        "W03FIR03.wav"
+      ]
+    },
+    {
+      "path": "dist/assets/original/sounds/definitions/pos551.ef",
+      "bytes": 19688,
+      "sha256": "266e9f69e2d7be6cfc06499354938a0771d1bf09997cbc4ae38f46529b201977",
+      "poseId": 551,
+      "declaredNodeCount": 35,
+      "nodes": [
+        {
+          "offset": 15,
+          "type": "BILLBOARD",
+          "name": "Board_2",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "bau_L_Hand",
+            "Character"
+          ],
+          "channelDataOffset": 85
+        },
+        {
+          "offset": 766,
+          "type": "SPHERE",
+          "name": "Attack102",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Rectangle_102",
+            "Rectangle_102"
+          ],
+          "channelDataOffset": 845
+        },
+        {
+          "offset": 1426,
+          "type": "SPHERE",
+          "name": "Sphere_3",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Character",
+            "Character"
+          ],
+          "channelDataOffset": 1496
+        },
+        {
+          "offset": 1857,
+          "type": "PLANE",
+          "name": "Rectangle_302",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "Sphere_3"
+          ],
+          "channelDataOffset": 1930
+        },
+        {
+          "offset": 2379,
+          "type": "PLANE",
+          "name": "Rectangle_102",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "Sphere_3"
+          ],
+          "channelDataOffset": 2452
+        },
+        {
+          "offset": 2901,
+          "type": "PLANE",
+          "name": "Rectangle_101",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "Sphere_3"
+          ],
+          "channelDataOffset": 2974
+        },
+        {
+          "offset": 3423,
+          "type": "PLANE",
+          "name": "Rectangle_303",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "Sphere_3"
+          ],
+          "channelDataOffset": 3496
+        },
+        {
+          "offset": 3945,
+          "type": "AUDIO",
+          "name": "Audio_4",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 3996
+        },
+        {
+          "offset": 4345,
+          "type": "PLANE",
+          "name": "Rectangle_103",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "Sphere_3"
+          ],
+          "channelDataOffset": 4418
+        },
+        {
+          "offset": 4867,
+          "type": "SPHERE",
+          "name": "Attack103",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Rectangle_103",
+            "Rectangle_103"
+          ],
+          "channelDataOffset": 4946
+        },
+        {
+          "offset": 5527,
+          "type": "PLANE",
+          "name": "Rectangle_201",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "Sphere_3"
+          ],
+          "channelDataOffset": 5600
+        },
+        {
+          "offset": 6049,
+          "type": "SPHERE",
+          "name": "Attack201",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Rectangle_201",
+            "Rectangle_201"
+          ],
+          "channelDataOffset": 6128
+        },
+        {
+          "offset": 6709,
+          "type": "SPHERE",
+          "name": "Attack101",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Rectangle_101",
+            "Rectangle_101"
+          ],
+          "channelDataOffset": 6788
+        },
+        {
+          "offset": 7369,
+          "type": "PLANE",
+          "name": "Rectangle_203",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "Sphere_3"
+          ],
+          "channelDataOffset": 7442
+        },
+        {
+          "offset": 7891,
+          "type": "PLANE",
+          "name": "Rectangle_202",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "Sphere_3"
+          ],
+          "channelDataOffset": 7964
+        },
+        {
+          "offset": 8413,
+          "type": "SPHERE",
+          "name": "Attack202",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Rectangle_202",
+            "Rectangle_202"
+          ],
+          "channelDataOffset": 8492
+        },
+        {
+          "offset": 9073,
+          "type": "AUDIO",
+          "name": "Audio_5",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Character",
+            "Character"
+          ],
+          "channelDataOffset": 9142
+        },
+        {
+          "offset": 9491,
+          "type": "BILLBOARD",
+          "name": "Board_2",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "bau_L_Hand",
+            "Character"
+          ],
+          "channelDataOffset": 9561
+        },
+        {
+          "offset": 10242,
+          "type": "PLANE",
+          "name": "Rectangle_204",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "Sphere_3"
+          ],
+          "channelDataOffset": 10315
+        },
+        {
+          "offset": 10764,
+          "type": "SPHERE",
+          "name": "Attack204",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Rectangle_204",
+            "Rectangle_204"
+          ],
+          "channelDataOffset": 10843
+        },
+        {
+          "offset": 11424,
+          "type": "PLANE",
+          "name": "Rectangle_301",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "Sphere_3"
+          ],
+          "channelDataOffset": 11497
+        },
+        {
+          "offset": 11946,
+          "type": "SPHERE",
+          "name": "Attack301",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Rectangle_301",
+            "Rectangle_301"
+          ],
+          "channelDataOffset": 12025
+        },
+        {
+          "offset": 12606,
+          "type": "AUDIO",
+          "name": "Audio_31",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Attack101",
+            "Attack101"
+          ],
+          "channelDataOffset": 12676
+        },
+        {
+          "offset": 13025,
+          "type": "PLANE",
+          "name": "Rectangle_305",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "Sphere_3"
+          ],
+          "channelDataOffset": 13098
+        },
+        {
+          "offset": 13547,
+          "type": "SPHERE",
+          "name": "Attack203",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Rectangle_203",
+            "Rectangle_203"
+          ],
+          "channelDataOffset": 13626
+        },
+        {
+          "offset": 14207,
+          "type": "PLANE",
+          "name": "Rectangle_304",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Sphere_3",
+            "Sphere_3"
+          ],
+          "channelDataOffset": 14280
+        },
+        {
+          "offset": 14729,
+          "type": "SPHERE",
+          "name": "Attack304",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Rectangle_304",
+            "Rectangle_304"
+          ],
+          "channelDataOffset": 14808
+        },
+        {
+          "offset": 15389,
+          "type": "SPHERE",
+          "name": "Attack305",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Rectangle_305",
+            "Rectangle_305"
+          ],
+          "channelDataOffset": 15468
+        },
+        {
+          "offset": 16049,
+          "type": "SPHERE",
+          "name": "Attack302",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Rectangle_302",
+            "Rectangle_302"
+          ],
+          "channelDataOffset": 16128
+        },
+        {
+          "offset": 16709,
+          "type": "AUDIO",
+          "name": "Audio_32",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Attack201",
+            "Attack201"
+          ],
+          "channelDataOffset": 16779
+        },
+        {
+          "offset": 17128,
+          "type": "AUDIO",
+          "name": "Audio_33",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Attack301",
+            "Attack301"
+          ],
+          "channelDataOffset": 17198
+        },
+        {
+          "offset": 17547,
+          "type": "BILLBOARD",
+          "name": "Board_32",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "bau_L_Hand",
+            "bau_L_Hand"
+          ],
+          "channelDataOffset": 17619
+        },
+        {
+          "offset": 18080,
+          "type": "SPHERE",
+          "name": "Attack303",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Rectangle_303",
+            "Rectangle_303"
+          ],
+          "channelDataOffset": 18159
+        },
+        {
+          "offset": 18740,
+          "type": "BILLBOARD",
+          "name": "Board_33",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "bau_Spine1",
+            "bau_Spine1"
+          ],
+          "channelDataOffset": 18812
+        },
+        {
+          "offset": 19269,
+          "type": "AUDIO",
+          "name": "Audio_34",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Character",
+            "Character"
+          ],
+          "channelDataOffset": 19339
+        }
+      ],
+      "sounds": [
+        "SFHiJump.wav",
+        "SFPowUP0.wav",
+        "W03FIR01.WAV",
+        "W03FIR03.wav"
+      ]
+    },
+    {
+      "path": "dist/assets/original/sounds/definitions/pos203.ef",
+      "bytes": 5953,
+      "sha256": "70792e7f56e730102e1df45b8e110872df95b0104ba6b82fab2045703e33bfba",
+      "poseId": 203,
+      "declaredNodeCount": 13,
+      "nodes": [
+        {
+          "offset": 15,
+          "type": "AUDIO",
+          "name": "Audio_9",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 66
+        },
+        {
+          "offset": 415,
+          "type": "PLANE",
+          "name": "Rectangle_9",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "Character",
+            ""
+          ],
+          "channelDataOffset": 479
+        },
+        {
+          "offset": 829,
+          "type": "SPHERE",
+          "name": "Sphere_7",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 881
+        },
+        {
+          "offset": 1230,
+          "type": "SPHERE",
+          "name": "AttackBall",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "b",
+            ""
+          ],
+          "channelDataOffset": 1285
+        },
+        {
+          "offset": 1757,
+          "type": "AUDIO",
+          "name": "Audio_8",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 1808
+        },
+        {
+          "offset": 2157,
+          "type": "AUDIO",
+          "name": "Audio_7",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 2208
+        },
+        {
+          "offset": 2557,
+          "type": "AUDIO",
+          "name": "Audio_6",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 2608
+        },
+        {
+          "offset": 2956,
+          "type": "AUDIO",
+          "name": "Audio_10",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 3008
+        },
+        {
+          "offset": 3357,
+          "type": "SPHERE",
+          "name": "Sphere_12",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "Character",
+            ""
+          ],
+          "channelDataOffset": 3419
+        },
+        {
+          "offset": 3768,
+          "type": "PARTICLE",
+          "name": "Particle_8",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 3822
+        },
+        {
+          "offset": 4290,
+          "type": "PARTICLE",
+          "name": "Particle_6",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 4344
+        },
+        {
+          "offset": 4922,
+          "type": "PARTICLE",
+          "name": "Particle_10",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 4977
+        },
+        {
+          "offset": 5430,
+          "type": "PARTICLE",
+          "name": "Particle_11",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 5485
+        }
+      ],
+      "sounds": [
+        "SFHiJump.wav",
+        "SFNoise1.wav",
+        "SFPowUP.wav",
+        "W06FIR03.wav",
+        "W07FIR03.wav"
+      ]
+    },
+    {
+      "path": "dist/assets/original/sounds/definitions/pos204.ef",
+      "bytes": 17832,
+      "sha256": "325d3a95f8156693965bce6e082d7177ba692ba62a071475610ba73956f56108",
+      "poseId": 204,
+      "declaredNodeCount": 16,
+      "nodes": [
+        {
+          "offset": 15,
+          "type": "SPHERE",
+          "name": "AttackBall",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "b",
+            "Character"
+          ],
+          "channelDataOffset": 79
+        },
+        {
+          "offset": 775,
+          "type": "CYLINDER",
+          "name": "AttackWave02",
+          "rawCommonWords": [
+            1,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "AttackBall",
+            "AttackBall"
+          ],
+          "channelDataOffset": 851
+        },
+        {
+          "offset": 2779,
+          "type": "CYLINDER",
+          "name": "AttackWave04",
+          "rawCommonWords": [
+            1,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "AttackBall",
+            "AttackBall"
+          ],
+          "channelDataOffset": 2855
+        },
+        {
+          "offset": 4783,
+          "type": "CYLINDER",
+          "name": "AttackWave01",
+          "rawCommonWords": [
+            1,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "AttackBall",
+            "AttackBall"
+          ],
+          "channelDataOffset": 4859
+        },
+        {
+          "offset": 6787,
+          "type": "CYLINDER",
+          "name": "AttackWave03",
+          "rawCommonWords": [
+            1,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "AttackBall",
+            "AttackBall"
+          ],
+          "channelDataOffset": 6863
+        },
+        {
+          "offset": 8791,
+          "type": "AUDIO",
+          "name": "Audio_8",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 8842
+        },
+        {
+          "offset": 9191,
+          "type": "SPHERE",
+          "name": "Sphere_7",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 9243
+        },
+        {
+          "offset": 9604,
+          "type": "AUDIO",
+          "name": "Audio_9",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 9655
+        },
+        {
+          "offset": 10004,
+          "type": "AUDIO",
+          "name": "Audio_6",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 10055
+        },
+        {
+          "offset": 10404,
+          "type": "DONUT",
+          "name": "Donut_10",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 10456
+        },
+        {
+          "offset": 10809,
+          "type": "AUDIO",
+          "name": "Audio_11",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 10861
+        },
+        {
+          "offset": 11208,
+          "type": "CYLINDER",
+          "name": "AttackWave05",
+          "rawCommonWords": [
+            1,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "AttackBall",
+            "AttackBall"
+          ],
+          "channelDataOffset": 11284
+        },
+        {
+          "offset": 12764,
+          "type": "CYLINDER",
+          "name": "AttackWave06",
+          "rawCommonWords": [
+            1,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "AttackBall",
+            "AttackBall"
+          ],
+          "channelDataOffset": 12840
+        },
+        {
+          "offset": 14320,
+          "type": "AUDIO",
+          "name": "Audio_14",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 14372
+        },
+        {
+          "offset": 14721,
+          "type": "CYLINDER",
+          "name": "AttackWave06",
+          "rawCommonWords": [
+            1,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "AttackBall",
+            "AttackBall"
+          ],
+          "channelDataOffset": 14797
+        },
+        {
+          "offset": 16277,
+          "type": "CYLINDER",
+          "name": "Cylinder_15",
+          "rawCommonWords": [
+            1,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "AttackBall",
+            "AttackBall"
+          ],
+          "channelDataOffset": 16352
+        }
+      ],
+      "sounds": [
+        "SFBoom01.wav",
+        "SFWave.wav",
+        "Scene001.wav",
+        "W01FIR01.wav"
+      ]
+    },
+    {
+      "path": "dist/assets/original/sounds/definitions/pos259.ef",
+      "bytes": 8351,
+      "sha256": "74159af5f28d01f9cd54fadfeb9b1048cac4941fa5bde01bf203dde17b46217d",
+      "poseId": 259,
+      "declaredNodeCount": 17,
+      "nodes": [
+        {
+          "offset": 15,
+          "type": "BOX",
+          "name": "AttackBox",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "d_base",
+            "d_base"
+          ],
+          "channelDataOffset": 80
+        },
+        {
+          "offset": 533,
+          "type": "AUDIO",
+          "name": "Audio_6",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 584
+        },
+        {
+          "offset": 933,
+          "type": "AUDIO",
+          "name": "Audio_3",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 984
+        },
+        {
+          "offset": 1333,
+          "type": "BILLBOARD",
+          "name": "Board_8",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "d_wpnR",
+            "d_wpnR"
+          ],
+          "channelDataOffset": 1396
+        },
+        {
+          "offset": 1965,
+          "type": "AUDIO",
+          "name": "Audio_7",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 2016
+        },
+        {
+          "offset": 2365,
+          "type": "CYLINDER",
+          "name": "KNightWave01",
+          "rawCommonWords": [
+            1,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Character",
+            "Character"
+          ],
+          "channelDataOffset": 2439
+        },
+        {
+          "offset": 3023,
+          "type": "PLANE",
+          "name": "Rectangle_9",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Character",
+            "Character"
+          ],
+          "channelDataOffset": 3096
+        },
+        {
+          "offset": 3669,
+          "type": "AUDIO",
+          "name": "Audio_4",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 3720
+        },
+        {
+          "offset": 4066,
+          "type": "AUDIO",
+          "name": "Audio_5",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 4117
+        },
+        {
+          "offset": 4466,
+          "type": "PLANE",
+          "name": "Rectangle_10",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "Rectangle_9",
+            "Rectangle_9"
+          ],
+          "channelDataOffset": 4544
+        },
+        {
+          "offset": 5117,
+          "type": "SPHERE",
+          "name": "Sphere_12",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "b",
+            "b"
+          ],
+          "channelDataOffset": 5172
+        },
+        {
+          "offset": 5521,
+          "type": "AUDIO",
+          "name": "Audio_14",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 5573
+        },
+        {
+          "offset": 5921,
+          "type": "AUDIO",
+          "name": "Audio_15",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 5973
+        },
+        {
+          "offset": 6322,
+          "type": "BOX",
+          "name": "Box_17",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "bindingStrings": [
+            "d_wpnR",
+            "d_wpnR"
+          ],
+          "channelDataOffset": 6384
+        },
+        {
+          "offset": 6725,
+          "type": "PARTICLE",
+          "name": "Particle_0",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 6779
+        },
+        {
+          "offset": 7268,
+          "type": "PARTICLE",
+          "name": "Particle_2",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 7322
+        },
+        {
+          "offset": 7804,
+          "type": "PARTICLE",
+          "name": "Particle_13",
+          "rawCommonWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "bindingStrings": [
+            "",
+            ""
+          ],
+          "channelDataOffset": 7859
+        }
+      ],
+      "sounds": [
+        "MMRun.wav",
+        "SFHiJump.wav",
+        "SFPowUP.wav",
+        "W00FIR03.wav",
+        "W01FIR03.wav",
+        "W02HIT01.wav",
+        "W04HIT02.wav"
+      ]
+    }
+  ],
+  "runtime": {
+    "addedPoses": [
+      209,
+      210
+    ],
+    "existingPoses": [
+      200,
+      202
+    ],
+    "releaseWindows": {
+      "209": [
+        3550,
+        3553
+      ],
+      "210": [
+        3593,
+        3596
+      ]
+    },
+    "weaponAttack": 75,
+    "poseModifierPercent": 50,
+    "versusDefense15Damage": 23,
+    "singleReleasePerPosWindow": "Web adapter following source projectile-only gesture and attack interval, not an EXE emitter-count recovery",
+    "flight": "Existing explicit Web adapter: speed50, radius0.12, lifetime3, gravity0, spin28; unverified native constants"
+  },
+  "pending": [
+    {
+      "poses": [
+        201
+      ],
+      "input": "ground down-up attack",
+      "reason": "12 original Attack spheres have separate PLANE bindings; channel transforms, timing, collision identity and full effect playback remain unported."
+    },
+    {
+      "poses": [
+        551
+      ],
+      "input": "air down-up attack",
+      "reason": "12 original Attack spheres have separate PLANE bindings; not a verified eight-dart emission pattern."
+    },
+    {
+      "poses": [
+        203,
+        204,
+        205
+      ],
+      "input": "ground down-up-up attack",
+      "reason": "Original AttackBall and seven AttackWave CYLINDER nodes (including duplicate AttackWave06 names) require native bound volumes and channel evaluation."
+    },
+    {
+      "poses": [
+        259,
+        349
+      ],
+      "weapon": "dagger",
+      "input": "ground down-up-up attack",
+      "reason": "POS259 attacks only effect at frames9551-9553; linked349 has no attack. Pos259.ef has17 nodes, one AttackBox BOX bound to d_base. Its timed dimensions and full channel-to-world transform are unported; no body-bone or guessed-radius replacement is used."
+    },
+    {
+      "poses": [
+        209,
+        210
+      ],
+      "reason": "RES parameter16 references item10/item11 on-hit effects; their temporal propagation is outside this single-flight/damage increment."
+    }
+  ],
+  "functions": [
+    {
+      "address": "0058a700",
+      "finding": "Type-name lookup in 12-row 005d2f88 registry; does not describe attack emission counts or flight vectors."
+    },
+    {
+      "address": "0056e490",
+      "finding": "PonEF V1.00 header, node count, typed constructors and virtual node reader."
+    },
+    {
+      "address": "00582d50",
+      "finding": "Common length-prefixed name, four common words, two binding strings, channel data and per-node animation-channel list."
+    },
+    {
+      "address": "0058a620",
+      "finding": "Length-prefixed source string reader, not null-padded fixed string."
+    },
+    {
+      "address": "00582b50",
+      "finding": "Per-node animation-channel count and virtual channel readers; no simple fixed dart-fan emitter established."
+    },
+    {
+      "address": "00589640",
+      "finding": "PLANE reader calls common reader then two float-width values; not a projectile emitter."
+    },
+    {
+      "address": "005892b0",
+      "finding": "SPHERE/CYLINDER reader calls common reader then five numeric fields; shape fields alone do not establish attack trajectory."
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/00580970_FUN_00580970.asm",
+      "bytes": 2925,
+      "sha256": "23bc039af6105658a29f008aa276dc16e34c1ab31b21ab91a4f6b902a61719f6"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/00580970_FUN_00580970.c",
+      "bytes": 1745,
+      "sha256": "444babb2eec7cc8d4c13f10140c8d1904479ffba49450e1d8af92edba134c076"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/005811c0_FUN_005811c0.asm",
+      "bytes": 3723,
+      "sha256": "386c6d912d0bed4e36b4fc1e838a137edd374e6c0332fcc8e5134003aeaa2890"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/005811c0_FUN_005811c0.c",
+      "bytes": 2843,
+      "sha256": "15c6a2d2a8d09c41d6f466d1097dba00c5cd4606b387ebe0503fbaaaa6c9e618"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/005813c0_FUN_005813c0.asm",
+      "bytes": 2430,
+      "sha256": "1fd77613b9d0182ba1b5c27c1c38f98630b9629a103ec3c14bdebcd6384c186b"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/005813c0_FUN_005813c0.c",
+      "bytes": 2451,
+      "sha256": "e5bcc734f1735e4bee4c5857b8aa303aa2f95331349e8f6684a4b9e5c77ba7d5"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/00582b50_FUN_00582b50.asm",
+      "bytes": 2235,
+      "sha256": "754eea2bacbb4a8870739d6640a1759e34a928e992c226bb5b3e4bb0b0fb0782"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/00582b50_FUN_00582b50.c",
+      "bytes": 1773,
+      "sha256": "553d16c4b31b5b4df9dbc303ffc82d361c1337a384579e0b242313ef694b6c02"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/00584d80_FUN_00584d80.asm",
+      "bytes": 1406,
+      "sha256": "0f8ad0f2d2b7873bb5a6e4d68759cd62e8fd947857a1e44930c17d266b52e656"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/00584d80_FUN_00584d80.c",
+      "bytes": 1111,
+      "sha256": "520b3c675de805d743be0823ef57111faf6a5cddb16fdd336cd540d1250be02f"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/00588e10_FUN_00588e10.asm",
+      "bytes": 1324,
+      "sha256": "9f1df08b4f9c4f236133cbf132624dec53a8e3e2374e9ab76849d45344d5c273"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/00588e10_FUN_00588e10.c",
+      "bytes": 1067,
+      "sha256": "7a22dc490567bcd62767de2a8bfa4b61627225fcfb366caf0849c3a9acdd7c1d"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/00589330_FUN_00589330.asm",
+      "bytes": 1180,
+      "sha256": "1ed9852592f780e0c63859f516d84577e8b732c2f136a09fdb1c9fa17fd0e700"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/00589330_FUN_00589330.c",
+      "bytes": 974,
+      "sha256": "7923e826e176b1a25f7f091ecc464448d1dbd105e502d828d3629e694963eea2"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/0058a560_FUN_0058a560.asm",
+      "bytes": 1788,
+      "sha256": "bc8c51ab0bbaceb4479dd71db996ea48cf07610b2f822a44396c675ef5b9d887"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/0058a560_FUN_0058a560.c",
+      "bytes": 1688,
+      "sha256": "73653e6f9cbc97d61d65a68a6b4c3731dcde131ae7816cfd2d3bdb245c5a24d4"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/0058a620_FUN_0058a620.asm",
+      "bytes": 662,
+      "sha256": "bae636467c2689ab36de0cc2f88275eb8a358b07e1a71ec702d2a352c0dbd556"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/0058a620_FUN_0058a620.c",
+      "bytes": 695,
+      "sha256": "db266e0e41223c354cd6947ad43ea484dde22fd277d798a239812fe4a52e8735"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/0058a6d0_FUN_0058a6d0.asm",
+      "bytes": 348,
+      "sha256": "b9d4b7c8c106cc5c4c1ce573aeda587d2c2a82ee32c5a82be2fcdcb63beea00f"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/0058a6d0_FUN_0058a6d0.c",
+      "bytes": 825,
+      "sha256": "383d4fb64c4f674f94b147fbec8552c49f6158c0e537104d8518c1e843e538b6"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/0058a700_FUN_0058a700.asm",
+      "bytes": 1036,
+      "sha256": "f300b22c76093838e8472eaa730bd9b88bb6cf75eece029765a6bb8d063c6d69"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/0058a700_FUN_0058a700.c",
+      "bytes": 1041,
+      "sha256": "abb23c191b1eef8fd75e51fc392dddb019f74572f920cb4675634552c3adc129"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/functions.tsv",
+      "bytes": 283,
+      "sha256": "e75fa66e5a64b0685ad69fc5cc6625b19cfb20c99dec06c5afa36c290aedb841"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/plane-reader/00585360_FUN_00585360.asm",
+      "bytes": 1180,
+      "sha256": "17cd0e35b3aa5119823683d0758b27283f72714e769050644f00b61980ea75d7"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/plane-reader/00585360_FUN_00585360.c",
+      "bytes": 982,
+      "sha256": "ea2404076471c1e739a99173c821ee520af7ff0b8ddd8d8e541a181a3031369d"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/plane-reader/00589640_FUN_00589640.asm",
+      "bytes": 481,
+      "sha256": "dfcdc4ec805db24f932012190c3bfbe8a56d10fa42ac363c2f0d9b33a7aa9a25"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/plane-reader/00589640_FUN_00589640.c",
+      "bytes": 333,
+      "sha256": "ccc33597c8ae569dcd0ca38990f2e42864429268dfb3691aaf026403ce0b2d62"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/plane-reader/0058e150_FUN_0058e150.asm",
+      "bytes": 1628,
+      "sha256": "4a5eeb405c39c3f570442bf0257691d0d3ff5e2947993bfe8c474402dbf6483f"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/plane-reader/0058e150_FUN_0058e150.c",
+      "bytes": 1310,
+      "sha256": "d7c7ba549d2eb037b8ba1272a2563ef8bb9da6f90ca43480fc607cef27c57c38"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/plane-reader/0058e430_FUN_0058e430.asm",
+      "bytes": 2550,
+      "sha256": "204331c23a06a55a03e45e3ab47593d5ce1aa44cafc8aa695b306b60ea6011e7"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/plane-reader/0058e430_FUN_0058e430.c",
+      "bytes": 1560,
+      "sha256": "75b5d3e4b611e94a2c8832eb47464a6f097a0d394db2da24f4fbda4e90534809"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/plane-reader/functions.tsv",
+      "bytes": 103,
+      "sha256": "9c833cd7fa78967daf2ece51216c452b07a92ef7f33de611fd30f2507ded878d"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/plane-reader/references.txt",
+      "bytes": 2549,
+      "sha256": "d64c394a54a83b4297cef47d9c040279062aba615872dd024a751c86389c6d05"
+    },
+    {
+      "path": "work/meteor-original/evidence/command-projectile-native-2026-10-29/references.txt",
+      "bytes": 4776,
+      "sha256": "77e00b6dbea0b4ab4c8765946b84afce384fb0185bca4873b0fb409ee63ffbbb"
+    },
+    {
+      "path": "work/meteor-original/evidence/native-command-projectiles-2026-10-29.tap",
+      "bytes": 1693,
+      "sha256": "194ad05b297d031362e8c1ad2701977f147aa57592935845f353e40d41131bde"
+    }
+  ],
+  "tests": {
+    "command": "node --test tests/native-command-projectiles.test.mjs",
+    "pass": 6,
+    "fail": 0
+  }
+}

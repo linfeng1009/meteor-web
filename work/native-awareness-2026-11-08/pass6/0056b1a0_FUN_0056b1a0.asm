@@ -1,0 +1,7 @@
+0056b1a0 MOV EAX,dword ptr [ECX + 0x120]
+0056b1a6 TEST EAX,EAX
+0056b1a8 JZ 0x0056b1b1
+0056b1aa FLD float ptr [EAX + 0xc8]
+0056b1b0 RET
+0056b1b1 FLD float ptr [0x005a83e4]
+0056b1b7 RET

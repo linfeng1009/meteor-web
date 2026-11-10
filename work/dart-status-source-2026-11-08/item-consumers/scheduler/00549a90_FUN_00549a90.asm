@@ -1,0 +1,32 @@
+00549a90 SUB ESP,0x10
+00549a93 LEA EAX,[ESP + 0x8]
+00549a97 PUSH ESI
+00549a98 PUSH EAX
+00549a99 MOV ESI,ECX
+00549a9b CALL dword ptr [0x005a81d4]
+00549aa1 LEA ECX,[ESP + 0x4]
+00549aa5 PUSH ECX
+00549aa6 CALL dword ptr [0x005a81dc]
+00549aac FILD qword ptr [ESP + 0x4]
+00549ab0 FLD double ptr [ESP + 0x18]
+00549ab4 MOV EDX,dword ptr [ESP + 0x4]
+00549ab8 MOV EAX,dword ptr [ESP + 0x8]
+00549abc FMUL ST1
+00549abe MOV dword ptr [ESI + 0x38],EDX
+00549ac1 MOV dword ptr [ESI + 0x3c],EAX
+00549ac4 CALL 0x00509980
+00549ac9 FDIV double ptr [ESI + 0x8]
+00549acc MOV ECX,dword ptr [ESP + 0xc]
+00549ad0 MOV dword ptr [ESI + 0x40],0x0
+00549ad7 SUB ECX,EAX
+00549ad9 MOV EAX,dword ptr [ESP + 0x10]
+00549add SBB EAX,EDX
+00549adf MOV dword ptr [ESI + 0x20],ECX
+00549ae2 MOV EDX,EAX
+00549ae4 MOV dword ptr [ESI + 0x24],EAX
+00549ae7 MOV dword ptr [ESI + 0x30],ECX
+00549aea MOV dword ptr [ESI + 0x34],EDX
+00549aed FSTP double ptr [ESI + 0x10]
+00549af0 POP ESI
+00549af1 ADD ESP,0x10
+00549af4 RET 0x8

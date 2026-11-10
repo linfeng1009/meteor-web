@@ -1,0 +1,100 @@
+TAP version 13
+# Subtest: ordinary directional key actions select each requested original skill without pose shortcuts
+ok 1 - ordinary directional key actions select each requested original skill without pose shortcuts
+  ---
+  duration_ms: 107.119208
+  type: 'test'
+  ...
+# Subtest: blade spin executes its original 374 to 375 automatic finish before returning to stance
+ok 2 - blade spin executes its original 374 to 375 automatic finish before returning to stance
+  ---
+  duration_ms: 50.937958
+  type: 'test'
+  ...
+# Subtest: sword multi-thrust resolves five original bone attack windows and actual damage
+ok 3 - sword multi-thrust resolves five original bone attack windows and actual damage
+  ---
+  duration_ms: 189.417959
+  type: 'test'
+  ...
+# Subtest: jump then down-A selects native down attacks, with sword wind-up held through 342 descent and landing
+ok 4 - jump then down-A selects native down attacks, with sword wind-up held through 342 descent and landing
+  ---
+  duration_ms: 81.004833
+  type: 'test'
+  ...
+# Subtest: every listed ready command has a public-input route and pending special commands do not fall back to ordinary attacks
+ok 5 - every listed ready command has a public-input route and pending special commands do not fall back to ordinary attacks
+  ---
+  duration_ms: 44.346083
+  type: 'test'
+  ...
+# Subtest: native in-place jump removes scene translation from d_base while preserving the authored skeleton pose
+ok 6 - native in-place jump removes scene translation from d_base while preserving the authored skeleton pose
+  ---
+  duration_ms: 16.571542
+  type: 'test'
+  ...
+# Subtest: authored non-in-place jump remains available with its original d_base displacement
+ok 7 - authored non-in-place jump remains available with its original d_base displacement
+  ---
+  duration_ms: 3.071833
+  type: 'test'
+  ...
+# Subtest: the real L jump stays in view on open ground and lands with the collider
+ok 8 - the real L jump stays in view on open ground and lands with the collider
+  ---
+  duration_ms: 57.165625
+  type: 'test'
+  ...
+# Subtest: the real L jump stays in view with an enemy locked and lands with the collider
+ok 9 - the real L jump stays in view with an enemy locked and lands with the collider
+  ---
+  duration_ms: 40.755708
+  type: 'test'
+  ...
+# Subtest: jump camera follows the native body without crossing a nearby wall
+ok 10 - jump camera follows the native body without crossing a nearby wall
+  ---
+  duration_ms: 89.066625
+  type: 'test'
+  ...
+# Subtest: in-place correction keeps native dart hand attachments aligned with the same skin pose
+ok 11 - in-place correction keeps native dart hand attachments aligned with the same skin pose
+  ---
+  duration_ms: 72.045791
+  type: 'test'
+  ...
+# Subtest: native attack 259 cannot leave the skin behind its collision root and raw per-frame override remains usable
+ok 12 - native attack 259 cannot leave the skin behind its collision root and raw per-frame override remains usable
+  ---
+  duration_ms: 13.835333
+  type: 'test'
+  ...
+# Subtest: vertical camera follow preserves its settled height over the collision root throughout a real jump
+ok 13 - vertical camera follow preserves its settled height over the collision root throughout a real jump
+  ---
+  duration_ms: 80.494083
+  type: 'test'
+  ...
+# Subtest: moving forward during the native jump keeps the rendered body on screen and lands while moving
+ok 14 - moving forward during the native jump keeps the rendered body on screen and lands while moving
+  ---
+  duration_ms: 29.893166
+  type: 'test'
+  ...
+# Subtest: all twenty supplied characters share the scene dummy hierarchy used by the in-place adapter
+ok 15 - all twenty supplied characters share the scene dummy hierarchy used by the in-place adapter
+  ---
+  duration_ms: 22.814542
+  type: 'test'
+  ...
+1..15
+# tests 15
+# suites 0
+# pass 15
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 626.638041

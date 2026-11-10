@@ -1,0 +1,2069 @@
+
+> meteor-sword-web@0.7.3 test
+> node --test tests/*.test.mjs
+
+TAP version 13
+# Subtest: the actual source mission starts on real floors with the original distinct NPC configuration
+ok 1 - the actual source mission starts on real floors with the original distinct NPC configuration
+  ---
+  duration_ms: 602.339042
+  type: 'test'
+  ...
+# Subtest: a player dagger attack uses actual native pose, bones, weapon geometry and RES math to remove NPC HP
+ok 2 - a player dagger attack uses actual native pose, bones, weapon geometry and RES math to remove NPC HP
+  ---
+  duration_ms: 273.867292
+  type: 'test'
+  ...
+# Subtest: switching to the source secondary dart releases from the real hand and damages an original NPC only after flight
+ok 3 - switching to the source secondary dart releases from the real hand and damages an original NPC only after flight
+  ---
+  duration_ms: 216.014042
+  type: 'test'
+  ...
+# Subtest: all original mission NPC spawns are reachable from the player through WP edges and real collision geometry
+ok 4 - all original mission NPC spawns are reachable from the player through WP edges and real collision geometry
+  ---
+  duration_ms: 3044.550375
+  type: 'test'
+  ...
+# Subtest: source patrol AI can reach and damage a player who enters the original guard area
+ok 5 - source patrol AI can reach and damage a player who enters the original guard area
+  ---
+  duration_ms: 1106.969916
+  type: 'test'
+  ...
+# Subtest: real native attacks defeat source NPC HP and produce one story win, then restart resets the mission
+ok 6 - real native attacks defeat source NPC HP and produce one story win, then restart resets the mission
+  ---
+  duration_ms: 4356.322625
+  type: 'test'
+  ...
+# Subtest: walking normally into the source enemies causes player death and one failure, and restart resets accumulated state (jitter seed 1)
+ok 7 - walking normally into the source enemies causes player death and one failure, and restart resets accumulated state (jitter seed 1)
+  ---
+  duration_ms: 10719.632083
+  type: 'test'
+  ...
+# Jitter seed 1: source enemies caused natural failure after 54.77 seconds; no HP/dead assignment.
+# Subtest: walking normally into the source enemies causes player death and one failure, and restart resets accumulated state (jitter seed 2)
+ok 8 - walking normally into the source enemies causes player death and one failure, and restart resets accumulated state (jitter seed 2)
+  ---
+  duration_ms: 10375.417542
+  type: 'test'
+  ...
+# Jitter seed 2: source enemies caused natural failure after 55.10 seconds; no HP/dead assignment.
+# Subtest: walking normally into the source enemies causes player death and one failure, and restart resets accumulated state (jitter seed 3)
+ok 9 - walking normally into the source enemies causes player death and one failure, and restart resets accumulated state (jitter seed 3)
+  ---
+  duration_ms: 10822.530417
+  type: 'test'
+  ...
+# Jitter seed 3: source enemies caused natural failure after 56.27 seconds; no HP/dead assignment.
+# Subtest: walking normally into the source enemies causes player death and one failure, and restart resets accumulated state (jitter seed 4)
+ok 10 - walking normally into the source enemies causes player death and one failure, and restart resets accumulated state (jitter seed 4)
+  ---
+  duration_ms: 10502.337625
+  type: 'test'
+  ...
+# Jitter seed 4: source enemies caused natural failure after 53.27 seconds; no HP/dead assignment.
+# Subtest: original ACT resolves a requested command group through the current allowed list to its actual destination
+ok 11 - original ACT resolves a requested command group through the current allowed list to its actual destination
+  ---
+  duration_ms: 0.503583
+  type: 'test'
+  ...
+# Subtest: group resolution preserves original destination order, not exact requested membership or numeric order
+ok 12 - group resolution preserves original destination order, not exact requested membership or numeric order
+  ---
+  duration_ms: 0.063459
+  type: 'test'
+  ...
+# Subtest: a group does not grant a connection when the current ACT list has no member of that group
+ok 13 - a group does not grant a connection when the current ACT list has no member of that group
+  ---
+  duration_ms: 0.070041
+  type: 'test'
+  ...
+# Subtest: queued sword, spear and blade rage group members preserve predecessor strikes and pay their command once
+ok 14 - queued sword, spear and blade rage group members preserve predecessor strikes and pay their command once
+  ---
+  duration_ms: 20.090125
+  type: 'test'
+  ...
+# Subtest: a grouped queued cost remains subject to start-time resource and hit interruption checks
+ok 15 - a grouped queued cost remains subject to start-time resource and hit interruption checks
+  ---
+  duration_ms: 0.505667
+  type: 'test'
+  ...
+# Subtest: an idle group command starts at its original root rather than a combo-only member
+ok 16 - an idle group command starts at its original root rather than a combo-only member
+  ---
+  duration_ms: 0.09775
+  type: 'test'
+  ...
+# Subtest: original direct A chains and held air recovery links survive group resolution without new ground links
+ok 17 - original direct A chains and held air recovery links survive group resolution without new ground links
+  ---
+  duration_ms: 0.391666
+  type: 'test'
+  ...
+# Subtest: attack-item resolution follows original parameter16 and exact source effect data
+ok 18 - attack-item resolution follows original parameter16 and exact source effect data
+  ---
+  duration_ms: 0.837708
+  type: 'test'
+  ...
+# Subtest: 气丧 immediately clamps rage to the original maximum without retaining a timed modifier
+ok 19 - 气丧 immediately clamps rage to the original maximum without retaining a timed modifier
+  ---
+  duration_ms: 0.504375
+  type: 'test'
+  ...
+# Subtest: 七星 and 蛊毒 use the source counter threshold, next native step and expiry-before-tick
+ok 20 - 七星 and 蛊毒 use the source counter threshold, next native step and expiry-before-tick
+  ---
+  duration_ms: 5.073541
+  type: 'test'
+  ...
+# Subtest: repeat poison hits refresh only the lifetime while preserving period progress and independent poison identities
+ok 21 - repeat poison hits refresh only the lifetime while preserving period progress and independent poison identities
+  ---
+  duration_ms: 0.208541
+  type: 'test'
+  ...
+# Subtest: all actors share the game item phase and expired items cannot tick or survive reset
+ok 22 - all actors share the game item phase and expired items cannot tick or survive reset
+  ---
+  duration_ms: 0.191625
+  type: 'test'
+  ...
+# Subtest: source item effects reject dead, removed and disposed actors without an application
+ok 23 - source item effects reject dead, removed and disposed actors without an application
+  ---
+  duration_ms: 0.218584
+  type: 'test'
+  ...
+# Subtest: original discovery requires View, a forward half-space beyond80 native units, and line of sight
+ok 24 - original discovery requires View, a forward half-space beyond80 native units, and line of sight
+  ---
+  duration_ms: 0.761792
+  type: 'test'
+  ...
+# Subtest: native nearby awareness is omnidirectional but never bypasses range or an occluding wall
+ok 25 - native nearby awareness is omnidirectional but never bypasses range or an occluding wall
+  ---
+  duration_ms: 0.216333
+  type: 'test'
+  ...
+# Subtest: an unknown actor is not a target; a known nearby enemy is retained and lost at the original200-unit boundary
+ok 26 - an unknown actor is not a target; a known nearby enemy is retained and lost at the original200-unit boundary
+  ---
+  duration_ms: 0.233167
+  type: 'test'
+  ...
+# Subtest: actual training start with original四方阵 spawns wakes only the enemy that discovers the player and permits public combos
+ok 27 - actual training start with original四方阵 spawns wakes only the enemy that discovers the player and permits public combos
+  ---
+  duration_ms: 548.505958
+  type: 'test'
+  ...
+# Source DES starts on a CPU floor with live NPC AI: displacement=5.095,0.000,0.000; awareness=true,false,false; public262→263.
+# Subtest: unseen training enemies cannot discover through real collision triangles and respawn clears their cached target
+ok 28 - unseen training enemies cannot discover through real collision triangles and respawn clears their cached target
+  ---
+  duration_ms: 148.455041
+  type: 'test'
+  ...
+# Subtest: original四方阵 geometry and normal start preserve discovery-gated live AI rather than an opening three-enemy rush
+ok 29 - original四方阵 geometry and normal start preserve discovery-gated live AI rather than an opening three-enemy rush
+  ---
+  duration_ms: 367.8015
+  type: 'test'
+  ...
+# Originalsn06 model/colliders/spawns plus live AI: displacement=5.095,0.000,0.000; one enemy discovers the player, two remain unaware. CPU; no browser rendering.
+# Subtest: sword appearance swaps visuals without changing the active combat state or source weapon model
+ok 30 - sword appearance swaps visuals without changing the active combat state or source weapon model
+  ---
+  duration_ms: 148.230125
+  type: 'test'
+  ...
+# Subtest: reference sword is a finite 3D mesh with its grip and blade on the original attachment axis
+ok 31 - reference sword is a finite 3D mesh with its grip and blade on the original attachment axis
+  ---
+  duration_ms: 96.549833
+  type: 'test'
+  ...
+# Subtest: refined sword ships physically based materials with emissive glow layers
+ok 32 - refined sword ships physically based materials with emissive glow layers
+  ---
+  duration_ms: 84.571958
+  type: 'test'
+  ...
+# Subtest: ribbon geometry is animated instead of frozen
+ok 33 - ribbon geometry is animated instead of frozen
+  ---
+  duration_ms: 145.215375
+  type: 'test'
+  ...
+# Subtest: blade keeps textured surfaces and a restrained glow throughout its animation
+ok 34 - blade keeps textured surfaces and a restrained glow throughout its animation
+  ---
+  duration_ms: 139.648708
+  type: 'test'
+  ...
+# Subtest: disposing the sword releases its generated blade texture once without disposing the shared environment
+ok 35 - disposing the sword releases its generated blade texture once without disposing the shared environment
+  ---
+  duration_ms: 99.528292
+  type: 'test'
+  ...
+# Subtest: attacking builds a sword trail that fades and disappears when idle
+ok 36 - attacking builds a sword trail that fades and disappears when idle
+  ---
+  duration_ms: 175.192667
+  type: 'test'
+  ...
+# Subtest: trail vertices and colours stay finite and fade toward the tail
+ok 37 - trail vertices and colours stay finite and fade toward the tail
+  ---
+  duration_ms: 110.784833
+  type: 'test'
+  ...
+# Subtest: butterflies follow the blade and freeze when the appearance is switched off
+ok 38 - butterflies follow the blade and freeze when the appearance is switched off
+  ---
+  duration_ms: 65.684958
+  type: 'test'
+  ...
+# Subtest: impact burst spawns a ring plus butterflies and cleans itself up
+ok 39 - impact burst spawns a ring plus butterflies and cleans itself up
+  ---
+  duration_ms: 178.013167
+  type: 'test'
+  ...
+# Subtest: low quality keeps the effect budget smaller
+ok 40 - low quality keeps the effect budget smaller
+  ---
+  duration_ms: 172.233458
+  type: 'test'
+  ...
+# Subtest: dispose releases scene objects and is safe to call twice
+ok 41 - dispose releases scene objects and is safe to call twice
+  ---
+  duration_ms: 83.076125
+  type: 'test'
+  ...
+# Subtest: lock-on turns the camera behind the player to keep the actual enemy in view
+ok 42 - lock-on turns the camera behind the player to keep the actual enemy in view
+  ---
+  duration_ms: 8.401167
+  type: 'test'
+  ...
+# Subtest: manual camera override holds the user angle temporarily and then smoothly follows the lock again
+ok 43 - manual camera override holds the user angle temporarily and then smoothly follows the lock again
+  ---
+  duration_ms: 0.377
+  type: 'test'
+  ...
+# Subtest: near-wall camera stays in front of the actual triangle and hides only the close player rendering
+ok 44 - near-wall camera stays in front of the actual triangle and hides only the close player rendering
+  ---
+  duration_ms: 1.513208
+  type: 'test'
+  ...
+# Subtest: enemy HUD reports world distance and signed bearing from the actual camera direction
+ok 45 - enemy HUD reports world distance and signed bearing from the actual camera direction
+  ---
+  duration_ms: 0.343333
+  type: 'test'
+  ...
+# Subtest: the attackless sword dive startup reaches and holds its source one-frame attack until ground contact
+ok 46 - the attackless sword dive startup reaches and holds its source one-frame attack until ground contact
+  ---
+  duration_ms: 2.816041
+  type: 'test'
+  ...
+# Subtest: the blade automatic chain preserves attackless stages and every original attack segment
+ok 47 - the blade automatic chain preserves attackless stages and every original attack segment
+  ---
+  duration_ms: 0.68725
+  type: 'test'
+  ...
+# Subtest: a buffered input keeps the old Action then uses native NextPose time before entering the next Action
+ok 48 - a buffered input keeps the old Action then uses native NextPose time before entering the next Action
+  ---
+  duration_ms: 0.348459
+  type: 'test'
+  ...
+# Subtest: a queued resource gate is rechecked when its pose starts and cannot overspend changed resources
+ok 49 - a queued resource gate is rechecked when its pose starts and cannot overspend changed resources
+  ---
+  duration_ms: 0.114959
+  type: 'test'
+  ...
+# Subtest: death, weapon switching and an explicit failed start discard queued costs without a charge
+ok 50 - death, weapon switching and an explicit failed start discard queued costs without a charge
+  ---
+  duration_ms: 0.244125
+  type: 'test'
+  ...
+# Subtest: a held air recovery retains its real ACT continuation but cannot receive a forbidden ground attack
+ok 51 - a held air recovery retains its real ACT continuation but cannot receive a forbidden ground attack
+  ---
+  duration_ms: 0.117083
+  type: 'test'
+  ...
+# Subtest: finishing a basic attack resets the next click to its first move rather than reviving an expired continuation
+ok 52 - finishing a basic attack resets the next click to its first move rather than reviving an expired continuation
+  ---
+  duration_ms: 0.116791
+  type: 'test'
+  ...
+# Subtest: automatic links preserve elapsed time and root deltas across coarse and fine frame partitions
+ok 53 - automatic links preserve elapsed time and root deltas across coarse and fine frame partitions
+  ---
+  duration_ms: 8.077125
+  type: 'test'
+  ...
+# Subtest: sword rapid thrust applies all five original windows to one overlapping opponent and never repeats a window
+ok 54 - sword rapid thrust applies all five original windows to one overlapping opponent and never repeats a window
+  ---
+  duration_ms: 5.996125
+  type: 'test'
+  ...
+# Subtest: both original blade spin stages can damage the same overlapping opponent when a single update spans their link
+ok 55 - both original blade spin stages can damage the same overlapping opponent when a single update spans their link
+  ---
+  duration_ms: 2.295583
+  type: 'test'
+  ...
+# Subtest: holding the one-frame sword dive does not create repeat hits on the same target
+ok 56 - holding the one-frame sword dive does not create repeat hits on the same target
+  ---
+  duration_ms: 3.255291
+  type: 'test'
+  ...
+# Subtest: a timeline advanced across its final attack frame still reports that native contact window
+ok 57 - a timeline advanced across its final attack frame still reports that native contact window
+  ---
+  duration_ms: 0.277916
+  type: 'test'
+  ...
+# Subtest: all twelve visible weapon choices equip their preserved original models and complete the E cycle
+ok 58 - all twelve visible weapon choices equip their preserved original models and complete the E cycle
+  ---
+  duration_ms: 659.770042
+  type: 'test'
+  ...
+# Subtest: qiankun public inputs switch all three source stances and retain distinct A attacks and automatic recovery
+ok 59 - qiankun public inputs switch all three source stances and retain distinct A attacks and automatic recovery
+  ---
+  duration_ms: 129.358333
+  type: 'test'
+  ...
+# Subtest: ninja ordinary foot and blade inputs cause real source contact, including its second A branch
+ok 60 - ninja ordinary foot and blade inputs cause real source contact, including its second A branch
+  ---
+  duration_ms: 17.424708
+  type: 'test'
+  ...
+# Subtest: wheel uses an original model in flight, hits through its release window, returns, and permits a second throw
+ok 61 - wheel uses an original model in flight, hits through its release window, returns, and permits a second throw
+  ---
+  duration_ms: 68.027042
+  type: 'test'
+  ...
+# Subtest: actual musket input produces its source shot damage and cannot be replaced by a melee contact
+ok 62 - actual musket input produces its source shot damage and cannot be replaced by a melee contact
+  ---
+  duration_ms: 22.513292
+  type: 'test'
+  ...
+# Subtest: an unlocked free attack keeps its chosen facing even with a nearby opponent behind the player
+ok 63 - an unlocked free attack keeps its chosen facing even with a nearby opponent behind the player
+  ---
+  duration_ms: 87.823541
+  type: 'test'
+  ...
+# Subtest: expansion weapon audio is registered as original byte copies, not merely unresolved EF names
+ok 64 - expansion weapon audio is registered as original byte copies, not merely unresolved EF names
+  ---
+  duration_ms: 66.099375
+  type: 'test'
+  ...
+# Subtest: ordinary directional key actions select each requested original skill without pose shortcuts
+ok 65 - ordinary directional key actions select each requested original skill without pose shortcuts
+  ---
+  duration_ms: 315.185541
+  type: 'test'
+  ...
+# Subtest: blade spin executes its original 374 to 375 automatic finish before returning to stance
+ok 66 - blade spin executes its original 374 to 375 automatic finish before returning to stance
+  ---
+  duration_ms: 43.370542
+  type: 'test'
+  ...
+# Subtest: sword multi-thrust resolves five original bone attack windows and actual damage
+ok 67 - sword multi-thrust resolves five original bone attack windows and actual damage
+  ---
+  duration_ms: 161.707958
+  type: 'test'
+  ...
+# Subtest: jump then down-A selects native down attacks, with sword wind-up held through 342 descent and landing
+ok 68 - jump then down-A selects native down attacks, with sword wind-up held through 342 descent and landing
+  ---
+  duration_ms: 195.821333
+  type: 'test'
+  ...
+# Subtest: every listed ready command has a public-input route from the ground or a natural jump, while pending specials stay blocked
+ok 69 - every listed ready command has a public-input route from the ground or a natural jump, while pending specials stay blocked
+  ---
+  duration_ms: 432.525625
+  type: 'test'
+  ...
+# Subtest: POS attack bone names resolve the actual original BNC bones without renaming the skeleton or inventing effect attachments
+ok 70 - POS attack bone names resolve the actual original BNC bones without renaming the skeleton or inventing effect attachments
+  ---
+  duration_ms: 97.275292
+  type: 'test'
+  ...
+# Subtest: the requested spear left-right-up-A body attack and airborne A kick remove actual HP through original bones
+ok 71 - the requested spear left-right-up-A body attack and airborne A kick remove actual HP through original bones
+  ---
+  duration_ms: 195.28625
+  type: 'test'
+  ...
+# Subtest: native thrusts move the collision root using d_base, retaining the actual authored distance rather than pelvis sway
+ok 72 - native thrusts move the collision root using d_base, retaining the actual authored distance rather than pelvis sway
+  ---
+  duration_ms: 148.835375
+  type: 'test'
+  ...
+# Subtest: authored thrust movement stops at the ordinary collision wall at both render rates
+ok 73 - authored thrust movement stops at the ordinary collision wall at both render rates
+  ---
+  duration_ms: 197.680416
+  type: 'test'
+  ...
+# Subtest: actual heavy-hit TargetMove scales the original recoil and TargetValue holds its authored final frame
+ok 74 - actual heavy-hit TargetMove scales the original recoil and TargetValue holds its authored final frame
+  ---
+  duration_ms: 6.37225
+  type: 'test'
+  ...
+# Subtest: a natural dagger jump can reach all three original air strikes through ordinary attack inputs without altitude overrides
+ok 75 - a natural dagger jump can reach all three original air strikes through ordinary attack inputs without altitude overrides
+  ---
+  duration_ms: 8.70175
+  type: 'test'
+  ...
+# Subtest: paid spear rage commands emit original EF visuals through the real engine animation loop
+ok 76 - paid spear rage commands emit original EF visuals through the real engine animation loop
+  ---
+  duration_ms: 447.489667
+  type: 'test'
+  ...
+# Subtest: infinite rage supports repeated rage commands across weapons without filling NPC rage
+ok 77 - infinite rage supports repeated rage commands across weapons without filling NPC rage
+  ---
+  duration_ms: 267.656125
+  type: 'test'
+  ...
+# Subtest: infinite rage survives weapon changes and respawns, then disabling restores normal spending and resource gates
+ok 78 - infinite rage survives weapon changes and respawns, then disabling restores normal spending and resource gates
+  ---
+  duration_ms: 147.138875
+  type: 'test'
+  ...
+# Subtest: directional darts retain their original single release windows, RES damage and distinct EF sound references
+ok 79 - directional darts retain their original single release windows, RES damage and distinct EF sound references
+  ---
+  duration_ms: 6.945791
+  type: 'test'
+  ...
+# Subtest: command pose 209 releases one original W3_0 only after its native animation reaches the attack window
+ok 80 - command pose 209 releases one original W3_0 only after its native animation reaches the attack window
+  ---
+  duration_ms: 7.118458
+  type: 'test'
+  ...
+# Subtest: command pose 209 cannot damage an opponent behind an original-triangle-style wall
+ok 81 - command pose 209 cannot damage an opponent behind an original-triangle-style wall
+  ---
+  duration_ms: 1.87875
+  type: 'test'
+  ...
+# Subtest: command pose 210 releases one original W3_0 only after its native animation reaches the attack window
+ok 82 - command pose 210 releases one original W3_0 only after its native animation reaches the attack window
+  ---
+  duration_ms: 0.645333
+  type: 'test'
+  ...
+# Subtest: command pose 210 cannot damage an opponent behind an original-triangle-style wall
+ok 83 - command pose 210 cannot damage an opponent behind an original-triangle-style wall
+  ---
+  duration_ms: 3.474875
+  type: 'test'
+  ...
+# Subtest: complex original EF files contain parented attack volumes which cannot be replaced by an invented dart fan
+ok 84 - complex original EF files contain parented attack volumes which cannot be replaced by an invented dart fan
+  ---
+  duration_ms: 6.17
+  type: 'test'
+  ...
+# Subtest: spear aura and wave use byte-identical original EF attack nodes and source POS effect windows
+ok 85 - spear aura and wave use byte-identical original EF attack nodes and source POS effect windows
+  ---
+  duration_ms: 11.829625
+  type: 'test'
+  ...
+# Subtest: native EF seconds remain independent of accelerated POS frames and reset at automatic links
+ok 86 - native EF seconds remain independent of accelerated POS frames and reset at automatic links
+  ---
+  duration_ms: 2.528083
+  type: 'test'
+  ...
+# Subtest: dagger YanLuo uses its original effect-only box window, source109 reaction and349 finish through public input
+ok 87 - dagger YanLuo uses its original effect-only box window, source109 reaction and349 finish through public input
+  ---
+  duration_ms: 560.6185
+  type: 'test'
+  ...
+# Source effect-only dagger hit: damage=794, attack259 then finish349; CPU actors with retaliation paused.
+# Subtest: ground 八方绝 uses source effect contacts, gains victim rage before draining20, and skips guarded and rear actors
+ok 88 - ground 八方绝 uses source effect contacts, gains victim rage before draining20, and skips guarded and rear actors
+  ---
+  duration_ms: 222.079667
+  type: 'test'
+  ...
+# Ground201 effect: Attack101; damage=67; rage100→80 after the capped victim gain.
+# Subtest: 八方绝 respects source dynamic max rage, applies its item on zero damage, and skips lethal hits
+ok 89 - 八方绝 respects source dynamic max rage, applies its item on zero damage, and skips lethal hits
+  ---
+  duration_ms: 144.991084
+  type: 'test'
+  ...
+# Subtest: air 八方绝 starts from a natural jump, uses its independent source effect and returns through211
+ok 90 - air 八方绝 starts from a natural jump, uses its independent source effect and returns through211
+  ---
+  duration_ms: 124.907917
+  type: 'test'
+  ...
+# Natural-jump551 effect: Attack301; source211 observed; ordinary landing completed.
+# Subtest: 落樱雪 follows203→204→205→329 and poisons actual near and remote effect targets without stacking
+ok 91 - 落樱雪 follows203→204→205→329 and poisons actual near and remote effect targets without stacking
+  ---
+  duration_ms: 224.003417
+  type: 'test'
+  ...
+# Source204 remote hit: AttackWave06; item12 tick counts=4,4; CPU NPC retaliation/navigation paused.
+# Subtest: ordinary 赤练牙 applies its own source poison through a real released dart
+ok 92 - ordinary 赤练牙 applies its own source poison through a real released dart
+  ---
+  duration_ms: 72.643708
+  type: 'test'
+  ...
+# Subtest: periodic damage pauses with game time, does not award an attacker kill, and clears at respawn
+ok 93 - periodic damage pauses with game time, does not award an attacker kill, and clears at respawn
+  ---
+  duration_ms: 122.350041
+  type: 'test'
+  ...
+# Subtest: actual aura hits surrounding actors without textures, pays once and applies original recoil, knockdown and recovery
+ok 94 - actual aura hits surrounding actors without textures, pays once and applies original recoil, knockdown and recovery
+  ---
+  duration_ms: 281.782791
+  type: 'test'
+  ...
+# Source aura outward displacement: 6.573, 6.573, 6.573m; isolated actors, not a live-AI playthrough.
+# Subtest: linked forward wave hits beyond spear reach without a mirrored attack behind the caster
+ok 95 - linked forward wave hits beyond spear reach without a mirrored attack behind the caster
+  ---
+  duration_ms: 274.253541
+  type: 'test'
+  ...
+# Subtest: aura cannot hit outside its authored attack bounds, before activation, after interruption or while paused
+ok 96 - aura cannot hit outside its authored attack bounds, before activation, after interruption or while paused
+  ---
+  duration_ms: 143.224834
+  type: 'test'
+  ...
+# Subtest: effect and weapon contact share a POS window identity rather than dealing damage every render or per shape
+ok 97 - effect and weapon contact share a POS window identity rather than dealing damage every render or per shape
+  ---
+  duration_ms: 182.194791
+  type: 'test'
+  ...
+# Subtest: public spear AAA can chain into the original group-selected rage finish and its remote effect without replaying the windup
+ok 98 - public spear AAA can chain into the original group-selected rage finish and its remote effect without replaying the windup
+  ---
+  duration_ms: 130.047208
+  type: 'test'
+  ...
+# Subtest: effect query rejects unresolved parents, zero scales, non-effect windows and disposed systems
+ok 99 - effect query rejects unresolved parents, zero scales, non-effect windows and disposed systems
+  ---
+  duration_ms: 122.299083
+  type: 'test'
+  ...
+# Subtest: native attack nodes remain absent before their first source key and disappear at weapon changes
+ok 100 - native attack nodes remain absent before their first source key and disappear at weapon changes
+  ---
+  duration_ms: 188.944791
+  type: 'test'
+  ...
+# Subtest: source wave contact survives coarse updates by sampling only the crossed original attack intervals
+ok 101 - source wave contact survives coarse updates by sampling only the crossed original attack intervals
+  ---
+  duration_ms: 121.979583
+  type: 'test'
+  ...
+# Subtest: oriented effect bounds do not become an oversized world-axis box when the caster turns
+ok 102 - oriented effect bounds do not become an oversized world-axis box when the caster turns
+  ---
+  duration_ms: 2.544542
+  type: 'test'
+  ...
+# Subtest: visual and attack graphs agree on the source base-anchored cylinder and the elapsed effect clock
+ok 103 - visual and attack graphs agree on the source base-anchored cylinder and the elapsed effect clock
+  ---
+  duration_ms: 127.147375
+  type: 'test'
+  ...
+# Subtest: original203 empty rotation binding keeps native world axes while its origin follows the animated bone
+ok 104 - original203 empty rotation binding keeps native world axes while its origin follows the animated bone
+  ---
+  duration_ms: 15.645083
+  type: 'test'
+  ...
+# Subtest: original204 split bone/Character binding uses the Character basis for key offsets
+ok 105 - original204 split bone/Character binding uses the Character basis for key offsets
+  ---
+  duration_ms: 2.473667
+  type: 'test'
+  ...
+# Subtest: native relative and world position flags produce different fixed coordinates under a turned caster
+ok 106 - native relative and world position flags produce different fixed coordinates under a turned caster
+  ---
+  duration_ms: 1.464708
+  type: 'test'
+  ...
+# Subtest: separate position and rotation parents preserve a sheared affine basis and never inherit position-parent rotation
+ok 107 - separate position and rotation parents preserve a sheared affine basis and never inherit position-parent rotation
+  ---
+  duration_ms: 0.377583
+  type: 'test'
+  ...
+# Subtest: Emilia keeps the real body, complete face and hair rather than substituting a completeness flag
+ok 108 - Emilia keeps the real body, complete face and hair rather than substituting a completeness flag
+  ---
+  duration_ms: 8.503291
+  type: 'test'
+  ...
+# Subtest: Emilia keeps original face, hair and accessory maps and a full-resolution composed cloth map
+ok 109 - Emilia keeps original face, hair and accessory maps and a full-resolution composed cloth map
+  ---
+  duration_ms: 31.0075
+  type: 'test'
+  ...
+# Subtest: Emilia geometry has finite unit normals and normalized compatible native bone weights
+ok 110 - Emilia geometry has finite unit normals and normalized compatible native bone weights
+  ---
+  duration_ms: 19.583042
+  type: 'test'
+  ...
+# Subtest: Emilia has a separate p0 bundle; a missing resource preserves the live Raiden surface
+ok 111 - Emilia has a separate p0 bundle; a missing resource preserves the live Raiden surface
+  ---
+  duration_ms: 200.810958
+  type: 'test'
+  ...
+# Subtest: Emilia loads the supplied complete face, costume and mapped PNG textures rather than a placeholder
+ok 112 - Emilia loads the supplied complete face, costume and mapped PNG textures rather than a placeholder
+  ---
+  duration_ms: 59.537458
+  type: 'test'
+  ...
+# Subtest: all five appearances keep independent cached meshes on one live skeleton and weapon attachment
+ok 113 - all five appearances keep independent cached meshes on one live skeleton and weapon attachment
+  ---
+  duration_ms: 112.787792
+  type: 'test'
+  ...
+# Subtest: Emilia retains native joints and finite skin bounds across 45 running, airborne, guard and attack samples
+ok 114 - Emilia retains native joints and finite skin bounds across 45 running, airborne, guard and attack samples
+  ---
+  duration_ms: 204.90825
+  type: 'test'
+  ...
+# Subtest: game adoption preserves mission identity, resources, airborne motion and the active manual command
+ok 115 - game adoption preserves mission identity, resources, airborne motion and the active manual command
+  ---
+  duration_ms: 35.203041
+  type: 'test'
+  ...
+# Subtest: actual sn14 hidden Plane23 is inside the exact original hell volume and a falling-foot sweep detects it
+ok 116 - actual sn14 hidden Plane23 is inside the exact original hell volume and a falling-foot sweep detects it
+  ---
+  duration_ms: 0.745959
+  type: 'test'
+  ...
+# Subtest: the original sn14 player spawn remains outside hell while standing on its actual source floor
+ok 117 - the original sn14 player spawn remains outside hell while standing on its actual source floor
+  ---
+  duration_ms: 0.402125
+  type: 'test'
+  ...
+# Subtest: continuous world-foot contact catches fast falls and complete crossings even when both endpoints are outside
+ok 118 - continuous world-foot contact catches fast falls and complete crossings even when both endpoints are outside
+  ---
+  duration_ms: 0.722375
+  type: 'test'
+  ...
+# Subtest: the exact source class and explicit activation decide eligibility, without guessing from a mesh name or appearance
+ok 119 - the exact source class and explicit activation decide eligibility, without guessing from a mesh name or appearance
+  ---
+  duration_ms: 0.401916
+  type: 'test'
+  ...
+# Subtest: missing meshes, planes, rotated volumes and malformed boxes remain pending rather than using their broad AABB
+ok 120 - missing meshes, planes, rotated volumes and malformed boxes remain pending rather than using their broad AABB
+  ---
+  duration_ms: 0.289
+  type: 'test'
+  ...
+# Subtest: source world placement is retained and multiple valid volumes return the earliest intersection
+ok 121 - source world placement is retained and multiple valid volumes return the earliest intersection
+  ---
+  duration_ms: 0.183792
+  type: 'test'
+  ...
+# Subtest: real engine falling onto native Plane23 dies at HBox before the hidden floor can keep the actor alive
+ok 122 - real engine falling onto native Plane23 dies at HBox before the hidden floor can keep the actor alive
+  ---
+  duration_ms: 7.662
+  type: 'test'
+  ...
+# Subtest: environment death produces one mission failure and source foot placement clears the death reason for restart
+ok 123 - environment death produces one mission failure and source foot placement clears the death reason for restart
+  ---
+  duration_ms: 3.179334
+  type: 'test'
+  ...
+# Subtest: training hazard death uses the existing respawn interval and restores the actual safe source spawn
+ok 124 - training hazard death uses the existing respawn interval and restores the actual safe source spawn
+  ---
+  duration_ms: 4.0525
+  type: 'test'
+  ...
+# Subtest: an original type-zero blade strike remains guarded with no HP loss and the native guard-rage branch
+ok 125 - an original type-zero blade strike remains guarded with no HP loss and the native guard-rage branch
+  ---
+  duration_ms: 1.354709
+  type: 'test'
+  ...
+# Subtest: original blade pose298 type-one attack bypasses a raised guard and deals89
+ok 126 - original blade pose298 type-one attack bypasses a raised guard and deals89
+  ---
+  duration_ms: 0.252542
+  type: 'test'
+  ...
+# Subtest: original blade pose300 type-one attack bypasses a raised guard and deals50
+ok 127 - original blade pose300 type-one attack bypasses a raised guard and deals50
+  ---
+  duration_ms: 0.120042
+  type: 'test'
+  ...
+# Subtest: original spear pose286 type-one attack bypasses a raised guard and deals37
+ok 128 - original spear pose286 type-one attack bypasses a raised guard and deals37
+  ---
+  duration_ms: 0.088625
+  type: 'test'
+  ...
+# Subtest: original spear pose291 type-one attack bypasses a raised guard and deals122
+ok 129 - original spear pose291 type-one attack bypasses a raised guard and deals122
+  ---
+  duration_ms: 0.154041
+  type: 'test'
+  ...
+# Subtest: guard recognition matches the original six-bit packet field rather than testing only the literal value one
+ok 130 - guard recognition matches the original six-bit packet field rather than testing only the literal value one
+  ---
+  duration_ms: 0.584792
+  type: 'test'
+  ...
+# Subtest: both original spear-spin type-one windows bypass guard using the same recovered damage path
+ok 131 - both original spear-spin type-one windows bypass guard using the same recovered damage path
+  ---
+  duration_ms: 0.169667
+  type: 'test'
+  ...
+# Subtest: a missing HD bundle reports an explicit original fallback and leaves the original model usable
+ok 132 - a missing HD bundle reports an explicit original fallback and leaves the original model usable
+  ---
+  duration_ms: 29.558334
+  type: 'test'
+  ...
+# Subtest: Blender skin is a separate denser native-coordinate asset with original bone compatibility
+ok 133 - Blender skin is a separate denser native-coordinate asset with original bone compatibility
+  ---
+  duration_ms: 91.893875
+  type: 'test'
+  ...
+# Subtest: hot appearance switching preserves the live skeleton, original pose, world transform and weapon attachment
+ok 134 - hot appearance switching preserves the live skeleton, original pose, world transform and weapon attachment
+  ---
+  duration_ms: 35.367416
+  type: 'test'
+  ...
+# Subtest: HD playback keeps real jump, run, attack and dart attachment matrices identical to the native skin
+ok 135 - HD playback keeps real jump, run, attack and dart attachment matrices identical to the native skin
+  ---
+  duration_ms: 687.630166
+  type: 'test'
+  ...
+# Subtest: the game appearance API leaves HP, fighter identity, combat state, velocity and weapon untouched
+ok 136 - the game appearance API leaves HP, fighter identity, combat state, velocity and weapon untouched
+  ---
+  duration_ms: 19.156125
+  type: 'test'
+  ...
+# Subtest: rapid HD/original selection keeps the latest appearance and disposal cancels pending adoption
+ok 137 - rapid HD/original selection keeps the latest appearance and disposal cancels pending adoption
+  ---
+  duration_ms: 1.142458
+  type: 'test'
+  ...
+# Subtest: other nineteen native characters explicitly keep their original appearance
+ok 138 - other nineteen native characters explicitly keep their original appearance
+  ---
+  duration_ms: 846.005083
+  type: 'test'
+  ...
+# Subtest: invalid replacement meshes cannot introduce foreign bones, invalid weights or nonfinite positions
+ok 139 - invalid replacement meshes cannot introduce foreign bones, invalid weights or nonfinite positions
+  ---
+  duration_ms: 1.904375
+  type: 'test'
+  ...
+# Subtest: color maps and PBR data maps use different color spaces and cached maps survive an actor disposal
+ok 140 - color maps and PBR data maps use different color spaces and cached maps survive an actor disposal
+  ---
+  duration_ms: 37.18425
+  type: 'test'
+  ...
+# Subtest: original instant healing clamps to current effective maxHP and never installs a timed modifier
+ok 141 - original instant healing clamps to current effective maxHP and never installs a timed modifier
+  ---
+  duration_ms: 0.663958
+  type: 'test'
+  ...
+# Subtest: original attack boost19 applies150, refreshes without stacking and expires from the effective stat calculation
+ok 142 - original attack boost19 applies150, refreshes without stacking and expires from the effective stat calculation
+  ---
+  duration_ms: 10.00125
+  type: 'test'
+  ...
+# Subtest: original maxHP boost20 changes the clamp used by subsequent healing; clear restores the base limit without inventing immediate damage
+ok 143 - original maxHP boost20 changes the clamp used by subsequent healing; clear restores the base limit without inventing immediate damage
+  ---
+  duration_ms: 0.324333
+  type: 'test'
+  ...
+# Subtest: native Move/Value packing preserves their separate motion/time meanings and original float32 wire rounding
+ok 144 - native Move/Value packing preserves their separate motion/time meanings and original float32 wire rounding
+  ---
+  duration_ms: 0.956792
+  type: 'test'
+  ...
+# Subtest: one-frame airborne source loops hold exactly one transform and cannot sample another pose or generate endless vertical velocity
+ok 145 - one-frame airborne source loops hold exactly one transform and cannot sample another pose or generate endless vertical velocity
+  ---
+  duration_ms: 0.589125
+  type: 'test'
+  ...
+# Subtest: source reaction selection uses native signed angles, exact sector boundaries and append-time fallback
+ok 146 - source reaction selection uses native signed angles, exact sector boundaries and append-time fallback
+  ---
+  duration_ms: 0.258625
+  type: 'test'
+  ...
+# Subtest: source guard selection retains each weapon-state list, all four front variants and its fixed side/back entries
+ok 147 - source guard selection retains each weapon-state list, all four front variants and its fixed side/back entries
+  ---
+  duration_ms: 0.327208
+  type: 'test'
+  ...
+# Subtest: front guard follows the original CRT53-bit draw distribution, including the maximum draw selecting slot4
+ok 148 - front guard follows the original CRT53-bit draw distribution, including the maximum draw selecting slot4
+  ---
+  duration_ms: 3.846833
+  type: 'test'
+  ...
+# Subtest: real hit events, original animation and impact sound all use the selected front/back/side source pose
+ok 149 - real hit events, original animation and impact sound all use the selected front/back/side source pose
+  ---
+  duration_ms: 490.779083
+  type: 'test'
+  ...
+# Subtest: an interrupted native hit blend starts from the actual displayed bones and weapon attachments without a pose pop
+ok 150 - an interrupted native hit blend starts from the actual displayed bones and weapon attachments without a pose pop
+  ---
+  duration_ms: 114.377333
+  type: 'test'
+  ...
+# Subtest: a blocked rear blow plays the defender sword guard pose, moves by native DefenseMove, holds DefenseValue and returns to guard
+ok 151 - a blocked rear blow plays the defender sword guard pose, moves by native DefenseMove, holds DefenseValue and returns to guard
+  ---
+  duration_ms: 95.529125
+  type: 'test'
+  ...
+# Subtest: public held guard can be released and pressed during block stun, repeated blocks preserve HP and a source break-guard hit interrupts it
+ok 152 - public held guard can be released and pressed during block stun, repeated blocks preserve HP and a source break-guard hit interrupts it
+  ---
+  duration_ms: 93.773958
+  type: 'test'
+  ...
+# Subtest: a native light-hit reaction discards queued offense and cannot be canceled by normal attack or locomotion input
+ok 153 - a native light-hit reaction discards queued offense and cannot be canceled by normal attack or locomotion input
+  ---
+  duration_ms: 7.116667
+  type: 'test'
+  ...
+# Subtest: native knockdowns keep their POS down links and recover through original animation rather than instantly standing
+ok 154 - native knockdowns keep their POS down links and recover through original animation rather than instantly standing
+  ---
+  duration_ms: 0.803667
+  type: 'test'
+  ...
+# Subtest: airborne prone reactions wait for floor contact and repeated light hits do not snap a prone actor upright
+ok 155 - airborne prone reactions wait for floor contact and repeated light hits do not snap a prone actor upright
+  ---
+  duration_ms: 0.304
+  type: 'test'
+  ...
+# Subtest: a real native sword hit visibly plays its authored target pose and locks ordinary AI movement and offense
+ok 156 - a real native sword hit visibly plays its authored target pose and locks ordinary AI movement and offense
+  ---
+  duration_ms: 113.942542
+  type: 'test'
+  ...
+# Subtest: three ordinary public attack inputs can hit and knock down a real native opponent on the source sword third strike
+ok 157 - three ordinary public attack inputs can hit and knock down a real native opponent on the source sword third strike
+  ---
+  duration_ms: 130.93025
+  type: 'test'
+  ...
+# Subtest: rapid public attack presses retain all three original sword strike windows before the third hit knocks down
+ok 158 - rapid public attack presses retain all three original sword strike windows before the third hit knocks down
+  ---
+  duration_ms: 83.6675
+  type: 'test'
+  ...
+# Subtest: guarded contact does not turn a blocked blow into knockdown, while a lethal blow keeps death priority
+ok 159 - guarded contact does not turn a blocked blow into knockdown, while a lethal blow keeps death priority
+  ---
+  duration_ms: 57.3945
+  type: 'test'
+  ...
+# Subtest: native hitstun cannot be cancelled by jumping; held defense engages on recovery without another input event
+ok 160 - native hitstun cannot be cancelled by jumping; held defense engages on recovery without another input event
+  ---
+  duration_ms: 91.517125
+  type: 'test'
+  ...
+# Subtest: real impact feedback freezes only the contacting actors and consumes only its pause portion of the next update
+ok 161 - real impact feedback freezes only the contacting actors and consumes only its pause portion of the next update
+  ---
+  duration_ms: 59.114292
+  type: 'test'
+  ...
+# Subtest: one defense press during hitstun survives repeated ordinary incoming hits after recovery and release still works
+ok 162 - one defense press during hitstun survives repeated ordinary incoming hits after recovery and release still works
+  ---
+  duration_ms: 85.597667
+  type: 'test'
+  ...
+# Subtest: a near-recovery attack input starts only after hitstun and expires instead of replaying after a long knockdown
+ok 163 - a near-recovery attack input starts only after hitstun and expires instead of replaying after a long knockdown
+  ---
+  duration_ms: 71.844208
+  type: 'test'
+  ...
+# Subtest: misses produce no contact freeze, guarded impact keeps HP and death interrupts an existing freeze immediately
+ok 164 - misses produce no contact freeze, guarded impact keeps HP and death interrupts an existing freeze immediately
+  ---
+  duration_ms: 90.875209
+  type: 'test'
+  ...
+# Subtest: the HuTao bundle contains the independently verified PMX face, mouth, eyes and lashes
+ok 165 - the HuTao bundle contains the independently verified PMX face, mouth, eyes and lashes
+  ---
+  duration_ms: 5.972417
+  type: 'test'
+  ...
+# Subtest: PMX texture paths are real local PNGs and retain the source two-kilopixel color maps
+ok 166 - PMX texture paths are real local PNGs and retain the source two-kilopixel color maps
+  ---
+  duration_ms: 15.06225
+  type: 'test'
+  ...
+# Subtest: the complete PMX export has finite unit normals, native bone weights and nondegenerate indices
+ok 167 - the complete PMX export has finite unit normals, native bone weights and nondegenerate indices
+  ---
+  duration_ms: 18.863458
+  type: 'test'
+  ...
+# Subtest: appearance registry separates native, Blender HD and HuTao bundles without adding a fake native character
+ok 168 - appearance registry separates native, Blender HD and HuTao bundles without adding a fake native character
+  ---
+  duration_ms: 0.846917
+  type: 'test'
+  ...
+# Subtest: an absent HuTao bundle explicitly falls back to the original mesh and keeps its pose usable
+ok 169 - an absent HuTao bundle explicitly falls back to the original mesh and keeps its pose usable
+  ---
+  duration_ms: 27.980958
+  type: 'test'
+  ...
+# Subtest: explicit workshop permission is required on every incomplete adoption, including a cached preview
+ok 170 - explicit workshop permission is required on every incomplete adoption, including a cached preview
+  ---
+  duration_ms: 89.983417
+  type: 'test'
+  ...
+# Subtest: the complete PMX HuTao mesh has real face geometry, separate textures and normalized native bone weights
+ok 171 - the complete PMX HuTao mesh has real face geometry, separate textures and normalized native bone weights
+  ---
+  duration_ms: 61.843541
+  type: 'test'
+  ...
+# Subtest: HuTao, HD and original hot switching retain distinct meshes on one live native skeleton
+ok 172 - HuTao, HD and original hot switching retain distinct meshes on one live native skeleton
+  ---
+  duration_ms: 130.7215
+  type: 'test'
+  ...
+# Subtest: PMX skin remains bounded across native running, jumping, guarding, attacks and death poses
+ok 173 - PMX skin remains bounded across native running, jumping, guarding, attacks and death poses
+  ---
+  duration_ms: 186.209208
+  type: 'test'
+  ...
+# Subtest: the game refuses an incomplete MOD and retains its current HD appearance and mission state
+ok 174 - the game refuses an incomplete MOD and retains its current HD appearance and mission state
+  ---
+  duration_ms: 107.463084
+  type: 'test'
+  ...
+# Subtest: the game adopts complete HuTao without resetting mission identity, HP, weapon, jump or live pose
+ok 175 - the game adopts complete HuTao without resetting mission identity, HP, weapon, jump or live pose
+  ---
+  duration_ms: 6.610708
+  type: 'test'
+  ...
+# Subtest: PMX cutout cards preserve depth-writing opaque materials and their supplied alpha threshold
+ok 176 - PMX cutout cards preserve depth-writing opaque materials and their supplied alpha threshold
+  ---
+  duration_ms: 1.131792
+  type: 'test'
+  ...
+# Subtest: a HuTao request for another original character preserves that character instead of loading a P20 substitute
+ok 177 - a HuTao request for another original character preserves that character instead of loading a P20 substitute
+  ---
+  duration_ms: 101.761167
+  type: 'test'
+  ...
+# Subtest: actual contact feedback distinguishes guard, light hit and knockdown with bounded actor freezes
+ok 178 - actual contact feedback distinguishes guard, light hit and knockdown with bounded actor freezes
+  ---
+  duration_ms: 2.0585
+  type: 'test'
+  ...
+# Subtest: feedback expires and disposes GPU resources, with no camera drift after an impact
+ok 179 - feedback expires and disposes GPU resources, with no camera drift after an impact
+  ---
+  duration_ms: 0.382292
+  type: 'test'
+  ...
+# Subtest: multi-target impacts have a hard memory and shake cap; distant contacts do not move the camera
+ok 180 - multi-target impacts have a hard memory and shake cap; distant contacts do not move the camera
+  ---
+  duration_ms: 1.746917
+  type: 'test'
+  ...
+# Subtest: invalid contact coordinates cannot introduce NaNs or an invisible lingering effect
+ok 181 - invalid contact coordinates cannot introduce NaNs or an invisible lingering effect
+  ---
+  duration_ms: 0.139417
+  type: 'test'
+  ...
+# Subtest: every catalog command selects its original pose with its required stance and predecessor
+ok 182 - every catalog command selects its original pose with its required stance and predecessor
+  ---
+  duration_ms: 9.389209
+  type: 'test'
+  ...
+# Subtest: three-direction commands win over two-direction and single-direction suffixes
+ok 183 - three-direction commands win over two-direction and single-direction suffixes
+  ---
+  duration_ms: 0.274125
+  type: 'test'
+  ...
+# Subtest: slow, stale and opposite-posture taps cannot fabricate a long command
+ok 184 - slow, stale and opposite-posture taps cannot fabricate a long command
+  ---
+  duration_ms: 0.143833
+  type: 'test'
+  ...
+# Subtest: held movement supports a single directional attack without inventing a diagonal sequence
+ok 185 - held movement supports a single directional attack without inventing a diagonal sequence
+  ---
+  duration_ms: 0.132666
+  type: 'test'
+  ...
+# Subtest: follow-ups need an active predecessor, including its actual linked air recovery
+ok 186 - follow-ups need an active predecessor, including its actual linked air recovery
+  ---
+  duration_ms: 0.215083
+  type: 'test'
+  ...
+# Subtest: long specials preserve their selected command and its actual readiness instead of degrading to a suffix
+ok 187 - long specials preserve their selected command and its actual readiness instead of degrading to a suffix
+  ---
+  duration_ms: 0.132125
+  type: 'test'
+  ...
+# Subtest: only original type2 Item01 resolves the exact RES current-HP +300 record
+ok 188 - only original type2 Item01 resolves the exact RES current-HP +300 record
+  ---
+  duration_ms: 0.805916
+  type: 'test'
+  ...
+# Subtest: native HP gain clamps to max HP and the same scene instance cannot be consumed twice
+ok 189 - native HP gain clamps to max HP and the same scene instance cannot be consumed twice
+  ---
+  duration_ms: 0.974583
+  type: 'test'
+  ...
+# Subtest: full HP keeps the meatbun with an explicit adapter policy; a subsequent wound can use it
+ok 190 - full HP keeps the meatbun with an explicit adapter policy; a subsequent wound can use it
+  ---
+  duration_ms: 0.239459
+  type: 'test'
+  ...
+# Subtest: hidden, noninteractive, distant, vertically separate, blocked and dead-player pickups are rejected
+ok 191 - hidden, noninteractive, distant, vertically separate, blocked and dead-player pickups are rejected
+  ---
+  duration_ms: 0.237667
+  type: 'test'
+  ...
+# Subtest: source model identity controls effects; names and arbitrary health-item models cannot grant meatbun healing
+ok 192 - source model identity controls effects; names and arbitrary health-item models cannot grant meatbun healing
+  ---
+  duration_ms: 0.09775
+  type: 'test'
+  ...
+# Subtest: nearest reachable original meatbun is selected, reset permits a source-reinitialized instance, disposal stops pickups
+ok 193 - nearest reachable original meatbun is selected, reset permits a source-reinitialized instance, disposal stops pickups
+  ---
+  duration_ms: 0.137334
+  type: 'test'
+  ...
+# Subtest: engine pickup reach ignores its own collider, rejects an intervening wall or another scene object, and restores ray distance
+ok 194 - engine pickup reach ignores its own collider, rejects an intervening wall or another scene object, and restores ray distance
+  ---
+  duration_ms: 3.982541
+  type: 'test'
+  ...
+# 原技能攻击范围暂未能载入： TypeError: Cannot read properties of undefined (reading 'radius')
+#     at MeteorGame._initializeEffectContacts (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/dist/engine.js:94:93)
+#     at file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/dist/engine.js:161:32
+# 怒气技能特效暂未能载入： ReferenceError: document is not defined
+#     at createElementNS (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/dist/vendor/three.module.js:1537:2)
+#     at ImageLoader.load (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/dist/vendor/three.module.js:45262:17)
+#     at TextureLoader.load (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/dist/vendor/three.module.js:45504:10)
+#     at texture (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/dist/native-rage-vfx.js:37:59)
+#     at new Promise (<anonymous>)
+#     at file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/dist/native-rage-vfx.js:37:29
+#     at Array.map (<anonymous>)
+#     at loadNativeRageVfx (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/dist/native-rage-vfx.js:34:92)
+# Subtest: engine-initialized pickup respects paused/story gates, emits actual HP recovery, and publishes a serializable HUD
+ok 195 - engine-initialized pickup respects paused/story gates, emits actual HP recovery, and publishes a serializable HUD
+  ---
+  duration_ms: 127.209791
+  type: 'test'
+  ...
+# Subtest: actual cave stone PST releases the actual DES Item01, heals once, and source init plus reset restores its hidden state
+ok 196 - actual cave stone PST releases the actual DES Item01, heals once, and source init plus reset restores its hidden state
+  ---
+  duration_ms: 276.586417
+  type: 'test'
+  ...
+# Subtest: native in-place jump removes scene translation from d_base while preserving the authored skeleton pose
+ok 197 - native in-place jump removes scene translation from d_base while preserving the authored skeleton pose
+  ---
+  duration_ms: 15.519291
+  type: 'test'
+  ...
+# Subtest: authored non-in-place jump remains available with its original d_base displacement
+ok 198 - authored non-in-place jump remains available with its original d_base displacement
+  ---
+  duration_ms: 3.808292
+  type: 'test'
+  ...
+# Subtest: normal L takeoff moves the collision root by the original d_base curve without adding it twice to the skin
+ok 199 - normal L takeoff moves the collision root by the original d_base curve without adding it twice to the skin
+  ---
+  duration_ms: 26.512667
+  type: 'test'
+  ...
+# Subtest: the real L jump stays in view on open ground and lands with the collider
+ok 200 - the real L jump stays in view on open ground and lands with the collider
+  ---
+  duration_ms: 46.32475
+  type: 'test'
+  ...
+# Subtest: the real L jump stays in view with an enemy locked and lands with the collider
+ok 201 - the real L jump stays in view with an enemy locked and lands with the collider
+  ---
+  duration_ms: 50.018542
+  type: 'test'
+  ...
+# Subtest: jump camera follows the native body without crossing a nearby wall
+ok 202 - jump camera follows the native body without crossing a nearby wall
+  ---
+  duration_ms: 40.042125
+  type: 'test'
+  ...
+# Subtest: in-place correction keeps native dart hand attachments aligned with the same skin pose
+ok 203 - in-place correction keeps native dart hand attachments aligned with the same skin pose
+  ---
+  duration_ms: 5.464667
+  type: 'test'
+  ...
+# Subtest: native attack 259 cannot leave the skin behind its collision root and raw per-frame override remains usable
+ok 204 - native attack 259 cannot leave the skin behind its collision root and raw per-frame override remains usable
+  ---
+  duration_ms: 1.574167
+  type: 'test'
+  ...
+# Subtest: vertical camera follow preserves its settled height over the collision root throughout a real jump
+ok 205 - vertical camera follow preserves its settled height over the collision root throughout a real jump
+  ---
+  duration_ms: 32.701833
+  type: 'test'
+  ...
+# Subtest: moving forward during the native jump keeps the rendered body on screen and lands while moving
+ok 206 - moving forward during the native jump keeps the rendered body on screen and lands while moving
+  ---
+  duration_ms: 24.96925
+  type: 'test'
+  ...
+# Subtest: all twenty supplied characters share the scene dummy hierarchy used by the in-place adapter
+ok 207 - all twenty supplied characters share the scene dummy hierarchy used by the in-place adapter
+  ---
+  duration_ms: 24.662333
+  type: 'test'
+  ...
+# Subtest: both new missions load real source geometry, original equipment and exact NPC HP/team/spawns
+ok 208 - both new missions load real source geometry, original equipment and exact NPC HP/team/spawns
+  ---
+  duration_ms: 822.336167
+  type: 'test'
+  ...
+# Subtest: sn09 normal movement/jump/guard from the source spawn survives all100 falling floors with living ColdYan and reaches original GameOver
+ok 209 - sn09 normal movement/jump/guard from the source spawn survives all100 falling floors with living ColdYan and reaches original GameOver
+  ---
+  duration_ms: 2190.743
+  type: 'test'
+  ...
+# Live original-scene survival 199.03s; playerHP2670, ColdYanHP2670; no HP/dead/result assignment.
+# Subtest: sn09 falling from the source spawn produces original delayed failure instead of a false survival victory
+ok 210 - sn09 falling from the source spawn produces original delayed failure instead of a false survival victory
+  ---
+  duration_ms: 299.979209
+  type: 'test'
+  ...
+# Subtest: sn09 protected death overrides a pending positive story result in the original PST
+ok 211 - sn09 protected death overrides a pending positive story result in the original PST
+  ---
+  duration_ms: 171.299875
+  type: 'test'
+  ...
+# Subtest: sn15 actual dual attacks defeat only the7500HP VIP, win with six other enemies alive, and restart restores source state
+ok 212 - sn15 actual dual attacks defeat only the7500HP VIP, win with six other enemies alive, and restart restores source state
+  ---
+  duration_ms: 7648.147458
+  type: 'test'
+  ...
+# Subtest: sn15 injured VIP physically follows all escape stages to WP116 and original RemoveNPC/GameOver fails the mission
+ok 213 - sn15 injured VIP physically follows all escape stages to WP116 and original RemoveNPC/GameOver fails the mission
+  ---
+  duration_ms: 10345.504459
+  type: 'test'
+  ...
+# Actual VIP escape failed the mission at240.03s, HP1783.
+# Subtest: sn15 real guard damage triggers the conditional friendly ally, source嗜战, and a friendly HUD marker exactly once
+ok 214 - sn15 real guard damage triggers the conditional friendly ally, source嗜战, and a friendly HUD marker exactly once
+  ---
+  duration_ms: 3539.346959
+  type: 'test'
+  ...
+# Subtest: pause freezes mission, floor and item clocks, and leaving clears script effects before another session
+ok 215 - pause freezes mission, floor and item clocks, and leaving clears script effects before another session
+  ---
+  duration_ms: 86.022458
+  type: 'test'
+  ...
+# Subtest: the real cave mission creates three distinct runtime NPCs with their original source configuration and waypoints
+ok 216 - the real cave mission creates three distinct runtime NPCs with their original source configuration and waypoints
+  ---
+  duration_ms: 48.6465
+  type: 'test'
+  ...
+# Subtest: source loading preserves the native browser fetch receiver
+ok 217 - source loading preserves the native browser fetch receiver
+  ---
+  duration_ms: 39.994542
+  type: 'test'
+  ...
+# Subtest: the real engine mission bridges preserve source HP, distinct actor IDs and original weapon variants
+ok 218 - the real engine mission bridges preserve source HP, distinct actor IDs and original weapon variants
+  ---
+  duration_ms: 26.802375
+  type: 'test'
+  ...
+# Subtest: the patrol routes and generated movement targets come from the original WP graph
+ok 219 - the patrol routes and generated movement targets come from the original WP graph
+  ---
+  duration_ms: 17.627083
+  type: 'test'
+  ...
+# Subtest: source waypoints above the collision floor do not trap foot-positioned engine actors
+ok 220 - source waypoints above the collision floor do not trap foot-positioned engine actors
+  ---
+  duration_ms: 20.4655
+  type: 'test'
+  ...
+# Subtest: script perception respects original View distance and collision visibility
+ok 221 - script perception respects original View distance and collision visibility
+  ---
+  duration_ms: 10.78775
+  type: 'test'
+  ...
+# Subtest: native wait begins pursuit only after discovery, while idle and behavior reset keep their source meaning
+ok 222 - native wait begins pursuit only after discovery, while idle and behavior reset keep their source meaning
+  ---
+  duration_ms: 21.442958
+  type: 'test'
+  ...
+# Subtest: the original guard discovery, loss, retreat and report dialogue execute through PST state transitions
+ok 223 - the original guard discovery, loss, retreat and report dialogue execute through PST state transitions
+  ---
+  duration_ms: 40.674875
+  type: 'test'
+  ...
+# Subtest: original scene item damage callbacks change real registered object collision and item activation
+ok 224 - original scene item damage callbacks change real registered object collision and item activation
+  ---
+  duration_ms: 22.098458
+  type: 'test'
+  ...
+# Subtest: mission completion uses all original hostile NPCs and retains its explicit Rule-10 inference
+ok 225 - mission completion uses all original hostile NPCs and retains its explicit Rule-10 inference
+  ---
+  duration_ms: 13.385417
+  type: 'test'
+  ...
+# Subtest: the source HP thresholds trigger a sentry retreat and the original leader death line
+ok 226 - the source HP thresholds trigger a sentry retreat and the original leader death line
+  ---
+  duration_ms: 14.503667
+  type: 'test'
+  ...
+# Subtest: unsupported host APIs are explicit and a disposed host stops script execution
+ok 227 - unsupported host APIs are explicit and a disposed host stops script execution
+  ---
+  duration_ms: 12.029917
+  type: 'test'
+  ...
+# Subtest: leaving while player equipment loads does not start an abandoned source mission
+ok 228 - leaving while player equipment loads does not start an abandoned source mission
+  ---
+  duration_ms: 7.943833
+  type: 'test'
+  ...
+# Subtest: late original NPC loads are removed after the source mission is disposed
+ok 229 - late original NPC loads are removed after the source mission is disposed
+  ---
+  duration_ms: 15.914958
+  type: 'test'
+  ...
+# Subtest: island mission loads the two original NPCs, source player configuration, dialogue and patrol routes on real floors
+ok 230 - island mission loads the two original NPCs, source player configuration, dialogue and patrol routes on real floors
+  ---
+  duration_ms: 487.214667
+  type: 'test'
+  ...
+# Subtest: ordinary walking follows original island waypoint links from the source player spawn to both source guard spawns
+ok 231 - ordinary walking follows original island waypoint links from the source player spawn to both source guard spawns
+  ---
+  duration_ms: 1189.558833
+  type: 'test'
+  ...
+# Subtest: original reacquisition Perform attack becomes a single valid combat request without changing source patrol intent
+ok 232 - original reacquisition Perform attack becomes a single valid combat request without changing source patrol intent
+  ---
+  duration_ms: 362.540791
+  type: 'test'
+  ...
+# Subtest: a script attack request cannot bypass native scene line-of-sight or normal weapon reach
+ok 233 - a script attack request cannot bypass native scene line-of-sight or normal weapon reach
+  ---
+  duration_ms: 156.626291
+  type: 'test'
+  ...
+# Subtest: island native sword combat consumes the source 2000 HP and executes both death lines before a single inferred victory and restart
+ok 234 - island native sword combat consumes the source 2000 HP and executes both death lines before a single inferred victory and restart
+  ---
+  duration_ms: 6127.10625
+  type: 'test'
+  ...
+# Subtest: ordinary movement into living island guards causes natural failure and restart restores source HP and pending intents
+ok 235 - ordinary movement into living island guards causes natural failure and restart restores source HP and pending intents
+  ---
+  duration_ms: 3652.474458
+  type: 'test'
+  ...
+# Actual source guards caused failure after 23.07 simulated seconds; no HP/dead assignment.
+# Subtest: snow city starts with source seven guards, both original weapons, five weather settings and10000HP gates
+ok 236 - snow city starts with source seven guards, both original weapons, five weather settings and10000HP gates
+  ---
+  duration_ms: 837.530958
+  type: 'test'
+  ...
+# Subtest: source spear contacts break the enemy gate through all source stages and wait for its final FMC frame before victory
+ok 237 - source spear contacts break the enemy gate through all source stages and wait for its final FMC frame before victory
+  ---
+  duration_ms: 3383.787417
+  type: 'test'
+  ...
+# Source gate victory at127.50s; isolated contact fixture, not live-AI completion.
+# Subtest: weather updates do not draw combat randomness and leaving disposes its scene objects
+ok 238 - weather updates do not draw combat randomness and leaving disposes its scene objects
+  ---
+  duration_ms: 136.156458
+  type: 'test'
+  ...
+# Subtest: source items retain their actual models, handedness and original stance
+ok 239 - source items retain their actual models, handedness and original stance
+  ---
+  duration_ms: 296.38425
+  type: 'test'
+  ...
+# Subtest: dual ordinary attack inputs traverse actual native bones and each source window once
+ok 240 - dual ordinary attack inputs traverse actual native bones and each source window once
+  ---
+  duration_ms: 30.823541
+  type: 'test'
+  ...
+# Subtest: hammer ordinary attack inputs traverse actual native bones and each source window once
+ok 241 - hammer ordinary attack inputs traverse actual native bones and each source window once
+  ---
+  duration_ms: 29.489083
+  type: 'test'
+  ...
+# Subtest: knuckle ordinary attack inputs traverse actual native bones and each source window once
+ok 242 - knuckle ordinary attack inputs traverse actual native bones and each source window once
+  ---
+  duration_ms: 37.113125
+  type: 'test'
+  ...
+# Subtest: dual actual blocked first strike preserves HP and selects its source guard sound family
+ok 243 - dual actual blocked first strike preserves HP and selects its source guard sound family
+  ---
+  duration_ms: 17.71175
+  type: 'test'
+  ...
+# Subtest: hammer actual blocked first strike preserves HP and selects its source guard sound family
+ok 244 - hammer actual blocked first strike preserves HP and selects its source guard sound family
+  ---
+  duration_ms: 11.270042
+  type: 'test'
+  ...
+# Subtest: knuckle actual blocked first strike preserves HP and selects its source guard sound family
+ok 245 - knuckle actual blocked first strike preserves HP and selects its source guard sound family
+  ---
+  duration_ms: 4.33575
+  type: 'test'
+  ...
+# Subtest: mission weapon profiles keep plain-A separate from the authored directional branches
+ok 246 - mission weapon profiles keep plain-A separate from the authored directional branches
+  ---
+  duration_ms: 0.242666
+  type: 'test'
+  ...
+# Subtest: ordinary jump and attack inputs render the original dual, hammer and knuckle air poses and return to their source stances
+ok 247 - ordinary jump and attack inputs render the original dual, hammer and knuckle air poses and return to their source stances
+  ---
+  duration_ms: 77.416458
+  type: 'test'
+  ...
+# Subtest: available story cards match real level globals and source NPC declarations, independently of map numbering
+ok 248 - available story cards match real level globals and source NPC declarations, independently of map numbering
+  ---
+  duration_ms: 25.478291
+  type: 'test'
+  ...
+# Subtest: unavailable story maps fail before mutating or loading a match
+ok 249 - unavailable story maps fail before mutating or loading a match
+  ---
+  duration_ms: 0.577292
+  type: 'test'
+  ...
+# Subtest: each available mission soundtrack is present with its original byte-copy hash
+ok 250 - each available mission soundtrack is present with its original byte-copy hash
+  ---
+  duration_ms: 21.881458
+  type: 'test'
+  ...
+# Subtest: every advertised manual command addresses preserved native animation and RES data
+ok 251 - every advertised manual command addresses preserved native animation and RES data
+  ---
+  duration_ms: 3.831541
+  type: 'test'
+  ...
+# Subtest: the requested blade spin, sword flurry, spear circles and airborne stabs use distinct original poses
+ok 252 - the requested blade spin, sword flurry, spear circles and airborne stabs use distinct original poses
+  ---
+  duration_ms: 0.747541
+  type: 'test'
+  ...
+# Subtest: separate source command tables resolve the ambiguous spear and blade pose-reference rows
+ok 253 - separate source command tables resolve the ambiguous spear and blade pose-reference rows
+  ---
+  duration_ms: 0.191417
+  type: 'test'
+  ...
+# Subtest: ordinary chains and conditional second stages preserve their distinct command prerequisites
+ok 254 - ordinary chains and conditional second stages preserve their distinct command prerequisites
+  ---
+  duration_ms: 0.2305
+  type: 'test'
+  ...
+# Subtest: catalog scope and unresolved projectile commands are explicit rather than silently substituted
+ok 255 - catalog scope and unresolved projectile commands are explicit rather than silently substituted
+  ---
+  duration_ms: 0.692916
+  type: 'test'
+  ...
+# Subtest: every usable command has a source bone, projectile or supported original effect bound, including its automatic phases
+ok 256 - every usable command has a source bone, projectile or supported original effect bound, including its automatic phases
+  ---
+  duration_ms: 0.745334
+  type: 'test'
+  ...
+# Subtest: the actual guide renders every catalog entry exactly once and rejects unequipped families
+ok 257 - the actual guide renders every catalog entry exactly once and rejects unequipped families
+  ---
+  duration_ms: 4.655667
+  type: 'test'
+  ...
+# Subtest: the reported spins, multi-thrust and four melee plunges show their complete distinct commands
+ok 258 - the reported spins, multi-thrust and four melee plunges show their complete distinct commands
+  ---
+  duration_ms: 2.582792
+  type: 'test'
+  ...
+# Subtest: rage costs and unavailable projectile specials remain visible next to their commands
+ok 259 - rage costs and unavailable projectile specials remain visible next to their commands
+  ---
+  duration_ms: 4.503208
+  type: 'test'
+  ...
+# Subtest: follow-up requirements are explained by move names and arrow commands are screen-reader labeled
+ok 260 - follow-up requirements are explained by move names and arrow commands are screen-reader labeled
+  ---
+  duration_ms: 2.70275
+  type: 'test'
+  ...
+# Subtest: original musket models, source stance and actual guard table are present
+ok 261 - original musket models, source stance and actual guard table are present
+  ---
+  duration_ms: 8.2215
+  type: 'test'
+  ...
+# Subtest: musket NPC ordinary attacks use source206 and do not invent airborne gunfire
+ok 262 - musket NPC ordinary attacks use source206 and do not invent airborne gunfire
+  ---
+  duration_ms: 2.704292
+  type: 'test'
+  ...
+# Subtest: actual POS206/207/208 releases hit once using each original RES modifier
+ok 263 - actual POS206/207/208 releases hit once using each original RES modifier
+  ---
+  duration_ms: 2.073042
+  type: 'test'
+  ...
+# Subtest: source weapon variants retain their own RES damage rather than default gun stats
+ok 264 - source weapon variants retain their own RES damage rather than default gun stats
+  ---
+  duration_ms: 0.783792
+  type: 'test'
+  ...
+# Subtest: guard and friendly contact preserve recovered damage arithmetic
+ok 265 - guard and friendly contact preserve recovered damage arithmetic
+  ---
+  duration_ms: 0.294667
+  type: 'test'
+  ...
+# Subtest: nearest actor or original map triangle wins, including a muzzle beyond a wall
+ok 266 - nearest actor or original map triangle wins, including a muzzle beyond a wall
+  ---
+  duration_ms: 1.229542
+  type: 'test'
+  ...
+# Subtest: host must choose ray range; pause, miss, stale windows and special EF do not duplicate shots
+ok 267 - host must choose ray range; pause, miss, stale windows and special EF do not duplicate shots
+  ---
+  duration_ms: 0.187917
+  type: 'test'
+  ...
+# Subtest: phoenix spear covers the original spear length with finite geometry
+ok 268 - phoenix spear covers the original spear length with finite geometry
+  ---
+  duration_ms: 153.4465
+  type: 'test'
+  ...
+# Subtest: phoenix spear preserves visible surface texture and restrained physically based lighting
+ok 269 - phoenix spear preserves visible surface texture and restrained physically based lighting
+  ---
+  duration_ms: 124.800625
+  type: 'test'
+  ...
+# Subtest: phoenix ribbons animate independently while keeping their vertices finite
+ok 270 - phoenix ribbons animate independently while keeping their vertices finite
+  ---
+  duration_ms: 71.201209
+  type: 'test'
+  ...
+# Subtest: switching spear skin preserves native combat state and attack reach
+ok 271 - switching spear skin preserves native combat state and attack reach
+  ---
+  duration_ms: 68.721459
+  type: 'test'
+  ...
+# Subtest: disposing a spear releases each owned resource once and preserves the shared environment
+ok 272 - disposing a spear releases each owned resource once and preserves the shared environment
+  ---
+  duration_ms: 94.399667
+  type: 'test'
+  ...
+# Subtest: original POS ground and air windows release one real W3_0 model, at native scale, once each
+ok 273 - original POS ground and air windows release one real W3_0 model, at native scale, once each
+  ---
+  duration_ms: 5.582333
+  type: 'test'
+  ...
+# Subtest: actual dart movement hits once using original 75/65 RES and recovered damage 34
+ok 274 - actual dart movement hits once using original 75/65 RES and recovered damage 34
+  ---
+  duration_ms: 1.371834
+  type: 'test'
+  ...
+# Subtest: continuous swept contact does not tunnel through a capsule at a low frame rate
+ok 275 - continuous swept contact does not tunnel through a capsule at a low frame rate
+  ---
+  duration_ms: 0.253959
+  type: 'test'
+  ...
+# Subtest: relative motion sweep catches a target crossing the projectile between frames
+ok 276 - relative motion sweep catches a target crossing the projectile between frames
+  ---
+  duration_ms: 0.314417
+  type: 'test'
+  ...
+# Subtest: an original map triangle blocks a target behind it and the closest actor wins before a wall
+ok 277 - an original map triangle blocks a target behind it and the closest actor wins before a wall
+  ---
+  duration_ms: 4.505042
+  type: 'test'
+  ...
+# Subtest: a hand beyond a wall cannot spawn a projectile through that wall
+ok 278 - a hand beyond a wall cannot spawn a projectile through that wall
+  ---
+  duration_ms: 0.309125
+  type: 'test'
+  ...
+# Subtest: a guarded dart is consumed once without HP loss; lethal impact emits one death
+ok 279 - a guarded dart is consumed once without HP loss; lethal impact emits one death
+  ---
+  duration_ms: 3.27325
+  type: 'test'
+  ...
+# Subtest: a weapon change after release preserves original launch weapon, pose, team and item snapshot
+ok 280 - a weapon change after release preserves original launch weapon, pose, team and item snapshot
+  ---
+  duration_ms: 0.324708
+  type: 'test'
+  ...
+# Subtest: self is excluded and friendly bodies use the original 0.2 team factor instead of being skipped
+ok 281 - self is excluded and friendly bodies use the original 0.2 team factor instead of being skipped
+  ---
+  duration_ms: 0.679834
+  type: 'test'
+  ...
+# Subtest: pause freezes motion and age, resume continues, expiry and match end remove every shot
+ok 282 - pause freezes motion and age, resume continues, expiry and match end remove every shot
+  ---
+  duration_ms: 0.81175
+  type: 'test'
+  ...
+# Subtest: map changes and menu exit clear shots before scene replacement
+ok 283 - map changes and menu exit clear shots before scene replacement
+  ---
+  duration_ms: 0.804333
+  type: 'test'
+  ...
+# Subtest: actual SKC/BNC/AMB, d_wpnR, W3_0 and original cave triangles launch and damage a real model at source waypoints
+ok 284 - actual SKC/BNC/AMB, d_wpnR, W3_0 and original cave triangles launch and damage a real model at source waypoints
+  ---
+  duration_ms: 2339.762208
+  type: 'test'
+  ...
+# Subtest: original leader W7_1 defense zero receives 49 instead of the basic spear defense-15 result
+ok 285 - original leader W7_1 defense zero receives 49 instead of the basic spear defense-15 result
+  ---
+  duration_ms: 0.686417
+  type: 'test'
+  ...
+# Subtest: all enabled rage moves and automatic pose links have source-backed effect definitions and PNG textures
+ok 286 - all enabled rage moves and automatic pose links have source-backed effect definitions and PNG textures
+  ---
+  duration_ms: 85.581541
+  type: 'test'
+  ...
+# Subtest: rage visuals follow authored frames, stay absent for ordinary attacks and cannot change combat values
+ok 287 - rage visuals follow authored frames, stay absent for ordinary attacks and cannot change combat values
+  ---
+  duration_ms: 5.26675
+  type: 'test'
+  ...
+# Subtest: original weapon DES dummies bind light to native W7_0 coordinates even when that model is hidden by a skin
+ok 288 - original weapon DES dummies bind light to native W7_0 coordinates even when that model is hidden by a skin
+  ---
+  duration_ms: 1.248709
+  type: 'test'
+  ...
+# Subtest: automatic rage links play their own EF timeline and pay no second cost
+ok 289 - automatic rage links play their own EF timeline and pay no second cost
+  ---
+  duration_ms: 8.317375
+  type: 'test'
+  ...
+# Subtest: hit interruption, weapon changes and clear remove visuals and dispose each owned mesh once
+ok 290 - hit interruption, weapon changes and clear remove visuals and dispose each owned mesh once
+  ---
+  duration_ms: 2.44275
+  type: 'test'
+  ...
+# Subtest: invalid native parent bindings remain hidden instead of emitting at the world origin
+ok 291 - invalid native parent bindings remain hidden instead of emitting at the world origin
+  ---
+  duration_ms: 4.21325
+  type: 'test'
+  ...
+# Subtest: key interpolation retains native endpoints and a normalized quaternion
+ok 292 - key interpolation retains native endpoints and a normalized quaternion
+  ---
+  duration_ms: 0.139708
+  type: 'test'
+  ...
+# Subtest: Raiden retains the independently decoded complete face and rigid eye/mouth alignment
+ok 293 - Raiden retains the independently decoded complete face and rigid eye/mouth alignment
+  ---
+  duration_ms: 8.2725
+  type: 'test'
+  ...
+# Subtest: Raiden preserves seven local color maps and the skin cutouts actually used by source UVs
+ok 294 - Raiden preserves seven local color maps and the skin cutouts actually used by source UVs
+  ---
+  duration_ms: 27.527708
+  type: 'test'
+  ...
+# Subtest: Raiden geometry uses finite normalized 30-bone skinning and valid triangle surfaces
+ok 295 - Raiden geometry uses finite normalized 30-bone skinning and valid triangle surfaces
+  ---
+  duration_ms: 23.055583
+  type: 'test'
+  ...
+# Subtest: Raiden has a separate p0 appearance and a missing bundle retains the live HuTao mesh
+ok 296 - Raiden has a separate p0 appearance and a missing bundle retains the live HuTao mesh
+  ---
+  duration_ms: 132.276875
+  type: 'test'
+  ...
+# Subtest: an incomplete Raiden bundle cannot be adopted or bypass the gate with a cached workshop preview
+ok 297 - an incomplete Raiden bundle cannot be adopted or bypass the gate with a cached workshop preview
+  ---
+  duration_ms: 78.498959
+  type: 'test'
+  ...
+# Subtest: the complete dress Raiden uses real mapped geometry and supplied texture files
+ok 298 - the complete dress Raiden uses real mapped geometry and supplied texture files
+  ---
+  duration_ms: 55.149166
+  type: 'test'
+  ...
+# Subtest: four appearances reuse one live skeleton and keep distinct cached surfaces and weapon attachments
+ok 299 - four appearances reuse one live skeleton and keep distinct cached surfaces and weapon attachments
+  ---
+  duration_ms: 94.639208
+  type: 'test'
+  ...
+# Subtest: Raiden remains finite and preserves original joints across 45 native motion samples
+ok 300 - Raiden remains finite and preserves original joints across 45 native motion samples
+  ---
+  duration_ms: 179.017667
+  type: 'test'
+  ...
+# Subtest: game adoption changes only appearance while keeping mission, HP, rage, weapon, airborne state and pose
+ok 301 - game adoption changes only appearance while keeping mission, HP, rage, weapon, airborne state and pose
+  ---
+  duration_ms: 16.094709
+  type: 'test'
+  ...
+# Subtest: a source cave destruction resets to the exact freshly loaded scene state and supports original Scene_OnInit again
+ok 302 - a source cave destruction resets to the exact freshly loaded scene state and supports original Scene_OnInit again
+  ---
+  duration_ms: 291.57675
+  type: 'test'
+  ...
+# Subtest: reset preserves source instance, shared GPU resources and grid collider references without allocating another map
+ok 303 - reset preserves source instance, shared GPU resources and grid collider references without allocating another map
+  ---
+  duration_ms: 67.315375
+  type: 'test'
+  ...
+# Subtest: reset is idempotent and removes session playback from static original props
+ok 304 - reset is idempotent and removes session playback from static original props
+  ---
+  duration_ms: 73.848834
+  type: 'test'
+  ...
+# Subtest: a real falling platform restores its original FMC frame and collider matrices while retaining fresh-load animation semantics
+ok 305 - a real falling platform restores its original FMC frame and collider matrices while retaining fresh-load animation semantics
+  ---
+  duration_ms: 38.837333
+  type: 'test'
+  ...
+# Subtest: production story exit and same-map training start restore cached props, then a new story reinitializes its source state
+ok 306 - production story exit and same-map training start restore cached props, then a new story reinitializes its source state
+  ---
+  duration_ms: 197.447208
+  type: 'test'
+  ...
+# Subtest: story items read source lifetime, refresh mode and periodic stat effects without guessing from names
+ok 307 - story items read source lifetime, refresh mode and periodic stat effects without guessing from names
+  ---
+  duration_ms: 1.240917
+  type: 'test'
+  ...
+# Subtest: 嗜战 affects actual native effective attack, refreshes without stacking, and expires after60 seconds
+ok 308 - 嗜战 affects actual native effective attack, refreshes without stacking, and expires after60 seconds
+  ---
+  duration_ms: 0.579166
+  type: 'test'
+  ...
+# Subtest: 尸毒 uses the source5Hz counter-before-increment cadence across Web frame rates
+ok 309 - 尸毒 uses the source5Hz counter-before-increment cadence across Web frame rates
+  ---
+  duration_ms: 2.810333
+  type: 'test'
+  ...
+# Subtest: poison refresh preserves its current period and cannot underflow source HP
+ok 310 - poison refresh preserves its current period and cannot underflow source HP
+  ---
+  duration_ms: 0.1325
+  type: 'test'
+  ...
+# Subtest: restart/mission disposal clears only script-owned effects and leaves no periodic damage behind
+ok 311 - restart/mission disposal clears only script-owned effects and leaves no periodic damage behind
+  ---
+  duration_ms: 0.225125
+  type: 'test'
+  ...
+# Subtest: all preserved PST/header files parse and load their actual include dependencies
+ok 312 - all preserved PST/header files parse and load their actual include dependencies
+  ---
+  duration_ms: 143.641667
+  type: 'test'
+  ...
+# Subtest: the original Stalactite Cave mission starts its three declared NPC scripts
+ok 313 - the original Stalactite Cave mission starts its three declared NPC scripts
+  ---
+  duration_ms: 0.992084
+  type: 'test'
+  ...
+# Subtest: the original first cave NPC binds its runtime address and enters its scripted wait behavior
+ok 314 - the original first cave NPC binds its runtime address and enters its scripted wait behavior
+  ---
+  duration_ms: 0.263334
+  type: 'test'
+  ...
+# Subtest: the original cave scene loads all included libraries and initializes its real stone state
+ok 315 - the original cave scene loads all included libraries and initializes its real stone state
+  ---
+  duration_ms: 10.930417
+  type: 'test'
+  ...
+# Subtest: an actual cave stone callback removes collision and activates its original item after damage
+ok 316 - an actual cave stone callback removes collision and activates its original item after damage
+  ---
+  duration_ms: 13.629542
+  type: 'test'
+  ...
+# Subtest: original machine damage uses pose attack without character defense, guard or team scaling
+ok 317 - original machine damage uses pose attack without character defense, guard or team scaling
+  ---
+  duration_ms: 0.977625
+  type: 'test'
+  ...
+# Subtest: projectile world hits feed original pose damage into the actual cave stone PST callback
+ok 318 - projectile world hits feed original pose damage into the actual cave stone PST callback
+  ---
+  duration_ms: 13.084583
+  type: 'test'
+  ...
+# Subtest: the real misspelled Perofrm API is exposed instead of silently corrected or skipped
+ok 319 - the real misspelled Perofrm API is exposed instead of silently corrected or skipped
+  ---
+  duration_ms: 0.772458
+  type: 'test'
+  ...
+# Subtest: native API requirements include exact names and source locations from included files
+ok 320 - native API requirements include exact names and source locations from included files
+  ---
+  duration_ms: 21.096459
+  type: 'test'
+  ...
+# Subtest: for/while loops, lexical locals, integer division and short circuit operators execute without JavaScript evaluation
+ok 321 - for/while loops, lexical locals, integer division and short circuit operators execute without JavaScript evaluation
+  ---
+  duration_ms: 0.665833
+  type: 'test'
+  ...
+# Subtest: a native output reference evaluates an array index once
+ok 322 - a native output reference evaluates an array index once
+  ---
+  duration_ms: 0.235958
+  type: 'test'
+  ...
+# Subtest: unknown native APIs, infinite loops, bounds violations and arbitrary property access fail explicitly
+ok 323 - unknown native APIs, infinite loops, bounds violations and arbitrary property access fail explicitly
+  ---
+  duration_ms: 0.258333
+  type: 'test'
+  ...
+# Subtest: the manifest exposes all actual maps and explicitly blocks the nonfinite map
+ok 324 - the manifest exposes all actual maps and explicitly blocks the nonfinite map
+  ---
+  duration_ms: 0.590042
+  type: 'test'
+  ...
+# Subtest: every imported model marked available has finite native geometry and matching source bytes
+ok 325 - every imported model marked available has finite native geometry and matching source bytes
+  ---
+  duration_ms: 259.428791
+  type: 'test'
+  ...
+# Subtest: POS and ACT are parsed from the preserved native files
+ok 326 - POS and ACT are parsed from the preserved native files
+  ---
+  duration_ms: 2.670833
+  type: 'test'
+  ...
+# Subtest: native animation phase speeds remain deterministic across frame partitions
+ok 327 - native animation phase speeds remain deterministic across frame partitions
+  ---
+  duration_ms: 0.662625
+  type: 'test'
+  ...
+# Subtest: a POS attack window is inactive before its original start frame
+ok 328 - a POS attack window is inactive before its original start frame
+  ---
+  duration_ms: 0.153667
+  type: 'test'
+  ...
+# Subtest: active native combo transitions obey the original ACT link graph
+ok 329 - active native combo transitions obey the original ACT link graph
+  ---
+  duration_ms: 1.465875
+  type: 'test'
+  ...
+# Subtest: unverified native damage coefficients are reported without fabricating HP loss
+ok 330 - unverified native damage coefficients are reported without fabricating HP loss
+  ---
+  duration_ms: 0.796875
+  type: 'test'
+  ...
+# Subtest: the original sword, blade and spear remain their verified RES model IDs
+ok 331 - the original sword, blade and spear remain their verified RES model IDs
+  ---
+  duration_ms: 0.08225
+  type: 'test'
+  ...
+# Subtest: native sound effects use the original PonEF-to-WAV references
+ok 332 - native sound effects use the original PonEF-to-WAV references
+  ---
+  duration_ms: 2.474958
+  type: 'test'
+  ...
+# Subtest: original spawn points in Four Squares and Stalactite Cave have actual collision surfaces
+ok 333 - original spawn points in Four Squares and Stalactite Cave have actual collision surfaces
+  ---
+  duration_ms: 36.65375
+  type: 'test'
+  ...
+# Subtest: an explicit native texture URL loads with an empty fallback path and retains a separate alpha mask
+ok 334 - an explicit native texture URL loads with an empty fallback path and retains a separate alpha mask
+  ---
+  duration_ms: 20.636625
+  type: 'test'
+  ...
+# Subtest: hidden collision platforms below the original Forge spawns remain solid
+ok 335 - hidden collision platforms below the original Forge spawns remain solid
+  ---
+  duration_ms: 18.164792
+  type: 'test'
+  ...
+# Subtest: rapid character selection keeps the latest requested native character
+ok 336 - rapid character selection keeps the latest requested native character
+  ---
+  duration_ms: 0.560458
+  type: 'test'
+  ...
+# Subtest: out-of-order native weapon loads attach only the latest selected model
+ok 337 - out-of-order native weapon loads attach only the latest selected model
+  ---
+  duration_ms: 0.853875
+  type: 'test'
+  ...
+# Subtest: native map cache eviction protects the current scene and pending loads
+ok 338 - native map cache eviction protects the current scene and pending loads
+  ---
+  duration_ms: 0.26125
+  type: 'test'
+  ...
+1..338
+# tests 338
+# suites 0
+# pass 338
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 52268.831292

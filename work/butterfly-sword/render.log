@@ -1,0 +1,7 @@
+/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/scripts/blender/render_butterfly_sword.py:9: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  mat=bpy.data.materials.new('Material %02d'%i);mat.diffuse_color=(*item['color'],1);mat.use_nodes=True;bs=mat.node_tree.nodes.get('Principled BSDF');bs.inputs['Base Color'].default_value=(*item['color'],1);bs.inputs['Metallic'].default_value=item['metalness'];bs.inputs['Roughness'].default_value=item['roughness'];ob.data.materials.append(mat)
+00:03.785  render           | Saved: '/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/work/butterfly-sword/月蝶剑-预览.png'
+Info: Saved as "月蝶剑-三维试版.blend"
+Blender 5.4.0 Alpha (hash 93eeecf73c12 built 2026-10-23 01:52:25)
+
+Blender quit

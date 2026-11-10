@@ -1,0 +1,35 @@
+004fc980 MOV EAX,dword ptr [ESP + 0x4]
+004fc984 SUB ESP,0xc
+004fc987 TEST EAX,EAX
+004fc989 JNZ 0x004fc993
+004fc98b XOR AL,AL
+004fc98d ADD ESP,0xc
+004fc990 RET 0x4
+004fc993 MOV EDX,dword ptr [EAX + 0x48]
+004fc996 TEST EDX,EDX
+004fc998 JG 0x004fc9a2
+004fc99a XOR AL,AL
+004fc99c ADD ESP,0xc
+004fc99f RET 0x4
+004fc9a2 MOV DL,byte ptr [EAX + 0x62]
+004fc9a5 TEST DL,DL
+004fc9a7 JZ 0x004fc9b1
+004fc9a9 XOR AL,AL
+004fc9ab ADD ESP,0xc
+004fc9ae RET 0x4
+004fc9b1 FLD float ptr [0x005ab844]
+004fc9b7 ADD EAX,0x18
+004fc9ba FMUL float ptr [0x005a83e8]
+004fc9c0 MOV EDX,dword ptr [EAX]
+004fc9c2 MOV dword ptr [ESP],EDX
+004fc9c6 MOV EDX,dword ptr [EAX + 0x4]
+004fc9c9 MOV dword ptr [ESP + 0x4],EDX
+004fc9cd LEA EDX,[ESP]
+004fc9d1 MOV EAX,dword ptr [EAX + 0x8]
+004fc9d4 PUSH EDX
+004fc9d5 MOV dword ptr [ESP + 0xc],EAX
+004fc9d9 FADD float ptr [ESP + 0xc]
+004fc9dd FSTP float ptr [ESP + 0xc]
+004fc9e1 CALL 0x004fc8a0
+004fc9e6 ADD ESP,0xc
+004fc9e9 RET 0x4

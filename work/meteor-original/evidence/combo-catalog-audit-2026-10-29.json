@@ -1,0 +1,1086 @@
+{
+  "date": "2026-10-29",
+  "scope": "five currently equipable weapons; community command map checked against original POS/ACT, not EXE input recognizer",
+  "weapons": {
+    "dart": {
+      "catalog": 8,
+      "ready": 5,
+      "pending": 3,
+      "ground": 5,
+      "air": 3,
+      "previousExplicitPoseIds": [
+        200,
+        202
+      ],
+      "addedManualPoseIds": [
+        209,
+        210,
+        201,
+        203,
+        214,
+        551
+      ],
+      "addedReady": 3,
+      "addedPending": 3
+    },
+    "dagger": {
+      "catalog": 17,
+      "ready": 16,
+      "pending": 1,
+      "ground": 11,
+      "air": 6,
+      "previousExplicitPoseIds": [
+        248,
+        249,
+        250,
+        251,
+        245,
+        246,
+        247
+      ],
+      "addedManualPoseIds": [
+        253,
+        370,
+        255,
+        343,
+        257,
+        558,
+        259,
+        252,
+        256,
+        559
+      ],
+      "addedReady": 9,
+      "addedPending": 1
+    },
+    "sword": {
+      "catalog": 21,
+      "ready": 21,
+      "pending": 0,
+      "ground": 18,
+      "air": 3,
+      "previousExplicitPoseIds": [
+        262,
+        263,
+        264,
+        260,
+        261,
+        266,
+        267,
+        269,
+        270,
+        271,
+        272,
+        274,
+        275
+      ],
+      "addedManualPoseIds": [
+        268,
+        273,
+        276,
+        277,
+        561,
+        560,
+        368,
+        265
+      ],
+      "addedReady": 8,
+      "addedPending": 0
+    },
+    "spear": {
+      "catalog": 18,
+      "ready": 18,
+      "pending": 0,
+      "ground": 15,
+      "air": 3,
+      "previousExplicitPoseIds": [
+        279,
+        280,
+        281,
+        282,
+        283,
+        285,
+        284,
+        287,
+        288,
+        289
+      ],
+      "addedManualPoseIds": [
+        286,
+        290,
+        291,
+        292,
+        571,
+        562,
+        293,
+        338
+      ],
+      "addedReady": 8,
+      "addedPending": 0
+    },
+    "blade": {
+      "catalog": 19,
+      "ready": 19,
+      "pending": 0,
+      "ground": 17,
+      "air": 2,
+      "previousExplicitPoseIds": [
+        295,
+        296,
+        297,
+        298,
+        299,
+        300,
+        301,
+        302,
+        303,
+        305,
+        306
+      ],
+      "addedManualPoseIds": [
+        304,
+        307,
+        374,
+        309,
+        572,
+        565,
+        310,
+        338
+      ],
+      "addedReady": 8,
+      "addedPending": 0
+    }
+  },
+  "poses": [
+    {
+      "id": "dart-200",
+      "poseId": 200,
+      "source": {
+        "file": "P0.POS",
+        "line": 2266,
+        "endLine": 2313
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "dart-209",
+      "poseId": 209,
+      "source": {
+        "file": "P0.POS",
+        "line": 2647,
+        "endLine": 2694
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "dart-210",
+      "poseId": 210,
+      "source": {
+        "file": "P0.POS",
+        "line": 2695,
+        "endLine": 2742
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "dart-201",
+      "poseId": 201,
+      "source": {
+        "file": "P0.POS",
+        "line": 2314,
+        "endLine": 2368
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "dart-203",
+      "poseId": 203,
+      "source": {
+        "file": "P0.POS",
+        "line": 2418,
+        "endLine": 2455
+      },
+      "attacks": 1,
+      "link": 204
+    },
+    {
+      "id": "dart-202",
+      "poseId": 202,
+      "source": {
+        "file": "P0.POS",
+        "line": 2369,
+        "endLine": 2417
+      },
+      "attacks": 1,
+      "link": 211
+    },
+    {
+      "id": "dart-214",
+      "poseId": 214,
+      "source": {
+        "file": "P0.POS",
+        "line": 2781,
+        "endLine": 2819
+      },
+      "attacks": 1,
+      "link": 211
+    },
+    {
+      "id": "dart-551",
+      "poseId": 551,
+      "source": {
+        "file": "P0.POS",
+        "line": 17102,
+        "endLine": 17157
+      },
+      "attacks": 1,
+      "link": 211
+    },
+    {
+      "id": "dagger-248",
+      "poseId": 248,
+      "source": {
+        "file": "P0.POS",
+        "line": 4488,
+        "endLine": 4544
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "dagger-249",
+      "poseId": 249,
+      "source": {
+        "file": "P0.POS",
+        "line": 4545,
+        "endLine": 4594
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "dagger-250",
+      "poseId": 250,
+      "source": {
+        "file": "P0.POS",
+        "line": 4595,
+        "endLine": 4651
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "dagger-251",
+      "poseId": 251,
+      "source": {
+        "file": "P0.POS",
+        "line": 4652,
+        "endLine": 4716
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "dagger-253",
+      "poseId": 253,
+      "source": {
+        "file": "P0.POS",
+        "line": 4784,
+        "endLine": 4865
+      },
+      "attacks": 2,
+      "link": 336
+    },
+    {
+      "id": "dagger-370",
+      "poseId": 370,
+      "source": {
+        "file": "P0.POS",
+        "line": 10726,
+        "endLine": 10789
+      },
+      "attacks": 1,
+      "link": 371
+    },
+    {
+      "id": "dagger-255",
+      "poseId": 255,
+      "source": {
+        "file": "P0.POS",
+        "line": 4868,
+        "endLine": 4961
+      },
+      "attacks": 2,
+      "link": null
+    },
+    {
+      "id": "dagger-343",
+      "poseId": 343,
+      "source": {
+        "file": "P0.POS",
+        "line": 9639,
+        "endLine": 9730
+      },
+      "attacks": 2,
+      "link": null
+    },
+    {
+      "id": "dagger-257",
+      "poseId": 257,
+      "source": {
+        "file": "P0.POS",
+        "line": 5019,
+        "endLine": 5063
+      },
+      "attacks": 1,
+      "link": 258
+    },
+    {
+      "id": "dagger-558",
+      "poseId": 558,
+      "source": {
+        "file": "P0.POS",
+        "line": 17452,
+        "endLine": 17503
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "dagger-259",
+      "poseId": 259,
+      "source": {
+        "file": "P0.POS",
+        "line": 5195,
+        "endLine": 5251
+      },
+      "attacks": 1,
+      "link": 349
+    },
+    {
+      "id": "dagger-245",
+      "poseId": 245,
+      "source": {
+        "file": "P0.POS",
+        "line": 4320,
+        "endLine": 4377
+      },
+      "attacks": 1,
+      "link": 332
+    },
+    {
+      "id": "dagger-246",
+      "poseId": 246,
+      "source": {
+        "file": "P0.POS",
+        "line": 4378,
+        "endLine": 4435
+      },
+      "attacks": 1,
+      "link": 333
+    },
+    {
+      "id": "dagger-247",
+      "poseId": 247,
+      "source": {
+        "file": "P0.POS",
+        "line": 4436,
+        "endLine": 4487
+      },
+      "attacks": 1,
+      "link": 334
+    },
+    {
+      "id": "dagger-252",
+      "poseId": 252,
+      "source": {
+        "file": "P0.POS",
+        "line": 4717,
+        "endLine": 4783
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "dagger-256",
+      "poseId": 256,
+      "source": {
+        "file": "P0.POS",
+        "line": 4962,
+        "endLine": 5018
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "dagger-559",
+      "poseId": 559,
+      "source": {
+        "file": "P0.POS",
+        "line": 17504,
+        "endLine": 17589
+      },
+      "attacks": 2,
+      "link": null
+    },
+    {
+      "id": "sword-262",
+      "poseId": 262,
+      "source": {
+        "file": "P0.POS",
+        "line": 5362,
+        "endLine": 5418
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "sword-263",
+      "poseId": 263,
+      "source": {
+        "file": "P0.POS",
+        "line": 5419,
+        "endLine": 5476
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "sword-264",
+      "poseId": 264,
+      "source": {
+        "file": "P0.POS",
+        "line": 5477,
+        "endLine": 5544
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "sword-266",
+      "poseId": 266,
+      "source": {
+        "file": "P0.POS",
+        "line": 5566,
+        "endLine": 5622
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "sword-267",
+      "poseId": 267,
+      "source": {
+        "file": "P0.POS",
+        "line": 5623,
+        "endLine": 5704
+      },
+      "attacks": 2,
+      "link": null
+    },
+    {
+      "id": "sword-268",
+      "poseId": 268,
+      "source": {
+        "file": "P0.POS",
+        "line": 5705,
+        "endLine": 5763
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "sword-269",
+      "poseId": 269,
+      "source": {
+        "file": "P0.POS",
+        "line": 5764,
+        "endLine": 5819
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "sword-270",
+      "poseId": 270,
+      "source": {
+        "file": "P0.POS",
+        "line": 5820,
+        "endLine": 5894
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "sword-271",
+      "poseId": 271,
+      "source": {
+        "file": "P0.POS",
+        "line": 5895,
+        "endLine": 5950
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "sword-272",
+      "poseId": 272,
+      "source": {
+        "file": "P0.POS",
+        "line": 5951,
+        "endLine": 6019
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "sword-273",
+      "poseId": 273,
+      "source": {
+        "file": "P0.POS",
+        "line": 6020,
+        "endLine": 6077
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "sword-274",
+      "poseId": 274,
+      "source": {
+        "file": "P0.POS",
+        "line": 6078,
+        "endLine": 6163
+      },
+      "attacks": 2,
+      "link": null
+    },
+    {
+      "id": "sword-275",
+      "poseId": 275,
+      "source": {
+        "file": "P0.POS",
+        "line": 6164,
+        "endLine": 6221
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "sword-276",
+      "poseId": 276,
+      "source": {
+        "file": "P0.POS",
+        "line": 6222,
+        "endLine": 6368
+      },
+      "attacks": 6,
+      "link": null
+    },
+    {
+      "id": "sword-277",
+      "poseId": 277,
+      "source": {
+        "file": "P0.POS",
+        "line": 6369,
+        "endLine": 6514
+      },
+      "attacks": 5,
+      "link": null
+    },
+    {
+      "id": "sword-561",
+      "poseId": 561,
+      "source": {
+        "file": "P0.POS",
+        "line": 17665,
+        "endLine": 17782
+      },
+      "attacks": 4,
+      "link": null
+    },
+    {
+      "id": "sword-560",
+      "poseId": 560,
+      "source": {
+        "file": "P0.POS",
+        "line": 17590,
+        "endLine": 17664
+      },
+      "attacks": 2,
+      "link": null
+    },
+    {
+      "id": "sword-368",
+      "poseId": 368,
+      "source": {
+        "file": "P0.POS",
+        "line": 10628,
+        "endLine": 10673
+      },
+      "attacks": 1,
+      "link": 369
+    },
+    {
+      "id": "sword-260",
+      "poseId": 260,
+      "source": {
+        "file": "P0.POS",
+        "line": 5252,
+        "endLine": 5309
+      },
+      "attacks": 1,
+      "link": 340
+    },
+    {
+      "id": "sword-261",
+      "poseId": 261,
+      "source": {
+        "file": "P0.POS",
+        "line": 5310,
+        "endLine": 5361
+      },
+      "attacks": 1,
+      "link": 341
+    },
+    {
+      "id": "sword-265",
+      "poseId": 265,
+      "source": {
+        "file": "P0.POS",
+        "line": 5545,
+        "endLine": 5565
+      },
+      "attacks": 0,
+      "link": 342
+    },
+    {
+      "id": "spear-279",
+      "poseId": 279,
+      "source": {
+        "file": "P0.POS",
+        "line": 6517,
+        "endLine": 6572
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "spear-280",
+      "poseId": 280,
+      "source": {
+        "file": "P0.POS",
+        "line": 6573,
+        "endLine": 6628
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "spear-281",
+      "poseId": 281,
+      "source": {
+        "file": "P0.POS",
+        "line": 6629,
+        "endLine": 6690
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "spear-284",
+      "poseId": 284,
+      "source": {
+        "file": "P0.POS",
+        "line": 6814,
+        "endLine": 6869
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "spear-285",
+      "poseId": 285,
+      "source": {
+        "file": "P0.POS",
+        "line": 6870,
+        "endLine": 6925
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "spear-286",
+      "poseId": 286,
+      "source": {
+        "file": "P0.POS",
+        "line": 6926,
+        "endLine": 6998
+      },
+      "attacks": 2,
+      "link": null
+    },
+    {
+      "id": "spear-287",
+      "poseId": 287,
+      "source": {
+        "file": "P0.POS",
+        "line": 6999,
+        "endLine": 7084
+      },
+      "attacks": 2,
+      "link": null
+    },
+    {
+      "id": "spear-288",
+      "poseId": 288,
+      "source": {
+        "file": "P0.POS",
+        "line": 7085,
+        "endLine": 7175
+      },
+      "attacks": 2,
+      "link": null
+    },
+    {
+      "id": "spear-289",
+      "poseId": 289,
+      "source": {
+        "file": "P0.POS",
+        "line": 7176,
+        "endLine": 7248
+      },
+      "attacks": 2,
+      "link": null
+    },
+    {
+      "id": "spear-290",
+      "poseId": 290,
+      "source": {
+        "file": "P0.POS",
+        "line": 7249,
+        "endLine": 7304
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "spear-291",
+      "poseId": 291,
+      "source": {
+        "file": "P0.POS",
+        "line": 7305,
+        "endLine": 7360
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "spear-292",
+      "poseId": 292,
+      "source": {
+        "file": "P0.POS",
+        "line": 7361,
+        "endLine": 7412
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "spear-571",
+      "poseId": 571,
+      "source": {
+        "file": "P0.POS",
+        "line": 18321,
+        "endLine": 18377
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "spear-562",
+      "poseId": 562,
+      "source": {
+        "file": "P0.POS",
+        "line": 17783,
+        "endLine": 17845
+      },
+      "attacks": 2,
+      "link": 563
+    },
+    {
+      "id": "spear-293",
+      "poseId": 293,
+      "source": {
+        "file": "P0.POS",
+        "line": 7413,
+        "endLine": 7477
+      },
+      "attacks": 1,
+      "link": 294
+    },
+    {
+      "id": "spear-338",
+      "poseId": 338,
+      "source": {
+        "file": "P0.POS",
+        "line": 9501,
+        "endLine": 9539
+      },
+      "attacks": 1,
+      "link": 339
+    },
+    {
+      "id": "spear-282",
+      "poseId": 282,
+      "source": {
+        "file": "P0.POS",
+        "line": 6691,
+        "endLine": 6758
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "spear-283",
+      "poseId": 283,
+      "source": {
+        "file": "P0.POS",
+        "line": 6759,
+        "endLine": 6813
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "blade-295",
+      "poseId": 295,
+      "source": {
+        "file": "P0.POS",
+        "line": 7541,
+        "endLine": 7603
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "blade-296",
+      "poseId": 296,
+      "source": {
+        "file": "P0.POS",
+        "line": 7604,
+        "endLine": 7660
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "blade-297",
+      "poseId": 297,
+      "source": {
+        "file": "P0.POS",
+        "line": 7661,
+        "endLine": 7724
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "blade-299",
+      "poseId": 299,
+      "source": {
+        "file": "P0.POS",
+        "line": 7789,
+        "endLine": 7852
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "blade-300",
+      "poseId": 300,
+      "source": {
+        "file": "P0.POS",
+        "line": 7853,
+        "endLine": 7902
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "blade-301",
+      "poseId": 301,
+      "source": {
+        "file": "P0.POS",
+        "line": 7903,
+        "endLine": 7972
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "blade-302",
+      "poseId": 302,
+      "source": {
+        "file": "P0.POS",
+        "line": 7973,
+        "endLine": 8055
+      },
+      "attacks": 2,
+      "link": null
+    },
+    {
+      "id": "blade-303",
+      "poseId": 303,
+      "source": {
+        "file": "P0.POS",
+        "line": 8056,
+        "endLine": 8137
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "blade-304",
+      "poseId": 304,
+      "source": {
+        "file": "P0.POS",
+        "line": 8138,
+        "endLine": 8201
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "blade-305",
+      "poseId": 305,
+      "source": {
+        "file": "P0.POS",
+        "line": 8202,
+        "endLine": 8265
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "blade-306",
+      "poseId": 306,
+      "source": {
+        "file": "P0.POS",
+        "line": 8266,
+        "endLine": 8330
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "blade-307",
+      "poseId": 307,
+      "source": {
+        "file": "P0.POS",
+        "line": 8331,
+        "endLine": 8395
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "blade-374",
+      "poseId": 374,
+      "source": {
+        "file": "P0.POS",
+        "line": 10941,
+        "endLine": 11012
+      },
+      "attacks": 1,
+      "link": 375
+    },
+    {
+      "id": "blade-309",
+      "poseId": 309,
+      "source": {
+        "file": "P0.POS",
+        "line": 8398,
+        "endLine": 8454
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "blade-572",
+      "poseId": 572,
+      "source": {
+        "file": "P0.POS",
+        "line": 18378,
+        "endLine": 18450
+      },
+      "attacks": 1,
+      "link": 573
+    },
+    {
+      "id": "blade-565",
+      "poseId": 565,
+      "source": {
+        "file": "P0.POS",
+        "line": 17899,
+        "endLine": 17956
+      },
+      "attacks": 1,
+      "link": null
+    },
+    {
+      "id": "blade-310",
+      "poseId": 310,
+      "source": {
+        "file": "P0.POS",
+        "line": 8455,
+        "endLine": 8513
+      },
+      "attacks": 1,
+      "link": 311
+    },
+    {
+      "id": "blade-338",
+      "poseId": 338,
+      "source": {
+        "file": "P0.POS",
+        "line": 9501,
+        "endLine": 9539
+      },
+      "attacks": 1,
+      "link": 339
+    },
+    {
+      "id": "blade-298",
+      "poseId": 298,
+      "source": {
+        "file": "P0.POS",
+        "line": 7725,
+        "endLine": 7788
+      },
+      "attacks": 1,
+      "link": null
+    }
+  ],
+  "sourceHashes": {
+    "dist/assets/native/combat/P0.POS": "1e71f945afc6b701f86eb50e500feccca22f20b52f7f3bec073b0247d390a5fb",
+    "dist/assets/native/combat/character.act": "e52865424fe065e808a73e9f81bb8df5a78e161a43e59e051bd41f0fb4e42eda",
+    "dist/assets/original/characters/meteor-res-data.json": "7fe60e2d0ea2e42facacb4306010a68a8599baab9fd58e98230c1340b6a8de44"
+  },
+  "effectAudit": {
+    "pureEffectPending": [
+      "dart-201",
+      "dart-203",
+      "dart-551",
+      "dagger-259"
+    ],
+    "partiallyMissingWindow": {
+      "dagger-343": "first window has real bones/weapon; second window is effect-only"
+    },
+    "basicDartEmptyBones": "200/209/210/202 launch native projectiles through a separate verified emitter path"
+  }
+}

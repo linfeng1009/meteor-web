@@ -1,0 +1,20 @@
+/* Original Meteor.exe static export @ 0055c300; original sample not executed. */
+/* XREF 00490713 UNCONDITIONAL_CALL */
+/* XREF 004cddbf UNCONDITIONAL_CALL */
+/* XREF 004cddde UNCONDITIONAL_CALL */
+/* XREF 004cde14 UNCONDITIONAL_CALL */
+/* XREF 004cdea4 UNCONDITIONAL_CALL */
+/* XREF 004cdf07 UNCONDITIONAL_CALL */
+/* XREF 004ce024 UNCONDITIONAL_CALL */
+/* XREF 004ce4aa UNCONDITIONAL_CALL */
+/* XREF 004d003b UNCONDITIONAL_CALL */
+/* XREF 004dcde7 UNCONDITIONAL_CALL */
+/* XREF 004dd0dc UNCONDITIONAL_CALL */
+/* XREF 004dfd2b UNCONDITIONAL_CALL */
+
+undefined4 __fastcall FUN_0055c300(int param_1)
+
+{
+  return *(undefined4 *)(param_1 + 0x640);
+}
+

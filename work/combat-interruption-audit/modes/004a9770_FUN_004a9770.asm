@@ -1,0 +1,7 @@
+004a9770 MOV ECX,dword ptr [ECX + 0xc]
+004a9773 TEST ECX,ECX
+004a9775 JZ 0x004a977c
+004a9777 MOV EAX,dword ptr [ECX]
+004a9779 JMP dword ptr [EAX + 0x20]
+004a977c OR EAX,0xffffffff
+004a977f RET 0xc

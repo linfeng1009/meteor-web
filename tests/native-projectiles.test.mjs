@@ -116,8 +116,9 @@ test('pause freezes motion and age, resume continues, expiry and match end remov
 test('map changes and menu exit clear shots before scene replacement', async () => {
   const { game, hero, target } = fixture(); release(game, hero);
   const next = { id: 'sn01', model: new THREE.Group(), bounds: new THREE.Box3(v(-20, -1, -20), v(20, 10, 20)), spawns: [{ position: v() }], metadata: { level: { integers: {} } } };
-  Object.assign(game, { mapRequest: 0, manifest: { maps: [{ id: 'sn01', name: '钟乳洞' }] }, mapCache: new Map([['sn01', Promise.resolve(next)]]), mapData: new Map([['sn01', next]]), pendingMaps: new Set(), camera: new THREE.PerspectiveCamera(), _loadStatus() {}, _trimMapCache() {} });
+  Object.assign(game, { mapRequest: 0, manifest: { maps: [{ id: 'sn01', name: '钟乳洞' }] }, mapCache: new Map([['sn01', Promise.resolve(next)]]), mapData: new Map([['sn01', next]]), pendingMaps: new Set(), camera: new THREE.PerspectiveCamera(), renderer: { shadowMap: {} }, _loadStatus() {}, _trimMapCache() {} });
   game.scene.background = new THREE.Color(); await game._loadMap('cave'); assert.equal(game.projectiles.size, 0); assert.equal(target.hp, 1000);
+  assert.equal(game.renderer.toneMapping, THREE.NoToneMapping); assert.equal(game.renderer.shadowMap.enabled, false);
   release(game, hero); Object.assign(game, { ready: Promise.resolve(), map: 'cave', sessionRequest: 0, _ground: () => null, _disposeNameplate() {} });
   await game.menu('cave'); assert.equal(game.projectiles.size, 0); assert.equal(game.running, false);
 });

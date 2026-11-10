@@ -1,0 +1,23 @@
+004ce4d1 CALL 0x0055c4d0
+004ce4d6 FLD float ptr [EDI + 0x128]
+004ce4dc FMUL float ptr [0x005a84c8]
+004ce4e2 MOV word ptr [ESP + 0x1c],AX
+004ce4e7 MOV AX,word ptr [EDI + 0x614]
+004ce4ee MOV word ptr [ESP + 0x1e],0x0
+004ce4f5 MOV word ptr [ESP + 0x20],AX
+004ce4fa CALL 0x00509980
+004ce4ff MOV EDX,dword ptr [ESI]
+004ce501 MOV word ptr [ESP + 0x22],AX
+004ce506 LEA EAX,[ESP + 0x1c]
+004ce50a PUSH 0x8
+004ce50c PUSH EAX
+004ce50d PUSH 0x1b
+004ce50f MOV ECX,ESI
+004ce511 CALL dword ptr [EDX + 0xc]
+004ce514 MOV EAX,EBP
+004ce516 POP EBP
+004ce517 POP EBX
+004ce518 POP EDI
+004ce519 POP ESI
+004ce51a ADD ESP,0x8
+004ce51d RET 0x8

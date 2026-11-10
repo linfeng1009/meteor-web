@@ -1,0 +1,174 @@
+TAP version 13
+# Subtest: original discovery requires View, a forward half-space beyond80 native units, and line of sight
+ok 1 - original discovery requires View, a forward half-space beyond80 native units, and line of sight
+  ---
+  duration_ms: 0.851
+  type: 'test'
+  ...
+# Subtest: native nearby awareness is omnidirectional but never bypasses range or an occluding wall
+ok 2 - native nearby awareness is omnidirectional but never bypasses range or an occluding wall
+  ---
+  duration_ms: 0.25925
+  type: 'test'
+  ...
+# Subtest: an unknown actor is not a target; a known nearby enemy is retained and lost at the original200-unit boundary
+ok 3 - an unknown actor is not a target; a known nearby enemy is retained and lost at the original200-unit boundary
+  ---
+  duration_ms: 0.256125
+  type: 'test'
+  ...
+# Subtest: actual training start with original四方阵 spawns wakes only the enemy that discovers the player and permits public combos
+ok 4 - actual training start with original四方阵 spawns wakes only the enemy that discovers the player and permits public combos
+  ---
+  duration_ms: 255.423834
+  type: 'test'
+  ...
+# Source DES starts on a CPU floor with live NPC AI: displacement=5.095,0.000,0.000; awareness=true,false,false; public262→263.
+# Subtest: unseen training enemies cannot discover through real collision triangles and respawn clears their cached target
+ok 5 - unseen training enemies cannot discover through real collision triangles and respawn clears their cached target
+  ---
+  duration_ms: 58.025666
+  type: 'test'
+  ...
+# Subtest: original四方阵 geometry and normal start preserve discovery-gated live AI rather than an opening three-enemy rush
+ok 6 - original四方阵 geometry and normal start preserve discovery-gated live AI rather than an opening three-enemy rush
+  ---
+  duration_ms: 160.029167
+  type: 'test'
+  ...
+# Originalsn06 model/colliders/spawns plus live AI: displacement=5.095,0.000,0.000; one enemy discovers the player, two remain unaware. CPU; no browser rendering.
+# Subtest: the real cave mission creates three distinct runtime NPCs with their original source configuration and waypoints
+ok 7 - the real cave mission creates three distinct runtime NPCs with their original source configuration and waypoints
+  ---
+  duration_ms: 30.775625
+  type: 'test'
+  ...
+# Subtest: source loading preserves the native browser fetch receiver
+ok 8 - source loading preserves the native browser fetch receiver
+  ---
+  duration_ms: 22.785917
+  type: 'test'
+  ...
+# Subtest: the real engine mission bridges preserve source HP, distinct actor IDs and original weapon variants
+ok 9 - the real engine mission bridges preserve source HP, distinct actor IDs and original weapon variants
+  ---
+  duration_ms: 15.926042
+  type: 'test'
+  ...
+# Subtest: the patrol routes and generated movement targets come from the original WP graph
+ok 10 - the patrol routes and generated movement targets come from the original WP graph
+  ---
+  duration_ms: 11.600875
+  type: 'test'
+  ...
+# Subtest: source waypoints above the collision floor do not trap foot-positioned engine actors
+ok 11 - source waypoints above the collision floor do not trap foot-positioned engine actors
+  ---
+  duration_ms: 10.463958
+  type: 'test'
+  ...
+# Subtest: script perception respects original View distance and collision visibility
+ok 12 - script perception respects original View distance and collision visibility
+  ---
+  duration_ms: 11.912166
+  type: 'test'
+  ...
+# Subtest: native wait begins pursuit only after discovery, while idle and behavior reset keep their source meaning
+ok 13 - native wait begins pursuit only after discovery, while idle and behavior reset keep their source meaning
+  ---
+  duration_ms: 8.209708
+  type: 'test'
+  ...
+# Subtest: the original guard discovery, loss, retreat and report dialogue execute through PST state transitions
+ok 14 - the original guard discovery, loss, retreat and report dialogue execute through PST state transitions
+  ---
+  duration_ms: 11.785166
+  type: 'test'
+  ...
+# Subtest: original scene item damage callbacks change real registered object collision and item activation
+ok 15 - original scene item damage callbacks change real registered object collision and item activation
+  ---
+  duration_ms: 11.471375
+  type: 'test'
+  ...
+# Subtest: mission completion uses all original hostile NPCs and retains its explicit Rule-10 inference
+ok 16 - mission completion uses all original hostile NPCs and retains its explicit Rule-10 inference
+  ---
+  duration_ms: 9.279833
+  type: 'test'
+  ...
+# Subtest: the source HP thresholds trigger a sentry retreat and the original leader death line
+ok 17 - the source HP thresholds trigger a sentry retreat and the original leader death line
+  ---
+  duration_ms: 9.813917
+  type: 'test'
+  ...
+# Subtest: unsupported host APIs are explicit and a disposed host stops script execution
+ok 18 - unsupported host APIs are explicit and a disposed host stops script execution
+  ---
+  duration_ms: 8.660459
+  type: 'test'
+  ...
+# Subtest: leaving while player equipment loads does not start an abandoned source mission
+ok 19 - leaving while player equipment loads does not start an abandoned source mission
+  ---
+  duration_ms: 6.2065
+  type: 'test'
+  ...
+# Subtest: late original NPC loads are removed after the source mission is disposed
+ok 20 - late original NPC loads are removed after the source mission is disposed
+  ---
+  duration_ms: 8.835208
+  type: 'test'
+  ...
+# Subtest: source NPC asset contains all twelve distinct weapon tables,36 vectors and127 ground programs
+ok 21 - source NPC asset contains all twelve distinct weapon tables,36 vectors and127 ground programs
+  ---
+  duration_ms: 1.188083
+  type: 'test'
+  ...
+# Subtest: source Guard and Attack1/2/3 weights share a single100-way roll without probability normalization
+ok 22 - source Guard and Attack1/2/3 weights share a single100-way roll without probability normalization
+  ---
+  duration_ms: 0.272792
+  type: 'test'
+  ...
+# Subtest: native Think scales the source base delay and clamps the low speed without fabricating a cooldown range
+ok 23 - native Think scales the source base delay and clamps the low speed without fabricating a cooldown range
+  ---
+  duration_ms: 0.084625
+  type: 'test'
+  ...
+# Subtest: NPC clock preserves randomized source startup, one decision per update, pause and dropped overshoot
+ok 24 - NPC clock preserves randomized source startup, one decision per update, pause and dropped overshoot
+  ---
+  duration_ms: 0.152208
+  type: 'test'
+  ...
+# Subtest: source fifty-percent repetition retains previous category/index and clamps it after weapon changes
+ok 25 - source fifty-percent repetition retains previous category/index and clamps it after weapon changes
+  ---
+  duration_ms: 0.266875
+  type: 'test'
+  ...
+# Subtest: native controllerstate0 selects the distinct original17-entry air program table without changing ground memory
+ok 26 - native controllerstate0 selects the distinct original17-entry air program table without changing ground memory
+  ---
+  duration_ms: 0.084666
+  type: 'test'
+  ...
+# Subtest: NPC direction programs use actual catalog roots, prerequisites and existing ACT continuation gates
+ok 27 - NPC direction programs use actual catalog roots, prerequisites and existing ACT continuation gates
+  ---
+  duration_ms: 2.029917
+  type: 'test'
+  ...
+1..27
+# tests 27
+# suites 0
+# pass 27
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 631.593333

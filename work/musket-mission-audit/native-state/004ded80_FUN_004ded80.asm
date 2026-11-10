@@ -1,0 +1,10 @@
+004ded80 PUSH ESI
+004ded81 MOV ESI,dword ptr [ESP + 0x8]
+004ded85 MOV ECX,ESI
+004ded87 MOV EAX,dword ptr [ESI]
+004ded89 CALL dword ptr [EAX + 0x130]
+004ded8f TEST EAX,EAX
+004ded91 JNZ 0x004ded99
+004ded93 MOV dword ptr [ESI + 0x36c],EAX
+004ded99 POP ESI
+004ded9a RET 0x4

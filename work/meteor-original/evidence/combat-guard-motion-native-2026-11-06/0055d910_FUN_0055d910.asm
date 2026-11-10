@@ -1,0 +1,14 @@
+0055d910 MOV EAX,dword ptr [ECX + 0xfc]
+0055d916 FLD float ptr [ESP + 0x4]
+0055d91a FMUL float ptr [ECX + 0x10c]
+0055d920 PUSH EAX
+0055d921 CALL 0x0055c4f0
+0055d926 FST float ptr [ECX + 0x108]
+0055d92c FLD float ptr [ECX + 0x38]
+0055d92f FMUL float ptr [EAX + 0x8]
+0055d932 FMUL ST1
+0055d934 FSTP float ptr [ESP + 0x4]
+0055d938 MOV EDX,dword ptr [ESP + 0x4]
+0055d93c FSTP ST0
+0055d93e MOV dword ptr [ESP + 0x4],EDX
+0055d942 JMP 0x0055d560

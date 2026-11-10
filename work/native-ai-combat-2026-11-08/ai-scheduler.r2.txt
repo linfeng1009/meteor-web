@@ -1,0 +1,121 @@
+HINT: Relocs not applied, some references may not resolve: use -e bin.relocs.apply=true
+            0x004f98c0      57             push edi
+            0x004f98c1      e837f10000     call 0x5089fd
+            0x004f98c6      83c404         add esp, 4
+        ┌─< 0x004f98c9      eb27           jmp 0x4f98f2
+        │   0x004f98cb      83c007         add eax, 7
+        │   0x004f98ce      b9e8595d00     mov ecx, 0x5d59e8
+        │   0x004f98d3      c1e803         shr eax, 3
+        │   0x004f98d6      8d3485a459..   lea esi, [eax*4 + 0x5d59a4]
+        │   0x004f98dd      e84e8af0ff     call 0x402330
+        │   0x004f98e2      8b06           mov eax, dword [esi]
+        │   0x004f98e4      b9e8595d00     mov ecx, 0x5d59e8
+        │   0x004f98e9      8907           mov dword [edi], eax
+        │   0x004f98eb      893e           mov dword [esi], edi
+        │   0x004f98ed      e83e9af4ff     call 0x443330
+        └─> 0x004f98f2      8b442418       mov eax, dword [esp + 0x18]
+            0x004f98f6      8b4c2410       mov ecx, dword [esp + 0x10]
+            0x004f98fa      2bc1           sub eax, ecx
+            0x004f98fc      5f             pop edi
+            0x004f98fd      85c9           test ecx, ecx
+            0x004f98ff      5e             pop esi
+        ┌─< 0x004f9900      740e           je 0x4f9910
+        │   0x004f9902      85c0           test eax, eax
+       ┌──< 0x004f9904      740a           je 0x4f9910
+       ││   0x004f9906      50             push eax
+       ││   0x004f9907      51             push ecx
+       ││   0x004f9908      e88395f0ff     call 0x402e90
+       ││   0x004f990d      83c408         add esp, 8
+       └└─> 0x004f9910      8b4c2424       mov ecx, dword [esp + 0x24]
+            0x004f9914      b801000000     mov eax, 1
+            0x004f9919      64890d0000..   mov dword fs:[0], ecx
+            0x004f9920      83c430         add esp, 0x30
+            0x004f9923      c3             ret
+            0x004f9924      90             nop
+            0x004f9925      90             nop
+            0x004f9926      90             nop
+            0x004f9927      90             nop
+            0x004f9928      90             nop
+            0x004f9929      90             nop
+            0x004f992a      90             nop
+            0x004f992b      90             nop
+            0x004f992c      90             nop
+            0x004f992d      90             nop
+            0x004f992e      90             nop
+            0x004f992f      90             nop
+            0x004f9930      8b442404       mov eax, dword [esp + 4]
+            0x004f9934      83ec08         sub esp, 8
+            0x004f9937      8b4008         mov eax, dword [eax + 8]
+            0x004f993a      56             push esi
+            0x004f993b      8b08           mov ecx, dword [eax]
+            0x004f993d      8b5108         mov edx, dword [ecx + 8]
+            0x004f9940      8b0d9c626600   mov ecx, dword [0x66629c]   ; [0x66629c:4]=0
+            0x004f9946      52             push edx
+            0x004f9947      e8849dfcff     call 0x4c36d0
+            0x004f994c      8bf0           mov esi, eax
+            0x004f994e      85f6           test esi, esi
+        ┌─< 0x004f9950      7505           jne 0x4f9957
+        │   0x004f9952      5e             pop esi
+        │   0x004f9953      83c408         add esp, 8
+        │   0x004f9956      c3             ret
+        └─> 0x004f9957      8b4604         mov eax, dword [esi + 4]
+            0x004f995a      83f803         cmp eax, 3                  ; 3
+        ┌─< 0x004f995d      7525           jne 0x4f9984
+        │   0x004f995f      8bce           mov ecx, esi
+        │   0x004f9961      e84a420000     call 0x4fdbb0
+        │   0x004f9966      817e64e04b..   cmp dword [esi + 0x64], 0x504be0
+       ┌──< 0x004f996d      0f85ea000000   jne 0x4f9a5d
+       ││   0x004f9973      8bce           mov ecx, esi
+       ││   0x004f9975      e8f63e0000     call 0x4fd870
+       ││   0x004f997a      b801000000     mov eax, 1
+       ││   0x004f997f      5e             pop esi
+       ││   0x004f9980      83c408         add esp, 8
+       ││   0x004f9983      c3             ret
+       │└─> 0x004f9984      83f801         cmp eax, 1                  ; 1
+       │┌─< 0x004f9987      0f85d0000000   jne 0x4f9a5d
+       ││   0x004f998d      a19c626600     mov eax, dword [0x66629c]   ; [0x66629c:4]=0
+       ││   0x004f9992      53             push ebx
+       ││   0x004f9993      55             push ebp
+       ││   0x004f9994      57             push edi
+       ││   0x004f9995      8b7814         mov edi, dword [eax + 0x14]
+       ││   0x004f9998      8d6814         lea ebp, [eax + 0x14]
+       ││   0x004f999b      8b4010         mov eax, dword [eax + 0x10]
+       ││   0x004f999e      8bcf           mov ecx, edi
+       ││   0x004f99a0      89442410       mov dword [esp + 0x10], eax
+       ││   0x004f99a4      8bd8           mov ebx, eax
+       ││   0x004f99a6      2bcf           sub ecx, edi
+       ││   0x004f99a8      b893244992     mov eax, 0x92492493
+       ││   0x004f99ad      f7e9           imul ecx
+       ││   0x004f99af      03d1           add edx, ecx
+       ││   0x004f99b1      c1fa04         sar edx, 4
+       ││   0x004f99b4      8bc2           mov eax, edx
+       ││   0x004f99b6      c1e81f         shr eax, 0x1f
+       ││   0x004f99b9      03d0           add edx, eax
+       ││   0x004f99bb      85d2           test edx, edx
+      ┌───< 0x004f99bd      7e40           jle 0x4f99ff
+      │││   0x004f99bf      8bc3           mov eax, ebx
+      │││   0x004f99c1      8d7718         lea esi, [edi + 0x18]
+      │││   0x004f99c4      2bc7           sub eax, edi
+      │││   0x004f99c6      8954241c       mov dword [esp + 0x1c], edx
+      │││   0x004f99ca      89442414       mov dword [esp + 0x14], eax
+      │││   0x004f99ce      8d4ee8         lea ecx, [esi - 0x18]
+      │││   0x004f99d1      51             push ecx
+      │││   0x004f99d2      8bcb           mov ecx, ebx
+      │││   0x004f99d4      e86799f7ff     call 0x473340
+      │││   0x004f99d9      8d56f4         lea edx, [esi - 0xc]
+      │││   0x004f99dc      8d4b0c         lea ecx, [ebx + 0xc]
+      │││   0x004f99df      52             push edx
+      │││   0x004f99e0      e85b99f7ff     call 0x473340
+      │││   0x004f99e5      8b4c2414       mov ecx, dword [esp + 0x14]
+      │││   0x004f99e9      8b06           mov eax, dword [esi]
+      │││   0x004f99eb      83c31c         add ebx, 0x1c               ; 28
+      │││   0x004f99ee      890431         mov dword [ecx + esi], eax
+      │││   0x004f99f1      8b44241c       mov eax, dword [esp + 0x1c]
+      │││   0x004f99f5      83c61c         add esi, 0x1c               ; 28
+      │││   0x004f99f8      48             dec eax
+      │││   0x004f99f9      8944241c       mov dword [esp + 0x1c], eax
+      │││   0x004f99fd      75cf           jne 0x4f99ce
+      └───> 0x004f99ff      8b4500         mov eax, dword [ebp]
+       ││   0x004f9a02      8bf3           mov esi, ebx
+       ││   0x004f9a04      3bd8           cmp ebx, eax
+       ││   0x004f9a06      8944241c       mov dword [esp + 0x1c], eax

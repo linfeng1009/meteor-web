@@ -156,6 +156,7 @@ test('source waypoints above the collision floor do not trap foot-positioned eng
 test('script perception respects original View distance and collision visibility', async () => {
   const { game, host, visibility } = await mission();
   const guard = host.actor(1);
+  guard.root.rotation.y = Math.PI / 2;
   visibility.add(1);
   game.hero.root.position.copy(guard.root.position).add(new THREE.Vector3(31.9, 0, 0));
   assert.equal(host.visibleEnemy(guard), game.hero);
@@ -163,6 +164,20 @@ test('script perception respects original View distance and collision visibility
   assert.equal(host.visibleEnemy(guard), null);
   game.hero.root.position.copy(guard.root.position).add(new THREE.Vector3(1, 0, 0));
   visibility.clear(); assert.equal(host.visibleEnemy(guard), null);
+});
+
+test('native wait begins pursuit only after discovery, while idle and behavior reset keep their source meaning', async () => {
+  const { game, host, visibility } = await mission(), guard = host.actor(1);
+  host.changeBehavior(1, 'wait'); guard.root.rotation.y = Math.PI / 2;
+  game.hero.root.position.copy(guard.root.position).add(new THREE.Vector3(20, 0, 0));
+  host.updateControls(); assert.equal(guard.scriptControl.moveTarget, null); assert.equal(guard.scriptControl.canAttack, false);
+  visibility.add(1); host.updateControls();
+  assert.equal(guard.scriptControl.moveTarget, game.hero.root.position); assert.equal(guard.scriptControl.attackTarget, game.hero);
+  assert.equal(guard.scriptControl.canAttack, true); assert.equal(guard.awarenessTarget, game.hero);
+  host.changeBehavior(1, 'idle'); assert.equal(guard.awarenessTarget, null);
+  host.updateControls(); assert.equal(guard.scriptControl.moveTarget, null); assert.equal(guard.scriptControl.canAttack, false);
+  visibility.clear(); host.changeBehavior(1, 'wait'); host.updateControls();
+  assert.equal(guard.scriptControl.moveTarget, null); assert.equal(guard.scriptControl.attackTarget, null);
 });
 
 test('the original guard discovery, loss, retreat and report dialogue execute through PST state transitions', async () => {
@@ -174,7 +189,7 @@ test('the original guard discovery, loss, retreat and report dialogue execute th
   assert.equal(guard.scriptPerform.action, 'guard');
   host.update(3.01);
   assert.ok(events.some(e => e.type === 'dialogue' && e.text.includes('竟敢擅自闯入禁地')));
-  visibility.clear(); host.update(.06);
+  visibility.clear(); game.hero.root.position.copy(guard.root.position).add(new THREE.Vector3(17, 0, 0)); host.update(.06);
   assert.equal(host.levelVm.getGlobal('trg1'), 2);
   assert.ok(events.some(e => e.type === 'dialogue' && e.text === '奇怪？人跑到那了？？？'));
   // Both sentries must be outside the source Report() threshold. The initial

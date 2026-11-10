@@ -1,0 +1,12 @@
+CANDIDATE 004cc0d1 owner=004cc0a0
+004cc0cb MOV EAX,dword ptr [ESI]
+004cc0cd PUSH 0x7
+004cc0cf MOV ECX,ESI
+004cc0d1 CALL dword ptr [EAX + 0x12c]
+CANDIDATE 004cde56 owner=004cde00
+004cde4c TEST EAX,EAX
+004cde4e JZ 0x004cde5c
+004cde50 MOV EDX,dword ptr [ESI]
+004cde52 PUSH 0x9
+004cde54 MOV ECX,ESI
+004cde56 CALL dword ptr [EDX + 0x12c]

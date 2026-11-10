@@ -24,3 +24,11 @@
 - [私有部署与验证边界](evidence/E-web-deployment.json)
 
 新增证据继续保存到evidence，原始事实、实现适配和推断分开登记。相关细节不写外部技能目录或记忆。
+
+
+继续开发记录：阶段报告保存在 report/，当前验证见 evidence/E-validation-current.json。10月29日招式、10月30日受击反馈已形成独立报告；11月4日其他关卡与11月5日动作混合仍需继续验证。初始化脚本覆盖的未提交索引记录已根据留存证据在 timeline.md / workitems.md 补录，Git 已存正文已恢复。
+
+
+2026-11-06本地v0.6.0新增关卡阶段：[报告](report/2026-11-06_逆向-决死阵与飞鹏堡-report.md)、[结构化证据](evidence/E-new-missions-2026-11-06.json)、[228项最终TAP](evidence/native-runtime-new-missions-2026-11-06.tap)。决死阵、飞鹏堡加入任务入口；完整游戏/战斗还原仍未完成。浏览器试玩和线上版本未更新。
+
+2026-11-06本地v0.6.1战斗运动阶段：[报告](report/2026-11-06_逆向-原位移与受击时长-report.md)、[PE字段/轨迹消费证据](evidence/E-combat-motion-source-2026-11-06.json)、[234项最终TAP](evidence/native-runtime-motion-fidelity-2026-11-06.tap)。原d_base运动、Move倍率、Value最低保持接入；空中单帧越界与落地丢续招修复，111可用指令自然起跳/地面遍历。原全部物理、方向/护架、EF、其余剧情和完整目标仍开放。

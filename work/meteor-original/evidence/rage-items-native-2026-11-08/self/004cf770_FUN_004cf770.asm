@@ -1,0 +1,31 @@
+004cf770 MOV EAX,dword ptr [ECX + 0x60]
+004cf773 PUSH 0xbf800000
+004cf778 PUSH 0x1
+004cf77a PUSH 0x0
+004cf77c TEST EAX,EAX
+004cf77e JLE 0x004cf78b
+004cf780 MOV EAX,dword ptr [ECX]
+004cf782 PUSH 0x97
+004cf787 CALL dword ptr [EAX + 0x74]
+004cf78a RET
+004cf78b JNZ 0x004cf7b7
+004cf78d MOV EAX,dword ptr [ECX + 0x64]
+004cf790 TEST EAX,EAX
+004cf792 JLE 0x004cf79f
+004cf794 MOV EDX,dword ptr [ECX]
+004cf796 PUSH 0x99
+004cf79b CALL dword ptr [EDX + 0x74]
+004cf79e RET
+004cf79f JGE 0x004cf7ac
+004cf7a1 MOV EAX,dword ptr [ECX]
+004cf7a3 PUSH 0x9b
+004cf7a8 CALL dword ptr [EAX + 0x74]
+004cf7ab RET
+004cf7ac MOV EDX,dword ptr [ECX]
+004cf7ae PUSH 0x97
+004cf7b3 CALL dword ptr [EDX + 0x74]
+004cf7b6 RET
+004cf7b7 MOV EAX,dword ptr [ECX]
+004cf7b9 PUSH 0x9d
+004cf7be CALL dword ptr [EAX + 0x74]
+004cf7c1 RET

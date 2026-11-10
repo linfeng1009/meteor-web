@@ -1,0 +1,118 @@
+TAP version 13
+# Subtest: the real cave mission creates three distinct runtime NPCs with their original source configuration and waypoints
+ok 1 - the real cave mission creates three distinct runtime NPCs with their original source configuration and waypoints
+  ---
+  duration_ms: 33.322958
+  type: 'test'
+  ...
+# Subtest: source loading preserves the native browser fetch receiver
+ok 2 - source loading preserves the native browser fetch receiver
+  ---
+  duration_ms: 18.778667
+  type: 'test'
+  ...
+# Subtest: the real engine mission bridges preserve source HP, distinct actor IDs and original weapon variants
+ok 3 - the real engine mission bridges preserve source HP, distinct actor IDs and original weapon variants
+  ---
+  duration_ms: 24.705833
+  type: 'test'
+  ...
+# Subtest: the patrol routes and generated movement targets come from the original WP graph
+ok 4 - the patrol routes and generated movement targets come from the original WP graph
+  ---
+  duration_ms: 20.9645
+  type: 'test'
+  ...
+# Subtest: source waypoints above the collision floor do not trap foot-positioned engine actors
+ok 5 - source waypoints above the collision floor do not trap foot-positioned engine actors
+  ---
+  duration_ms: 13.774042
+  type: 'test'
+  ...
+# Subtest: script perception respects original View distance and collision visibility
+ok 6 - script perception respects original View distance and collision visibility
+  ---
+  duration_ms: 11.230291
+  type: 'test'
+  ...
+# Subtest: the original guard discovery, loss, retreat and report dialogue execute through PST state transitions
+ok 7 - the original guard discovery, loss, retreat and report dialogue execute through PST state transitions
+  ---
+  duration_ms: 12.515417
+  type: 'test'
+  ...
+# Subtest: original scene item damage callbacks change real registered object collision and item activation
+ok 8 - original scene item damage callbacks change real registered object collision and item activation
+  ---
+  duration_ms: 11.482167
+  type: 'test'
+  ...
+# Subtest: mission completion uses all original hostile NPCs and retains its explicit Rule-10 inference
+ok 9 - mission completion uses all original hostile NPCs and retains its explicit Rule-10 inference
+  ---
+  duration_ms: 10.195042
+  type: 'test'
+  ...
+# Subtest: the source HP thresholds trigger a sentry retreat and the original leader death line
+ok 10 - the source HP thresholds trigger a sentry retreat and the original leader death line
+  ---
+  duration_ms: 10.040333
+  type: 'test'
+  ...
+# Subtest: unsupported host APIs are explicit and a disposed host stops script execution
+ok 11 - unsupported host APIs are explicit and a disposed host stops script execution
+  ---
+  duration_ms: 8.3125
+  type: 'test'
+  ...
+# Subtest: leaving while player equipment loads does not start an abandoned source mission
+ok 12 - leaving while player equipment loads does not start an abandoned source mission
+  ---
+  duration_ms: 6.127208
+  type: 'test'
+  ...
+# Subtest: late original NPC loads are removed after the source mission is disposed
+ok 13 - late original NPC loads are removed after the source mission is disposed
+  ---
+  duration_ms: 10.663208
+  type: 'test'
+  ...
+# Subtest: a source cave destruction resets to the exact freshly loaded scene state and supports original Scene_OnInit again
+ok 14 - a source cave destruction resets to the exact freshly loaded scene state and supports original Scene_OnInit again
+  ---
+  duration_ms: 186.576917
+  type: 'test'
+  ...
+# Subtest: reset preserves source instance, shared GPU resources and grid collider references without allocating another map
+ok 15 - reset preserves source instance, shared GPU resources and grid collider references without allocating another map
+  ---
+  duration_ms: 48.4095
+  type: 'test'
+  ...
+# Subtest: reset is idempotent and removes session playback from static original props
+ok 16 - reset is idempotent and removes session playback from static original props
+  ---
+  duration_ms: 42.994458
+  type: 'test'
+  ...
+# Subtest: a real falling platform restores its original FMC frame and collider matrices while retaining fresh-load animation semantics
+ok 17 - a real falling platform restores its original FMC frame and collider matrices while retaining fresh-load animation semantics
+  ---
+  duration_ms: 26.089458
+  type: 'test'
+  ...
+# Subtest: production story exit and same-map training start restore cached props, then a new story reinitializes its source state
+ok 18 - production story exit and same-map training start restore cached props, then a new story reinitializes its source state
+  ---
+  duration_ms: 113.051
+  type: 'test'
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 531.511833

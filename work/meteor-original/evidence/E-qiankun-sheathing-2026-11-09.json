@@ -1,0 +1,292 @@
+{
+  "id": "E-qiankun-sheathing-2026-11-09",
+  "clientDate": "2026-11-09",
+  "scope": "work/meteor-original/scope.md",
+  "originalExecuted": false,
+  "sourceExeSha256": "289afb0aa44a47921d167fc24d6d404c60d6d00c299ac27d45fc61e16231b498",
+  "sockets": {
+    "w9_0r": {
+      "d_wpnre": {
+        "position": [
+          0.635,
+          -22.288,
+          -0.0
+        ],
+        "quaternion": [
+          -1.0,
+          -0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "d_wpnrs": {
+        "position": [
+          0.0,
+          -1.855,
+          -0.0
+        ],
+        "quaternion": [
+          -1.0,
+          -0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "w9_0l": {
+      "d_wpnls": {
+        "position": [
+          0.0,
+          18.388,
+          -0.0
+        ],
+        "quaternion": [
+          -1.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "d_wpnle": {
+        "position": [
+          -0.007,
+          16.589,
+          -0.0
+        ],
+        "quaternion": [
+          -1.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "w9_1r": {
+      "d_wpnrs": {
+        "position": [
+          0.0,
+          -1.855,
+          -0.0
+        ],
+        "quaternion": [
+          -1.0,
+          0.0,
+          -0.0,
+          -0.0
+        ]
+      },
+      "d_wpnre": {
+        "position": [
+          0.635,
+          -22.288,
+          -0.0
+        ],
+        "quaternion": [
+          -1.0,
+          0.0,
+          -0.0,
+          -0.0
+        ]
+      }
+    },
+    "w9_1l": {
+      "d_wpnls": {
+        "position": [
+          0.0,
+          18.388,
+          -0.0
+        ],
+        "quaternion": [
+          -1.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "d_wpnle": {
+        "position": [
+          -0.007,
+          16.589,
+          -0.0
+        ],
+        "quaternion": [
+          -1.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "w9_2r": {
+      "d_wpnre": {
+        "position": [
+          -0.002,
+          -22.288,
+          -0.0
+        ],
+        "quaternion": [
+          -1.0,
+          0.0,
+          -0.0,
+          -0.0
+        ]
+      },
+      "d_wpnrs": {
+        "position": [
+          0.0,
+          -1.855,
+          -0.0
+        ],
+        "quaternion": [
+          -1.0,
+          0.0,
+          -0.0,
+          -0.0
+        ]
+      }
+    },
+    "w9_2l": {
+      "d_wpnls": {
+        "position": [
+          0.0,
+          18.388,
+          -0.0
+        ],
+        "quaternion": [
+          -1.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "d_wpnle": {
+        "position": [
+          -0.007,
+          16.589,
+          -0.0
+        ],
+        "quaternion": [
+          -1.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "w9_3r": {
+      "d_wpnrs": {
+        "position": [
+          0.043,
+          -1.855,
+          -0.0
+        ],
+        "quaternion": [
+          -1.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "d_wpnre": {
+        "position": [
+          0.679,
+          -22.288,
+          -0.0
+        ],
+        "quaternion": [
+          -1.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "w9_3l": {
+      "d_wpnle": {
+        "position": [
+          -0.007,
+          17.065,
+          0.0
+        ],
+        "quaternion": [
+          -1.0,
+          -0.0,
+          0.0,
+          -0.0
+        ]
+      },
+      "d_wpnls": {
+        "position": [
+          -0.0,
+          18.388,
+          0.0
+        ],
+        "quaternion": [
+          -1.0,
+          -0.0,
+          0.0,
+          -0.0
+        ]
+      }
+    }
+  },
+  "sourcePoseGroups": {
+    "enterSheath": [
+      431,
+      441
+    ],
+    "return": [
+      485,
+      486,
+      487
+    ],
+    "draw": [
+      447,
+      448,
+      449,
+      450,
+      451,
+      522
+    ],
+    "sheathedAttacks": [
+      520,
+      521
+    ],
+    "finish": [
+      524
+    ]
+  },
+  "webAdapter": "Interpolate the visible blade between its right palm and a seated transform derived from original DES blade/sheath axes and tip endpoints, during original POS phases. The source R/L control tracks are unchanged. Exact native compensation/loading remains unverified.",
+  "acceptanceCorrection": "The legacy all-frame palm constraint was wrong for a sheathed blade. Tests now check the actual blade tip/edge inside visible sheath bounds, hilt outside, no model hiding, partial travel, public commands from both stances, drawing/return and four variants.",
+  "passiveBodyDamage": "Full regression exposed a pre-existing zero-damage assertion. Diagnostic records showed player reactions104/105/103 causing body hits, with no player move commands. Original POS102-106/111 contain body attack windows. Acceptance now allows only these source reaction windows and verifies damage accounting; runtime damage rules were unchanged.",
+  "nativeExploration": "Read-only exports of qiankun ctor, pose sets and loader membership queries retained. Their full native rendering semantics were not assumed as a blade-hiding rule.",
+  "nativeHashes": {
+    "work/qiankun-sheathing-2026-11-09/native/004e2770_FUN_004e2770.asm": "0ba399a2adcead5aa9003f54784ece74353771c1d3cc68a9e98621da397812b9",
+    "work/qiankun-sheathing-2026-11-09/native/functions.tsv": "35be3e68674005417124bfc42dff478e3aced539d7338e0b6709f3635a1677e8",
+    "work/qiankun-sheathing-2026-11-09/native/004e2bb0_FUN_004e2bb0.asm": "06dbf6b0d359e43cc87c11169ad03f6a92dcf206a86a0b4ea7b3177b8022adfe",
+    "work/qiankun-sheathing-2026-11-09/native/004df590_FUN_004df590.c": "f02863ce2464a0bd37872261ea49023949c9307f3c40eb16dc788eeb08a27e86",
+    "work/qiankun-sheathing-2026-11-09/native/004e2770_FUN_004e2770.c": "a5d460fba5998e9fa8d93a3e79cde9b905730a6cf0d0051eb5364343298177d0",
+    "work/qiankun-sheathing-2026-11-09/native/004e1420_FUN_004e1420.asm": "36d72578e7852fb2e1d54e38aeef1caebbcff9fee2b8d9bf72f60f54dc20c079",
+    "work/qiankun-sheathing-2026-11-09/native/004df590_FUN_004df590.asm": "937c03bdeb3c2af5dcebef0882271163a13477cdc2da7969a4102f98e30ff52f",
+    "work/qiankun-sheathing-2026-11-09/native/004e2bb0_FUN_004e2bb0.c": "6822041d41547626ad096ca53ad6b260a4387a1c2faf916f498df1c6e41f2cd8",
+    "work/qiankun-sheathing-2026-11-09/native/export.log": "94e2cf2fa6c7e303f458d2a7ee96fd0c0de3292d56e43655f9f422980b14b6e0",
+    "work/qiankun-sheathing-2026-11-09/native/004e1420_FUN_004e1420.c": "dfe0009eda4e8f6f83b01d64a314a2370ed8aed7b64db34dffb82d82ff9d86c2",
+    "work/qiankun-sheathing-2026-11-09/native/references.txt": "8572bb7f434422ac38947cad7d704d7583197d3817edcc41d7eaeb6852993326",
+    "work/qiankun-sheathing-2026-11-09/native-pose-sets/functions.tsv": "68f6510fe79e9eb4d8ae13c7f00bc2209917646162e9c8decab2f8dda38f46ee",
+    "work/qiankun-sheathing-2026-11-09/native-pose-sets/004e1910_FUN_004e1910.asm": "5507637faeb9f48da4c2cbb108d9b5b79cb9149a5b722bd3ca402024b2a1b71c",
+    "work/qiankun-sheathing-2026-11-09/native-pose-sets/export.log": "9cd6483fb22e0440fea645e54cf28c57c3088b0440d974d9d218f2e0c7501018",
+    "work/qiankun-sheathing-2026-11-09/native-pose-sets/004e1910_FUN_004e1910.c": "4ba5299c89226c61333e6a3441a0f0f5deb06a303c86c647728c858cf7ed515d",
+    "work/qiankun-sheathing-2026-11-09/native-pose-sets/references.txt": "514b0eec7252cb9a14e32aa5ddd244fdca121def532cddaf748fb6237ca2d2d8",
+    "work/qiankun-sheathing-2026-11-09/native-visibility/004e2be0_FUN_004e2be0.asm": "979b3d79c188ecbf70abd3f62217ab9799a08a9e6320eec53ea9153cd4e41da3",
+    "work/qiankun-sheathing-2026-11-09/native-visibility/004e2b30_FUN_004e2b30.c": "19e73c1e79337b6b1c5f44fc5a5cc01b61ec4a8a9d260615b3a1c0b557e182f2",
+    "work/qiankun-sheathing-2026-11-09/native-visibility/functions.tsv": "e012d431b98d6c5d0e260868939cd89b3b06b2130e9a60bf48816f7d52313152",
+    "work/qiankun-sheathing-2026-11-09/native-visibility/004e2800_FUN_004e2800.c": "31ba4ee91e43b2cb8ff0cb2cd875dff17fbd17c8bbb7d6fa768da6fa0cf5f698",
+    "work/qiankun-sheathing-2026-11-09/native-visibility/004e2ac0_FUN_004e2ac0.asm": "8614b98fc775b4394f6060b58df9ec977ad0bfabe0b3a50d1a002733fe7e1aae",
+    "work/qiankun-sheathing-2026-11-09/native-visibility/004e2800_FUN_004e2800.asm": "9c746909a32eb2f135dd30aa97d617d17d231e2995a34fefe4d4c89af250ab0d",
+    "work/qiankun-sheathing-2026-11-09/native-visibility/004e2b30_FUN_004e2b30.asm": "157fcda317eeb204a673ac44159268cca4a09d356fe4ac38c45a314505c79c34",
+    "work/qiankun-sheathing-2026-11-09/native-visibility/export.log": "059d0f9e6dc77ef2a337e534970a2bb8e42656953bb566b378e46144061fb3e7",
+    "work/qiankun-sheathing-2026-11-09/native-visibility/004e2be0_FUN_004e2be0.c": "7fb8b14473d7a7792589b40a8c59998a661db039ce3676ca1529334146cdb729",
+    "work/qiankun-sheathing-2026-11-09/native-visibility/references.txt": "988f82f0b54bf5f75727a4e6d202c98b3753e04d07cd7191ce2bec37f9cde590",
+    "work/qiankun-sheathing-2026-11-09/native-visibility/004e2ac0_FUN_004e2ac0.c": "1b1516456cc5af4ee2f72cdc048df33c45fa47d894068e33cfa6a34412d7ea0f"
+  }
+}

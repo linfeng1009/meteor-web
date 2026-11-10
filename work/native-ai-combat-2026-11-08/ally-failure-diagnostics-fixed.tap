@@ -1,0 +1,33 @@
+TAP version 13
+# Subtest: sn15 real guard damage triggers the conditional friendly ally, source嗜战, and a friendly HUD marker exactly once
+not ok 1 - sn15 real guard damage triggers the conditional friendly ally, source嗜战, and a friendly HUD marker exactly once
+  ---
+  duration_ms: 8330.4035
+  type: 'test'
+  location: '/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/tests/.npc-mission-diagnostic.mjs:143:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(game.hero.hp > 0 && game.hero.hp < 2500/3)
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/tests/.npc-mission-diagnostic.mjs:151:295)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# {"label":"ally-audit","hero":{"hp":836,"dead":false,"pos":[4.773962156400626,-3.0956687821546693,-116.36269963493764]},"guard":{"hp":5000,"pos":[10.114677227281378,-3.081504649134849,-130.70090704637056],"pose":6},"decisions":[{"type":"npc-decision","actorId":2,"kind":"attack","category":1,"program":"","poseId":262,"accepted":true},{"type":"npc-decision","actorId":2,"kind":"attack","category":1,"program":"","poseId":263,"accepted":true},{"type":"npc-decision","actorId":2,"kind":"attack","category":1,"program":"","poseId":264,"accepted":true},{"type":"npc-decision","actorId":2,"kind":"attack","category":1,"program":"","poseId":264,"accepted":true},{"type":"npc-decision","actorId":2,"kind":"attack","category":1,"program":"","poseId":262,"accepted":false},{"type":"npc-decision","actorId":2,"kind":"attack","category":1,"program":"","poseId":262,"accepted":false},{"type":"npc-decision","actorId":2,"kind":"attack","category":1,"program":"","poseId":262,"accepted":false},{"type":"npc-decision","actorId":2,"kind":"attack","category":1,"program":"","poseId":262,"accepted":true},{"type":"npc-decision","actorId":2,"kind":"attack","category":1,"program":"","poseId":263,"accepted":true},{"type":"npc-decision","actorId":2,"kind":"attack","category":1,"program":"","poseId":264,"accepted":true},{"type":"npc-decision","actorId":2,"kind":"attack","category":1,"program":"","poseId":264,"accepted":true},{"type":"npc-decision","actorId":2,"kind":"attack","category":1,"program":"","poseId":262,"accepted":false}]}
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8444.111417

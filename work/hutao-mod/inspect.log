@@ -1,0 +1,13 @@
+HuTaoHeadDiffuse (1024, 1024)
+/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/scripts/blender/hutao_inspect.py:15: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m=bpy.data.materials.new(name);m.use_nodes=True;bs=m.node_tree.nodes.get('Principled BSDF');bs.inputs['Roughness'].default_value=.8;tex=m.node_tree.nodes.new('ShaderNodeTexImage');tex.image=im;m.node_tree.links.new(tex.outputs['Color'],bs.inputs['Base Color']);materials.append(m)
+HuTaoBodyDiffuse (4096, 4096)
+HuTaoFaceHeadDiffuse (1024, 1024)
+HuTaoHeadLightMap (1024, 1024)
+HuTaoBodyLightMap (1024, 1024)
+00:05.782  render           | Saved: '/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/work/hutao-mod/source-front.png'
+00:09.861  render           | Saved: '/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/work/hutao-mod/source-face.png'
+Info: Saved as "胡桃-原缓冲还原.blend"
+Blender 5.4.0 Alpha (hash 93eeecf73c12 built 2026-10-23 01:52:25)
+
+Blender quit

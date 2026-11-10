@@ -1,0 +1,2472 @@
+{
+  "date": "2026-11-06",
+  "scope": "Offline static original Meteor.exe/POS/ACT/RES analysis only; original EXE never executed; source resources never modified",
+  "sourceExeSha256": "289afb0aa44a47921d167fc24d6d404c60d6d00c299ac27d45fc61e16231b498",
+  "sources": [
+    {
+      "url": "https://www.lxres.com/LiuXingBiJi/1559.html",
+      "role": "knuckle command names, direction sequences, rage requirements",
+      "section": "指虎"
+    },
+    {
+      "url": "https://www.lxres.com/LiuXingBiJi/1758.html",
+      "role": "pose cross-check",
+      "section": "405-429;400;480;488-493"
+    }
+  ],
+  "localHashes": {
+    "dist/assets/native/combat/P0.POS": "1e71f945afc6b701f86eb50e500feccca22f20b52f7f3bec073b0247d390a5fb",
+    "dist/assets/native/combat/character.act": "e52865424fe065e808a73e9f81bb8df5a78e161a43e59e051bd41f0fb4e42eda"
+  },
+  "profile": {
+    "key": "knuckle",
+    "weaponId": 51,
+    "nativeWeaponClass": 10,
+    "model": "w10_0r",
+    "modelIds": [
+      "w10_0r",
+      "w10_0l"
+    ],
+    "handedness": {
+      "w10_0r": "d_wpnR",
+      "w10_0l": "d_wpnL"
+    },
+    "stance": 400,
+    "guard": 480,
+    "basic": [
+      407,
+      408,
+      409
+    ],
+    "air": [
+      405,
+      406
+    ],
+    "special": [
+      416,
+      421,
+      489
+    ],
+    "family": [
+      405,
+      426
+    ],
+    "guardReactions": [
+      490,
+      491,
+      492,
+      493,
+      513,
+      514,
+      515
+    ],
+    "guardSource": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e3770_FUN_004e3770.c:74-155"
+  },
+  "variants": [
+    {
+      "itemId": 51,
+      "name": "指虎林",
+      "modelId": "w10_0r",
+      "available": true,
+      "modelIds": [
+        "w10_0r",
+        "w10_0l"
+      ],
+      "parameters": [
+        {
+          "offset": 9876,
+          "words": [
+            11,
+            10,
+            0
+          ]
+        },
+        {
+          "offset": 9888,
+          "words": [
+            13,
+            30,
+            0
+          ]
+        },
+        {
+          "offset": 9900,
+          "words": [
+            14,
+            672,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 9916,
+          "words": [
+            2,
+            0,
+            3,
+            0,
+            -1,
+            0,
+            87,
+            1,
+            0,
+            0
+          ],
+          "statKey": 3,
+          "mode": 0,
+          "value": 87,
+          "valueOffset": 9940
+        },
+        {
+          "offset": 9956,
+          "words": [
+            2,
+            0,
+            4,
+            0,
+            -1,
+            0,
+            15,
+            1,
+            0,
+            0
+          ],
+          "statKey": 4,
+          "mode": 0,
+          "value": 15,
+          "valueOffset": 9980
+        },
+        {
+          "offset": 9996,
+          "words": [
+            2,
+            0,
+            5,
+            0,
+            -1,
+            1,
+            100,
+            1,
+            0,
+            0
+          ],
+          "statKey": 5,
+          "mode": 1,
+          "value": 100,
+          "valueOffset": 10020
+        }
+      ],
+      "resourceRecordOffset": 9837
+    },
+    {
+      "itemId": 52,
+      "name": "指虎火",
+      "modelId": "w10_1r",
+      "available": true,
+      "modelIds": [
+        "w10_1r",
+        "w10_1l"
+      ],
+      "parameters": [
+        {
+          "offset": 10075,
+          "words": [
+            11,
+            10,
+            0
+          ]
+        },
+        {
+          "offset": 10087,
+          "words": [
+            13,
+            30,
+            0
+          ]
+        },
+        {
+          "offset": 10099,
+          "words": [
+            14,
+            672,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 10115,
+          "words": [
+            2,
+            0,
+            3,
+            0,
+            -1,
+            0,
+            98,
+            1,
+            0,
+            0
+          ],
+          "statKey": 3,
+          "mode": 0,
+          "value": 98,
+          "valueOffset": 10139
+        },
+        {
+          "offset": 10155,
+          "words": [
+            2,
+            0,
+            4,
+            0,
+            -1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "statKey": 4,
+          "mode": 0,
+          "value": 0,
+          "valueOffset": 10179
+        },
+        {
+          "offset": 10195,
+          "words": [
+            2,
+            0,
+            5,
+            0,
+            -1,
+            1,
+            90,
+            1,
+            0,
+            0
+          ],
+          "statKey": 5,
+          "mode": 1,
+          "value": 90,
+          "valueOffset": 10219
+        }
+      ],
+      "resourceRecordOffset": 10036
+    },
+    {
+      "itemId": 53,
+      "name": "指虎山",
+      "modelId": "w10_2r",
+      "available": true,
+      "modelIds": [
+        "w10_2r",
+        "w10_2l"
+      ],
+      "parameters": [
+        {
+          "offset": 10274,
+          "words": [
+            11,
+            10,
+            0
+          ]
+        },
+        {
+          "offset": 10286,
+          "words": [
+            13,
+            30,
+            0
+          ]
+        },
+        {
+          "offset": 10298,
+          "words": [
+            14,
+            672,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 10314,
+          "words": [
+            2,
+            0,
+            3,
+            0,
+            -1,
+            0,
+            65,
+            1,
+            0,
+            0
+          ],
+          "statKey": 3,
+          "mode": 0,
+          "value": 65,
+          "valueOffset": 10338
+        },
+        {
+          "offset": 10354,
+          "words": [
+            2,
+            0,
+            4,
+            0,
+            -1,
+            0,
+            30,
+            1,
+            0,
+            0
+          ],
+          "statKey": 4,
+          "mode": 0,
+          "value": 30,
+          "valueOffset": 10378
+        },
+        {
+          "offset": 10394,
+          "words": [
+            2,
+            0,
+            5,
+            0,
+            -1,
+            1,
+            90,
+            1,
+            0,
+            0
+          ],
+          "statKey": 5,
+          "mode": 1,
+          "value": 90,
+          "valueOffset": 10418
+        }
+      ],
+      "resourceRecordOffset": 10235
+    },
+    {
+      "itemId": 54,
+      "name": "指虎風",
+      "modelId": "w10_3r",
+      "available": true,
+      "modelIds": [
+        "w10_3r",
+        "w10_3l"
+      ],
+      "parameters": [
+        {
+          "offset": 10473,
+          "words": [
+            11,
+            10,
+            0
+          ]
+        },
+        {
+          "offset": 10485,
+          "words": [
+            13,
+            30,
+            0
+          ]
+        },
+        {
+          "offset": 10497,
+          "words": [
+            14,
+            672,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 10513,
+          "words": [
+            2,
+            0,
+            3,
+            0,
+            -1,
+            0,
+            72,
+            1,
+            0,
+            0
+          ],
+          "statKey": 3,
+          "mode": 0,
+          "value": 72,
+          "valueOffset": 10537
+        },
+        {
+          "offset": 10553,
+          "words": [
+            2,
+            0,
+            4,
+            0,
+            -1,
+            0,
+            7,
+            1,
+            0,
+            0
+          ],
+          "statKey": 4,
+          "mode": 0,
+          "value": 7,
+          "valueOffset": 10577
+        },
+        {
+          "offset": 10593,
+          "words": [
+            2,
+            0,
+            5,
+            0,
+            -1,
+            1,
+            120,
+            1,
+            0,
+            0
+          ],
+          "statKey": 5,
+          "mode": 1,
+          "value": 120,
+          "valueOffset": 10617
+        }
+      ],
+      "resourceRecordOffset": 10434
+    }
+  ],
+  "commands": [
+    {
+      "poseId": 407,
+      "keys": "A",
+      "name": "虎探爪",
+      "stance": "ground",
+      "rage": 0,
+      "status": "ready",
+      "commandConfidence": "medium-high: two lxres references; not recovered EXE direction recognizer",
+      "poseConfidence": "high: original POS / ACT / RES",
+      "pos": {
+        "path": "dist/assets/native/combat/P0.POS",
+        "line": 11274,
+        "endLine": 11336
+      },
+      "legalOutgoing": [
+        408,
+        411,
+        413,
+        414,
+        415,
+        416,
+        417,
+        418,
+        419,
+        420
+      ],
+      "attackWindows": [
+        {
+          "line": 11311,
+          "bones": [
+            "weapon",
+            "effect",
+            "bau Spine1",
+            "bau L UpperArm",
+            "bau L Forearm",
+            "bau L Hand"
+          ],
+          "start": 13705,
+          "end": 13707,
+          "attacktype": 0,
+          "targetposefront": 90,
+          "targetposeback": 94,
+          "targetposeleft": 93,
+          "targetposeright": 92,
+          "targetmove": 5,
+          "defensemove": 5
+        }
+      ]
+    },
+    {
+      "poseId": 408,
+      "keys": "A",
+      "name": "擘虎须",
+      "stance": "ground",
+      "rage": 0,
+      "continuationOf": [
+        407
+      ],
+      "status": "ready",
+      "commandConfidence": "medium-high: two lxres references; not recovered EXE direction recognizer",
+      "poseConfidence": "high: original POS / ACT / RES",
+      "pos": {
+        "path": "dist/assets/native/combat/P0.POS",
+        "line": 11337,
+        "endLine": 11399
+      },
+      "legalOutgoing": [
+        409,
+        411,
+        412,
+        414,
+        415,
+        416,
+        417,
+        419,
+        420,
+        489
+      ],
+      "attackWindows": [
+        {
+          "line": 11374,
+          "bones": [
+            "weapon",
+            "effect",
+            "bau Spine1",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand"
+          ],
+          "start": 13729,
+          "end": 13731,
+          "attacktype": 0,
+          "targetposefront": 91,
+          "targetposeback": 94,
+          "targetposeleft": 93,
+          "targetposeright": 92,
+          "targetmove": 5,
+          "defensemove": 5
+        }
+      ]
+    },
+    {
+      "poseId": 409,
+      "keys": "A",
+      "name": "断虎牙",
+      "stance": "ground",
+      "rage": 0,
+      "continuationOf": [
+        408
+      ],
+      "status": "ready",
+      "commandConfidence": "medium-high: two lxres references; not recovered EXE direction recognizer",
+      "poseConfidence": "high: original POS / ACT / RES",
+      "pos": {
+        "path": "dist/assets/native/combat/P0.POS",
+        "line": 11400,
+        "endLine": 11462
+      },
+      "legalOutgoing": [
+        411,
+        413,
+        414,
+        415,
+        416,
+        418,
+        419,
+        420,
+        421,
+        489
+      ],
+      "attackWindows": [
+        {
+          "line": 11437,
+          "bones": [
+            "weapon",
+            "effect",
+            "bau Spine1",
+            "bau L UpperArm",
+            "bau L Forearm",
+            "bau L Hand"
+          ],
+          "start": 13750,
+          "end": 13752,
+          "attacktype": 0,
+          "targetposefront": 90,
+          "targetposeback": 94,
+          "targetposeleft": 93,
+          "targetposeright": 92,
+          "targetmove": 6,
+          "defensemove": 6
+        }
+      ]
+    },
+    {
+      "poseId": 405,
+      "keys": "A",
+      "name": "跃虎脚",
+      "stance": "air",
+      "rage": 0,
+      "status": "ready",
+      "commandConfidence": "medium-high: two lxres references; not recovered EXE direction recognizer",
+      "poseConfidence": "high: original POS / ACT / RES",
+      "pos": {
+        "path": "dist/assets/native/combat/P0.POS",
+        "line": 11152,
+        "endLine": 11209
+      },
+      "link": 427,
+      "legalOutgoing": [
+        406,
+        410
+      ],
+      "attackWindows": [
+        {
+          "line": 11184,
+          "bones": [
+            "weapon",
+            "effect",
+            "bad R Thigh",
+            "bad R Calf",
+            "bad R Foot"
+          ],
+          "start": 13653,
+          "end": 13657,
+          "attacktype": 0,
+          "targetposefront": 90,
+          "targetposeback": 94,
+          "targetposeleft": 93,
+          "targetposeright": 92,
+          "targetmove": 6,
+          "defensemove": 6
+        }
+      ]
+    },
+    {
+      "poseId": 406,
+      "keys": "A",
+      "name": "飞虎脚",
+      "stance": "air",
+      "rage": 0,
+      "continuationOf": [
+        405
+      ],
+      "status": "ready",
+      "commandConfidence": "medium-high: two lxres references; not recovered EXE direction recognizer",
+      "poseConfidence": "high: original POS / ACT / RES",
+      "pos": {
+        "path": "dist/assets/native/combat/P0.POS",
+        "line": 11210,
+        "endLine": 11273
+      },
+      "link": 428,
+      "legalOutgoing": [
+        410
+      ],
+      "attackWindows": [
+        {
+          "line": 11248,
+          "bones": [
+            "weapon",
+            "effect",
+            "bad R Thigh",
+            "bad R Calf",
+            "bad R Foot"
+          ],
+          "start": 13685,
+          "end": 13688,
+          "attacktype": 0,
+          "targetposefront": 103,
+          "targetposeback": 106,
+          "targetposeleft": 105,
+          "targetposeright": 104,
+          "targetmove": 1.5,
+          "defensemove": 8
+        }
+      ]
+    },
+    {
+      "poseId": 410,
+      "keys": "DA",
+      "name": "虎出栅",
+      "stance": "air",
+      "rage": 0,
+      "status": "ready",
+      "commandConfidence": "medium-high: two lxres references; not recovered EXE direction recognizer",
+      "poseConfidence": "high: original POS / ACT / RES",
+      "pos": {
+        "path": "dist/assets/native/combat/P0.POS",
+        "line": 11463,
+        "endLine": 11529
+      },
+      "link": 429,
+      "legalOutgoing": [],
+      "attackWindows": [
+        {
+          "line": 11501,
+          "bones": [
+            "weapon",
+            "effect",
+            "bau Spine1",
+            "bau Spine",
+            "bau L UpperArm",
+            "bau L Forearm",
+            "bau L Hand",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand"
+          ],
+          "start": 13772,
+          "end": 13774,
+          "attacktype": 0,
+          "targetposefront": 96,
+          "targetposeback": 96,
+          "targetposeleft": 96,
+          "targetposeright": 96,
+          "targetmove": 5,
+          "defensemove": 5
+        }
+      ]
+    },
+    {
+      "poseId": 411,
+      "keys": "LRA",
+      "name": "虎爪旋破",
+      "stance": "ground",
+      "rage": 0,
+      "status": "ready",
+      "commandConfidence": "medium-high: two lxres references; not recovered EXE direction recognizer",
+      "poseConfidence": "high: original POS / ACT / RES",
+      "pos": {
+        "path": "dist/assets/native/combat/P0.POS",
+        "line": 11530,
+        "endLine": 11600
+      },
+      "legalOutgoing": [
+        412,
+        413,
+        414,
+        415,
+        416,
+        417,
+        418,
+        419,
+        420,
+        422,
+        489
+      ],
+      "attackWindows": [
+        {
+          "line": 11573,
+          "bones": [
+            "weapon",
+            "effect",
+            "bau Spine1",
+            "bau L UpperArm",
+            "bau L Forearm",
+            "bau L Hand",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand"
+          ],
+          "start": 13807,
+          "end": 13812,
+          "attacktype": 1,
+          "targetposefront": 103,
+          "targetposeback": 106,
+          "targetposeleft": 105,
+          "targetposeright": 104,
+          "targetmove": 0.5,
+          "defensemove": 6
+        }
+      ]
+    },
+    {
+      "poseId": 412,
+      "keys": "LLA",
+      "name": "左打虎",
+      "stance": "ground",
+      "rage": 0,
+      "status": "pending-weapon-swap",
+      "commandConfidence": "medium-high: two lxres references; not recovered EXE direction recognizer",
+      "poseConfidence": "high: original POS / ACT / RES",
+      "pos": {
+        "path": "dist/assets/native/combat/P0.POS",
+        "line": 11601,
+        "endLine": 11643
+      },
+      "legalOutgoing": [
+        203,
+        224,
+        230,
+        233,
+        237,
+        238,
+        239,
+        240,
+        241,
+        243,
+        244,
+        245,
+        226,
+        228,
+        235,
+        248,
+        250,
+        253,
+        370,
+        255,
+        257,
+        259,
+        262,
+        266,
+        267,
+        269,
+        270,
+        271,
+        272,
+        274,
+        275,
+        277,
+        279,
+        284,
+        285,
+        286,
+        287,
+        288,
+        289,
+        290,
+        291,
+        292,
+        293,
+        295,
+        299,
+        300,
+        301,
+        302,
+        303,
+        305,
+        306,
+        374,
+        309,
+        310,
+        315,
+        316,
+        317,
+        319,
+        320,
+        321,
+        322,
+        323,
+        372,
+        325,
+        343,
+        367,
+        368,
+        411,
+        414,
+        415,
+        416,
+        417,
+        419,
+        420,
+        421,
+        430,
+        431,
+        432,
+        438,
+        440,
+        441,
+        442,
+        443,
+        444,
+        445,
+        447,
+        448,
+        449,
+        450,
+        451,
+        461,
+        462,
+        463,
+        464,
+        466,
+        468,
+        470,
+        471,
+        472,
+        473,
+        526,
+        527,
+        528,
+        529,
+        535,
+        540,
+        556,
+        557,
+        558,
+        559,
+        560,
+        561,
+        562,
+        572,
+        565,
+        566,
+        567,
+        568
+      ],
+      "attackWindows": [
+        {
+          "line": 11620,
+          "bones": [
+            "effect",
+            "bau Head",
+            "bau Spine1"
+          ],
+          "start": 13838,
+          "end": 13840,
+          "attacktype": 0,
+          "targetposefront": 91,
+          "targetposeback": 94,
+          "targetposeleft": 93,
+          "targetposeright": 92,
+          "targetmove": 5,
+          "defensemove": 5
+        }
+      ]
+    },
+    {
+      "poseId": 413,
+      "keys": "RRA",
+      "name": "右打虎",
+      "stance": "ground",
+      "rage": 0,
+      "status": "pending-weapon-swap",
+      "commandConfidence": "medium-high: two lxres references; not recovered EXE direction recognizer",
+      "poseConfidence": "high: original POS / ACT / RES",
+      "pos": {
+        "path": "dist/assets/native/combat/P0.POS",
+        "line": 11644,
+        "endLine": 11686
+      },
+      "legalOutgoing": [
+        203,
+        224,
+        230,
+        233,
+        237,
+        238,
+        239,
+        240,
+        241,
+        243,
+        244,
+        245,
+        226,
+        228,
+        235,
+        248,
+        250,
+        253,
+        370,
+        255,
+        257,
+        259,
+        262,
+        266,
+        267,
+        269,
+        270,
+        271,
+        272,
+        274,
+        275,
+        277,
+        279,
+        284,
+        285,
+        286,
+        287,
+        288,
+        289,
+        290,
+        291,
+        292,
+        293,
+        295,
+        299,
+        300,
+        301,
+        302,
+        303,
+        305,
+        306,
+        374,
+        309,
+        310,
+        315,
+        316,
+        317,
+        319,
+        320,
+        321,
+        322,
+        323,
+        372,
+        325,
+        343,
+        367,
+        368,
+        411,
+        414,
+        415,
+        416,
+        418,
+        419,
+        420,
+        421,
+        430,
+        431,
+        432,
+        438,
+        440,
+        441,
+        442,
+        443,
+        444,
+        445,
+        447,
+        448,
+        449,
+        450,
+        451,
+        461,
+        462,
+        463,
+        464,
+        466,
+        468,
+        470,
+        471,
+        472,
+        473,
+        526,
+        527,
+        528,
+        529,
+        535,
+        540,
+        556,
+        557,
+        558,
+        559,
+        560,
+        561,
+        562,
+        572,
+        565,
+        566,
+        567,
+        568
+      ],
+      "attackWindows": [
+        {
+          "line": 11663,
+          "bones": [
+            "effect",
+            "bau Head",
+            "bau Spine1"
+          ],
+          "start": 13853,
+          "end": 13855,
+          "attacktype": 0,
+          "targetposefront": 91,
+          "targetposeback": 94,
+          "targetposeleft": 93,
+          "targetposeright": 92,
+          "targetmove": 5,
+          "defensemove": 5
+        }
+      ]
+    },
+    {
+      "poseId": 414,
+      "keys": "DA",
+      "name": "虎扫尾",
+      "stance": "ground",
+      "rage": 0,
+      "status": "ready",
+      "commandConfidence": "medium-high: two lxres references; not recovered EXE direction recognizer",
+      "poseConfidence": "high: original POS / ACT / RES",
+      "pos": {
+        "path": "dist/assets/native/combat/P0.POS",
+        "line": 11687,
+        "endLine": 11749
+      },
+      "legalOutgoing": [
+        411,
+        412,
+        413,
+        415,
+        416,
+        417,
+        418,
+        419,
+        420,
+        424,
+        489
+      ],
+      "attackWindows": [
+        {
+          "line": 11724,
+          "bones": [
+            "effect",
+            "bau Spine1",
+            "bau Spine",
+            "bad R Thigh",
+            "bad R Calf",
+            "bad R Foot"
+          ],
+          "start": 13871,
+          "end": 13873,
+          "attacktype": 0,
+          "targetposefront": 95,
+          "targetposeback": 99,
+          "targetposeleft": 98,
+          "targetposeright": 97,
+          "targetmove": 8,
+          "defensemove": 8
+        }
+      ]
+    },
+    {
+      "poseId": 415,
+      "keys": "DDA",
+      "name": "奔虎箭疾",
+      "stance": "ground",
+      "rage": 0,
+      "status": "ready",
+      "commandConfidence": "medium-high: two lxres references; not recovered EXE direction recognizer",
+      "poseConfidence": "high: original POS / ACT / RES",
+      "pos": {
+        "path": "dist/assets/native/combat/P0.POS",
+        "line": 11750,
+        "endLine": 11817
+      },
+      "legalOutgoing": [
+        411,
+        413,
+        414,
+        416,
+        417,
+        418,
+        419,
+        420,
+        423,
+        489
+      ],
+      "attackWindows": [
+        {
+          "line": 11793,
+          "bones": [
+            "effect",
+            "bau Spine1",
+            "bau Head",
+            "bau L UpperArm",
+            "bau L Forearm"
+          ],
+          "start": 13899,
+          "end": 13904,
+          "attacktype": 0,
+          "targetposefront": 103,
+          "targetposeback": 106,
+          "targetposeleft": 105,
+          "targetposeright": 104,
+          "targetmove": 1,
+          "defensemove": 8
+        }
+      ]
+    },
+    {
+      "poseId": 416,
+      "keys": "LRUA",
+      "name": "虎啸波",
+      "stance": "ground",
+      "rage": 60,
+      "status": "pending-effect-only",
+      "commandConfidence": "medium-high: two lxres references; not recovered EXE direction recognizer",
+      "poseConfidence": "high: original POS / ACT / RES",
+      "pos": {
+        "path": "dist/assets/native/combat/P0.POS",
+        "line": 11818,
+        "endLine": 11866
+      },
+      "legalOutgoing": [],
+      "attackWindows": [
+        {
+          "line": 11843,
+          "bones": [
+            "effect"
+          ],
+          "start": 13959,
+          "end": 13980,
+          "attacktype": 0,
+          "targetposefront": 103,
+          "targetposeback": 106,
+          "targetposeleft": 105,
+          "targetposeright": 104,
+          "targetmove": 2,
+          "defensemove": 15
+        }
+      ]
+    },
+    {
+      "poseId": 417,
+      "keys": "DUA",
+      "name": "虎扬头",
+      "stance": "ground",
+      "rage": 0,
+      "status": "ready",
+      "commandConfidence": "medium-high: two lxres references; not recovered EXE direction recognizer",
+      "poseConfidence": "high: original POS / ACT / RES",
+      "pos": {
+        "path": "dist/assets/native/combat/P0.POS",
+        "line": 11867,
+        "endLine": 11929
+      },
+      "legalOutgoing": [
+        411,
+        413,
+        414,
+        415,
+        416,
+        418,
+        419,
+        420,
+        424,
+        489
+      ],
+      "attackWindows": [
+        {
+          "line": 11904,
+          "bones": [
+            "weapon",
+            "effect",
+            "bau Spine1",
+            "bau L UpperArm",
+            "bau L Forearm",
+            "bau L Hand"
+          ],
+          "start": 14010,
+          "end": 14012,
+          "attacktype": 0,
+          "targetposefront": 100,
+          "targetposeback": 100,
+          "targetposeleft": 100,
+          "targetposeright": 100,
+          "targetmove": 1,
+          "defensemove": 6
+        }
+      ]
+    },
+    {
+      "poseId": 418,
+      "keys": "UUA",
+      "name": "虎王崩击",
+      "stance": "ground",
+      "rage": 0,
+      "status": "ready",
+      "commandConfidence": "medium-high: two lxres references; not recovered EXE direction recognizer",
+      "poseConfidence": "high: original POS / ACT / RES",
+      "pos": {
+        "path": "dist/assets/native/combat/P0.POS",
+        "line": 11930,
+        "endLine": 11998
+      },
+      "legalOutgoing": [
+        411,
+        412,
+        414,
+        415,
+        416,
+        417,
+        419,
+        420,
+        422
+      ],
+      "attackWindows": [
+        {
+          "line": 11973,
+          "bones": [
+            "weapon",
+            "effect",
+            "bau Spine1",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand"
+          ],
+          "start": 14049,
+          "end": 14052,
+          "attacktype": 1,
+          "targetposefront": 103,
+          "targetposeback": 106,
+          "targetposeleft": 105,
+          "targetposeright": 104,
+          "targetmove": 2,
+          "defensemove": 6
+        }
+      ]
+    },
+    {
+      "poseId": 419,
+      "keys": "UDA",
+      "name": "猛虎靠山",
+      "stance": "ground",
+      "rage": 0,
+      "status": "ready",
+      "commandConfidence": "medium-high: two lxres references; not recovered EXE direction recognizer",
+      "poseConfidence": "high: original POS / ACT / RES",
+      "pos": {
+        "path": "dist/assets/native/combat/P0.POS",
+        "line": 11999,
+        "endLine": 12067
+      },
+      "legalOutgoing": [
+        411,
+        412,
+        413,
+        414,
+        415,
+        416,
+        417,
+        418,
+        420,
+        422,
+        489
+      ],
+      "attackWindows": [
+        {
+          "line": 12042,
+          "bones": [
+            "weapon",
+            "effect",
+            "bau Spine1",
+            "bau L UpperArm",
+            "bau L Forearm",
+            "bau L Hand"
+          ],
+          "start": 14111,
+          "end": 14113,
+          "attacktype": 0,
+          "targetposefront": 110,
+          "targetposeback": 110,
+          "targetposeleft": 110,
+          "targetposeright": 110,
+          "targetmove": 1,
+          "defensemove": 8
+        }
+      ]
+    },
+    {
+      "poseId": 420,
+      "keys": "DUUA",
+      "name": "疯虎百烈",
+      "stance": "ground",
+      "rage": 0,
+      "status": "ready",
+      "commandConfidence": "medium-high: two lxres references; not recovered EXE direction recognizer",
+      "poseConfidence": "high: original POS / ACT / RES",
+      "pos": {
+        "path": "dist/assets/native/combat/P0.POS",
+        "line": 12068,
+        "endLine": 12202
+      },
+      "legalOutgoing": [
+        411,
+        412,
+        413,
+        414,
+        415,
+        416,
+        417,
+        418,
+        419,
+        424,
+        489
+      ],
+      "attackWindows": [
+        {
+          "line": 12093,
+          "bones": [
+            "weapon",
+            "effect",
+            "bau L UpperArm",
+            "bau L Forearm",
+            "bau L Hand",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand"
+          ],
+          "start": 14153,
+          "end": 14157,
+          "attacktype": 0,
+          "targetposefront": 121,
+          "targetposeback": 121,
+          "targetposeleft": 121,
+          "targetposeright": 121,
+          "targetmove": 0,
+          "defensemove": 1
+        },
+        {
+          "line": 12114,
+          "bones": [
+            "weapon",
+            "effect",
+            "bau L UpperArm",
+            "bau L Forearm",
+            "bau L Hand",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand"
+          ],
+          "start": 14160,
+          "end": 14164,
+          "attacktype": 0,
+          "targetposefront": 110,
+          "targetposeback": 110,
+          "targetposeleft": 110,
+          "targetposeright": 110,
+          "targetmove": 0,
+          "defensemove": 1
+        },
+        {
+          "line": 12135,
+          "bones": [
+            "weapon",
+            "effect",
+            "bau L UpperArm",
+            "bau L Forearm",
+            "bau L Hand",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand"
+          ],
+          "start": 14168,
+          "end": 14172,
+          "attacktype": 0,
+          "targetposefront": 121,
+          "targetposeback": 121,
+          "targetposeleft": 121,
+          "targetposeright": 121,
+          "targetmove": 0,
+          "defensemove": 2
+        },
+        {
+          "line": 12156,
+          "bones": [
+            "weapon",
+            "effect",
+            "bau L UpperArm",
+            "bau L Forearm",
+            "bau L Hand",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand"
+          ],
+          "start": 14175,
+          "end": 14178,
+          "attacktype": 0,
+          "targetposefront": 90,
+          "targetposeback": 94,
+          "targetposeleft": 93,
+          "targetposeright": 92,
+          "targetmove": 4,
+          "defensemove": 2
+        },
+        {
+          "line": 12177,
+          "bones": [
+            "weapon",
+            "effect",
+            "bau L UpperArm",
+            "bau L Forearm",
+            "bau L Hand"
+          ],
+          "start": 14180,
+          "end": 14182,
+          "attacktype": 0,
+          "targetposefront": 91,
+          "targetposeback": 94,
+          "targetposeleft": 93,
+          "targetposeright": 92,
+          "targetmove": 6,
+          "defensemove": 3
+        }
+      ]
+    },
+    {
+      "poseId": 421,
+      "keys": "LRDA",
+      "name": "虎王虐袭杀",
+      "stance": "ground",
+      "rage": 100,
+      "status": "partial-native-body-chain",
+      "commandConfidence": "medium-high: two lxres references; not recovered EXE direction recognizer",
+      "poseConfidence": "high: original POS / ACT / RES",
+      "pos": {
+        "path": "dist/assets/native/combat/P0.POS",
+        "line": 12203,
+        "endLine": 12250
+      },
+      "link": 422,
+      "legalOutgoing": [],
+      "attackWindows": [
+        {
+          "line": 12223,
+          "bones": [
+            "weapon",
+            "effect",
+            "bau Head",
+            "bau Spine1",
+            "bau Spine",
+            "bau L UpperArm",
+            "bau L Forearm",
+            "bau L Hand",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand",
+            "bad R Thigh",
+            "bad R Calf",
+            "bad R Foot",
+            "bad L Thigh",
+            "bad L Calf",
+            "bad L Foot"
+          ],
+          "start": 14209,
+          "end": 14216,
+          "attacktype": 1,
+          "targetposefront": 109,
+          "targetposeback": 109,
+          "targetposeleft": 109,
+          "targetposeright": 109,
+          "targetmove": 0,
+          "defensemove": 0
+        }
+      ]
+    },
+    {
+      "poseId": 489,
+      "keys": "DDUA",
+      "name": "饿虎嗜血",
+      "stance": "ground",
+      "rage": 100,
+      "status": "pending-state-34",
+      "commandConfidence": "medium-high: two lxres references; not recovered EXE direction recognizer",
+      "poseConfidence": "high: original POS / ACT / RES",
+      "pos": {
+        "path": "dist/assets/native/combat/P0.POS",
+        "line": 15681,
+        "endLine": 15743
+      },
+      "legalOutgoing": [
+        411,
+        413,
+        414,
+        415,
+        418,
+        419,
+        420
+      ],
+      "attackWindows": [
+        {
+          "line": 15712,
+          "bones": [
+            "bau Head",
+            "bau Spine1",
+            "bau Spine",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand",
+            "bau L UpperArm",
+            "bau L Forearm",
+            "bau L Hand",
+            "bad R Thigh",
+            "bad R Calf",
+            "bad R Foot",
+            "bad L Thigh",
+            "bad L Calf",
+            "bad L Foot",
+            "weapon",
+            "effect"
+          ],
+          "start": 14678,
+          "end": 14681,
+          "attacktype": 1,
+          "targetposefront": 109,
+          "targetposeback": 109,
+          "targetposeleft": 109,
+          "targetposeright": 109,
+          "targetmove": 1,
+          "defensemove": 8
+        }
+      ]
+    }
+  ],
+  "rageChain": [
+    {
+      "id": 421,
+      "link": 422,
+      "evidence": {
+        "file": "P0.POS",
+        "line": 12203,
+        "endLine": 12250
+      },
+      "attacks": [
+        {
+          "line": 12223,
+          "bones": [
+            "weapon",
+            "effect",
+            "bau Head",
+            "bau Spine1",
+            "bau Spine",
+            "bau L UpperArm",
+            "bau L Forearm",
+            "bau L Hand",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand",
+            "bad R Thigh",
+            "bad R Calf",
+            "bad R Foot",
+            "bad L Thigh",
+            "bad L Calf",
+            "bad L Foot"
+          ],
+          "start": 14209,
+          "end": 14216
+        }
+      ],
+      "resource": {
+        "offset": 39776,
+        "parameters": [
+          {
+            "offset": 39817,
+            "words": [
+              16,
+              21,
+              0
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "offset": 39833,
+            "words": [
+              2,
+              0,
+              3,
+              0,
+              -1,
+              1,
+              0,
+              1,
+              0,
+              0
+            ],
+            "statKey": 3,
+            "mode": 1,
+            "value": 0,
+            "valueOffset": 39857
+          }
+        ]
+      }
+    },
+    {
+      "id": 422,
+      "link": 423,
+      "evidence": {
+        "file": "P0.POS",
+        "line": 12251,
+        "endLine": 12298
+      },
+      "attacks": [
+        {
+          "line": 12271,
+          "bones": [
+            "weapon",
+            "effect",
+            "bau Head",
+            "bau Spine1",
+            "bau Spine",
+            "bau L UpperArm",
+            "bau L Forearm",
+            "bau L Hand",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand",
+            "bad R Thigh",
+            "bad R Calf",
+            "bad R Foot",
+            "bad L Thigh",
+            "bad L Calf",
+            "bad L Foot"
+          ],
+          "start": 14223,
+          "end": 14224
+        }
+      ],
+      "resource": {
+        "offset": 39873,
+        "parameters": [
+          {
+            "offset": 39916,
+            "words": [
+              16,
+              37,
+              0
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "offset": 39932,
+            "words": [
+              2,
+              0,
+              3,
+              0,
+              -1,
+              1,
+              60,
+              1,
+              0,
+              0
+            ],
+            "statKey": 3,
+            "mode": 1,
+            "value": 60,
+            "valueOffset": 39956
+          }
+        ]
+      }
+    },
+    {
+      "id": 423,
+      "link": 424,
+      "evidence": {
+        "file": "P0.POS",
+        "line": 12299,
+        "endLine": 12430
+      },
+      "attacks": [
+        {
+          "line": 12319,
+          "bones": [
+            "weapon",
+            "effect",
+            "bau Head",
+            "bau Spine1",
+            "bau Spine",
+            "bau L UpperArm",
+            "bau L Forearm",
+            "bau L Hand",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand",
+            "bad R Thigh",
+            "bad R Calf",
+            "bad R Foot",
+            "bad L Thigh",
+            "bad L Calf",
+            "bad L Foot"
+          ],
+          "start": 14258,
+          "end": 14261
+        },
+        {
+          "line": 12340,
+          "bones": [
+            "weapon",
+            "effect",
+            "bau Head",
+            "bau Spine1",
+            "bau Spine",
+            "bau L UpperArm",
+            "bau L Forearm",
+            "bau L Hand",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand",
+            "bad R Thigh",
+            "bad R Calf",
+            "bad R Foot",
+            "bad L Thigh",
+            "bad L Calf",
+            "bad L Foot"
+          ],
+          "start": 14265,
+          "end": 14268
+        },
+        {
+          "line": 12361,
+          "bones": [
+            "weapon",
+            "effect",
+            "bau Head",
+            "bau Spine1",
+            "bau Spine",
+            "bau L UpperArm",
+            "bau L Forearm",
+            "bau L Hand",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand",
+            "bad R Thigh",
+            "bad R Calf",
+            "bad R Foot",
+            "bad L Thigh",
+            "bad L Calf",
+            "bad L Foot"
+          ],
+          "start": 14273,
+          "end": 14276
+        },
+        {
+          "line": 12382,
+          "bones": [
+            "weapon",
+            "effect",
+            "bau Head",
+            "bau Spine1",
+            "bau Spine",
+            "bau L UpperArm",
+            "bau L Forearm",
+            "bau L Hand",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand",
+            "bad R Thigh",
+            "bad R Calf",
+            "bad R Foot",
+            "bad L Thigh",
+            "bad L Calf",
+            "bad L Foot"
+          ],
+          "start": 14279,
+          "end": 14282
+        },
+        {
+          "line": 12403,
+          "bones": [
+            "weapon",
+            "effect",
+            "bau Head",
+            "bau Spine1",
+            "bau Spine",
+            "bau L UpperArm",
+            "bau L Forearm",
+            "bau L Hand",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand",
+            "bad R Thigh",
+            "bad R Calf",
+            "bad R Foot",
+            "bad L Thigh",
+            "bad L Calf",
+            "bad L Foot"
+          ],
+          "start": 14284,
+          "end": 14287
+        }
+      ],
+      "resource": {
+        "offset": 39972,
+        "parameters": [
+          {
+            "offset": 40013,
+            "words": [
+              16,
+              37,
+              0
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "offset": 40029,
+            "words": [
+              2,
+              0,
+              3,
+              0,
+              -1,
+              1,
+              60,
+              1,
+              0,
+              0
+            ],
+            "statKey": 3,
+            "mode": 1,
+            "value": 60,
+            "valueOffset": 40053
+          }
+        ]
+      }
+    },
+    {
+      "id": 424,
+      "link": 425,
+      "evidence": {
+        "file": "P0.POS",
+        "line": 12431,
+        "endLine": 12478
+      },
+      "attacks": [
+        {
+          "line": 12451,
+          "bones": [
+            "weapon",
+            "effect",
+            "bau Head",
+            "bau Spine1",
+            "bau Spine",
+            "bau L UpperArm",
+            "bau L Forearm",
+            "bau L Hand",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand",
+            "bad R Thigh",
+            "bad R Calf",
+            "bad R Foot",
+            "bad L Thigh",
+            "bad L Calf",
+            "bad L Foot"
+          ],
+          "start": 14329,
+          "end": 14331
+        }
+      ],
+      "resource": {
+        "offset": 40069,
+        "parameters": [
+          {
+            "offset": 40110,
+            "words": [
+              16,
+              37,
+              0
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "offset": 40126,
+            "words": [
+              2,
+              0,
+              3,
+              0,
+              -1,
+              1,
+              60,
+              1,
+              0,
+              0
+            ],
+            "statKey": 3,
+            "mode": 1,
+            "value": 60,
+            "valueOffset": 40150
+          }
+        ]
+      }
+    },
+    {
+      "id": 425,
+      "link": 426,
+      "evidence": {
+        "file": "P0.POS",
+        "line": 12479,
+        "endLine": 12555
+      },
+      "attacks": [
+        {
+          "line": 12511,
+          "bones": [
+            "effect"
+          ],
+          "start": 14364,
+          "end": 14367
+        },
+        {
+          "line": 12528,
+          "bones": [
+            "weapon",
+            "effect",
+            "bau Head",
+            "bau Spine1",
+            "bau Spine",
+            "bau L UpperArm",
+            "bau L Forearm",
+            "bau L Hand",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand",
+            "bad R Thigh",
+            "bad R Calf",
+            "bad R Foot",
+            "bad L Thigh",
+            "bad L Calf",
+            "bad L Foot"
+          ],
+          "start": 14376,
+          "end": 14380
+        }
+      ],
+      "resource": {
+        "offset": 40166,
+        "parameters": [
+          {
+            "offset": 40207,
+            "words": [
+              1,
+              100,
+              0
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "offset": 40223,
+            "words": [
+              2,
+              0,
+              3,
+              0,
+              -1,
+              1,
+              80,
+              1,
+              0,
+              0
+            ],
+            "statKey": 3,
+            "mode": 1,
+            "value": 80,
+            "valueOffset": 40247
+          }
+        ]
+      }
+    },
+    {
+      "id": 426,
+      "link": 488,
+      "evidence": {
+        "file": "P0.POS",
+        "line": 12556,
+        "endLine": 12603
+      },
+      "attacks": [
+        {
+          "line": 12576,
+          "bones": [
+            "weapon",
+            "effect",
+            "bau Head",
+            "bau Spine1",
+            "bau Spine",
+            "bau L UpperArm",
+            "bau L Forearm",
+            "bau L Hand",
+            "bau R UpperArm",
+            "bau R Forearm",
+            "bau R Hand",
+            "bad R Thigh",
+            "bad R Calf",
+            "bad R Foot",
+            "bad L Thigh",
+            "bad L Calf",
+            "bad L Foot"
+          ],
+          "start": 14410,
+          "end": 14451
+        }
+      ],
+      "resource": {
+        "offset": 40263,
+        "parameters": [
+          {
+            "offset": 40304,
+            "words": [
+              1,
+              100,
+              0
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "offset": 40320,
+            "words": [
+              2,
+              0,
+              3,
+              0,
+              -1,
+              1,
+              100,
+              1,
+              0,
+              0
+            ],
+            "statKey": 3,
+            "mode": 1,
+            "value": 100,
+            "valueOffset": 40344
+          }
+        ]
+      }
+    },
+    {
+      "id": 488,
+      "evidence": {
+        "file": "P0.POS",
+        "line": 15659,
+        "endLine": 15680
+      },
+      "attacks": [],
+      "resource": {
+        "offset": 45605,
+        "parameters": [
+          {
+            "offset": 45650,
+            "words": [
+              1,
+              100,
+              0
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "offset": 45666,
+            "words": [
+              2,
+              0,
+              3,
+              0,
+              -1,
+              1,
+              50,
+              1,
+              0,
+              0
+            ],
+            "statKey": 3,
+            "mode": 1,
+            "value": 50,
+            "valueOffset": 45690
+          }
+        ]
+      }
+    }
+  ],
+  "states": [
+    {
+      "offset": 56255,
+      "endOffset": 56415,
+      "type": 2,
+      "id": 21,
+      "name": "气绝",
+      "nameEncodings": {
+        "big5": "ァ橈",
+        "gbk": "气绝",
+        "hex": "c6f8bef8"
+      },
+      "model": "0",
+      "flag": 1,
+      "byteFlag": 0,
+      "parameters": [
+        {
+          "offset": 56287,
+          "words": [
+            11,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 56299,
+          "words": [
+            13,
+            99999,
+            0
+          ]
+        },
+        {
+          "offset": 56311,
+          "words": [
+            14,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 56323,
+          "words": [
+            15,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 56335,
+          "words": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 56347,
+          "words": [
+            2,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 56359,
+          "words": [
+            8,
+            0,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 56375,
+          "words": [
+            2,
+            0,
+            6,
+            0,
+            0,
+            0,
+            -10,
+            0,
+            0,
+            0
+          ],
+          "statKey": 6,
+          "mode": 0,
+          "value": -10,
+          "valueOffset": 56399
+        }
+      ]
+    },
+    {
+      "offset": 58132,
+      "endOffset": 58292,
+      "type": 2,
+      "id": 34,
+      "name": "嗜血",
+      "nameEncodings": {
+        "big5": "岓悛",
+        "gbk": "嗜血",
+        "hex": "cac8d1aa"
+      },
+      "model": "0",
+      "flag": 1,
+      "byteFlag": 0,
+      "parameters": [
+        {
+          "offset": 58164,
+          "words": [
+            11,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 58176,
+          "words": [
+            13,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 58188,
+          "words": [
+            14,
+            713,
+            0
+          ]
+        },
+        {
+          "offset": 58200,
+          "words": [
+            15,
+            739,
+            0
+          ]
+        },
+        {
+          "offset": 58212,
+          "words": [
+            1,
+            900,
+            0
+          ]
+        },
+        {
+          "offset": 58224,
+          "words": [
+            2,
+            900,
+            0
+          ]
+        },
+        {
+          "offset": 58236,
+          "words": [
+            8,
+            10,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 58252,
+          "words": [
+            2,
+            0,
+            3,
+            0,
+            -1,
+            0,
+            40,
+            1,
+            0,
+            0
+          ],
+          "statKey": 3,
+          "mode": 0,
+          "value": 40,
+          "valueOffset": 58276
+        }
+      ]
+    },
+    {
+      "offset": 58612,
+      "endOffset": 58772,
+      "type": 2,
+      "id": 37,
+      "name": "气失",
+      "nameEncodings": {
+        "big5": "ァ囮",
+        "gbk": "气失",
+        "hex": "c6f8caa7"
+      },
+      "model": "0",
+      "flag": 1,
+      "byteFlag": 0,
+      "parameters": [
+        {
+          "offset": 58644,
+          "words": [
+            11,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 58656,
+          "words": [
+            13,
+            99999,
+            0
+          ]
+        },
+        {
+          "offset": 58668,
+          "words": [
+            14,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 58680,
+          "words": [
+            15,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 58692,
+          "words": [
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 58704,
+          "words": [
+            2,
+            0,
+            0
+          ]
+        },
+        {
+          "offset": 58716,
+          "words": [
+            8,
+            0,
+            0
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "offset": 58732,
+          "words": [
+            2,
+            0,
+            6,
+            0,
+            0,
+            0,
+            -5,
+            0,
+            0,
+            0
+          ],
+          "statKey": 6,
+          "mode": 0,
+          "value": -5,
+          "valueOffset": 58756
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "412/413 are labeled left/right weapon swap in native POS and connect cross-weapon ACT entries: pending until swap behavior is implemented.",
+    "416 has a single effect-only attack window: no substitute body collision.",
+    "489 references state34 via parameter[18,34,0]; state34 has native attack+40 modifier and duration/effect metadata: pending until the persistent buff is implemented.",
+    "421 chain can match existing partial melee-rage implementation: original native body/weapon windows and authored links only. Missing state21/37 target-rage reductions, EF-only first window of425 and remote EF collisions must stay disclosed.",
+    "No paired-target/grab-specific path was found in class10 callbacks; static immediate scan is a bounded negative result, not proof of absence.",
+    "ACT rage shortcuts exist but their command recognition prerequisites are not recovered; do not infer that the full rage input may jump directly into422/423/424.",
+    "Runtime personal POS frame offsets may differ from common P0.POS; use each loaded character POS."
+  ]
+}

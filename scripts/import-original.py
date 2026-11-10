@@ -546,6 +546,10 @@ def main():
         for name in sorted(importer.archive_index.get('waves.pak', {})):
             if name.endswith('.wav'):
                 effects.append(dict(importer.raw(name, f'sounds/effects/{name}', 'waves.pak'), id=Path(name).stem))
+        # Expansion weapon sounds live in loose Patch files, outside waves.pak.
+        for path in sorted((source / 'Patch').iterdir()):
+            if path.suffix.lower() == '.wav' and path.name.lower().startswith(('w09', 'w10', 'w11')):
+                effects.append(dict(importer.raw(str(path.relative_to(source)), f'sounds/effects/{path.name.lower()}'), id=path.stem.lower()))
         effect_definitions = []
         for path in sorted((source / 'SFX').iterdir()):
             if path.suffix.lower() not in ('.ef', '.lst'):
@@ -557,7 +561,7 @@ def main():
             effect_definitions.append(dict(record, id=path.stem, signature=data[:11].decode('ascii', errors='replace'),
                                            soundReferences=list(dict.fromkeys(wavs))))
         music = []
-        for name in ['menu.mp3', 's1.mp3', 's6.mp3', 's10.mp3']:
+        for name in ['menu.mp3', 's1.mp3', 's2.mp3', 's6.mp3', 's10.mp3']:
             music.append(dict(importer.raw(f'music/{name}', f'sounds/music/{name}'), id=Path(name).stem))
         scripts = []
         for directory in ['Level', 'PScriptLib']:
@@ -654,7 +658,7 @@ def main():
             maps=selected_maps, mapCatalog=[dict(id=m['id'], name=m['name'], nameEvidence=m['nameEvidence']) for m in all_maps],
             weapons=weapons, ui=ui, sounds=dict(effects=effects, music=music, effectDefinitions=effect_definitions), scripts=scripts,
             assets=assets, stats=dict(assetCount=len(assets), bytes=sum(a['bytes'] for a in assets), mapCount=len(selected_maps),
-            weaponCount=len(weapons), uiCount=len(ui), soundCount=len(effects), scriptCount=len(scripts),
+            weaponCount=len(weapons), uiCount=len(ui), soundCount=len(effects), musicCount=len(music), scriptCount=len(scripts),
             effectDefinitionCount=len(effect_definitions), availableMapCount=sum(m['available'] for m in selected_maps)),
             missingRequestedResources=[dict(name='蝴蝶谷', status='not identified in this local client; sn01 is 钟乳洞, not 蝴蝶谷')],
             limitations=['COB is copied and identified; collision cell semantics are not implemented by this importer.',

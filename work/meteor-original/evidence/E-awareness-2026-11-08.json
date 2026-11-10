@@ -1,0 +1,1859 @@
+{
+  "id": "E-awareness-2026-11-08",
+  "observedAt": "2026-11-08T21:26:48.082083+08:00",
+  "version": "0.7.3",
+  "scope": "work/meteor-original/scope.md",
+  "originalExecuted": false,
+  "sampleSha256": "289afb0aa44a47921d167fc24d6d404c60d6d00c299ac27d45fc61e16231b498",
+  "perception": {
+    "sourceFunctions": [
+      "005012f0",
+      "004fe1a0",
+      "004fc0b0",
+      "004fc610",
+      "004fc980",
+      "004fc8a0",
+      "004fdf00",
+      "004f8e50",
+      "004fda00"
+    ],
+    "defaultViewNativeUnits": 400,
+    "scale": 0.08,
+    "nearbySourceDistanceSquared": 6400,
+    "nearbyMeters": 6.4,
+    "farGate": "Strictly positive forward dot; not an invented narrow cone. Nearby candidates still require View and line of sight.",
+    "retentionSourceDistanceSquared": 40000,
+    "retentionMeters": 16,
+    "retentionStrictBoundary": true,
+    "viewMultiplierDefault": 1,
+    "webAdapters": [
+      "Eye/foot proxy points and original geometry collision ray implementation",
+      "Nearest valid visible target instead of original registry order/PRNG",
+      "Rendering-frame observation rather than full native think scheduling",
+      "Training slot movement/cooldowns and complete attack decisions remain Web policies"
+    ]
+  },
+  "engineIntegration": {
+    "training": "No target means no turn/chase/slot orbit/attack. Discovery uses the same source gates as missions.",
+    "story": "Source00503970(wait)→004fdf00→00503e00 pursues a discovered enemy; wait/patrol perception is shared. Behavior changes clear cached enemy as004fda00. Explicit follow/kill/attacktarget orders remain intact.",
+    "reset": "Death/disposal/removal invalidates a known target; spawn/mission teardown clear target cache. D_user wxyz facing is projected onto the walking plane.",
+    "attackSight": "Training attacks now require the existing collision line-of-sight check at start."
+  },
+  "acceptance": {
+    "newAwarenessTests": 6,
+    "awarenessAndHostTests": 20,
+    "combinedInputMissionsEffectsTests": 63,
+    "oldControlProductionFailures": 3,
+    "currentAwarenessPassed": 6,
+    "sourceSpawns": [
+      "D_user09",
+      "D_user12",
+      "D_user05"
+    ],
+    "firstSecondDisplacementMeters": [
+      5.095,
+      0,
+      0
+    ],
+    "detected": [
+      true,
+      false,
+      false
+    ],
+    "publicCombo": [
+      262,
+      263
+    ],
+    "originalMap": "Actualsn06 GMB/scene geometry/colliders and normal start(), all three NPC AI active. Texture loading/audio/rendering stubbed. No direct target HP changes in this opening acceptance.",
+    "otherFixture": "CPU plane uses the same original DES spawns; synthetic triangle wall checks blocked discovery."
+  },
+  "dartCompletion": {
+    "catalogEntries": 196,
+    "readyEntryPaths": 169,
+    "pending": 27,
+    "newReady": [
+      201,
+      203,
+      551
+    ],
+    "extraRestoredItemPose": 210,
+    "effectPack": {
+      "definitions": 61,
+      "texturedShapes": 286,
+      "textureRecords": 50,
+      "pngFiles": 46,
+      "iflRecords": 4,
+      "reproducedGeneratedFiles": 47,
+      "manifestSha256": "e09c528f45d824b53bba2e317bbacf1e75aef48a1df3663d6a3f4eac6236a8de"
+    },
+    "sourceOrder": "004af630: damage→clamped victim rage gain→parameter16 item on an unguarded surviving target. Guard/lethal paths skip item; zero damage does not.",
+    "item22": "Immediate rage-20, capped to0..effective stat7, source default100; no timed active record.",
+    "item12": "Source period word3=2; lifetime600/rate10. Server/client fixedfloat32(.2), old-counter check first, integer accumulation, expire-before-tick. First due step11;27ticks in60seconds.",
+    "item11": "Period3, lifetime150/rate10; first due step16;4ticks in15seconds.",
+    "timingBoundary": "Source counter semantics are implemented; Web accumulated time bridges to source0.2s steps with common game phase. Original OS/network phase/dispatch and poison presentation remain incomplete.",
+    "poisonDeath": "004affd0 carries no attacker kill attribution; Web periodic death does not add an attacker kill.",
+    "effectBinding": "00582120/00582210 separate position origin and complete rotation-parent affine basis; empty rotation uses native world axes, preserve flag3 position mode and shear.",
+    "cpuAcceptance": "Public201 actual effect hit+drain/guard/lethal/dynamicmax/zero-damage cases;551 natural jump/211/landing;203→204→205→329 remote5m hit and real poison ticks;210 released projectile poison. NPC retaliation/navigation paused in these skill fixtures."
+  },
+  "sourceArtifacts": [
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/README.md",
+      "sha256": "c3b722ecd97d4f0cd79f261f244ec048d5c08c2fc4859556628e30e41d25ad00"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/code-review.md",
+      "sha256": "b5b848c4c36926e8ca76cbf6e4513841bd0fc5ff839a0cdfb5b4371e3f380e2d"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/evidence.json",
+      "sha256": "c97428acb6e1bd81a444ccf7d8d9e654097cbc6a0aebcc29f1251c73498b113f"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass1.log",
+      "sha256": "0a20e8f1192774f446cd4cc86e4a51dcf8b311606f5dc522fd135c4cb7007de2"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass1/004af630_FUN_004af630.asm",
+      "sha256": "5494194bd7d9670b375bb9120f3ab6f9edc18e7e8d0e7607f8aba42da41af9d5"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass1/004af630_FUN_004af630.c",
+      "sha256": "6a3e210fe506197ee6254559ee16461aa242ebcb2851d23c1063cc6665d7de58"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass1/004d5fc0_FUN_004d5fc0.asm",
+      "sha256": "30d695ae310c8b7c7448cfaf32e045643c9974431fa23434eedf6f2334f26f60"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass1/004d5fc0_FUN_004d5fc0.c",
+      "sha256": "bee9ced0b2eff22318ed75166188217fe3f0a05ad77ef69f7f017926df653cfd"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass1/references.txt",
+      "sha256": "5cb24ad45b724be0c686f1a239f99812991ed93c72c8b5d9cff391debf578581"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass2-retry.log",
+      "sha256": "471488507bad449d55fc827b893933cd17bfac69b1f6fa4b311de8687b8b809d"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass2-retry/004abaa0_FUN_004abaa0.asm",
+      "sha256": "9abc234fcb2f746ebc1323df1ae689923ba76d17cfed6bffa8b4009c6874793f"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass2-retry/004abaa0_FUN_004abaa0.c",
+      "sha256": "a124b16c84cc9dcc078e0e9e07facac22a01bf113241b8e6ede40485a78b42a7"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass2-retry/004abf50_FUN_004abf50.asm",
+      "sha256": "2ff2c51e0c774da765034b65f2425bb5899f1178df485756f15cdf668ef9b8eb"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass2-retry/004abf50_FUN_004abf50.c",
+      "sha256": "f17e6df9ab9c5beb06a25268180f4720aaf3d04106ef425341cdc53253e56ec7"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass2-retry/004acae0_FUN_004acae0.asm",
+      "sha256": "ec45a22b22a8ab5367ae2e5f9ac591d20b7ccee25c68d84cb4ba0a013ab8de58"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass2-retry/004acae0_FUN_004acae0.c",
+      "sha256": "7486e9d5b758d6900af034280db4ee4ce0930125a7223f8f37159a22d89101b8"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass2-retry/004afcf0_FUN_004afcf0.asm",
+      "sha256": "3abeff0b6bba6c90929c652c12fb4ae41356d564234d05db3a956283d3b597b0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass2-retry/004afcf0_FUN_004afcf0.c",
+      "sha256": "d9eeef67c3616d1e8fd3b9d01fd3448595d58fa5072a245b4c962a3f4d1fda64"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass2-retry/004d5fc0_FUN_004d5fc0.asm",
+      "sha256": "30d695ae310c8b7c7448cfaf32e045643c9974431fa23434eedf6f2334f26f60"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass2-retry/004d5fc0_FUN_004d5fc0.c",
+      "sha256": "bee9ced0b2eff22318ed75166188217fe3f0a05ad77ef69f7f017926df653cfd"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass2-retry/references.txt",
+      "sha256": "9b6ca7c16474567f63fd95e2eeee3d710fd7e6659e718047ddca1aa907b27410"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/attack-application/pass2.log",
+      "sha256": "271c686bec11a470ad5a3ef417086f6f9d1672358577c16c0db2d8e66f5a9ff3"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/command-tests-first.tap",
+      "sha256": "b94614f30d32377ce57c90b4cb0754652f5d865c0f776c1a380786e38cad7e3f"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/effect-integration-first.tap",
+      "sha256": "e0c2f0d20d27c9bae483f76806218542622b9074a42b2f46b1d05386759cde19"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/geometry/README.md",
+      "sha256": "207a595997372504b4e92a6f716db7d92a313a35d43e2e8cd0a5f7bd2ade7892"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/geometry/binding-functions.r2.txt",
+      "sha256": "752125f82571aeeaa7f3d61018a5554b78b8411919afb8889abcfaf675693067"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/geometry/binding-header-load.r2.txt",
+      "sha256": "730d5d9defcf8bc8eb38a2f53b07b1f5e7a0fc2d60a1cef3078356b4b532714f"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/geometry/binding-load-and-matrix.r2.txt",
+      "sha256": "d53342410b4e1f01e937ed002a11d7d0d605cb70251bc525f1027b236d566ec4"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/geometry/binding-lookup.r2.txt",
+      "sha256": "3c564deb81caa5a2e6b9a5397359b283e7d4bc2e3383c14a5db99ee7aa41a998"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/geometry/binding-matrix-lookup.r2.txt",
+      "sha256": "144122b0f72c2b4b00422145a369e6c571aadaededa1939e003588298a35c62b"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/geometry/binding-offset-search.r2.txt",
+      "sha256": "b3babb44f9e307017b7b84b6e7b5299a1a9de9b6a984191c849a92ca2231552d"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/geometry/binding-parents.r2.txt",
+      "sha256": "be8aff1eb645390c36823f9f339e529a1b930bddde44cd29729da96e6b5fa0e9"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/geometry/binding-payload-load.r2.txt",
+      "sha256": "1ceeac1e0acb43403226f66d92446f5d020fc68fa98b9a18251a2677b9ff8289"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/geometry/binding-resolvers.r2.txt",
+      "sha256": "059e93e749e6e79edf7a4b9aae1673afec8722996da8b0c84116e191eeed38b0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/geometry/binding-setup.r2.txt",
+      "sha256": "90e8c49672e96094edeeaac086c6cefaff475320067d7fbcbad02688a94674d5"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/geometry/check-before-regression.py",
+      "sha256": "c202347c6b3dcf7043a0ba2bb644e84e3cb65001fbc922d277bd815053ea1b40"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/geometry/contact-visual-regression-first.tap",
+      "sha256": "ac862e16b4ed47720473c643535556ae27e84d5c2a343d958b559a9e6a970a64"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/geometry/effect-vtables.r2.txt",
+      "sha256": "197377ac537010f63610735f4b36d3058fcaf42d081d79b2c76d7faad38eb12a"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/geometry/evidence.json",
+      "sha256": "f0646fe2c3e6fca0673be3b8974e489a17f881544eb0c67d8b2782406394d4a1"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/geometry/native-effect-transforms-before.js.txt",
+      "sha256": "3459c1c5f8a6e497e8383ee41cbfddaa1e98f8366b8d89168b73a0423e6aa680"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/geometry/probe-dart-effects-final.log",
+      "sha256": "d275c79596b2768f4c3e07936fbdd1efc403fca717229159916eb38b05bc5e27"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/geometry/probe-dart-effects-fixed.log",
+      "sha256": "124ae15b7005822e17c0e00e9ea73c423b68a70b036b6b8d5e93947721378616"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/geometry/probe-dart-effects.json",
+      "sha256": "d275c79596b2768f4c3e07936fbdd1efc403fca717229159916eb38b05bc5e27"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/geometry/probe-dart-effects.log",
+      "sha256": "bef3eb5a2875e7a9f642752d7264a9c74c3649c652fe1414c1982b2a644fc8e4"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/geometry/probe-dart-effects.mjs",
+      "sha256": "b5e1ee102156b120272c3f2b4556c02d3e5c058928307fb00cc01a7b1d2dda33"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/geometry/relative-translation.r2.txt",
+      "sha256": "81d4c828e870a9860d5ba33000e8dde0874a060d6fc2adf826801af4c9e38983"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/geometry/source-effects.json",
+      "sha256": "95ad2cc15f976f6c1b56abc5adc9fe87b404feb6d3c154f0081c950071731cf5"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/geometry/transform-tests-before.tap",
+      "sha256": "adcc1fe8581013cdce7c97cd1be5fa2764bbdc92425719ada4328121cc0762bf"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/geometry/transform-tests-first.tap",
+      "sha256": "2f38819a6b91398f15ba9d27ca4f50c2f8b09f4e5fd88e70a670975f2dba57b4"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/README.md",
+      "sha256": "ec2e45a2e11d53b40b6431b5ad31ca569d37dc96e5faa0a455c10c6fef9457c1"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/ReadOnlyItemConsumerTrace.java",
+      "sha256": "7ddd3985b1b350659283536c7c20619242da2f110e28b35990a745fba6cea358"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/ReadOnlyItemSchedulerTrace.java",
+      "sha256": "0deb08e699761e19cd3a9e3cbf6521d77fc1cdf30915f1c887ab7426569e0b0a"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/death.log",
+      "sha256": "c9dd093e02685794fe75a4c5e72a7ad70a18da0a3870b870c7187b949e76572e"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/death/0048ee50_FUN_0048ee50.asm",
+      "sha256": "aa646daeb710b220f1c0b6f5f6d18c5f6a0e59ce66ae8bd3cb21190ec9e4e9d0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/death/0048ee50_FUN_0048ee50.c",
+      "sha256": "201573864aee09adbbd109532f983886614901e643d0a6f28058ec6e7ea2c5fd"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/death/0048f050_FUN_0048f050.asm",
+      "sha256": "0f0d3986308caf46d5bcd4f99dac3818d97784a9e9a5dd5f2a747c054d3ba3f1"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/death/0048f050_FUN_0048f050.c",
+      "sha256": "9da53390f993dc69337937ab14bcb84a2308fc518fe5c867a45537ddab192fa8"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/death/00492690_FUN_00492690.asm",
+      "sha256": "a22481c04f32b743d30dcea5b74c3e850132d074bdfc9450c60932b1c3ce59b1"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/death/00492690_FUN_00492690.c",
+      "sha256": "399e4b4c8242b55cf1681668adddbdee1766a617e9a837af91f80cf45dae75bf"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/death/00492840_FUN_00492840.asm",
+      "sha256": "9ee6e2afca880b8f3a07e93c278d53d950979f286dfc3758bfc3f7c683ecb8a0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/death/00492840_FUN_00492840.c",
+      "sha256": "816dfeb956ba54e8e222b2a419256675dcdf283031100013a44da8fb5a67f99e"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/death/0049a750_FUN_0049a750.asm",
+      "sha256": "ff8a41def7c69a3b0888e21fbb90292fe8d10bc68be13a10535d875057e074c6"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/death/0049a750_FUN_0049a750.c",
+      "sha256": "c19b4b0ba091bc540dbad1f9c139823fa8189385eb24e4afb1ca59268976f606"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/death/004affd0_FUN_004affd0.asm",
+      "sha256": "79ddeb51793570b203580493134957026634b3acc43e2fcd79ce1f25574f5f3c"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/death/004affd0_FUN_004affd0.c",
+      "sha256": "72a01500719168e0765a650dbb12a94f2b3855816b8fe547ecb59889db1e287c"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/death/004b43f0_FUN_004b43f0.asm",
+      "sha256": "035a65005f3372f43c1b78f2cca5236822ba7a3bc460cb750ba76eb58b197224"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/death/004b43f0_FUN_004b43f0.c",
+      "sha256": "1ca7858dd6bc97d8bc9876bf43505d80d909ec8e414bfcc79fc2cab59c248305"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/death/references.txt",
+      "sha256": "09806f911c03c438083f9c0e19f8bcda0ef5ae300f204ef4b1dff6864075ab24"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/evidence.json",
+      "sha256": "d459b59d76ae94c79608db547ef4c2be750a97b7f89f809fe845a4dc95495739"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/original-item-records.json",
+      "sha256": "9972adea63dabe23cea61b1dca7084171eaf49019676ca28b56166734da65be6"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1.log",
+      "sha256": "620d0d31a7f8d31a8034cf2b7cad7ae4c0ee6f7c8523363a0c34178d6e0dafe4"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/0048f3f0_FUN_0048f3f0.asm",
+      "sha256": "4173807585fe3a62a3f87f8ec656d97aa2688cb3825c993cb8ba632347bd6316"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/0048f3f0_FUN_0048f3f0.c",
+      "sha256": "cc071d627ad72f8897a0e71aa1985a17065462736ec19734f41d9d0c49d6dffc"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004907b0_FUN_004907b0.asm",
+      "sha256": "ddac720730969be20443fb7fc2669502b962d90878d1dcdaeadca93102c9f409"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004907b0_FUN_004907b0.c",
+      "sha256": "020f700a548c2b7f753db483c21ce8e78ec10a160b08dab7cb3c4c5eff7d4d99"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/00492230_FUN_00492230.asm",
+      "sha256": "0840e5a5f7349fd3ca57834acbab43538eb5a08467b0a4ed6b5cb2e14cb0b308"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/00492230_FUN_00492230.c",
+      "sha256": "fe3e80efbbb36d1d738ae8b3409c980f0b6929b8e4f3df57615f40dba3d5e34b"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/00492a80_FUN_00492a80.asm",
+      "sha256": "b29d2f0222b75e7afc11f59ef7774c7cce82045711990dc8f5a128cfdad64ed0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/00492a80_FUN_00492a80.c",
+      "sha256": "d9c106aecd40f6090786b714586edddeb5f42ce3c9f4906a0d0e625d6874bbaa"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004af110_FUN_004af110.asm",
+      "sha256": "79e36044d3e4577db0e9ca0beac2a0ec2503ed2e5deb9f8de49d40c486238446"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004af110_FUN_004af110.c",
+      "sha256": "30856f9fa0e9a8ff3251ce927e1f10faeef5e0939e26d64f293b5f76a788eb44"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004b0bd0_FUN_004b0bd0.asm",
+      "sha256": "9b535c8fc80c079a81116ebecda0045aa6622c5280c6aa4b0a2e717a52945d81"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004b0bd0_FUN_004b0bd0.c",
+      "sha256": "950682c39eaf41ec413a6d84b4a64954ef2260f188b5d1b7ab9048276dafb3fe"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d4a70_FUN_004d4a70.asm",
+      "sha256": "9c8afb25387c81a39019eb71cf35976c600d984953d85b21a30e234e8d4ca1f0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d4a70_FUN_004d4a70.c",
+      "sha256": "4cc65d467f033a14b70df16c3010ef050faf94ea48597a28d38a0cefa72dbe90"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d4d30_FUN_004d4d30.asm",
+      "sha256": "a3547041d6576545b22dfeb427d7b74f071bf78fc0f2b91f27160533d366ecca"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d4d30_FUN_004d4d30.c",
+      "sha256": "c912f2075af119ae9493cbdb917e73e444346e5461a115ba005d7f24877ae521"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d4dd0_FUN_004d4dd0.asm",
+      "sha256": "002d620df7d6250ca22bd10f9108e03b3ce3c4e52fecc5fe00785808e654ed54"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d4dd0_FUN_004d4dd0.c",
+      "sha256": "d3ebe3bd6e34e27ce0b9640e5dbaffc14b3cf35c425fed38eedf9f3f72d9e2f0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d4e30_FUN_004d4e30.asm",
+      "sha256": "1945a697b996f2f29893d6622d355c34de9895b5b447dfdb8084af03aa9ef22d"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d4e30_FUN_004d4e30.c",
+      "sha256": "35edaaf46c34fbfa4ff3fc5df3f578f385a5c01b4b3bcb382eeab2bc175ae68e"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d5020_FUN_004d5020.asm",
+      "sha256": "45378aa9e8d4868e9610c7575ca581edb41cacfade5e5154e7eb72d57e3a4fb2"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d5020_FUN_004d5020.c",
+      "sha256": "77ce32ea4500e0d033625a03b3950890c201303513e9d1443b859c7adae09592"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d51a0_FUN_004d51a0.asm",
+      "sha256": "30c0e35f9112578738db7b49d2f635eb928145229435d9c6de62085b5f9f65b3"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d51a0_FUN_004d51a0.c",
+      "sha256": "3a8ee9c264f63dc6b6f81b6e92671c5ed218c84b696e8ddba3b35c13f0ebfc27"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d5220_FUN_004d5220.asm",
+      "sha256": "e89f8fc946d3adb9215a5feac1d675070b647324275dc9de13ca73ad8e470c5b"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d5220_FUN_004d5220.c",
+      "sha256": "cc5b5c75c1b752c590072d6b8bef95d20117ab721c0b2e91d01ed1e6b0ad05a0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d54c0_FUN_004d54c0.asm",
+      "sha256": "62bd03ed98ccbebf72f6f163f2d04064c4cfccd4be041c5dcbc9554f340e34e0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d54c0_FUN_004d54c0.c",
+      "sha256": "19654521278d2005be48adb161c6dcc442bf39fcd5cf5baa9d8377804bf5378d"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d56c0_FUN_004d56c0.asm",
+      "sha256": "27be83f3f3a09e0fb04dd1b9dbbcfbf712acdbc7d3e85be8720aa9861d31ea1a"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d56c0_FUN_004d56c0.c",
+      "sha256": "1089f3053a83f984cf45ad7ae26a2312b476d3f9ff1c19518cf56fb7ab7c9520"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d5790_FUN_004d5790.asm",
+      "sha256": "e2e3cf8595e36f5fe0c3f5c65f20f7e4b0724698c269aed29fcdd16c23c090d5"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d5790_FUN_004d5790.c",
+      "sha256": "9c12e39f0a9afbbb6c90351548ba533fac62ff02ef0aa7019e2fcd52c54c797c"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d58b0_FUN_004d58b0.asm",
+      "sha256": "8cb51ef1265f9d1f34bb012766f9298fc9e7138cb58c5021c304b0d8a32c9f7f"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d58b0_FUN_004d58b0.c",
+      "sha256": "c24484c49ab307efd16b2e45cd7d0d103ea68520be5b4a5e045b902353f6612a"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d59d0_FUN_004d59d0.asm",
+      "sha256": "0ef6ea0bb01b761ea8cb23a700563b021ad82138f6cc27ecab0fa3d6dff1ea7b"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d59d0_FUN_004d59d0.c",
+      "sha256": "42ddbe3e8fd741cb0797ad04aeebec4f54e634b1128f02900f0c3194d2fd656f"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d5d30_FUN_004d5d30.asm",
+      "sha256": "2afd4ddd14aabf99ade72d4f22c2128cc5e0eaa80ba173f497290327876868d9"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d5d30_FUN_004d5d30.c",
+      "sha256": "53eb1980db2b9ef82a55f0fd027f8d1aa5aca7633f4c05800b52a227d7c452e9"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d5d70_FUN_004d5d70.asm",
+      "sha256": "29cdbc4ea5cfac29c4c104faa833c7536b0e1c2c5086ed345c618d301580f9c5"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d5d70_FUN_004d5d70.c",
+      "sha256": "dd557800237215db7308c0fbd771136941c78027b9cbf32e698b897a8e12e279"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d5de0_FUN_004d5de0.asm",
+      "sha256": "7fe57b36a680092efe8bf1a88a58915075230f8b37914db95ae971899aaca781"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d5de0_FUN_004d5de0.c",
+      "sha256": "202af5a626a2d0c49da890e456efd46b51e0e7f2187fb57fc84d61b234774339"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d5e30_FUN_004d5e30.asm",
+      "sha256": "40663a42d2acf89a4b191e0e568d57db1e4f9221b5306d14ad3def9b7659e0d4"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d5e30_FUN_004d5e30.c",
+      "sha256": "ba1982f08c55aeaa8c5296ba56764a847370444ae5bfa0a202d436056a315422"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d5f70_FUN_004d5f70.asm",
+      "sha256": "c216194644a70f5a8dccf6932f0ae2d953ced9d88090060e9c6f73f9c6bb11b1"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d5f70_FUN_004d5f70.c",
+      "sha256": "c2af5391c5cccf27eeb5f85cbaa93161e856720ccb89326252157207a930733a"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d5fb0_FUN_004d5fb0.asm",
+      "sha256": "f8ab37d2a1404d47eca19763caa96b0ff690531358c02f446a28d60a911e717c"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d5fb0_FUN_004d5fb0.c",
+      "sha256": "7cfdad5e6e717282fd6a23aef5404cbc6b0d1f5d12ce5b1b46d76303043ccf7d"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d5fc0_FUN_004d5fc0.asm",
+      "sha256": "30d695ae310c8b7c7448cfaf32e045643c9974431fa23434eedf6f2334f26f60"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d5fc0_FUN_004d5fc0.c",
+      "sha256": "67759fd41e4b4348f6bfbe45ed555fdb5a96621c7971857daca38ea59ef6a51e"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d6190_FUN_004d6190.asm",
+      "sha256": "d0038c231dd7be847e5b9d8614340a7d46b399af49d839f5b7a69c16fed228f8"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d6190_FUN_004d6190.c",
+      "sha256": "4e28ecc2d2af5093bc99dc8d3c86f22af74c48296a042e7c9dcfc0e26b2a630b"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d61c0_FUN_004d61c0.asm",
+      "sha256": "6047813aa084159996a3f6f81f3457f98585fff4bd784550657e31d6cca2cdbd"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d61c0_FUN_004d61c0.c",
+      "sha256": "f2c342d0151248fdc4e3096bf390cd09665b2b36e5ab1153b7fcc5e5edb32e1e"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d6400_FUN_004d6400.asm",
+      "sha256": "c11df810facbcb39616292b566f5af6a1b251b83dc884ead5853bc06824b4910"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/004d6400_FUN_004d6400.c",
+      "sha256": "e1434381a8af994d6596fbb7577102d029fcc006a3103a0330ef1756ae70e4f0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/references.txt",
+      "sha256": "c41519d70f13e5e8d152b352a144e4a849903161e1f8ce22f26a54a804462ea5"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass1/stat-pointer-update-candidates.txt",
+      "sha256": "03b50fd4f903b16a73f9b7e0f047abf26950b490b8d28645fc467aa6e752c063"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2.log",
+      "sha256": "e850bc17064b6bec7ee8a7d16a0dc13683104a1b32630dc124166ce1e07efbf4"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/0048f3f0_FUN_0048f3f0.asm",
+      "sha256": "4173807585fe3a62a3f87f8ec656d97aa2688cb3825c993cb8ba632347bd6316"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/0048f3f0_FUN_0048f3f0.c",
+      "sha256": "cc071d627ad72f8897a0e71aa1985a17065462736ec19734f41d9d0c49d6dffc"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004907b0_FUN_004907b0.asm",
+      "sha256": "ddac720730969be20443fb7fc2669502b962d90878d1dcdaeadca93102c9f409"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004907b0_FUN_004907b0.c",
+      "sha256": "020f700a548c2b7f753db483c21ce8e78ec10a160b08dab7cb3c4c5eff7d4d99"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/00492230_FUN_00492230.asm",
+      "sha256": "0840e5a5f7349fd3ca57834acbab43538eb5a08467b0a4ed6b5cb2e14cb0b308"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/00492230_FUN_00492230.c",
+      "sha256": "fe3e80efbbb36d1d738ae8b3409c980f0b6929b8e4f3df57615f40dba3d5e34b"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/00492a80_FUN_00492a80.asm",
+      "sha256": "b29d2f0222b75e7afc11f59ef7774c7cce82045711990dc8f5a128cfdad64ed0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/00492a80_FUN_00492a80.c",
+      "sha256": "d9c106aecd40f6090786b714586edddeb5f42ce3c9f4906a0d0e625d6874bbaa"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004af110_FUN_004af110.asm",
+      "sha256": "79e36044d3e4577db0e9ca0beac2a0ec2503ed2e5deb9f8de49d40c486238446"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004af110_FUN_004af110.c",
+      "sha256": "30856f9fa0e9a8ff3251ce927e1f10faeef5e0939e26d64f293b5f76a788eb44"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004b0bd0_FUN_004b0bd0.asm",
+      "sha256": "9b535c8fc80c079a81116ebecda0045aa6622c5280c6aa4b0a2e717a52945d81"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004b0bd0_FUN_004b0bd0.c",
+      "sha256": "950682c39eaf41ec413a6d84b4a64954ef2260f188b5d1b7ab9048276dafb3fe"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d4a70_FUN_004d4a70.asm",
+      "sha256": "9c8afb25387c81a39019eb71cf35976c600d984953d85b21a30e234e8d4ca1f0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d4a70_FUN_004d4a70.c",
+      "sha256": "4cc65d467f033a14b70df16c3010ef050faf94ea48597a28d38a0cefa72dbe90"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d4d30_FUN_004d4d30.asm",
+      "sha256": "a3547041d6576545b22dfeb427d7b74f071bf78fc0f2b91f27160533d366ecca"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d4d30_FUN_004d4d30.c",
+      "sha256": "c912f2075af119ae9493cbdb917e73e444346e5461a115ba005d7f24877ae521"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d4dd0_FUN_004d4dd0.asm",
+      "sha256": "002d620df7d6250ca22bd10f9108e03b3ce3c4e52fecc5fe00785808e654ed54"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d4dd0_FUN_004d4dd0.c",
+      "sha256": "d3ebe3bd6e34e27ce0b9640e5dbaffc14b3cf35c425fed38eedf9f3f72d9e2f0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d4e30_FUN_004d4e30.asm",
+      "sha256": "1945a697b996f2f29893d6622d355c34de9895b5b447dfdb8084af03aa9ef22d"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d4e30_FUN_004d4e30.c",
+      "sha256": "35edaaf46c34fbfa4ff3fc5df3f578f385a5c01b4b3bcb382eeab2bc175ae68e"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d5020_FUN_004d5020.asm",
+      "sha256": "45378aa9e8d4868e9610c7575ca581edb41cacfade5e5154e7eb72d57e3a4fb2"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d5020_FUN_004d5020.c",
+      "sha256": "77ce32ea4500e0d033625a03b3950890c201303513e9d1443b859c7adae09592"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d51a0_FUN_004d51a0.asm",
+      "sha256": "30c0e35f9112578738db7b49d2f635eb928145229435d9c6de62085b5f9f65b3"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d51a0_FUN_004d51a0.c",
+      "sha256": "3a8ee9c264f63dc6b6f81b6e92671c5ed218c84b696e8ddba3b35c13f0ebfc27"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d5220_FUN_004d5220.asm",
+      "sha256": "e89f8fc946d3adb9215a5feac1d675070b647324275dc9de13ca73ad8e470c5b"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d5220_FUN_004d5220.c",
+      "sha256": "cc5b5c75c1b752c590072d6b8bef95d20117ab721c0b2e91d01ed1e6b0ad05a0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d54c0_FUN_004d54c0.asm",
+      "sha256": "62bd03ed98ccbebf72f6f163f2d04064c4cfccd4be041c5dcbc9554f340e34e0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d54c0_FUN_004d54c0.c",
+      "sha256": "19654521278d2005be48adb161c6dcc442bf39fcd5cf5baa9d8377804bf5378d"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d56c0_FUN_004d56c0.asm",
+      "sha256": "27be83f3f3a09e0fb04dd1b9dbbcfbf712acdbc7d3e85be8720aa9861d31ea1a"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d56c0_FUN_004d56c0.c",
+      "sha256": "1089f3053a83f984cf45ad7ae26a2312b476d3f9ff1c19518cf56fb7ab7c9520"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d5790_FUN_004d5790.asm",
+      "sha256": "e2e3cf8595e36f5fe0c3f5c65f20f7e4b0724698c269aed29fcdd16c23c090d5"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d5790_FUN_004d5790.c",
+      "sha256": "9c12e39f0a9afbbb6c90351548ba533fac62ff02ef0aa7019e2fcd52c54c797c"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d58b0_FUN_004d58b0.asm",
+      "sha256": "8cb51ef1265f9d1f34bb012766f9298fc9e7138cb58c5021c304b0d8a32c9f7f"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d58b0_FUN_004d58b0.c",
+      "sha256": "c24484c49ab307efd16b2e45cd7d0d103ea68520be5b4a5e045b902353f6612a"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d59d0_FUN_004d59d0.asm",
+      "sha256": "0ef6ea0bb01b761ea8cb23a700563b021ad82138f6cc27ecab0fa3d6dff1ea7b"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d59d0_FUN_004d59d0.c",
+      "sha256": "42ddbe3e8fd741cb0797ad04aeebec4f54e634b1128f02900f0c3194d2fd656f"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d5d30_FUN_004d5d30.asm",
+      "sha256": "2afd4ddd14aabf99ade72d4f22c2128cc5e0eaa80ba173f497290327876868d9"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d5d30_FUN_004d5d30.c",
+      "sha256": "53eb1980db2b9ef82a55f0fd027f8d1aa5aca7633f4c05800b52a227d7c452e9"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d5d70_FUN_004d5d70.asm",
+      "sha256": "29cdbc4ea5cfac29c4c104faa833c7536b0e1c2c5086ed345c618d301580f9c5"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d5d70_FUN_004d5d70.c",
+      "sha256": "dd557800237215db7308c0fbd771136941c78027b9cbf32e698b897a8e12e279"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d5de0_FUN_004d5de0.asm",
+      "sha256": "7fe57b36a680092efe8bf1a88a58915075230f8b37914db95ae971899aaca781"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d5de0_FUN_004d5de0.c",
+      "sha256": "202af5a626a2d0c49da890e456efd46b51e0e7f2187fb57fc84d61b234774339"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d5e30_FUN_004d5e30.asm",
+      "sha256": "40663a42d2acf89a4b191e0e568d57db1e4f9221b5306d14ad3def9b7659e0d4"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d5e30_FUN_004d5e30.c",
+      "sha256": "ba1982f08c55aeaa8c5296ba56764a847370444ae5bfa0a202d436056a315422"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d5f70_FUN_004d5f70.asm",
+      "sha256": "c216194644a70f5a8dccf6932f0ae2d953ced9d88090060e9c6f73f9c6bb11b1"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d5f70_FUN_004d5f70.c",
+      "sha256": "c2af5391c5cccf27eeb5f85cbaa93161e856720ccb89326252157207a930733a"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d5fb0_FUN_004d5fb0.asm",
+      "sha256": "f8ab37d2a1404d47eca19763caa96b0ff690531358c02f446a28d60a911e717c"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d5fb0_FUN_004d5fb0.c",
+      "sha256": "7cfdad5e6e717282fd6a23aef5404cbc6b0d1f5d12ce5b1b46d76303043ccf7d"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d5fc0_FUN_004d5fc0.asm",
+      "sha256": "30d695ae310c8b7c7448cfaf32e045643c9974431fa23434eedf6f2334f26f60"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d5fc0_FUN_004d5fc0.c",
+      "sha256": "67759fd41e4b4348f6bfbe45ed555fdb5a96621c7971857daca38ea59ef6a51e"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d6190_FUN_004d6190.asm",
+      "sha256": "d0038c231dd7be847e5b9d8614340a7d46b399af49d839f5b7a69c16fed228f8"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d6190_FUN_004d6190.c",
+      "sha256": "4e28ecc2d2af5093bc99dc8d3c86f22af74c48296a042e7c9dcfc0e26b2a630b"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d61c0_FUN_004d61c0.asm",
+      "sha256": "6047813aa084159996a3f6f81f3457f98585fff4bd784550657e31d6cca2cdbd"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d61c0_FUN_004d61c0.c",
+      "sha256": "f2c342d0151248fdc4e3096bf390cd09665b2b36e5ab1153b7fcc5e5edb32e1e"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d6400_FUN_004d6400.asm",
+      "sha256": "c11df810facbcb39616292b566f5af6a1b251b83dc884ead5853bc06824b4910"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/004d6400_FUN_004d6400.c",
+      "sha256": "e1434381a8af994d6596fbb7577102d029fcc006a3103a0330ef1756ae70e4f0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/references.txt",
+      "sha256": "c41519d70f13e5e8d152b352a144e4a849903161e1f8ce22f26a54a804462ea5"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass2/stat-pointer-update-candidates.txt",
+      "sha256": "b328322f2e2c95072f034e1c84ffe22358811139f61413f2758d627e71cc5059"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3.log",
+      "sha256": "de7b2e5b8d0103f7bebeff794bc38b19b6c0395407b63f03d4a1cdea5b9ba43f"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/0048aeb0_FUN_0048aeb0.asm",
+      "sha256": "7687020b6ffbc57dac85e09c777a7c12dad96bba5b15164e4c0e58496283efe5"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/0048aeb0_FUN_0048aeb0.c",
+      "sha256": "1f1e30e2f0af488f7ef6ffebc8d1bcd8bc5e0d91742fd18df3c46d1933c5ec63"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/0048f3f0_FUN_0048f3f0.asm",
+      "sha256": "4173807585fe3a62a3f87f8ec656d97aa2688cb3825c993cb8ba632347bd6316"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/0048f3f0_FUN_0048f3f0.c",
+      "sha256": "cc071d627ad72f8897a0e71aa1985a17065462736ec19734f41d9d0c49d6dffc"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/00492230_FUN_00492230.asm",
+      "sha256": "0840e5a5f7349fd3ca57834acbab43538eb5a08467b0a4ed6b5cb2e14cb0b308"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/00492230_FUN_00492230.c",
+      "sha256": "fe3e80efbbb36d1d738ae8b3409c980f0b6929b8e4f3df57615f40dba3d5e34b"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/00492a80_FUN_00492a80.asm",
+      "sha256": "b29d2f0222b75e7afc11f59ef7774c7cce82045711990dc8f5a128cfdad64ed0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/00492a80_FUN_00492a80.c",
+      "sha256": "d9c106aecd40f6090786b714586edddeb5f42ce3c9f4906a0d0e625d6874bbaa"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004b24e0_FUN_004b24e0.asm",
+      "sha256": "c2ce5e29711450fa5f5fe1307b5fbdada552ad84dc6b8e2188bddb21b1f909e4"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004b24e0_FUN_004b24e0.c",
+      "sha256": "ee9a80c5775ccb44101412305c1d3b6ba41a915f8077dc8cdb90b0f4700bb0f0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d4a70_FUN_004d4a70.asm",
+      "sha256": "9c8afb25387c81a39019eb71cf35976c600d984953d85b21a30e234e8d4ca1f0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d4a70_FUN_004d4a70.c",
+      "sha256": "4cc65d467f033a14b70df16c3010ef050faf94ea48597a28d38a0cefa72dbe90"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d4d30_FUN_004d4d30.asm",
+      "sha256": "a3547041d6576545b22dfeb427d7b74f071bf78fc0f2b91f27160533d366ecca"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d4d30_FUN_004d4d30.c",
+      "sha256": "c912f2075af119ae9493cbdb917e73e444346e5461a115ba005d7f24877ae521"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d4dd0_FUN_004d4dd0.asm",
+      "sha256": "002d620df7d6250ca22bd10f9108e03b3ce3c4e52fecc5fe00785808e654ed54"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d4dd0_FUN_004d4dd0.c",
+      "sha256": "d3ebe3bd6e34e27ce0b9640e5dbaffc14b3cf35c425fed38eedf9f3f72d9e2f0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d4e30_FUN_004d4e30.asm",
+      "sha256": "1945a697b996f2f29893d6622d355c34de9895b5b447dfdb8084af03aa9ef22d"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d4e30_FUN_004d4e30.c",
+      "sha256": "35edaaf46c34fbfa4ff3fc5df3f578f385a5c01b4b3bcb382eeab2bc175ae68e"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d5020_FUN_004d5020.asm",
+      "sha256": "45378aa9e8d4868e9610c7575ca581edb41cacfade5e5154e7eb72d57e3a4fb2"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d5020_FUN_004d5020.c",
+      "sha256": "77ce32ea4500e0d033625a03b3950890c201303513e9d1443b859c7adae09592"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d51a0_FUN_004d51a0.asm",
+      "sha256": "30c0e35f9112578738db7b49d2f635eb928145229435d9c6de62085b5f9f65b3"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d51a0_FUN_004d51a0.c",
+      "sha256": "3a8ee9c264f63dc6b6f81b6e92671c5ed218c84b696e8ddba3b35c13f0ebfc27"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d5220_FUN_004d5220.asm",
+      "sha256": "e89f8fc946d3adb9215a5feac1d675070b647324275dc9de13ca73ad8e470c5b"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d5220_FUN_004d5220.c",
+      "sha256": "cc5b5c75c1b752c590072d6b8bef95d20117ab721c0b2e91d01ed1e6b0ad05a0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d54c0_FUN_004d54c0.asm",
+      "sha256": "62bd03ed98ccbebf72f6f163f2d04064c4cfccd4be041c5dcbc9554f340e34e0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d54c0_FUN_004d54c0.c",
+      "sha256": "19654521278d2005be48adb161c6dcc442bf39fcd5cf5baa9d8377804bf5378d"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d56c0_FUN_004d56c0.asm",
+      "sha256": "27be83f3f3a09e0fb04dd1b9dbbcfbf712acdbc7d3e85be8720aa9861d31ea1a"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d56c0_FUN_004d56c0.c",
+      "sha256": "1089f3053a83f984cf45ad7ae26a2312b476d3f9ff1c19518cf56fb7ab7c9520"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d5790_FUN_004d5790.asm",
+      "sha256": "e2e3cf8595e36f5fe0c3f5c65f20f7e4b0724698c269aed29fcdd16c23c090d5"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d5790_FUN_004d5790.c",
+      "sha256": "9c12e39f0a9afbbb6c90351548ba533fac62ff02ef0aa7019e2fcd52c54c797c"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d58b0_FUN_004d58b0.asm",
+      "sha256": "8cb51ef1265f9d1f34bb012766f9298fc9e7138cb58c5021c304b0d8a32c9f7f"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d58b0_FUN_004d58b0.c",
+      "sha256": "c24484c49ab307efd16b2e45cd7d0d103ea68520be5b4a5e045b902353f6612a"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d59d0_FUN_004d59d0.asm",
+      "sha256": "0ef6ea0bb01b761ea8cb23a700563b021ad82138f6cc27ecab0fa3d6dff1ea7b"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d59d0_FUN_004d59d0.c",
+      "sha256": "42ddbe3e8fd741cb0797ad04aeebec4f54e634b1128f02900f0c3194d2fd656f"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d5d30_FUN_004d5d30.asm",
+      "sha256": "2afd4ddd14aabf99ade72d4f22c2128cc5e0eaa80ba173f497290327876868d9"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d5d30_FUN_004d5d30.c",
+      "sha256": "53eb1980db2b9ef82a55f0fd027f8d1aa5aca7633f4c05800b52a227d7c452e9"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d5d70_FUN_004d5d70.asm",
+      "sha256": "29cdbc4ea5cfac29c4c104faa833c7536b0e1c2c5086ed345c618d301580f9c5"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d5d70_FUN_004d5d70.c",
+      "sha256": "dd557800237215db7308c0fbd771136941c78027b9cbf32e698b897a8e12e279"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d5de0_FUN_004d5de0.asm",
+      "sha256": "7fe57b36a680092efe8bf1a88a58915075230f8b37914db95ae971899aaca781"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d5de0_FUN_004d5de0.c",
+      "sha256": "202af5a626a2d0c49da890e456efd46b51e0e7f2187fb57fc84d61b234774339"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d5e30_FUN_004d5e30.asm",
+      "sha256": "40663a42d2acf89a4b191e0e568d57db1e4f9221b5306d14ad3def9b7659e0d4"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d5e30_FUN_004d5e30.c",
+      "sha256": "ba1982f08c55aeaa8c5296ba56764a847370444ae5bfa0a202d436056a315422"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d5f70_FUN_004d5f70.asm",
+      "sha256": "c216194644a70f5a8dccf6932f0ae2d953ced9d88090060e9c6f73f9c6bb11b1"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d5f70_FUN_004d5f70.c",
+      "sha256": "c2af5391c5cccf27eeb5f85cbaa93161e856720ccb89326252157207a930733a"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d5fb0_FUN_004d5fb0.asm",
+      "sha256": "f8ab37d2a1404d47eca19763caa96b0ff690531358c02f446a28d60a911e717c"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d5fb0_FUN_004d5fb0.c",
+      "sha256": "7cfdad5e6e717282fd6a23aef5404cbc6b0d1f5d12ce5b1b46d76303043ccf7d"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d5fc0_FUN_004d5fc0.asm",
+      "sha256": "30d695ae310c8b7c7448cfaf32e045643c9974431fa23434eedf6f2334f26f60"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d5fc0_FUN_004d5fc0.c",
+      "sha256": "67759fd41e4b4348f6bfbe45ed555fdb5a96621c7971857daca38ea59ef6a51e"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d6190_FUN_004d6190.asm",
+      "sha256": "d0038c231dd7be847e5b9d8614340a7d46b399af49d839f5b7a69c16fed228f8"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d6190_FUN_004d6190.c",
+      "sha256": "4e28ecc2d2af5093bc99dc8d3c86f22af74c48296a042e7c9dcfc0e26b2a630b"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d61c0_FUN_004d61c0.asm",
+      "sha256": "6047813aa084159996a3f6f81f3457f98585fff4bd784550657e31d6cca2cdbd"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d61c0_FUN_004d61c0.c",
+      "sha256": "f2c342d0151248fdc4e3096bf390cd09665b2b36e5ab1153b7fcc5e5edb32e1e"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d6400_FUN_004d6400.asm",
+      "sha256": "c11df810facbcb39616292b566f5af6a1b251b83dc884ead5853bc06824b4910"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004d6400_FUN_004d6400.c",
+      "sha256": "e1434381a8af994d6596fbb7577102d029fcc006a3103a0330ef1756ae70e4f0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004f3380_FUN_004f3380.asm",
+      "sha256": "3fe7707e8a256a5c6e5b36fc7fac49af80281ab0d5f07b692dabb44f871ea6a1"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/004f3380_FUN_004f3380.c",
+      "sha256": "8b1b88c288cdc0538a8df8435720af10e0bcdee3b1443181a7f11fe9e11aa864"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/005452d0_FUN_005452d0.asm",
+      "sha256": "06bda866611cb7cf869fd02fcbf42ecea9765d705dee8f3a8cdc640ca3eeb6fc"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/005452d0_FUN_005452d0.c",
+      "sha256": "bd893c5d4093aa5eeb1c2afa73241b22beda775b9510e0fe6d5fa0194034436d"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/references.txt",
+      "sha256": "c41519d70f13e5e8d152b352a144e4a849903161e1f8ce22f26a54a804462ea5"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass3/stat-pointer-update-candidates.txt",
+      "sha256": "1e8cd31a7623306fe73af8ee00b6fd05c2ffefb229d6ad6e157e7ff9d7c261a2"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4.log",
+      "sha256": "f5238e20df08b8dc6bae08d2866a45c197be545be8595345b51fb821fbcf05a4"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/0048aeb0_FUN_0048aeb0.asm",
+      "sha256": "7687020b6ffbc57dac85e09c777a7c12dad96bba5b15164e4c0e58496283efe5"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/0048aeb0_FUN_0048aeb0.c",
+      "sha256": "1f1e30e2f0af488f7ef6ffebc8d1bcd8bc5e0d91742fd18df3c46d1933c5ec63"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/0048f3f0_FUN_0048f3f0.asm",
+      "sha256": "4173807585fe3a62a3f87f8ec656d97aa2688cb3825c993cb8ba632347bd6316"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/0048f3f0_FUN_0048f3f0.c",
+      "sha256": "cc071d627ad72f8897a0e71aa1985a17065462736ec19734f41d9d0c49d6dffc"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/00492230_FUN_00492230.asm",
+      "sha256": "0840e5a5f7349fd3ca57834acbab43538eb5a08467b0a4ed6b5cb2e14cb0b308"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/00492230_FUN_00492230.c",
+      "sha256": "fe3e80efbbb36d1d738ae8b3409c980f0b6929b8e4f3df57615f40dba3d5e34b"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/00492a80_FUN_00492a80.asm",
+      "sha256": "b29d2f0222b75e7afc11f59ef7774c7cce82045711990dc8f5a128cfdad64ed0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/00492a80_FUN_00492a80.c",
+      "sha256": "d9c106aecd40f6090786b714586edddeb5f42ce3c9f4906a0d0e625d6874bbaa"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004abaa0_FUN_004abaa0.asm",
+      "sha256": "9abc234fcb2f746ebc1323df1ae689923ba76d17cfed6bffa8b4009c6874793f"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004abaa0_FUN_004abaa0.c",
+      "sha256": "fd58f42742c169ea768f19d09cf36de3438f150786d713c811734b7b1f95b7b1"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004abf50_FUN_004abf50.asm",
+      "sha256": "2ff2c51e0c774da765034b65f2425bb5899f1178df485756f15cdf668ef9b8eb"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004abf50_FUN_004abf50.c",
+      "sha256": "7adbe3a6c045bc05170cec329a15df449a756d666943197567d63fc4cc3279bd"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004b24e0_FUN_004b24e0.asm",
+      "sha256": "c2ce5e29711450fa5f5fe1307b5fbdada552ad84dc6b8e2188bddb21b1f909e4"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004b24e0_FUN_004b24e0.c",
+      "sha256": "ee9a80c5775ccb44101412305c1d3b6ba41a915f8077dc8cdb90b0f4700bb0f0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d4a70_FUN_004d4a70.asm",
+      "sha256": "9c8afb25387c81a39019eb71cf35976c600d984953d85b21a30e234e8d4ca1f0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d4a70_FUN_004d4a70.c",
+      "sha256": "4cc65d467f033a14b70df16c3010ef050faf94ea48597a28d38a0cefa72dbe90"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d4d30_FUN_004d4d30.asm",
+      "sha256": "a3547041d6576545b22dfeb427d7b74f071bf78fc0f2b91f27160533d366ecca"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d4d30_FUN_004d4d30.c",
+      "sha256": "c912f2075af119ae9493cbdb917e73e444346e5461a115ba005d7f24877ae521"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d4dd0_FUN_004d4dd0.asm",
+      "sha256": "002d620df7d6250ca22bd10f9108e03b3ce3c4e52fecc5fe00785808e654ed54"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d4dd0_FUN_004d4dd0.c",
+      "sha256": "d3ebe3bd6e34e27ce0b9640e5dbaffc14b3cf35c425fed38eedf9f3f72d9e2f0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d4e30_FUN_004d4e30.asm",
+      "sha256": "1945a697b996f2f29893d6622d355c34de9895b5b447dfdb8084af03aa9ef22d"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d4e30_FUN_004d4e30.c",
+      "sha256": "35edaaf46c34fbfa4ff3fc5df3f578f385a5c01b4b3bcb382eeab2bc175ae68e"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d5020_FUN_004d5020.asm",
+      "sha256": "45378aa9e8d4868e9610c7575ca581edb41cacfade5e5154e7eb72d57e3a4fb2"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d5020_FUN_004d5020.c",
+      "sha256": "77ce32ea4500e0d033625a03b3950890c201303513e9d1443b859c7adae09592"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d51a0_FUN_004d51a0.asm",
+      "sha256": "30c0e35f9112578738db7b49d2f635eb928145229435d9c6de62085b5f9f65b3"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d51a0_FUN_004d51a0.c",
+      "sha256": "3a8ee9c264f63dc6b6f81b6e92671c5ed218c84b696e8ddba3b35c13f0ebfc27"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d5220_FUN_004d5220.asm",
+      "sha256": "e89f8fc946d3adb9215a5feac1d675070b647324275dc9de13ca73ad8e470c5b"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d5220_FUN_004d5220.c",
+      "sha256": "cc5b5c75c1b752c590072d6b8bef95d20117ab721c0b2e91d01ed1e6b0ad05a0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d54c0_FUN_004d54c0.asm",
+      "sha256": "62bd03ed98ccbebf72f6f163f2d04064c4cfccd4be041c5dcbc9554f340e34e0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d54c0_FUN_004d54c0.c",
+      "sha256": "19654521278d2005be48adb161c6dcc442bf39fcd5cf5baa9d8377804bf5378d"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d56c0_FUN_004d56c0.asm",
+      "sha256": "27be83f3f3a09e0fb04dd1b9dbbcfbf712acdbc7d3e85be8720aa9861d31ea1a"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d56c0_FUN_004d56c0.c",
+      "sha256": "1089f3053a83f984cf45ad7ae26a2312b476d3f9ff1c19518cf56fb7ab7c9520"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d5790_FUN_004d5790.asm",
+      "sha256": "e2e3cf8595e36f5fe0c3f5c65f20f7e4b0724698c269aed29fcdd16c23c090d5"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d5790_FUN_004d5790.c",
+      "sha256": "9c12e39f0a9afbbb6c90351548ba533fac62ff02ef0aa7019e2fcd52c54c797c"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d58b0_FUN_004d58b0.asm",
+      "sha256": "8cb51ef1265f9d1f34bb012766f9298fc9e7138cb58c5021c304b0d8a32c9f7f"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d58b0_FUN_004d58b0.c",
+      "sha256": "c24484c49ab307efd16b2e45cd7d0d103ea68520be5b4a5e045b902353f6612a"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d59d0_FUN_004d59d0.asm",
+      "sha256": "0ef6ea0bb01b761ea8cb23a700563b021ad82138f6cc27ecab0fa3d6dff1ea7b"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d59d0_FUN_004d59d0.c",
+      "sha256": "42ddbe3e8fd741cb0797ad04aeebec4f54e634b1128f02900f0c3194d2fd656f"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d5d30_FUN_004d5d30.asm",
+      "sha256": "2afd4ddd14aabf99ade72d4f22c2128cc5e0eaa80ba173f497290327876868d9"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d5d30_FUN_004d5d30.c",
+      "sha256": "53eb1980db2b9ef82a55f0fd027f8d1aa5aca7633f4c05800b52a227d7c452e9"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d5d70_FUN_004d5d70.asm",
+      "sha256": "29cdbc4ea5cfac29c4c104faa833c7536b0e1c2c5086ed345c618d301580f9c5"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d5d70_FUN_004d5d70.c",
+      "sha256": "dd557800237215db7308c0fbd771136941c78027b9cbf32e698b897a8e12e279"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d5de0_FUN_004d5de0.asm",
+      "sha256": "7fe57b36a680092efe8bf1a88a58915075230f8b37914db95ae971899aaca781"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d5de0_FUN_004d5de0.c",
+      "sha256": "202af5a626a2d0c49da890e456efd46b51e0e7f2187fb57fc84d61b234774339"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d5e30_FUN_004d5e30.asm",
+      "sha256": "40663a42d2acf89a4b191e0e568d57db1e4f9221b5306d14ad3def9b7659e0d4"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d5e30_FUN_004d5e30.c",
+      "sha256": "ba1982f08c55aeaa8c5296ba56764a847370444ae5bfa0a202d436056a315422"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d5f70_FUN_004d5f70.asm",
+      "sha256": "c216194644a70f5a8dccf6932f0ae2d953ced9d88090060e9c6f73f9c6bb11b1"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d5f70_FUN_004d5f70.c",
+      "sha256": "c2af5391c5cccf27eeb5f85cbaa93161e856720ccb89326252157207a930733a"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d5fb0_FUN_004d5fb0.asm",
+      "sha256": "f8ab37d2a1404d47eca19763caa96b0ff690531358c02f446a28d60a911e717c"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d5fb0_FUN_004d5fb0.c",
+      "sha256": "7cfdad5e6e717282fd6a23aef5404cbc6b0d1f5d12ce5b1b46d76303043ccf7d"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d5fc0_FUN_004d5fc0.asm",
+      "sha256": "30d695ae310c8b7c7448cfaf32e045643c9974431fa23434eedf6f2334f26f60"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d5fc0_FUN_004d5fc0.c",
+      "sha256": "67759fd41e4b4348f6bfbe45ed555fdb5a96621c7971857daca38ea59ef6a51e"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d6190_FUN_004d6190.asm",
+      "sha256": "d0038c231dd7be847e5b9d8614340a7d46b399af49d839f5b7a69c16fed228f8"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d6190_FUN_004d6190.c",
+      "sha256": "4e28ecc2d2af5093bc99dc8d3c86f22af74c48296a042e7c9dcfc0e26b2a630b"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d61c0_FUN_004d61c0.asm",
+      "sha256": "6047813aa084159996a3f6f81f3457f98585fff4bd784550657e31d6cca2cdbd"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d61c0_FUN_004d61c0.c",
+      "sha256": "f2c342d0151248fdc4e3096bf390cd09665b2b36e5ab1153b7fcc5e5edb32e1e"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d6400_FUN_004d6400.asm",
+      "sha256": "c11df810facbcb39616292b566f5af6a1b251b83dc884ead5853bc06824b4910"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004d6400_FUN_004d6400.c",
+      "sha256": "e1434381a8af994d6596fbb7577102d029fcc006a3103a0330ef1756ae70e4f0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004f3380_FUN_004f3380.asm",
+      "sha256": "3fe7707e8a256a5c6e5b36fc7fac49af80281ab0d5f07b692dabb44f871ea6a1"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/004f3380_FUN_004f3380.c",
+      "sha256": "8b1b88c288cdc0538a8df8435720af10e0bcdee3b1443181a7f11fe9e11aa864"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/005452d0_FUN_005452d0.asm",
+      "sha256": "06bda866611cb7cf869fd02fcbf42ecea9765d705dee8f3a8cdc640ca3eeb6fc"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/005452d0_FUN_005452d0.c",
+      "sha256": "bd893c5d4093aa5eeb1c2afa73241b22beda775b9510e0fe6d5fa0194034436d"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/references.txt",
+      "sha256": "a276090fac6ae37bd50e360bebac7b09d2cc7dd36265e353957d48cf4871dbcc"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/pass4/stat-pointer-update-candidates.txt",
+      "sha256": "1e8cd31a7623306fe73af8ee00b6fd05c2ffefb229d6ad6e157e7ff9d7c261a2"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler-targets.log",
+      "sha256": "16f5fab147a07463bdba81bb4adfef9dc0f7173ef2f06d65a7a9041ee7681101"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler-targets/0048ee50_FUN_0048ee50.asm",
+      "sha256": "aa646daeb710b220f1c0b6f5f6d18c5f6a0e59ce66ae8bd3cb21190ec9e4e9d0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler-targets/0048ee50_FUN_0048ee50.c",
+      "sha256": "201573864aee09adbbd109532f983886614901e643d0a6f28058ec6e7ea2c5fd"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler-targets/0048f050_FUN_0048f050.asm",
+      "sha256": "0f0d3986308caf46d5bcd4f99dac3818d97784a9e9a5dd5f2a747c054d3ba3f1"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler-targets/0048f050_FUN_0048f050.c",
+      "sha256": "9da53390f993dc69337937ab14bcb84a2308fc518fe5c867a45537ddab192fa8"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler-targets/00492690_FUN_00492690.asm",
+      "sha256": "a22481c04f32b743d30dcea5b74c3e850132d074bdfc9450c60932b1c3ce59b1"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler-targets/00492690_FUN_00492690.c",
+      "sha256": "399e4b4c8242b55cf1681668adddbdee1766a617e9a837af91f80cf45dae75bf"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler-targets/00492840_FUN_00492840.asm",
+      "sha256": "9ee6e2afca880b8f3a07e93c278d53d950979f286dfc3758bfc3f7c683ecb8a0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler-targets/00492840_FUN_00492840.c",
+      "sha256": "816dfeb956ba54e8e222b2a419256675dcdf283031100013a44da8fb5a67f99e"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler-targets/0049a750_FUN_0049a750.asm",
+      "sha256": "ff8a41def7c69a3b0888e21fbb90292fe8d10bc68be13a10535d875057e074c6"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler-targets/0049a750_FUN_0049a750.c",
+      "sha256": "c19b4b0ba091bc540dbad1f9c139823fa8189385eb24e4afb1ca59268976f606"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler-targets/004b1d60_FUN_004b1d60.asm",
+      "sha256": "652379b4128fef265596d43a368f88d48f83b5ce569958959c7b0c13260a447f"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler-targets/004b1d60_FUN_004b1d60.c",
+      "sha256": "ee88d8e087d1334fccbbc9489449b4f67eeb7339742465e4c022421ff04afb80"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler-targets/004b43f0_FUN_004b43f0.asm",
+      "sha256": "035a65005f3372f43c1b78f2cca5236822ba7a3bc460cb750ba76eb58b197224"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler-targets/004b43f0_FUN_004b43f0.c",
+      "sha256": "1ca7858dd6bc97d8bc9876bf43505d80d909ec8e414bfcc79fc2cab59c248305"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler-targets/00549950_FUN_00549950.asm",
+      "sha256": "2276f3946777a5c67ff361ec3d696c5775b0fdda61d61831f9242134eda20098"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler-targets/00549950_FUN_00549950.c",
+      "sha256": "1589722177a9d30a781d0d8c0d6eb28fdda0170703323743b65bc4c2d169088a"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler-targets/references.txt",
+      "sha256": "5a10e6e442fb1302cc8e1c60f209b9a88ea1b7e32e6df10ee9bc75e535535126"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler.log",
+      "sha256": "5f533542d05fb8ab2e05df55c14b5b7deddc2eeeca65a8c46b0624f161991fd2"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler/00486610_FUN_00486610.asm",
+      "sha256": "ae15e20933121665fd87246fffcda4f8cd1ca08ffb76d4cf055eb98115d6e442"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler/00486610_FUN_00486610.c",
+      "sha256": "d6c11be3a7f7f48ea9ffbef9fc172538588829be1ac9801108b8aaa768b277dd"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler/00487450_FUN_00487450.asm",
+      "sha256": "e283a80eba0d2f9787cc27b1dcc7fb324788314d16a87cf3d4c01b188dbb7c4a"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler/00487450_FUN_00487450.c",
+      "sha256": "d4695b33e9bbfa929698246ee03a5a40e5689045affc0170a11afa62fff2f3c3"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler/004881e0_FUN_004881e0.asm",
+      "sha256": "e1d8b83310e72a49f6ef65708dce7b999ebda71293f56c37c1e111a6a3923d98"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler/004881e0_FUN_004881e0.c",
+      "sha256": "06930345ae605ae9a7ec1531271c99324dfdc5f753e73bc65a27890eae973247"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler/0048aeb0_FUN_0048aeb0.asm",
+      "sha256": "7687020b6ffbc57dac85e09c777a7c12dad96bba5b15164e4c0e58496283efe5"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler/0048aeb0_FUN_0048aeb0.c",
+      "sha256": "c5354f10c6df2cbcc6cb15ac53f05bbbb8fe2036066005944d96a8b481f6f587"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler/004abe80_FUN_004abe80.asm",
+      "sha256": "227f326737d0b72c51cb0abbfd18926a694c233bf164e0c8e26805df7d59bf30"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler/004abe80_FUN_004abe80.c",
+      "sha256": "e44c922bde2d266ee704f168565a9931cc29f3a7d0b985b6a4f3b83be46756c6"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler/005498c0_FUN_005498c0.asm",
+      "sha256": "546b9273f179fa8781939df4fbd0ff423a7bb62517b5d3b6c1d4fb23e4ff921c"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler/005498c0_FUN_005498c0.c",
+      "sha256": "c5801edd8283df6566d55ed2b6e2c3bf2b284af33ef3f1cb10684d589149c446"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler/005499a0_FUN_005499a0.asm",
+      "sha256": "f0cfbb97e0f360fc3eff09793875a07cebb8f9cd6e8a01dd9574e2cb79b41cf0"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler/005499a0_FUN_005499a0.c",
+      "sha256": "17417e71e222787ff80d4271133abcd52d1eda8815483eaffcaccf3a70177d94"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler/00549a90_FUN_00549a90.asm",
+      "sha256": "497c9923e745d6b1d3b3832fa94f458d37d61220565a9e17037680f46b95caf5"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler/00549a90_FUN_00549a90.c",
+      "sha256": "4c03f5e663302a38c79f714417a366997e6bfdfa24428dcfc59fb634b43bd65a"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler/00549b00_FUN_00549b00.asm",
+      "sha256": "6171563ca0a55b74e84e8927dcd61dae4db21648c0530969b7cde330af0bb0ff"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler/00549b00_FUN_00549b00.c",
+      "sha256": "0fac6d58d4229cf1cedab8b9c6009fa08d6015cc132e8d9929b734fba00d8c36"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler/candidates.txt",
+      "sha256": "176979b0ac84b5706507adf6cf56f968272e523385bff740d36bf5ce7417e4b2"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/scheduler/references.txt",
+      "sha256": "a4c0fdf5ca0d22bb28148df524a6eefc539d0e0a0043dee26afde1bc233da86e"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/source-clock-oracle.json",
+      "sha256": "60e1a6ddebd6a2d5297be005402de76c19522705d263fed69267e77ec3104c9b"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-consumers/source-clock-oracle.py",
+      "sha256": "e4b72c00aedcd504859527b9a1dbd722111d4eee968349716fc430f967f07824"
+    },
+    {
+      "path": "work/dart-status-source-2026-11-08/item-tests-native-cadence.tap",
+      "sha256": "17fe19b0ebbca97cd309f0cdac042a05d86d3c2cc84dc6566afc4b13a0fb074e"
+    },
+    {
+      "path": "work/meteor-original/evidence/E-imports.json",
+      "sha256": "b20e79118ee2432a31bb018c2f937fa13e6dfd118740523b74e8b824d3894c5f"
+    },
+    {
+      "path": "work/meteor-original/scope.md",
+      "sha256": "dce9296c758af591119086e98715db3f3bbc7abc90d70d22caddc254757b9dc6"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/ReadOnlyAwarenessTrace.java",
+      "sha256": "af9ebf8f62721d15946a7852d842b1bb44424baa60c6d793fd6e3a0f729bfed2"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/awareness-first.tap",
+      "sha256": "bba648135eb41e3298a4cc18f47a9bf4ffac94031ec0c0dd38aa3a3f0e3fb7c0"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/awareness-original-map.tap",
+      "sha256": "ffff121018a2e154831d59e5970659fa25db8bd0c1900da87f173817f85e87a1"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/awareness-wait-final.tap",
+      "sha256": "eabe0f253431e52f466176bf1e26961283051908a8fe07982a604bf3de8827c7"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/chase-state.log",
+      "sha256": "d0b82b9bc8fbcc674a0f174b33cfbf8bfa8e42ce34b286e64fed472055e8ca67"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/chase-state/004fd5b0_FUN_004fd5b0.asm",
+      "sha256": "598b3d0d6bd03eecaeada65a629de455dd48c09eacd2d9772ae1a21a2d3281c7"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/chase-state/004fd5b0_FUN_004fd5b0.c",
+      "sha256": "d7052e6b3a3d461808a111bdc3779110581419310066f03c3e33d907ee7f1d5f"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/chase-state/00503e00_FUN_00503e00.asm",
+      "sha256": "a1ebac64fd81e024ab345c9627a5398a348b082dbd65d0b45c60a96eb8ac5e7d"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/chase-state/00503e00_FUN_00503e00.c",
+      "sha256": "f22aa53e27f1274170aae0f0757c1aa590b6b85b4434e884b510863e083011a9"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/chase-state/functions.tsv",
+      "sha256": "acb65a8c17160121f98230990232fdbc495342a2153c209e3c019f9e443bd010"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/chase-state/references.txt",
+      "sha256": "22c4fc77f342f14e3a66a93040168d22d9a223d7ab2518f846919cc2c929fed9"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/combined-first.tap",
+      "sha256": "681090d68dfc38184133818a7ef91b709d8e4616aef345a49247c29aa4089a9c"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/default-import-reproduction.json",
+      "sha256": "e602cf7a39694923b6dc519831135e1d607f7a1ae37f19617f674e6f592b4ff8"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/default-import-reproduction.log",
+      "sha256": "347842a34ce0a718d3275f75e1a831f1102087358c19c7ff4c0c8901f3f2e480"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/input-readiness-correction.tap",
+      "sha256": "9a645b6c74d2720b13e12f346da39328a273b14b30bd64d2f5805c13377636ab"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/old-control.json",
+      "sha256": "2489d110066ec4d97d70e0670ae78dad24fdc4c215b70576d5ac503082e83e41"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/old-control.tap",
+      "sha256": "24266bb86f89696e72e7f7da59728a1869d0d3ebd908306094e9acfd815ab9ec"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass1.log",
+      "sha256": "409c232c8d79680e085a64dcc6d459f00656c1a81832655484ac952bfa3b6607"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass1/004f8950_FUN_004f8950.asm",
+      "sha256": "9db92de2468c7ecc8af994ed86e2a2c2c83fbcbc37d39d26be054a52559309b0"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass1/004f8950_FUN_004f8950.c",
+      "sha256": "824ecfb6604846e1bea67a4ac1300cefea88eaed727ce44af502b758a3dc0106"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass1/004f8f60_FUN_004f8f60.asm",
+      "sha256": "15a59148acdd058f94d73c325e861d713a138587c86ce7e9f39082d28e4ab74d"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass1/004f8f60_FUN_004f8f60.c",
+      "sha256": "4ba396fded85de84d1afe319e10beaf76b06a6b2d9450f3bfc9c474b36e13b83"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass1/005012f0_FUN_005012f0.asm",
+      "sha256": "72fba84a5436cfd576338cb525008fb785b3165bb69923f91559024373277871"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass1/005012f0_FUN_005012f0.c",
+      "sha256": "60b36ecff47c632dbd71fdf89efde2c52d83a0bfd590134f1e0a61bb92aa8f6d"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass1/functions.tsv",
+      "sha256": "33145f65f2e778facb0466c6fde5c42f11149ed96a40b47d23c094c19103a568"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass1/references.txt",
+      "sha256": "4d929189671c42b115159fb53a933520ca749e3c72a4ecb1eb0695a445083ba2"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass2.log",
+      "sha256": "a77b6b550205334f4234f589681a66535dce784c788a4dd75d574fabbd55c793"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass2/004f8e50_FUN_004f8e50.asm",
+      "sha256": "177afa69f95ff73da9430db3a610d26db1953d21177bcafa789d016712ec92c6"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass2/004f8e50_FUN_004f8e50.c",
+      "sha256": "d89c176c4da25a2d2355fc184a9391e089cdf0068cccedcbca35d91c03ac670e"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass2/00503970_FUN_00503970.asm",
+      "sha256": "281f97e92038a03e005adb607213344f7d6fa6e1c1dc62b1ef1df59a92250ba3"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass2/00503970_FUN_00503970.c",
+      "sha256": "72386167415b41e47d420b4726713be01c291f4f0b0bbfcfb49c4e227abf3c8c"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass2/005039f0_FUN_005039f0.asm",
+      "sha256": "01b5e94e8942d4d1ecd65b408af33efd5cd4ab1e525701ccb356419182c79fd3"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass2/005039f0_FUN_005039f0.c",
+      "sha256": "675c583bc5601170ae4e9975a5d297823b45857073a1fc9ff7d5228a29a24265"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass2/functions.tsv",
+      "sha256": "fc6c054c9643da6c0a4299e6e3886975100eb8f064abac7a76b4f70bf08c7957"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass2/references.txt",
+      "sha256": "e37d72a8ce69b2a92addd64fe53a51c944d4d2fdec53ba2e34a4ddcac1012313"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass3.log",
+      "sha256": "fb9f8bc13bb6c5afb9f7933973dab9ab59db70b09af0a37fe1c87d77e889464f"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass3/004fc0a0_FUN_004fc0a0.asm",
+      "sha256": "aad8e67ddd169a2e462a2a3ddbde1aa88d5c4725ed20590cb2dcd0d8fb35c327"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass3/004fc0a0_FUN_004fc0a0.c",
+      "sha256": "6ce16a0a4eabd22b5ac172bfe2cdea623b53af9d1d24c18e22ca33f0bf53d50b"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass3/004fdd70_FUN_004fdd70.asm",
+      "sha256": "2c82d9b9a86bbf6672bbeb41fbdd2aaab438807183ae4ef4938a36b3071c52ab"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass3/004fdd70_FUN_004fdd70.c",
+      "sha256": "be2de5a4ec87131bf5fd5aa3f8498470a775eafb60b3c696a4e9f5ae8bf774eb"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass3/004fdf00_FUN_004fdf00.asm",
+      "sha256": "da820079d09a3ea4d45ac2153e92ece873875ed0b0765f9449879f1c509b6c62"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass3/004fdf00_FUN_004fdf00.c",
+      "sha256": "37a81ae0b8fc44989e9a20669cb596c2fa4e4194acb2d5bea6136fd5ae3c2eba"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass3/004fdf90_FUN_004fdf90.asm",
+      "sha256": "29c9097336efa7e1211a40f404433f259f59f1f6c22fa37af3a3314fa5126b10"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass3/004fdf90_FUN_004fdf90.c",
+      "sha256": "062fbd89cbbc5e75ddf4fdfac3602883b9424459c19dc27a94ebf93bbf7162bf"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass3/functions.tsv",
+      "sha256": "37ae314f882e2c098a7e66163fa158fc3cc8305dd049f8fc586ddd5c96b32517"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass3/references.txt",
+      "sha256": "7586c12e346f459534c2cb47b7f7892e1d03b794c96e51034ad0b13939194f21"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass4.log",
+      "sha256": "9caaa1ce3229ccdfad2c90aab00b4d3f271476cfd8800ecde6d917f4db449faa"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass4/004fc0b0_FUN_004fc0b0.asm",
+      "sha256": "aa86fcba71fbdd45b3c3e548c26ba058dcea76951e3ebd9aa7957066c04a265c"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass4/004fc0b0_FUN_004fc0b0.c",
+      "sha256": "ca162d3f03bd2bd9281539b8770eb9500dae79af4777a4c1ee080cb9cb70d2eb"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass4/004fc2b0_FUN_004fc2b0.asm",
+      "sha256": "751c21a50e97ad239e7a42dc12963d66499ac780f47a29bec8c487405c3a045d"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass4/004fc2b0_FUN_004fc2b0.c",
+      "sha256": "1e0b5f22dfb863df250c1cfa4c91e01610bb170423ec0a849d49ea95aafbc524"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass4/004fcbd0_FUN_004fcbd0.asm",
+      "sha256": "cfca070e5e2ded5a4387f51d0cefd56ed55c74825d87becdf82554c6dede69ef"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass4/004fcbd0_FUN_004fcbd0.c",
+      "sha256": "2c42b9a3c18fc4016466d8358227c829703b481fed3ac6d37c11aa521db54f07"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass4/004fcc00_FUN_004fcc00.asm",
+      "sha256": "9f2d61ac1e2b0572e35e0ff9b198a0d254a8da7fb6d3723eeed05cac364db138"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass4/004fcc00_FUN_004fcc00.c",
+      "sha256": "a7426ea77c0a8aa7bfb0d40a9225fd6eb59be893e68af5b05116edd177449e8c"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass4/004fd530_FUN_004fd530.asm",
+      "sha256": "f584ed9f31334a5ffeb88a4d6ada9a4dbc1bde1aff6f8035d579e86c4554d849"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass4/004fd530_FUN_004fd530.c",
+      "sha256": "12d988131a2386b7cba709985bfba421bab4c0d208a5dfae17d217f945dd9aa8"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass4/functions.tsv",
+      "sha256": "ecf395c8f1ee8da45b0aeb3b3ac862daefe20e42263414c991c966f0ef203a7d"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass4/references.txt",
+      "sha256": "da6bec6b761bf5f9eb908846bfbdff041c457415aa0a3c1024ddd8e0a37b2bfb"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass5.log",
+      "sha256": "5fd53637b0f92017f299395b3d4a8b988c3593e0ee603b9d4af22be35554f8f7"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass5/004fc610_FUN_004fc610.asm",
+      "sha256": "ddcbd9a5716341c260962cd083ef650820f7daea15a780070b20a569a783cd9e"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass5/004fc610_FUN_004fc610.c",
+      "sha256": "42cfc8d0b6460a7360518f0650b8590771d0905d52fe737951c5592eafcdd94e"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass5/004fc980_FUN_004fc980.asm",
+      "sha256": "9eeed5d80b860dfd6200257822a7991646031713786f1b23f1959c2bf6896e9a"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass5/004fc980_FUN_004fc980.c",
+      "sha256": "22cf1adc502484169bd9882332fd050415f69a6101ebe05a498ebc0da3d07f2e"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass5/004fe1a0_FUN_004fe1a0.asm",
+      "sha256": "5937cf253944dc00b43d9ade74016aa08f1f05277216f92a3d445194b55b6d12"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass5/004fe1a0_FUN_004fe1a0.c",
+      "sha256": "0b5d1a1fee36012f12bf645b6cbe2ba0aee91bfc15c534ef6a5162497c91ca12"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass5/functions.tsv",
+      "sha256": "5e9d27c7b99797f68669698e9597e26388541521adc0c5acc311c5e610f68d9b"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass5/references.txt",
+      "sha256": "43a213eb68d0fbff8d203f11447e4c0b4527c53f51a239dda116d9e5e021f0a1"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass6.log",
+      "sha256": "32187bbf1e1eccffcd1fc90fc117c65971f2a8a1bd304694b6d59f03b7d3256b"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass6/004fc8a0_FUN_004fc8a0.asm",
+      "sha256": "c7708b791a0e390189a489c1273f42c333ad09aa5aad916e59123550dae7078a"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass6/004fc8a0_FUN_004fc8a0.c",
+      "sha256": "2c279eca36acff2147f52f4bc944d0ab1ccebf24af1a7f27cf1408aa4262541d"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass6/functions.tsv",
+      "sha256": "ec8b682811f3ab2694f2c69e1dc72f8ef01b9c0f34936fd753b4ff3640165405"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pass6/references.txt",
+      "sha256": "0ff4ea573c36f5ec3ed83b75d4ce3aad4be3400d8384a80d6b807ccc22b1a52d"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/pre-change-files.json",
+      "sha256": "1b6b2e6f06e3931c51ae8eb0fba567a09c8c5d4d6fe229728fa624b4ae2446a2"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/string-anchors.json",
+      "sha256": "fe9102f8237cc7f70c2df803b74731ef31bc25e712705d6c8a3dea397cc3b9e2"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/verify-effect-import.py",
+      "sha256": "effbd7838351502541bc4455135612b870ceb1b29e41a85bc96d5835445ce405"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/view-consumers.log",
+      "sha256": "f1cfe94899e7c81ecdc6e96e04e2ddeffb504c81211876579ac2721ef418f6c6"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/view-multiplier.log",
+      "sha256": "20402176e99cfc70e7061f962e030f9723a97835cd01ee5705243bbb2e734d34"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/view-multiplier/004fda00_FUN_004fda00.asm",
+      "sha256": "26f25e807136d65f000408ebb8ef60718aa7585f1d09f27b30deb16966c750e0"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/view-multiplier/004fda00_FUN_004fda00.c",
+      "sha256": "1e3f80a4f3975734969957363ffd75612367f9cb177d8d6943e3f32753784d0d"
+    },
+    {
+      "path": "work/native-awareness-2026-11-08/view-multiplier/candidates.txt",
+      "sha256": "8bdd6974d9da91b2e6a7ccc609e696e5d6a904a4a6add5fb40f94b8d10881a29"
+    }
+  ],
+  "browserValidated": false,
+  "deploymentChanged": false,
+  "overallGoalComplete": false
+}

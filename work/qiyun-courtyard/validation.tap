@@ -1,0 +1,274 @@
+TAP version 13
+# Subtest: all twelve visible weapon choices equip their preserved original models and complete the E cycle
+ok 1 - all twelve visible weapon choices equip their preserved original models and complete the E cycle
+  ---
+  duration_ms: 471.785
+  type: 'test'
+  ...
+# Subtest: qiankun public inputs switch all three source stances and retain distinct A attacks and automatic recovery
+ok 2 - qiankun public inputs switch all three source stances and retain distinct A attacks and automatic recovery
+  ---
+  duration_ms: 64.699792
+  type: 'test'
+  ...
+# Subtest: qiankun keeps the raised grip and seats the visible blade inside all four original sheaths
+ok 3 - qiankun keeps the raised grip and seats the visible blade inside all four original sheaths
+  ---
+  duration_ms: 182.471333
+  type: 'test'
+  ...
+# Subtest: public down-down-A slides into the sheath from either stance, then a real draw attack returns it
+ok 4 - public down-down-A slides into the sheath from either stance, then a real draw attack returns it
+  ---
+  duration_ms: 337.818167
+  type: 'test'
+  ...
+# Subtest: ninja ordinary foot and blade inputs cause real source contact, including its second A branch
+ok 5 - ninja ordinary foot and blade inputs cause real source contact, including its second A branch
+  ---
+  duration_ms: 8.287708
+  type: 'test'
+  ...
+# Subtest: wheel uses an original model in flight, hits through its release window, returns, and permits a second throw
+ok 6 - wheel uses an original model in flight, hits through its release window, returns, and permits a second throw
+  ---
+  duration_ms: 17.690125
+  type: 'test'
+  ...
+# Subtest: actual musket input produces its source shot damage and cannot be replaced by a melee contact
+ok 7 - actual musket input produces its source shot damage and cannot be replaced by a melee contact
+  ---
+  duration_ms: 14.191875
+  type: 'test'
+  ...
+# Subtest: an unlocked free attack keeps its chosen facing even with a nearby opponent behind the player
+ok 8 - an unlocked free attack keeps its chosen facing even with a nearby opponent behind the player
+  ---
+  duration_ms: 218.746458
+  type: 'test'
+  ...
+# Subtest: expansion weapon audio is registered as original byte copies, not merely unresolved EF names
+ok 9 - expansion weapon audio is registered as original byte copies, not merely unresolved EF names
+  ---
+  duration_ms: 40.564
+  type: 'test'
+  ...
+# Subtest: ordinary directional key actions select each requested original skill without pose shortcuts
+ok 10 - ordinary directional key actions select each requested original skill without pose shortcuts
+  ---
+  duration_ms: 333.569
+  type: 'test'
+  ...
+# Subtest: blade spin executes its original 374 to 375 automatic finish before returning to stance
+ok 11 - blade spin executes its original 374 to 375 automatic finish before returning to stance
+  ---
+  duration_ms: 23.61025
+  type: 'test'
+  ...
+# Subtest: sword multi-thrust resolves five original bone attack windows and actual damage
+ok 12 - sword multi-thrust resolves five original bone attack windows and actual damage
+  ---
+  duration_ms: 263.0535
+  type: 'test'
+  ...
+# Subtest: jump then down-A selects native down attacks, with sword wind-up held through 342 descent and landing
+ok 13 - jump then down-A selects native down attacks, with sword wind-up held through 342 descent and landing
+  ---
+  duration_ms: 299.008542
+  type: 'test'
+  ...
+# Subtest: every listed ready command has a public-input route from the ground or a natural jump, while pending specials stay blocked
+ok 14 - every listed ready command has a public-input route from the ground or a natural jump, while pending specials stay blocked
+  ---
+  duration_ms: 489.510125
+  type: 'test'
+  ...
+# Subtest: POS attack bone names resolve the actual original BNC bones without renaming the skeleton or inventing effect attachments
+ok 15 - POS attack bone names resolve the actual original BNC bones without renaming the skeleton or inventing effect attachments
+  ---
+  duration_ms: 80.649
+  type: 'test'
+  ...
+# Subtest: the requested spear left-right-up-A body attack and airborne A kick remove actual HP through original bones
+ok 16 - the requested spear left-right-up-A body attack and airborne A kick remove actual HP through original bones
+  ---
+  duration_ms: 210.235916
+  type: 'test'
+  ...
+# Subtest: native thrusts move the collision root using d_base, retaining the actual authored distance rather than pelvis sway
+ok 17 - native thrusts move the collision root using d_base, retaining the actual authored distance rather than pelvis sway
+  ---
+  duration_ms: 218.815
+  type: 'test'
+  ...
+# Subtest: authored thrust movement stops at the ordinary collision wall at both render rates
+ok 18 - authored thrust movement stops at the ordinary collision wall at both render rates
+  ---
+  duration_ms: 214.174541
+  type: 'test'
+  ...
+# Subtest: actual heavy-hit TargetMove scales the original recoil and TargetValue holds its authored final frame
+ok 19 - actual heavy-hit TargetMove scales the original recoil and TargetValue holds its authored final frame
+  ---
+  duration_ms: 14.586292
+  type: 'test'
+  ...
+# Subtest: a natural dagger jump can reach all three original air strikes through ordinary attack inputs without altitude overrides
+ok 20 - a natural dagger jump can reach all three original air strikes through ordinary attack inputs without altitude overrides
+  ---
+  duration_ms: 11.7675
+  type: 'test'
+  ...
+# Subtest: paid spear rage commands emit original EF visuals through the real engine animation loop
+ok 21 - paid spear rage commands emit original EF visuals through the real engine animation loop
+  ---
+  duration_ms: 502.130917
+  type: 'test'
+  ...
+# Subtest: infinite rage supports repeated rage commands across weapons without filling NPC rage
+ok 22 - infinite rage supports repeated rage commands across weapons without filling NPC rage
+  ---
+  duration_ms: 320.205333
+  type: 'test'
+  ...
+# Subtest: infinite rage survives weapon changes and respawns, then disabling restores normal spending and resource gates
+ok 23 - infinite rage survives weapon changes and respawns, then disabling restores normal spending and resource gates
+  ---
+  duration_ms: 198.328792
+  type: 'test'
+  ...
+# Subtest: native in-place jump removes scene translation from d_base while preserving the authored skeleton pose
+ok 24 - native in-place jump removes scene translation from d_base while preserving the authored skeleton pose
+  ---
+  duration_ms: 18.178875
+  type: 'test'
+  ...
+# Subtest: authored non-in-place jump remains available with its original d_base displacement
+ok 25 - authored non-in-place jump remains available with its original d_base displacement
+  ---
+  duration_ms: 3.880583
+  type: 'test'
+  ...
+# Subtest: normal L takeoff moves the collision root by the original d_base curve without adding it twice to the skin
+ok 26 - normal L takeoff moves the collision root by the original d_base curve without adding it twice to the skin
+  ---
+  duration_ms: 40.352333
+  type: 'test'
+  ...
+# Subtest: the real L jump stays in view on open ground and lands with the collider
+ok 27 - the real L jump stays in view on open ground and lands with the collider
+  ---
+  duration_ms: 61.167625
+  type: 'test'
+  ...
+# Subtest: the real L jump stays in view with an enemy locked and lands with the collider
+ok 28 - the real L jump stays in view with an enemy locked and lands with the collider
+  ---
+  duration_ms: 47.022167
+  type: 'test'
+  ...
+# Subtest: jump camera follows the native body without crossing a nearby wall
+ok 29 - jump camera follows the native body without crossing a nearby wall
+  ---
+  duration_ms: 36.170708
+  type: 'test'
+  ...
+# Subtest: in-place correction keeps native dart hand attachments aligned with the same skin pose
+ok 30 - in-place correction keeps native dart hand attachments aligned with the same skin pose
+  ---
+  duration_ms: 7.753834
+  type: 'test'
+  ...
+# Subtest: native attack 259 cannot leave the skin behind its collision root and raw per-frame override remains usable
+ok 31 - native attack 259 cannot leave the skin behind its collision root and raw per-frame override remains usable
+  ---
+  duration_ms: 1.622583
+  type: 'test'
+  ...
+# Subtest: vertical camera follow preserves its settled height over the collision root throughout a real jump
+ok 32 - vertical camera follow preserves its settled height over the collision root throughout a real jump
+  ---
+  duration_ms: 40.779792
+  type: 'test'
+  ...
+# Subtest: moving forward during the native jump keeps the rendered body on screen and lands while moving
+ok 33 - moving forward during the native jump keeps the rendered body on screen and lands while moving
+  ---
+  duration_ms: 37.668792
+  type: 'test'
+  ...
+# Subtest: all twenty supplied characters share the scene dummy hierarchy used by the in-place adapter
+ok 34 - all twenty supplied characters share the scene dummy hierarchy used by the in-place adapter
+  ---
+  duration_ms: 42.926875
+  type: 'test'
+  ...
+# Subtest: a source cave destruction resets to the exact freshly loaded scene state and supports original Scene_OnInit again
+ok 35 - a source cave destruction resets to the exact freshly loaded scene state and supports original Scene_OnInit again
+  ---
+  duration_ms: 352.035583
+  type: 'test'
+  ...
+# Subtest: reset preserves source instance, shared GPU resources and grid collider references without allocating another map
+ok 36 - reset preserves source instance, shared GPU resources and grid collider references without allocating another map
+  ---
+  duration_ms: 83.454834
+  type: 'test'
+  ...
+# Subtest: reset is idempotent and removes session playback from static original props
+ok 37 - reset is idempotent and removes session playback from static original props
+  ---
+  duration_ms: 63.249166
+  type: 'test'
+  ...
+# Subtest: a real falling platform restores its original FMC frame and collider matrices while retaining fresh-load animation semantics
+ok 38 - a real falling platform restores its original FMC frame and collider matrices while retaining fresh-load animation semantics
+  ---
+  duration_ms: 40.078667
+  type: 'test'
+  ...
+# Subtest: production story exit and same-map training start restore cached props, then a new story reinitializes its source state
+ok 39 - production story exit and same-map training start restore cached props, then a new story reinitializes its source state
+  ---
+  duration_ms: 189.355875
+  type: 'test'
+  ...
+# Subtest: the shipped map has usable spawns and continuous ground across the entire fight surface
+ok 40 - the shipped map has usable spawns and continuous ground across the entire fight surface
+  ---
+  duration_ms: 669.84825
+  type: 'test'
+  ...
+# Subtest: real movement crosses slab seams and the north approach without getting stuck or falling
+ok 41 - real movement crosses slab seams and the north approach without getting stuck or falling
+  ---
+  duration_ms: 788.260083
+  type: 'test'
+  ...
+# Subtest: presentation and low quality restore correctly when leaving the new map
+ok 42 - presentation and low quality restore correctly when leaving the new map
+  ---
+  duration_ms: 0.387625
+  type: 'test'
+  ...
+# Subtest: map animation uses elapsed simulation time and corrupt buffers fail explicitly
+ok 43 - map animation uses elapsed simulation time and corrupt buffers fail explicitly
+  ---
+  duration_ms: 1.440667
+  type: 'test'
+  ...
+# Subtest: eviction disposes scene resources once and retains the engine collision material
+ok 44 - eviction disposes scene resources once and retains the engine collision material
+  ---
+  duration_ms: 0.983041
+  type: 'test'
+  ...
+1..44
+# tests 44
+# suites 0
+# pass 44
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4830.697042

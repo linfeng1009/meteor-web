@@ -1,0 +1,237 @@
+/* Original Meteor.exe static export @ 004f8950; original sample not executed. */
+/* XREF 004bf750 UNCONDITIONAL_CALL */
+/* XREF 004bfcc8 UNCONDITIONAL_CALL */
+
+undefined4 __fastcall FUN_004f8950(int param_1)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  char *pcVar3;
+  uint uVar4;
+  undefined **ppuStack_108;
+  undefined1 *puStack_104;
+  undefined *puStack_100;
+  undefined1 *puStack_fc;
+  char *pcStack_f8;
+  undefined **ppuStack_f4;
+  char *pcStack_f0;
+  undefined1 *puStack_ec;
+  char *pcStack_e8;
+  char *pcStack_e4;
+  char *pcStack_e0;
+  undefined1 *puStack_dc;
+  undefined *puStack_d8;
+  undefined1 *puStack_d4;
+  char *pcStack_d0;
+  char **ppcStack_cc;
+  char *pcStack_c8;
+  undefined1 *puStack_c4;
+  char *pcStack_c0;
+  undefined1 *puStack_bc;
+  char *pcStack_b8;
+  undefined1 *puStack_b4;
+  char *pcStack_b0;
+  code *pcStack_ac;
+  char *pcStack_a8;
+  undefined1 *puStack_a4;
+  char *pcStack_a0;
+  code *pcStack_9c;
+  char *pcStack_98;
+  undefined1 *puStack_94;
+  char *pcStack_90;
+  undefined1 *puStack_8c;
+  char *pcStack_88;
+  undefined1 *puStack_84;
+  char *pcStack_80;
+  undefined1 *puStack_7c;
+  char *pcStack_78;
+  undefined1 *puStack_74;
+  char *pcStack_70;
+  undefined1 *puStack_6c;
+  char *pcStack_68;
+  undefined1 *puStack_64;
+  char *pcStack_60;
+  undefined1 *puStack_5c;
+  char *pcStack_58;
+  undefined1 *puStack_54;
+  char *pcStack_50;
+  undefined1 *puStack_4c;
+  char *pcStack_48;
+  undefined1 *puStack_44;
+  void *pvStack_c;
+  undefined1 *puStack_8;
+  undefined4 uStack_4;
+  
+  uStack_4 = 0xffffffff;
+  puStack_8 = &LAB_005a39b0;
+  pvStack_c = ExceptionList;
+  ExceptionList = &pvStack_c;
+  *(undefined1 *)(param_1 + 0x40) = 0;
+  puStack_44 = (undefined1 *)0x4f8976;
+  FUN_00571410();
+  puStack_44 = &LAB_004f8cd0;
+  pcStack_48 = s_GetChar_005ca0e0;
+  puStack_4c = (undefined1 *)0x4f8987;
+  FUN_005714e0();
+  puStack_4c = &LAB_004f8d30;
+  pcStack_50 = s_GetAnyChar_005ca0d4;
+  puStack_54 = (undefined1 *)0x4f8998;
+  FUN_005714e0();
+  puStack_54 = &LAB_004f8d90;
+  pcStack_58 = s_GetSelf_005ca0cc;
+  puStack_5c = (undefined1 *)0x4f89a9;
+  FUN_005714e0();
+  puStack_5c = &LAB_004f8db0;
+  pcStack_60 = s_GetHP_005ca0c4;
+  puStack_64 = (undefined1 *)0x4f89ba;
+  FUN_005714e0();
+  puStack_64 = &LAB_004f8de0;
+  pcStack_68 = s_GetMaxHP_005ca0b8;
+  puStack_6c = (undefined1 *)0x4f89cb;
+  FUN_005714e0();
+  puStack_6c = &LAB_004f8e20;
+  pcStack_70 = s_GetTeam_005ca0b0;
+  puStack_74 = (undefined1 *)0x4f89dc;
+  FUN_005714e0();
+  puStack_74 = &LAB_004f8e50;
+  pcStack_78 = s_GetEnemy_005ca0a4;
+  puStack_7c = (undefined1 *)0x4f89ed;
+  FUN_005714e0();
+  puStack_7c = &LAB_004f8e80;
+  pcStack_80 = s_GetLeader_005ca098;
+  puStack_84 = (undefined1 *)0x4f89fe;
+  FUN_005714e0();
+  puStack_84 = &LAB_004f8f30;
+  pcStack_88 = s_GetGameTime_005ca08c;
+  puStack_8c = (undefined1 *)0x4f8a0f;
+  FUN_005714e0();
+  puStack_8c = &LAB_004f8eb0;
+  pcStack_90 = s_EnableWaypoints_005ca07c;
+  puStack_94 = (undefined1 *)0x4f8a20;
+  FUN_005714e0();
+  puStack_94 = &LAB_004f8ef0;
+  pcStack_98 = s_DisableWaypoints_005ca068;
+  pcStack_9c = (code *)0x4f8a31;
+  FUN_005714e0();
+  pcStack_9c = FUN_004f8f60;
+  pcStack_a0 = s_ChangeBehavior_005ca058;
+  puStack_a4 = (undefined1 *)0x4f8a42;
+  FUN_005714e0();
+  puStack_a4 = &LAB_004f94a0;
+  pcStack_a8 = s_Perform_005ca050;
+  pcStack_ac = (code *)0x4f8a53;
+  FUN_005714e0();
+  pcStack_ac = FUN_004f9720;
+  pcStack_b0 = s_PlayerPerform_005ca040;
+  puStack_b4 = (undefined1 *)0x4f8a64;
+  FUN_005714e0();
+  puStack_b4 = &LAB_004f9930;
+  pcStack_b8 = s_StopPerform_005ca034;
+  puStack_bc = (undefined1 *)0x4f8a75;
+  FUN_005714e0();
+  puStack_bc = &LAB_004f9a70;
+  pcStack_c0 = s_IsPerforming_005ca024;
+  puStack_c4 = (undefined1 *)0x4f8a86;
+  FUN_005714e0();
+  puStack_c4 = &LAB_004f9ad0;
+  pcStack_c8 = s_SetTarget_005ca018;
+  ppcStack_cc = (char **)0x4f8a97;
+  FUN_005714e0();
+  ppcStack_cc = (char **)&LAB_004f9ca0;
+  pcStack_d0 = s_Distance_005c68a4;
+  puStack_d4 = (undefined1 *)0x4f8aa8;
+  FUN_005714e0();
+  puStack_d4 = &LAB_004f9d20;
+  puStack_d8 = &DAT_005ca010;
+  puStack_dc = (undefined1 *)0x4f8ab9;
+  FUN_005714e0();
+  puStack_dc = &LAB_004f9d40;
+  pcStack_e0 = s_GameOver_005ca004;
+  pcStack_e4 = (char *)0x4f8aca;
+  FUN_005714e0();
+  pcStack_e4 = &LAB_004f9d60;
+  pcStack_e8 = s_AddNPC_005c9ffc;
+  puStack_ec = (undefined1 *)0x4f8adb;
+  FUN_005714e0();
+  puStack_ec = &LAB_004f9da0;
+  pcStack_f0 = s_RemoveNPC_005c9ff0;
+  ppuStack_f4 = (undefined **)0x4f8aec;
+  FUN_005714e0();
+  ppuStack_f4 = (undefined **)&LAB_004f9eb0;
+  pcStack_f8 = s_UpdateAIAttrib_005c9fe0;
+  puStack_fc = (undefined1 *)0x4f8afd;
+  FUN_005714e0();
+  puStack_fc = &LAB_004f9dc0;
+  puStack_100 = &DAT_005c9fd8;
+  puStack_104 = (undefined1 *)0x4f8b0e;
+  FUN_005714e0();
+  puStack_104 = &LAB_004f9ee0;
+  ppuStack_108 = &PTR_DAT_005c9fd4;
+  FUN_005714e0();
+  FUN_005714e0(s_Print_005c9fcc,FUN_004fa030);
+  iVar1 = FUN_005716d0(ppcStack_cc);
+  if (iVar1 == 0) {
+    FUN_00571410();
+    ExceptionList = puStack_dc;
+    return 0;
+  }
+  uVar2 = FUN_005715d0(s_OnUpdate_005c9fc0);
+  *(undefined4 *)(param_1 + 0x38) = uVar2;
+  iVar1 = FUN_005715d0(s_OnInit_005c9fb8);
+  *(int *)(param_1 + 0x3c) = iVar1;
+  if (iVar1 != 0) {
+    FUN_005783a0();
+    ppcStack_cc = &pcStack_e8;
+    puStack_d4 = (undefined1 *)0x0;
+    pcStack_e8 = (char *)0x0;
+    pcStack_e4 = (char *)0x0;
+    pcStack_e0 = (char *)0x0;
+    FUN_00402330();
+    puStack_d4._0_1_ = 1;
+    if (DAT_005d59a8 == (char *)0x0) {
+      pcVar3 = (char *)FUN_00403290(8);
+    }
+    else {
+      pcVar3 = DAT_005d59a8;
+      DAT_005d59a8 = *(char **)DAT_005d59a8;
+    }
+    puStack_d4._0_1_ = 0;
+    FUN_00443330();
+    pcStack_e0 = pcVar3 + 8;
+    puStack_d4._0_1_ = 4;
+    pcStack_e8 = pcVar3;
+    pcStack_e4 = pcVar3;
+    FUN_00402a70();
+    pcStack_f0 = (char *)0x0;
+    ppuStack_f4 = &PTR_LAB_005ab82c;
+    puStack_d4._0_1_ = 5;
+    puStack_ec = (undefined1 *)param_1;
+    FUN_005785c0(&ppuStack_f4);
+    FUN_00570fc0(&ppuStack_108);
+    (**(code **)(**(int **)(param_1 + 0x3c) + 4))();
+    pcVar3 = pcStack_e8;
+    uVar4 = (int)pcStack_e0 - (int)pcStack_e8;
+    puStack_d4 = (undefined1 *)((uint)puStack_d4._1_3_ << 8);
+    ppuStack_f4 = &PTR_LAB_005ab82c;
+    if ((pcStack_e8 != (char *)0x0) && (uVar4 != 0)) {
+      if (uVar4 < 0x81) {
+        FUN_00402330();
+        *(undefined4 *)pcVar3 = *(undefined4 *)(&DAT_005d59a4 + (uVar4 + 7 >> 3) * 4);
+        *(char **)(&DAT_005d59a4 + (uVar4 + 7 >> 3) * 4) = pcVar3;
+        FUN_00443330();
+      }
+      else {
+        FUN_005089fd(pcStack_e8);
+      }
+    }
+    puStack_d4 = (undefined1 *)0xffffffff;
+    FUN_005783c0();
+  }
+  *(undefined4 *)(param_1 + 0x44) = 0;
+  *(undefined4 *)(param_1 + 0x48) = 0x14d;
+  *(undefined1 *)(param_1 + 0x40) = 1;
+  ExceptionList = puStack_dc;
+  return 1;
+}
+

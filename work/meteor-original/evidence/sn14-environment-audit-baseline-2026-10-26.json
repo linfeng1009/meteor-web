@@ -1,0 +1,89 @@
+{
+  "date": "2026-10-26",
+  "kind": "sn14-original-environment-geometry-audit",
+  "finding": "The original name=hell volume is not a browser collision surface, but no trigger handling runs; an actor settles safely on the hidden Plane23 inside it without losing HP.",
+  "sourceHell": {
+    "name": "HBox",
+    "properties": {
+      "name": "\"hell\"",
+      "blockplayer": "no",
+      "visible": "0"
+    },
+    "vertexCount": 8,
+    "triangleCount": 12,
+    "uniqueCoordinateCounts": [
+      2,
+      2,
+      2
+    ],
+    "worldBounds": {
+      "min": [
+        -247.99569702148438,
+        -47.22396469116211,
+        -155.1370849609375
+      ],
+      "max": [
+        139.0430450439453,
+        -11.710654258728027,
+        135.60494995117188
+      ]
+    },
+    "collidable": false,
+    "visible": false
+  },
+  "hiddenGround": {
+    "name": "Plane23",
+    "collidable": true,
+    "visible": false,
+    "worldBounds": {
+      "min": [
+        -97.10155487060547,
+        -14.020164489746094,
+        -118.76785278320312
+      ],
+      "max": [
+        126.30683898925781,
+        -14.020164489746094,
+        126.12210083007812
+      ]
+    }
+  },
+  "movementProbe": {
+    "placedAt": [
+      -96,
+      10,
+      64
+    ],
+    "frames": 180,
+    "dt": 0.016666666666666666,
+    "grounded": true,
+    "finalPosition": [
+      -96,
+      -14.005164489746093,
+      64
+    ],
+    "floor": "Plane23",
+    "hpBefore": 1000,
+    "hpAfter": 1000,
+    "dead": false,
+    "feetInsideHellAabb": true,
+    "chestInsideHellAabb": true
+  },
+  "existingFallOutThreshold": -47.916399002075195,
+  "sceneScript": {
+    "file": "maps/sn14/sn14.pst",
+    "functions": [
+      "Scene_OnInit"
+    ],
+    "initCalls": [
+      "InitBoxes",
+      "InitBBoxes",
+      "InitChairs",
+      "InitDeskes",
+      "InitJugs"
+    ],
+    "referencesHellOrLava": false,
+    "note": "The scene main script contains no hell/lava trigger or environmental damage value. Included breakable-prop libraries have object OnAttack damage callbacks; they are not evidence for a lava damage rate."
+  },
+  "scope": "CPU geometric placement inside one source trigger volume; no player route, browser behavior or original EXE damage/death semantics proved."
+}

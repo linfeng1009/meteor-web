@@ -1,0 +1,6 @@
+004ded40 MOV ECX,dword ptr [ESP + 0x4]
+004ded44 XOR EAX,EAX
+004ded46 MOV EDX,dword ptr [ECX + 0x36c]
+004ded4c TEST EDX,EDX
+004ded4e SETNZ AL
+004ded51 RET 0x4

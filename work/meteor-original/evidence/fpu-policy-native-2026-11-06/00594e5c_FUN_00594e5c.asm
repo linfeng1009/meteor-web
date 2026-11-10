@@ -1,0 +1,54 @@
+00594e5c PUSH EDX
+00594e5d SUB ESP,0x30
+00594e60 FSTP extended double ptr [ESP + 0x18]
+00594e64 FSTP extended double ptr [ESP]
+00594e67 XOR EDX,EDX
+00594e69 MOV EAX,dword ptr [ESP + 0x6]
+00594e6d TEST EAX,0x7fff0000
+00594e72 JZ 0x00594e7e
+00594e74 CALL 0x00594c56
+00594e79 ADD ESP,0x30
+00594e7c POP EDX
+00594e7d RET
+00594e7e FLD extended double ptr [ESP]
+00594e81 FLD extended double ptr [ESP + 0x18]
+00594e85 MOV EAX,dword ptr [ESP]
+00594e88 OR EAX,dword ptr [ESP + 0x4]
+00594e8c JZ 0x00594f07
+00594e8e FXCH
+00594e90 FSTP extended double ptr [ESP + 0xc]
+00594e94 FLD extended double ptr [ESP]
+00594e97 FXCH
+00594e99 OR EDX,0x2
+00594e9c FNSTCW word ptr [ESP + 0x24]
+00594ea0 MOV EAX,dword ptr [ESP + 0x24]
+00594ea4 OR EAX,0x33f
+00594ea9 MOV dword ptr [ESP + 0x28],EAX
+00594ead FLDCW word ptr [ESP + 0x28]
+00594eb1 MOV EAX,dword ptr [ESP + 0x20]
+00594eb5 AND EAX,0x7fff
+00594eba CMP EAX,0x7fbe
+00594ebf JA 0x00594ed9
+00594ec1 OR EDX,0x1
+00594ec4 FMUL double ptr [0x005d37d4]
+00594eca FSTP extended double ptr [ESP + 0x18]
+00594ece FMUL double ptr [0x005d37d4]
+00594ed4 FSTP extended double ptr [ESP]
+00594ed7 JMP 0x00594ef9
+00594ed9 FNSTCW word ptr [ESP + 0x24]
+00594edd MOV EAX,dword ptr [ESP + 0x24]
+00594ee1 OR EAX,0x300
+00594ee6 MOV dword ptr [ESP + 0x28],EAX
+00594eea FLDCW word ptr [ESP + 0x28]
+00594eee FSTP ST0
+00594ef0 FMUL double ptr [0x005d37d4]
+00594ef6 FSTP extended double ptr [ESP]
+00594ef9 FLDCW word ptr [ESP + 0x24]
+00594efd CALL 0x00594c56
+00594f02 ADD ESP,0x30
+00594f05 POP EDX
+00594f06 RET
+00594f07 FPREM
+00594f09 ADD ESP,0x30
+00594f0c POP EDX
+00594f0d RET

@@ -1,0 +1,165 @@
+{
+  "observedAt": "2026-11-08T16:25:24.822146+08:00",
+  "scope": "current extracted filesystem and four manifest snapshots; read-only audit; does not assert gameplay implementation completeness",
+  "manifests": {
+    "main": {
+      "manifest": "dist/assets/original/manifest.json",
+      "manifestSha256": "0d044fb8dcf17ddb1243bca71d867bfd12d5d9d47c5da7d1ab65e758e5791f2d",
+      "stats": {
+        "assetCount": 3064,
+        "bytes": 94886832,
+        "mapCount": 22,
+        "weaponCount": 3,
+        "uiCount": 143,
+        "soundCount": 157,
+        "scriptCount": 132,
+        "effectDefinitionCount": 1093,
+        "availableMapCount": 21,
+        "musicCount": 5
+      },
+      "verifiedAssetEntries": 3064,
+      "warnings": [],
+      "errors": [],
+      "assetPrefixes": {
+        "maps": 1391,
+        "scripts": 218,
+        "sounds": 1255,
+        "ui": 191,
+        "weapons": 9
+      },
+      "unavailableMaps": [
+        {
+          "id": "sn22",
+          "reason": "nonfinite GMB vertex"
+        }
+      ],
+      "limitations": [
+        "COB is copied and identified; collision cell semantics are not implemented by this importer.",
+        "Map DES loose-file versions differ from packed copies; loose client versions are selected and hashed explicitly.",
+        "Names without menu/script evidence remain null; archive member names are retained verbatim as provenance.",
+        "Copyright and redistribution permission are not inferred from local possession."
+      ]
+    },
+    "sceneModels": {
+      "manifest": "dist/assets/original/scene-models/manifest.json",
+      "manifestSha256": "c5159cee9de0e53a9d6a5b95e103fd063fb7ad742c86766ee99a687ee3a2123f",
+      "stats": {
+        "modelCount": 114,
+        "available": 114,
+        "uniqueFiles": 489,
+        "bytes": 12427636,
+        "fmcCount": 37
+      },
+      "verifiedAssetEntries": 489,
+      "warnings": [
+        "missing texture n23r05.bmp for textures",
+        "missing texture n23r06.bmp for textures",
+        "missing texture n23w01.BMP for textures"
+      ],
+      "errors": [],
+      "unavailableModels": []
+    },
+    "weaponModels": {
+      "manifest": "dist/assets/original/weapon-models/manifest.json",
+      "manifestSha256": "a906a83f542696e7ab8347e5b6bc49bcf915c0ea3bcd893cf1f9458555018438",
+      "stats": {
+        "itemCount": 59,
+        "modelCount": 71,
+        "bytes": 7971515
+      },
+      "verifiedAssetEntries": 251,
+      "warnings": [],
+      "errors": [
+        {
+          "modelId": "w6_5",
+          "error": "source model is absent"
+        }
+      ],
+      "availableItems": 58
+    },
+    "characters": {
+      "manifest": "dist/assets/original/characters/manifest.json",
+      "manifestSha256": "0049c960f2905ef9a24e9600e9a3b8a335d5b665a4f32038adb6f261e2f1c3da",
+      "characters": 20,
+      "ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "verifiedSourceFiles": 81,
+      "actualFiles": 157,
+      "actualBytes": 34650212,
+      "common": {
+        "bones": 30,
+        "dummies": 6,
+        "frames": 17061,
+        "fps": 30,
+        "stride": 698,
+        "bytes": 11908599,
+        "maxQuaternionNormSquaredError": 1.0178780929237519e-07,
+        "dummyParents": [
+          [
+            "NULL"
+          ],
+          [
+            "b13"
+          ],
+          [
+            "NULL",
+            "d3",
+            "d4"
+          ],
+          [
+            "b17"
+          ],
+          [
+            "NULL",
+            "d2",
+            "d5"
+          ],
+          [
+            "b25"
+          ]
+        ],
+        "sha256": "87f8b4d81160c924408f9d12bc73aa51b184ea69c31953c1236d8de97c03578a"
+      },
+      "portraitCount": 20
+    }
+  },
+  "verifiedEntries": 3885,
+  "uniqueVerifiedPaths": 3885,
+  "issues": [],
+  "actualOriginalDirectory": {
+    "files": 4012,
+    "bytes": 154968696
+  },
+  "separateManifestRoots": [
+    "main",
+    "scene-models",
+    "weapon-models",
+    "characters"
+  ],
+  "coverageLimits": [
+    "Main manifest stats exclude separate scene-models/weapon-models/characters trees.",
+    "Asset availability does not establish support for its AI, mission, collision, event, effect or network behavior.",
+    "sn22 is retained as source but unavailable due to nonfinite GMB vertices.",
+    "Weapon w6_5 source is absent; scene model warnings and unavailable models are preserved verbatim."
+  ]
+}

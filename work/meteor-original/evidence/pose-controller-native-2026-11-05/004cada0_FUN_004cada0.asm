@@ -1,0 +1,146 @@
+004cada0 PUSH -0x1
+004cada2 PUSH 0x5a1994
+004cada7 MOV EAX,FS:[0x0]
+004cadad PUSH EAX
+004cadae MOV dword ptr FS:[0x0],ESP
+004cadb5 SUB ESP,0x10
+004cadb8 PUSH EBX
+004cadb9 PUSH EBP
+004cadba MOV EBP,ECX
+004cadbc PUSH ESI
+004cadbd PUSH EDI
+004cadbe MOV dword ptr [ESP + 0x1c],EBP
+004cadc2 MOV dword ptr [EBP],0x5aa6a8
+004cadc9 MOV EAX,dword ptr [EBP + 0xe8]
+004cadcf MOV dword ptr [ESP + 0x28],0x2
+004cadd7 TEST EAX,EAX
+004cadd9 JZ 0x004cade4
+004caddb PUSH EAX
+004caddc CALL 0x00507850
+004cade1 ADD ESP,0x4
+004cade4 LEA ECX,[EBP + 0x3d4]
+004cadea CALL 0x004d0f60
+004cadef MOV ESI,dword ptr [EBP + 0x2f4]
+004cadf5 MOV EAX,dword ptr [EBP + 0x2fc]
+004cadfb SUB EAX,ESI
+004cadfd MOV byte ptr [ESP + 0x28],0x1
+004cae02 TEST ESI,ESI
+004cae04 JZ 0x004cae43
+004cae06 TEST EAX,EAX
+004cae08 JZ 0x004cae43
+004cae0a CMP EAX,0x80
+004cae0f JBE 0x004cae1c
+004cae11 PUSH ESI
+004cae12 CALL 0x005089fd
+004cae17 ADD ESP,0x4
+004cae1a JMP 0x004cae43
+004cae1c ADD EAX,0x7
+004cae1f MOV ECX,0x5d59e8
+004cae24 SHR EAX,0x3
+004cae27 LEA EDI,[EAX*0x4 + 0x5d59a4]
+004cae2e CALL 0x00402330
+004cae33 MOV EAX,dword ptr [EDI]
+004cae35 MOV dword ptr [ESI],EAX
+004cae37 MOV dword ptr [EDI],ESI
+004cae39 MOV dword ptr [0x005d59e8],0x0
+004cae43 MOV EBX,dword ptr [EBP + 0x2e8]
+004cae49 MOV EAX,dword ptr [EBP + 0x2f0]
+004cae4f SUB EAX,EBX
+004cae51 MOV byte ptr [ESP + 0x28],0x0
+004cae56 TEST EBX,EBX
+004cae58 MOV dword ptr [ESP + 0x14],EBX
+004cae5c JZ 0x004caf8d
+004cae62 TEST EAX,EAX
+004cae64 JZ 0x004caf8d
+004cae6a CMP EAX,0x80
+004cae6f JBE 0x004cae7f
+004cae71 PUSH EBX
+004cae72 CALL 0x005089fd
+004cae77 ADD ESP,0x4
+004cae7a JMP 0x004caf8d
+004cae7f ADD EAX,0x7
+004cae82 PUSH 0x1
+004cae84 SHR EAX,0x3
+004cae87 PUSH 0x5d59e8
+004cae8c LEA ECX,[EAX*0x4 + 0x5d59a4]
+004cae93 MOV dword ptr [ESP + 0x20],ECX
+004cae97 CALL 0x00443110
+004cae9c ADD ESP,0x8
+004cae9f TEST EAX,EAX
+004caea1 JZ 0x004caf79
+004caea7 MOV EDI,dword ptr [0x005c4248]
+004caead MOV EAX,[0x005d59ec]
+004caeb2 XOR ESI,ESI
+004caeb4 MOV dword ptr [ESP + 0x10],0x11
+004caebc TEST EDI,EDI
+004caebe JBE 0x004caf3f
+004caec0 MOV EBX,EAX
+004caec2 SHR EBX,0x1
+004caec4 CMP ESI,EBX
+004caec6 JC 0x004caefa
+004caec8 MOV EAX,[0x005d59e8]
+004caecd TEST EAX,EAX
+004caecf JNZ 0x004caefa
+004caed1 PUSH 0x1
+004caed3 PUSH 0x5d59e8
+004caed8 CALL 0x00443110
+004caedd ADD ESP,0x8
+004caee0 TEST EAX,EAX
+004caee2 JNZ 0x004caf36
+004caee4 MOV EBX,dword ptr [ESP + 0x14]
+004caee8 MOV dword ptr [0x005d59ec],ESI
+004caeee MOV dword ptr [0x005c4248],0x3e8
+004caef8 JMP 0x004caf79
+004caefa MOV EDX,dword ptr [ESP + 0x10]
+004caefe MOV EAX,dword ptr [ESP + 0x10]
+004caf02 IMUL EDX,EAX
+004caf05 MOV dword ptr [ESP + 0x10],EDX
+004caf09 MOV ECX,dword ptr [ESP + 0x10]
+004caf0d MOV EDX,dword ptr [ESP + 0x10]
+004caf11 IMUL ECX,EDX
+004caf14 MOV dword ptr [ESP + 0x10],ECX
+004caf18 MOV EAX,dword ptr [ESP + 0x10]
+004caf1c MOV ECX,dword ptr [ESP + 0x10]
+004caf20 IMUL EAX,ECX
+004caf23 MOV dword ptr [ESP + 0x10],EAX
+004caf27 MOV EDX,dword ptr [ESP + 0x10]
+004caf2b MOV EAX,dword ptr [ESP + 0x10]
+004caf2f IMUL EDX,EAX
+004caf32 MOV dword ptr [ESP + 0x10],EDX
+004caf36 INC ESI
+004caf37 CMP ESI,EDI
+004caf39 JC 0x004caec4
+004caf3b MOV EBX,dword ptr [ESP + 0x14]
+004caf3f MOV dword ptr [0x005c4248],0x1e
+004caf49 MOV ESI,0x6
+004caf4e CMP ESI,0x1b
+004caf51 MOV EDI,ESI
+004caf53 JLE 0x004caf5a
+004caf55 MOV EDI,0x1b
+004caf5a PUSH 0x1
+004caf5c PUSH 0x5d59e8
+004caf61 CALL 0x00443110
+004caf66 ADD ESP,0x8
+004caf69 TEST EAX,EAX
+004caf6b JZ 0x004caf79
+004caf6d PUSH EDI
+004caf6e CALL 0x00443130
+004caf73 ADD ESP,0x4
+004caf76 INC ESI
+004caf77 JMP 0x004caf4e
+004caf79 MOV EAX,dword ptr [ESP + 0x18]
+004caf7d MOV ECX,dword ptr [EAX]
+004caf7f MOV dword ptr [EBX],ECX
+004caf81 MOV dword ptr [EAX],EBX
+004caf83 MOV dword ptr [0x005d59e8],0x0
+004caf8d MOV ECX,EBP
+004caf8f MOV dword ptr [ESP + 0x28],0xffffffff
+004caf97 CALL 0x00502e00
+004caf9c MOV ECX,dword ptr [ESP + 0x20]
+004cafa0 POP EDI
+004cafa1 POP ESI
+004cafa2 POP EBP
+004cafa3 POP EBX
+004cafa4 MOV dword ptr FS:[0x0],ECX
+004cafab ADD ESP,0x1c
+004cafae RET

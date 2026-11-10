@@ -1,10 +1,18 @@
 import * as THREE from './vendor/three.module.js';
+import { parsePos } from './native-combat.js';
 
 // Original SKC skin + BNC rest skeleton + BANIM frame data. No procedural body.
 // All input assets are read-only copies extracted by scripts/extract-character-assets.py.
 const baseURL=new URL('./assets/original/characters/',import.meta.url);
-const dataCache=new Map(), textureCache=new Map();
+const dataCache=new Map(), textureCache=new Map(), enhancedCache=new Map();
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+export const NATIVE_APPEARANCES=Object.freeze({
+  original:Object.freeze({id:'original',label:'原版人物',characterId:null}),
+  hd:Object.freeze({id:'hd',label:'孟星魂 · 高清试制',characterId:0,assetPath:'./assets/enhanced/p0/'}),
+  hutao:Object.freeze({id:'hutao',label:'YS-胡桃 · 模型适配',characterId:0,assetPath:'./assets/enhanced/hutao/'}),
+  raiden:Object.freeze({id:'raiden',label:'YS-影 · 模型适配',characterId:0,assetPath:'./assets/enhanced/raiden/'}),
+  emilia:Object.freeze({id:'emilia',label:'RE0-爱蜜莉雅 · 模型适配',characterId:0,assetPath:'./assets/enhanced/emilia/'})
+});
 export const NATIVE_POSES=Object.freeze({idle:0,swordReady:6,spearReady:7,bladeReady:8,guard:16,spearGuard:17,bladeGuard:18,walk:140,run:144,jump:151,fall:152,hit:90,death:117,attack:262,attack2:263,attack3:264,spearAttack:279,bladeAttack:295});
 export const NATIVE_CHARACTERS=Object.freeze([{"id":0,"name":"孟星魂","portrait":"./assets/original/characters/portraits/p0.jpg"},{"id":1,"name":"冷燕","portrait":"./assets/original/characters/portraits/p1.jpg"},{"id":2,"name":"铁胡子","portrait":"./assets/original/characters/portraits/p2.jpg"},{"id":3,"name":"破空","portrait":"./assets/original/characters/portraits/p3.jpg"},{"id":4,"name":"夜猫子","portrait":"./assets/original/characters/portraits/p4.jpg"},{"id":5,"name":"冯浩","portrait":"./assets/original/characters/portraits/p5.jpg"},{"id":6,"name":"孙剑","portrait":"./assets/original/characters/portraits/p6.jpg"},{"id":7,"name":"萧安","portrait":"./assets/original/characters/portraits/p7.jpg"},{"id":8,"name":"子与","portrait":"./assets/original/characters/portraits/p8.jpg"},{"id":9,"name":"王强","portrait":"./assets/original/characters/portraits/p9.jpg"},{"id":10,"name":"无名","portrait":"./assets/original/characters/portraits/p10.jpg"},{"id":11,"name":"叶翔","portrait":"./assets/original/characters/portraits/p11.jpg"},{"id":12,"name":"小何","portrait":"./assets/original/characters/portraits/p12.jpg"},{"id":13,"name":"凤凰","portrait":"./assets/original/characters/portraits/p13.jpg"},{"id":14,"name":"石群","portrait":"./assets/original/characters/portraits/p14.jpg"},{"id":15,"name":"屠城","portrait":"./assets/original/characters/portraits/p15.jpg"},{"id":16,"name":"范璇","portrait":"./assets/original/characters/portraits/p16.jpg"},{"id":17,"name":"高寄萍","portrait":"./assets/original/characters/portraits/p17.jpg"},{"id":18,"name":"孙玉伯","portrait":"./assets/original/characters/portraits/p18.jpg"},{"id":19,"name":"律香川","portrait":"./assets/original/characters/portraits/p19.jpg"}]);
 
@@ -67,35 +75,91 @@ function cachedData(id){
   if(!dataCache.has(key))dataCache.set(key,(async()=>{
     const path=new URL(`p${key}/`,baseURL);
     const [skin,bnc,personal,common,pos]=await Promise.all([resource(new URL(`p${key}.skc`,path)),resource(new URL(`p${key}.bnc`,path)),resource(new URL(`p${key}.amb`,path),'buffer'),getCommon(),resource(new URL(`p${key}.pos`,path))]);
-    return {id:Number(key),path,skin:parseNativeSkin(skin),skeleton:parseNativeBones(bnc),animations:[common,parseNativeAnimation(personal)],poses:parseNativePoses(pos)};
+    return {id:Number(key),path,skin:parseNativeSkin(skin),skeleton:parseNativeBones(bnc),animations:[common,parseNativeAnimation(personal)],poses:parseNativePoses(pos),combatPoses:parsePos(pos,{file:`pmodel/P${key}.POS`})};
   })().catch(error=>{dataCache.delete(key);throw error;}));
   return dataCache.get(key);
 }
 let commonPromise;
 function getCommon(){return commonPromise??=(resource(new URL('common/character.amb',baseURL),'buffer').then(parseNativeAnimation).catch(e=>{commonPromise=null;throw e;}));}
-function nativeTexture(url){
-  const key=String(url);if(!textureCache.has(key))textureCache.set(key,new Promise((resolve,reject)=>new THREE.TextureLoader().load(key,t=>{t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;resolve(t);},undefined,reject)));
+function nativeTexture(url,color=true){
+  // Textures are shared between actors and appearance variants. Only the
+  // actor-owned geometry/materials are disposed; these cached maps stay alive.
+  const key=`${color?'color':'data'}:${url}`;if(!textureCache.has(key))textureCache.set(key,new Promise((resolve,reject)=>new THREE.TextureLoader().load(String(url),t=>{t.colorSpace=color?THREE.SRGBColorSpace:THREE.NoColorSpace;t.anisotropy=4;resolve(t);},undefined,reject)).catch(error=>{textureCache.delete(key);throw error;}));
   return textureCache.get(key);
 }
 function webTextureName(name){return name.replace(/\.(tga|bmp)$/i,'.png');}
 function applyQuaternion(target,wxyz){target.set(wxyz[1],wxyz[2],wxyz[3],wxyz[0]).normalize();}
 
+// The Blender export uses the same native Z-up coordinates, bone indices and
+// UV convention as SKC. Never replace BNC, AMB, POS or the attachment hierarchy.
+export function validateEnhancedSkin(skin,boneCount=30){
+  const finite=values=>Array.isArray(values)&&values.every(Number.isFinite),nv=skin?.positions?.length/3;
+  if(!Number.isInteger(nv)||nv<3||!finite(skin.positions)||!finite(skin.uvs)||skin.uvs.length!==nv*2||!finite(skin.skinIndices)||skin.skinIndices.length!==nv*4||!finite(skin.skinWeights)||skin.skinWeights.length!==nv*4||!Array.isArray(skin.materials)||!skin.materials.length||!Array.isArray(skin.faces)||!skin.faces.length)throw new Error('Invalid enhanced character geometry');
+  if(skin.skinIndices.some(i=>!Number.isInteger(i)||i<0||i>=boneCount)||skin.skinWeights.some(w=>w<0))throw new Error('Enhanced character uses an incompatible skeleton');
+  for(let i=0;i<nv;i++){const sum=skin.skinWeights.slice(i*4,i*4+4).reduce((a,b)=>a+b,0);if(Math.abs(sum-1)>.01)throw new Error('Invalid enhanced character skin weights');}
+  if(skin.faces.some(f=>!Number.isInteger(f.material)||f.material<0||f.material>=skin.materials.length||!Array.isArray(f.indices)||f.indices.length!==3||f.indices.some(i=>!Number.isInteger(i)||i<0||i>=nv)))throw new Error('Invalid enhanced character faces');
+  if(skin.normals!==undefined&&(!finite(skin.normals)||skin.normals.length!==nv*3))throw new Error('Invalid enhanced character normals');
+  return {...skin,vertexCount:nv,triangleCount:skin.faces.length};
+}
+export async function loadEnhancedCharacterData(id=0,appearance='hd'){
+  const descriptor=NATIVE_APPEARANCES[appearance];
+  if(!descriptor?.assetPath)throw new Error('Unknown enhanced character appearance');
+  if(Number(id)!==descriptor.characterId)throw new Error(`${descriptor.label}目前仅提供孟星魂骨架适配`);
+  const key=`${Number(id)}:${appearance}`,enhancedURL=new URL(descriptor.assetPath,import.meta.url);
+  if(!enhancedCache.has(key))enhancedCache.set(key,(async()=>{
+    const manifestResponse=await fetch(new URL('manifest.json',enhancedURL));if(!manifestResponse.ok)throw new Error(`高清资源尚未就绪（${manifestResponse.status}）`);
+    const manifest=await manifestResponse.json();if(manifest.characterId!==descriptor.characterId||typeof manifest.mesh!=='string'||(manifest.appearance!==undefined&&manifest.appearance!==appearance))throw new Error('人物外观资源清单与骨架或外观不匹配');
+    const meshURL=new URL(manifest.mesh,enhancedURL),meshResponse=await fetch(meshURL);if(!meshResponse.ok)throw new Error(`高清模型读取失败（${meshResponse.status}）`);
+    return {manifest,skin:validateEnhancedSkin(await meshResponse.json()),path:new URL('./',meshURL)};
+  })().catch(error=>{enhancedCache.delete(key);throw error;}));
+  return enhancedCache.get(key);
+}
+
+function appearanceCompleteness(manifest){
+  const complete=manifest?.complete!==false&&manifest?.completeness?.faceGeometry!==false;
+  const reason=complete?null:(manifest?.incompleteReason|| (manifest?.completeness?.faceGeometry===false?'人物模型缺少脸部网格，当前只能查看不完整预览':'人物模型资源尚不完整，当前只能查看不完整预览'));
+  return {complete,completeness:manifest?.completeness??null,reason};
+}
+
+function createSkinVisual(skin,path,{enhanced=false,loadTextures=true}={}){
+  const materials=skin.materials.map(s=>{
+    const opacity=Number.isFinite(s.opacity)?clamp(s.opacity,0,1):1;
+    // PMX hair/eyelash cards use cutout textures. Keep those depth-writing and
+    // opaque; alpha blending would sort overlapping eyes, hair and face badly.
+    const alphaTest=Number.isFinite(s.alphaTest)?clamp(s.alphaTest,0,1):(s.alpha ? .35 : 0);
+    const transparent=typeof s.transparent==='boolean'?s.transparent:opacity<.99;
+    return new THREE.MeshStandardMaterial({name:s.name??'',color:enhanced?(s.color??0xffffff):0xffffff,roughness:enhanced?(s.roughness??.78):.85,metalness:enhanced?(s.metalness??0):0,side:s.twoSide?THREE.DoubleSide:THREE.FrontSide,transparent,opacity,alphaTest,depthWrite:s.depthWrite??true});
+  });
+  if(enhanced)materials.forEach((material,i)=>{const strength=skin.materials[i].normalScale;if(Number.isFinite(strength))material.normalScale.setScalar(strength);else if(Array.isArray(strength)&&strength.length===2&&strength.every(Number.isFinite))material.normalScale.fromArray(strength);});
+  const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(skin.positions,3));geometry.setAttribute('uv',new THREE.Float32BufferAttribute(skin.uvs,2));geometry.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(skin.skinIndices,4));geometry.setAttribute('skinWeight',new THREE.Float32BufferAttribute(skin.skinWeights,4));
+  const indices=[];for(let i=0;i<materials.length;i++){const start=indices.length;for(const f of skin.faces)if(f.material===i)indices.push(...f.indices);if(indices.length>start)geometry.addGroup(start,indices.length-start,i);}
+  geometry.setIndex(indices);if(skin.normals)geometry.setAttribute('normal',new THREE.Float32BufferAttribute(skin.normals,3));else geometry.computeVertexNormals();geometry.computeBoundingSphere();
+  const mesh=new THREE.SkinnedMesh(geometry,materials);mesh.castShadow=true;mesh.receiveShadow=true;mesh.frustumCulled=false;
+  const dispose=()=>{geometry.dispose();materials.forEach(m=>m.dispose());mesh.removeFromParent();};
+  const ready=loadTextures?Promise.all(materials.map(async(material,i)=>{
+    const s=skin.materials[i],textureName=s.texture;
+    if(textureName&&textureName!=='null'){material.map=await nativeTexture(new URL(enhanced?textureName:`textures/${webTextureName(textureName)}`,path));material.needsUpdate=true;}
+    if(enhanced)for(const [key,name] of [['normalMap',s.normal],['roughnessMap',s.roughnessMap]])if(name){material[key]=await nativeTexture(new URL(name,path),false);material.needsUpdate=true;}
+  })):Promise.resolve();
+  return {mesh,ready,dispose};
+}
+
 export function createNativeCharacter(data,options={}){
   const {scale=.08,inPlace=true,interpolate=true,loadTextures=true}=options;
-  const group=new THREE.Group();group.name=`原版${NATIVE_CHARACTERS.find(c=>c.id===data.id)?.name??`角色${data.id}`}`;
-  group.userData={nativeCharacter:true,characterId:data.id,sourceFormat:'SKC+BNC+AMB+POS',nativeScale:scale};
+  const characterName=NATIVE_CHARACTERS.find(c=>c.id===data.id)?.name??`角色${data.id}`;
+  const group=new THREE.Group();group.name=`原版${characterName}`;
+  group.userData={nativeCharacter:true,characterId:data.id,appearance:'original',sourceFormat:'SKC+BNC+AMB+POS',nativeScale:scale};
   const nativeSpace=new THREE.Group();group.add(nativeSpace);
-  const byName=new Map(),boneNodes=[],dummyNodes=[];
+  const byName=new Map(),boneNodes=[],dummyNodes=[],poseListeners=new Set();
   for(const entry of data.skeleton.entries){const bone=new THREE.Bone();bone.name=entry.name;bone.position.fromArray(entry.position);applyQuaternion(bone.quaternion,entry.quaternion);byName.set(entry.name,bone);(entry.kind==='bone'?boneNodes:dummyNodes).push(bone);}
   const resolve=name=>byName.get(name)||(/^b\d+$/.test(name)?boneNodes[Number(name.slice(1))]:/^d\d+$/.test(name)?dummyNodes[Number(name.slice(1))]:null);
   for(const entry of data.skeleton.entries){const node=byName.get(entry.name),parent=resolve(entry.parent);(parent||nativeSpace).add(node);}
   const motionBase=byName.get('d_base'),motionBaseRest=motionBase?.position.clone();
-  const materials=data.skin.materials.map(s=>new THREE.MeshStandardMaterial({color:0xffffff,roughness:.85,metalness:0,side:s.twoSide?THREE.DoubleSide:THREE.FrontSide,transparent:s.opacity<.99,opacity:s.opacity,alphaTest:s.alpha ? 0.35 : 0}));
-  const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(data.skin.positions,3));geometry.setAttribute('uv',new THREE.Float32BufferAttribute(data.skin.uvs,2));geometry.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(data.skin.skinIndices,4));geometry.setAttribute('skinWeight',new THREE.Float32BufferAttribute(data.skin.skinWeights,4));
-  const indices=[];for(let i=0;i<materials.length;i++){const start=indices.length;for(const f of data.skin.faces)if(f.material===i)indices.push(...f.indices);if(indices.length>start)geometry.addGroup(start,indices.length-start,i);}
-  geometry.setIndex(indices);geometry.computeVertexNormals();geometry.computeBoundingSphere();
-  const mesh=new THREE.SkinnedMesh(geometry,materials);mesh.name=`p${data.id}.skc`;mesh.castShadow=true;mesh.receiveShadow=true;mesh.frustumCulled=false;nativeSpace.add(mesh);
+  const originalVisual=createSkinVisual(data.skin,data.path,{loadTextures});
+  let mesh=originalVisual.mesh;mesh.name=`p${data.id}.skc`;nativeSpace.add(mesh);
   nativeSpace.updateMatrixWorld(true);const skeleton=new THREE.Skeleton(boneNodes);mesh.bind(skeleton);mesh.normalizeSkinWeights();
+  const bindMatrix=mesh.bindMatrix.clone(),visuals=new Map([['original',originalVisual]]),pendingVisuals=new Map();
+  let disposed=false,appearanceRequest=0,appearance='original',appearanceState={requested:'original',appearance:'original',available:true,complete:true,previewOnly:false,reason:null,label:`原版${characterName}`};
   nativeSpace.rotation.x=-Math.PI/2;nativeSpace.scale.setScalar(scale);
   const animationState={pose:null,time:0,rate:1,loop:false,finished:false,external:false};
   const qa=new THREE.Quaternion(),qb=new THREE.Quaternion(),positionA=new THREE.Vector3(),positionB=new THREE.Vector3();
@@ -103,6 +167,15 @@ export function createNativeCharacter(data,options={}){
   const sampleRoot=(source,frame)=>{
     const a=data.animations[Number(source)];if(!a)throw new Error('Invalid animation source');
     const f=clamp(Number(frame)||0,0,a.frameCount-1),lo=Math.floor(f),hi=Math.min(lo+1,a.frameCount-1),t=f-lo,o=a.frameOffset(lo)+8,p=a.frameOffset(hi)+8,v=a.view;
+    return {x:THREE.MathUtils.lerp(v.getFloat32(o,true),v.getFloat32(p,true),t),y:THREE.MathUtils.lerp(v.getFloat32(o+4,true),v.getFloat32(p+4,true),t),z:THREE.MathUtils.lerp(v.getFloat32(o+8,true),v.getFloat32(p+8,true),t)};
+  };
+  // d_base is the authored scene-motion track, distinct from the pelvis.
+  // Read it without moving the rendered skin or any weapon attachment.
+  const sampleSceneMotion=(source,frame)=>{
+    const a=data.animations[Number(source)],index=dummyNodes.indexOf(motionBase);
+    if(!a||index<0)throw new Error('Native scene-motion track is absent');
+    const f=clamp(Number(frame)||0,0,a.frameCount-1),lo=Math.floor(f),hi=Math.min(lo+1,a.frameCount-1),t=f-lo;
+    const offset=20+a.boneCount*16+index*33+5,o=a.frameOffset(lo)+offset,p=a.frameOffset(hi)+offset,v=a.view;
     return {x:THREE.MathUtils.lerp(v.getFloat32(o,true),v.getFloat32(p,true),t),y:THREE.MathUtils.lerp(v.getFloat32(o+4,true),v.getFloat32(p+4,true),t),z:THREE.MathUtils.lerp(v.getFloat32(o+8,true),v.getFloat32(p+8,true),t)};
   };
   function readQ(v,o,q){q.set(v.getFloat32(o+4,true),v.getFloat32(o+8,true),v.getFloat32(o+12,true),v.getFloat32(o,true)).normalize();}
@@ -127,7 +200,50 @@ export function createNativeCharacter(data,options={}){
       if(!rootMotion&&dummyNodes[i]===motionBase)motionBase.position.copy(motionBaseRest);
       readQ(v,x+12,qa);readQ(v,y+12,qb);dummyNodes[i].quaternion.copy(qa).slerp(qb,t);
     }
-    group.updateMatrixWorld(true);skeleton.update();api.source=Number(source);api.frame=f;return api;
+    group.updateMatrixWorld(true);skeleton.update();api.source=Number(source);api.frame=f;
+    for(const listener of poseListeners)listener({source:api.source,frame:f});return api;
+  }
+  const transformNodes=[...boneNodes,...dummyNodes],blendMatrix=new THREE.Matrix4(),nativeInverse=new THREE.Matrix4();
+  let blendCache=null,poseSnapshotSerial=0;
+  function snapshotTransforms(){
+    group.updateMatrixWorld(true);
+    nativeInverse.copy(nativeSpace.matrixWorld).invert();
+    return transformNodes.map(node=>{
+      const nativePosition=new THREE.Vector3(),nativeRotation=new THREE.Quaternion(),nativeScale=new THREE.Vector3();
+      blendMatrix.multiplyMatrices(nativeInverse,node.matrixWorld).decompose(nativePosition,nativeRotation,nativeScale);
+      return {position:node.position.clone(),quaternion:node.quaternion.clone(),parent:node.parent.name,nativePosition,nativeRotation};
+    });
+  }
+  function capturePose(){return{source:api.source,frame:api.frame,snapshot:{id:++poseSnapshotSerial,transforms:snapshotTransforms()}};}
+  function snapshotFrame(descriptor,frameOptions){
+    if(descriptor.snapshot)return descriptor.snapshot.transforms;
+    setPoseFrame(descriptor.source,descriptor.frame,frameOptions);
+    return snapshotTransforms();
+  }
+  function setPoseBlend(from,to,weight,frameOptions={}){
+    const alpha=clamp(Number(weight)||0,0,1),key=`${from.snapshot?.id??''}:${from.source}:${from.frame}:${to.source}:${to.frame}:${frameOptions.rootMotion??!inPlace}`;
+    if(blendCache?.key!==key){
+      const start=snapshotFrame(from,frameOptions),end=snapshotFrame(to,frameOptions);
+      blendCache={key,start,end};
+    }else setPoseFrame(to.source,to.frame,frameOptions);
+    const {start,end}=blendCache,changed=[];
+    for(let i=0;i<transformNodes.length;i++){
+      const node=transformNodes[i],a=start[i],b=end[i];
+      if(a.parent!==b.parent){changed.push(i);continue;}
+      node.position.copy(a.position).lerp(b.position,alpha);node.quaternion.copy(a.quaternion).slerp(b.quaternion,alpha);
+    }
+    group.updateMatrixWorld(true);
+    // Native animation may reparent a weapon dummy. Interpolate it in native
+    // model space, then convert into its target parent, so it cannot teleport.
+    for(const i of changed){
+      const node=transformNodes[i],a=start[i],b=end[i];
+      positionA.copy(a.nativePosition).lerp(b.nativePosition,alpha);qa.copy(a.nativeRotation).slerp(b.nativeRotation,alpha);
+      blendMatrix.compose(positionA,qa,new THREE.Vector3(1,1,1)).premultiply(nativeSpace.matrixWorld);
+      nativeInverse.copy(node.parent.matrixWorld).invert();blendMatrix.premultiply(nativeInverse).decompose(node.position,node.quaternion,node.scale);
+      node.updateMatrixWorld(true);
+    }
+    group.updateMatrixWorld(true);skeleton.update();api.source=Number(to.source);api.frame=to.frame;
+    for(const listener of poseListeners)listener({source:api.source,frame:api.frame,blend:{from,to,weight:alpha}});return api;
   }
   function playPose(poseId,{loop,rate=1,restart=false}={}){
     const pose=data.poses[typeof poseId==='string'&&!/^\d+$/.test(poseId)?NATIVE_POSES[poseId]:Number(poseId)];if(!pose)return false;
@@ -143,10 +259,51 @@ export function createNativeCharacter(data,options={}){
     if(frame>pose.end){if(animationState.loop){const begin=pose.loopStart??pose.start,end=pose.loopEnd??pose.end;frame=begin+(frame-begin)%Math.max(1,end-begin+1);}else{frame=pose.end;animationState.finished=true;}}
     setPoseFrame(pose.source,frame,{managed:true});
   }
-  const api={group,mesh,skeleton,bones:boneNodes,dummies:dummyNodes,nativeSpace,poses:data.poses,animations:data.animations,source:1,frame:1,update,playPose,setPoseFrame,sampleRoot,getAttachment:name=>byName.get(name)||resolve(name),get finished(){return animationState.finished;},get currentPose(){return animationState.pose?.id??null;},getAttachmentPosition(name,target=new THREE.Vector3()){return resolve(name)?.getWorldPosition(target)||null;},dispose(){geometry.dispose();materials.forEach(m=>m.dispose());skeleton.dispose();group.removeFromParent();}};
-  api.ready=loadTextures?Promise.all(materials.map(async(material,i)=>{const textureName=data.skin.materials[i].texture;if(!textureName||textureName==='null')return;const url=new URL(`textures/${webTextureName(textureName)}`,data.path);material.map=await nativeTexture(url);material.needsUpdate=true;})):Promise.resolve();
+  function applyVisual(key){
+    const next=visuals.get(key).mesh;if(next!==mesh){mesh.removeFromParent();mesh=next;nativeSpace.add(mesh);group.updateMatrixWorld(true);skeleton.update();}
+    appearance=key;group.userData.appearance=key;group.userData.sourceFormat=key!=='original'?'Blender JSON+BNC+AMB+POS':'SKC+BNC+AMB+POS';group.name=key==='original'?`原版${characterName}`:(visuals.get(key).manifest.label??NATIVE_APPEARANCES[key].label);
+  }
+  async function setAppearance(requested='original',{allowIncomplete=false}={}){
+    if(!Object.hasOwn(NATIVE_APPEARANCES,requested))throw new Error('Unknown character appearance');
+    const request=++appearanceRequest;
+    if(disposed)return {...appearanceState,reason:'角色已释放'};
+    if(requested==='original'){
+      applyVisual('original');appearanceState={requested,appearance,available:true,complete:true,previewOnly:false,reason:null,label:`原版${characterName}`};return {...appearanceState};
+    }
+    let requestedCompleteness=null;
+    try{
+      // Completeness gates game adoption even if a previous explicit workshop
+      // preview already cached this mesh. A texture override does not supply a
+      // missing source face mesh, and preview permission is never persistent.
+      const asset=visuals.has(requested)?null:await loadEnhancedCharacterData(data.id,requested);
+      if(disposed||request!==appearanceRequest)return {...appearanceState};
+      const manifest=visuals.get(requested)?.manifest||asset.manifest;
+      requestedCompleteness=appearanceCompleteness(manifest);
+      if(!requestedCompleteness.complete&&allowIncomplete!==true)throw new Error(requestedCompleteness.reason);
+      if(!pendingVisuals.has(requested)&&!visuals.has(requested))pendingVisuals.set(requested,(async()=>{
+        validateEnhancedSkin(asset.skin,boneNodes.length);
+        if(disposed)return null;
+        const visual=createSkinVisual(asset.skin,asset.path,{enhanced:true,loadTextures});visual.mesh.name=`p${data.id}.blender-${requested}`;visual.manifest=asset.manifest;
+        // Reuse the original binding transform as well as the live skeleton.
+        // Binding from the actor's current animated pose would deform the mesh.
+        visual.mesh.bind(skeleton,bindMatrix);visual.mesh.normalizeSkinWeights();
+        try{await visual.ready;}catch(error){visual.dispose();throw error;}
+        if(disposed){visual.dispose();return null;}visuals.set(requested,visual);return visual;
+      })().finally(()=>pendingVisuals.delete(requested)));
+      await pendingVisuals.get(requested);
+      if(disposed||request!==appearanceRequest)return {...appearanceState};
+      applyVisual(requested);appearanceState={requested,appearance,available:true,complete:requestedCompleteness.complete,previewOnly:!requestedCompleteness.complete,completeness:requestedCompleteness.completeness,reason:requestedCompleteness.reason,label:visuals.get(requested).manifest.label??NATIVE_APPEARANCES[requested].label,stats:visuals.get(requested).manifest.stats??null};
+    }catch(error){
+      if(disposed||request!==appearanceRequest)return {...appearanceState};
+      const current=visuals.get(appearance);
+      appearanceState={requested,appearance,available:false,complete:requestedCompleteness?.complete??false,previewOnly:false,completeness:requestedCompleteness?.completeness??null,reason:error.message,label:appearance==='original'?`原版${characterName}`:(current?.manifest.label??NATIVE_APPEARANCES[appearance].label)};
+    }
+    return {...appearanceState};
+  }
+  const api={group,get mesh(){return mesh;},skeleton,bones:boneNodes,dummies:dummyNodes,nativeSpace,poses:data.poses,combatPoses:data.combatPoses,animations:data.animations,source:1,frame:1,onPoseUpdate(listener){poseListeners.add(listener);return()=>poseListeners.delete(listener);},update,playPose,setPoseFrame,setPoseBlend,capturePose,sampleRoot,sampleSceneMotion,setAppearance,get appearance(){return appearance;},get appearanceStatus(){return {...appearanceState};},getAttachment:name=>byName.get(name)||resolve(name),get finished(){return animationState.finished;},get currentPose(){return animationState.pose?.id??null;},getAttachmentPosition(name,target=new THREE.Vector3()){return resolve(name)?.getWorldPosition(target)||null;},dispose(){if(disposed)return;disposed=true;++appearanceRequest;blendCache=null;poseListeners.clear();for(const visual of visuals.values())visual.dispose();visuals.clear();skeleton.dispose();group.removeFromParent();}};
+  api.ready=originalVisual.ready.then(async()=>{if(options.appearance&&options.appearance!=='original'&&appearanceRequest===0)await setAppearance(options.appearance);});
   playPose(0,{loop:true});return api;
 }
 
-export async function loadNativeCharacter(id=0,options={}){const data=await cachedData(id),character=createNativeCharacter(data,options);await character.ready;return character;}
+export async function loadNativeCharacter(id=0,options={}){const data=await cachedData(id),character=createNativeCharacter(data,options);try{await character.ready;return character;}catch(error){character.dispose();throw error;}}
 export const loadNativeCharacterData=cachedData;

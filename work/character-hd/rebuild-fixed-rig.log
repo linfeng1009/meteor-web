@@ -1,0 +1,15 @@
+ ArchWarn: ARCH_CACHE_LINE_SIZE != Arch_ObtainCacheLineSize()
+ Function: Arch_ValidateAssumptions
+     File: /Users/jonas/blender-dev-deps/build_darwin/deps_arm64/build/usd/src/external_usd/pxr/base/arch/assumptions.cpp
+     Line: 140
+/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/scripts/blender/build_p0_hd.py:94: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m=bpy.data.materials.new(name);m.use_nodes=True;nodes=m.node_tree.nodes;p=nodes.get('Principled BSDF');p.inputs['Roughness'].default_value=roughness;p.inputs['Metallic'].default_value=metalness
+/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/scripts/blender/build_p0_hd.py:128: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m=bpy.data.materials.new('Source material '+str(i));m.use_nodes=True;p=m.node_tree.nodes.get('Principled BSDF');p.inputs['Roughness'].default_value=.85;t=m.node_tree.nodes.new('ShaderNodeTexImage');t.image=bpy.data.images.load(os.path.join(SRC,'textures/nm001f01.jpg'if i in[2,3]else'textures/nm001b01.png'),check_existing=True);t.extension='EXTEND';m.node_tree.links.new(t.outputs['Color'],p.inputs['Base Color'])
+EXPORTED {'originalVertices': 1290, 'originalTriangles': 1482, 'vertices': 19192, 'triangles': 34228, 'bones': 30, 'dummies': 6, 'modeledHairLocks': 32}
+00:04.385  image.write      | ERROR OpenImageIO write failed: Could not open file "/Users/dulinfeng/.thumbnails/large/blender_74218_fc9d38047e65d4224d679305f5bf24b8.png.png"
+Info: Saved as "孟星魂-高清对照.blend"
+DONE
+Blender 5.4.0 Alpha (hash 93eeecf73c12 built 2026-10-23 01:52:25)
+
+Blender quit

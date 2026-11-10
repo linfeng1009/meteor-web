@@ -1,0 +1,173 @@
+{
+  "date": "2026-10-30",
+  "scope": "meteor-original/scope.md; offline static reading only; native executable not run",
+  "finding": "Basic native impact and guard sound effect references resolve to byte-copied original WAVs. Missing reaction playback, not absent assets, is the proven common gap. First-hit audio fetch/decode remains a potential latency source, not measured browser latency.",
+  "native_examples": [
+    {
+      "id": "W00BL090",
+      "definition": {
+        "path": "SFX/W00BL090.ef",
+        "bytes": 415,
+        "sha256": "4ae49d22c0434cbaf0a83a8516197c647b42ec9056c6e1ab32a3597ef1a214e9"
+      },
+      "soundReferences": [
+        "W00HIT01.wav"
+      ],
+      "waves": [
+        {
+          "id": "w00hit01",
+          "source": {
+            "path": "waves.pak",
+            "bytes": 1648648,
+            "sha256": "70440e807df0fa8a2bf056d40566e3ae1f6c456ae43bd93606419d5637f59bfd",
+            "archiveMember": "waves/W00HIT01.wav",
+            "memberSha256": "72f289dedd5a60291efccb8b4c5d43e5671813d8ba685ba58b30a34866bea5b0",
+            "memberBytes": 5344,
+            "memberCrc32": "0f657aab"
+          }
+        }
+      ]
+    },
+    {
+      "id": "W00GD090",
+      "definition": {
+        "path": "SFX/W00GD090.ef",
+        "bytes": 415,
+        "sha256": "d0d31a9981f5f3dfb705ac41398c7f0282130ca4caf6c88730d862bc141eb03b"
+      },
+      "soundReferences": [
+        "W00GRD01.wav"
+      ],
+      "waves": [
+        {
+          "id": "w00grd01",
+          "source": {
+            "path": "waves.pak",
+            "bytes": 1648648,
+            "sha256": "70440e807df0fa8a2bf056d40566e3ae1f6c456ae43bd93606419d5637f59bfd",
+            "archiveMember": "waves/W00GRD01.wav",
+            "memberSha256": "49bad1016561a3060dcbf6e34d24b056ab1ad3ae8c215dc7e80a0eba8afcc352",
+            "memberBytes": 8980,
+            "memberCrc32": "94b87263"
+          }
+        }
+      ]
+    },
+    {
+      "id": "W00BL100",
+      "definition": {
+        "path": "SFX/W00BL100.ef",
+        "bytes": 415,
+        "sha256": "883f2c02be9e8832ad0ed4d4cb3260c51106ca865e1c149aebdeff76f6d3d819"
+      },
+      "soundReferences": [
+        "W00HIT03.wav"
+      ],
+      "waves": [
+        {
+          "id": "w00hit03",
+          "source": {
+            "path": "waves.pak",
+            "bytes": 1648648,
+            "sha256": "70440e807df0fa8a2bf056d40566e3ae1f6c456ae43bd93606419d5637f59bfd",
+            "archiveMember": "waves/W00HIT03.wav",
+            "memberSha256": "afac4699520b38310b024f837c93debdab0db00009a4ba49b71248bb81a1ee11",
+            "memberBytes": 11166,
+            "memberCrc32": "4ac4c3aa"
+          }
+        }
+      ]
+    },
+    {
+      "id": "W01BL090",
+      "definition": {
+        "path": "SFX/W01BL090.ef",
+        "bytes": 415,
+        "sha256": "362276cfa1f6b7b51fe5ad31340f2568a5d6488d6d9b86cff43bef9ed6bd0258"
+      },
+      "soundReferences": [
+        "W01HIT01.wav"
+      ],
+      "waves": [
+        {
+          "id": "w01hit01",
+          "source": {
+            "path": "waves.pak",
+            "bytes": 1648648,
+            "sha256": "70440e807df0fa8a2bf056d40566e3ae1f6c456ae43bd93606419d5637f59bfd",
+            "archiveMember": "waves/W01HIT01.wav",
+            "memberSha256": "1dc21910ab1c8fcd960f88ba3774651289114dfd02eb5c12425329a59a37cf4c",
+            "memberBytes": 4756,
+            "memberCrc32": "63b4a545"
+          }
+        }
+      ]
+    },
+    {
+      "id": "W05BL100",
+      "definition": {
+        "path": "SFX/W05BL100.ef",
+        "bytes": 415,
+        "sha256": "14f17a591e378d59df3d8d4b1401302a55f1366a865820294ac8af0e3205992d"
+      },
+      "soundReferences": [
+        "W05HIT03.wav"
+      ],
+      "waves": [
+        {
+          "id": "w05hit03",
+          "source": {
+            "path": "waves.pak",
+            "bytes": 1648648,
+            "sha256": "70440e807df0fa8a2bf056d40566e3ae1f6c456ae43bd93606419d5637f59bfd",
+            "archiveMember": "waves/W05HIT03.wav",
+            "memberSha256": "1ea2084fb0d419846426d6ac7746f109c34aa1674c413e3c5ff440c98ac1e623",
+            "memberBytes": 8926,
+            "memberCrc32": "aff4c1b6"
+          }
+        }
+      ]
+    },
+    {
+      "id": "W07GD100",
+      "definition": {
+        "path": "SFX/W07GD100.ef",
+        "bytes": 415,
+        "sha256": "a1489e6167f8f1b1b0ea3ece73d885b00783e3024974f072e6ebf933cd75f74b"
+      },
+      "soundReferences": [
+        "W07GRD03.wav"
+      ],
+      "waves": [
+        {
+          "id": "w07grd03",
+          "source": {
+            "path": "waves.pak",
+            "bytes": 1648648,
+            "sha256": "70440e807df0fa8a2bf056d40566e3ae1f6c456ae43bd93606419d5637f59bfd",
+            "archiveMember": "waves/W07GRD03.wav",
+            "memberSha256": "0a39a9a075c11495671a85115eda8a7694421b037c38ec74ab51cd4fa849f557",
+            "memberBytes": 15596,
+            "memberCrc32": "f3ce4b80"
+          }
+        }
+      ]
+    }
+  ],
+  "presentation_adapter": {
+    "module": "dist/native-impact-feedback.js",
+    "sha256": "087e11c85945ab5b33ee6c8b64aaf933f1f499f1fdbf329c5270bfc8aa797a5f",
+    "not_native": "Spark geometry, 22/32/50ms actor hitstop and camera impulse are explicit Web presentation parameters. No original EF renderer or exact original timing is claimed.",
+    "source_parameter_effect": "Does not change attack windows, HP formulas, movement, native WAV selection or mission timers."
+  },
+  "tests": {
+    "file": "tests/native-impact-feedback.test.mjs",
+    "passed": 4,
+    "coverage": [
+      "contact location and distinct guard/light/down profiles",
+      "lifetime expiry and GPU disposal",
+      "memory/camera caps and distant contacts",
+      "invalid contact input cannot create NaN state"
+    ]
+  }
+}

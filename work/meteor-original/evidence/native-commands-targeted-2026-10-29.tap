@@ -1,0 +1,256 @@
+TAP version 13
+# Subtest: the attackless sword dive startup reaches and holds its source one-frame attack until ground contact
+ok 1 - the attackless sword dive startup reaches and holds its source one-frame attack until ground contact
+  ---
+  duration_ms: 2.222791
+  type: 'test'
+  ...
+# Subtest: the blade automatic chain preserves attackless stages and every original attack segment
+ok 2 - the blade automatic chain preserves attackless stages and every original attack segment
+  ---
+  duration_ms: 0.754542
+  type: 'test'
+  ...
+# Subtest: an input queued before the native cancel window starts there even when one update crosses the entire window
+ok 3 - an input queued before the native cancel window starts there even when one update crosses the entire window
+  ---
+  duration_ms: 0.2965
+  type: 'test'
+  ...
+# Subtest: a queued resource gate is rechecked when its pose starts and cannot overspend changed resources
+ok 4 - a queued resource gate is rechecked when its pose starts and cannot overspend changed resources
+  ---
+  duration_ms: 0.09725
+  type: 'test'
+  ...
+# Subtest: death, weapon switching and an explicit failed start discard queued costs without a charge
+ok 5 - death, weapon switching and an explicit failed start discard queued costs without a charge
+  ---
+  duration_ms: 0.238125
+  type: 'test'
+  ...
+# Subtest: a held air recovery retains its real ACT continuation but cannot receive a forbidden ground attack
+ok 6 - a held air recovery retains its real ACT continuation but cannot receive a forbidden ground attack
+  ---
+  duration_ms: 0.088125
+  type: 'test'
+  ...
+# Subtest: finishing a basic attack resets the next click to its first move rather than reviving an expired continuation
+ok 7 - finishing a basic attack resets the next click to its first move rather than reviving an expired continuation
+  ---
+  duration_ms: 0.123542
+  type: 'test'
+  ...
+# Subtest: automatic links preserve elapsed time and root deltas across coarse and fine frame partitions
+ok 8 - automatic links preserve elapsed time and root deltas across coarse and fine frame partitions
+  ---
+  duration_ms: 1.913209
+  type: 'test'
+  ...
+# Subtest: sword rapid thrust applies all five original windows to one overlapping opponent and never repeats a window
+ok 9 - sword rapid thrust applies all five original windows to one overlapping opponent and never repeats a window
+  ---
+  duration_ms: 2.061666
+  type: 'test'
+  ...
+# Subtest: both original blade spin stages can damage the same overlapping opponent when a single update spans their link
+ok 10 - both original blade spin stages can damage the same overlapping opponent when a single update spans their link
+  ---
+  duration_ms: 1.031667
+  type: 'test'
+  ...
+# Subtest: holding the one-frame sword dive does not create repeat hits on the same target
+ok 11 - holding the one-frame sword dive does not create repeat hits on the same target
+  ---
+  duration_ms: 0.602416
+  type: 'test'
+  ...
+# Subtest: a timeline advanced across its final attack frame still reports that native contact window
+ok 12 - a timeline advanced across its final attack frame still reports that native contact window
+  ---
+  duration_ms: 0.088584
+  type: 'test'
+  ...
+# Subtest: ordinary directional key actions select each requested original skill without pose shortcuts
+ok 13 - ordinary directional key actions select each requested original skill without pose shortcuts
+  ---
+  duration_ms: 97.579417
+  type: 'test'
+  ...
+# Subtest: blade spin executes its original 374 to 375 automatic finish before returning to stance
+ok 14 - blade spin executes its original 374 to 375 automatic finish before returning to stance
+  ---
+  duration_ms: 47.768292
+  type: 'test'
+  ...
+# Subtest: sword multi-thrust resolves five original bone attack windows and actual damage
+ok 15 - sword multi-thrust resolves five original bone attack windows and actual damage
+  ---
+  duration_ms: 25.906125
+  type: 'test'
+  ...
+# Subtest: jump then down-A selects native down attacks, with sword wind-up held through 342 descent and landing
+ok 16 - jump then down-A selects native down attacks, with sword wind-up held through 342 descent and landing
+  ---
+  duration_ms: 59.8015
+  type: 'test'
+  ...
+# Subtest: every listed ready command has a public-input route and pending special commands do not fall back to ordinary attacks
+ok 17 - every listed ready command has a public-input route and pending special commands do not fall back to ordinary attacks
+  ---
+  duration_ms: 45.986375
+  type: 'test'
+  ...
+# Subtest: POS attack bone names resolve the actual original BNC bones without renaming the skeleton or inventing effect attachments
+ok 18 - POS attack bone names resolve the actual original BNC bones without renaming the skeleton or inventing effect attachments
+  ---
+  duration_ms: 3.20925
+  type: 'test'
+  ...
+# Subtest: the requested spear left-right-up-A body attack and airborne A kick remove actual HP through original bones
+ok 19 - the requested spear left-right-up-A body attack and airborne A kick remove actual HP through original bones
+  ---
+  duration_ms: 30.026334
+  type: 'test'
+  ...
+# Subtest: directional darts retain their original single release windows, RES damage and distinct EF sound references
+ok 20 - directional darts retain their original single release windows, RES damage and distinct EF sound references
+  ---
+  duration_ms: 9.398583
+  type: 'test'
+  ...
+# Subtest: command pose 209 releases one original W3_0 only after its native animation reaches the attack window
+ok 21 - command pose 209 releases one original W3_0 only after its native animation reaches the attack window
+  ---
+  duration_ms: 4.034375
+  type: 'test'
+  ...
+# Subtest: command pose 209 cannot damage an opponent behind an original-triangle-style wall
+ok 22 - command pose 209 cannot damage an opponent behind an original-triangle-style wall
+  ---
+  duration_ms: 2.155208
+  type: 'test'
+  ...
+# Subtest: command pose 210 releases one original W3_0 only after its native animation reaches the attack window
+ok 23 - command pose 210 releases one original W3_0 only after its native animation reaches the attack window
+  ---
+  duration_ms: 0.646583
+  type: 'test'
+  ...
+# Subtest: command pose 210 cannot damage an opponent behind an original-triangle-style wall
+ok 24 - command pose 210 cannot damage an opponent behind an original-triangle-style wall
+  ---
+  duration_ms: 1.013208
+  type: 'test'
+  ...
+# Subtest: complex original EF files contain parented attack volumes which cannot be replaced by an invented dart fan
+ok 25 - complex original EF files contain parented attack volumes which cannot be replaced by an invented dart fan
+  ---
+  duration_ms: 4.018417
+  type: 'test'
+  ...
+# Subtest: every catalog command selects its original pose with its required stance and predecessor
+ok 26 - every catalog command selects its original pose with its required stance and predecessor
+  ---
+  duration_ms: 15.472667
+  type: 'test'
+  ...
+# Subtest: three-direction commands win over two-direction and single-direction suffixes
+ok 27 - three-direction commands win over two-direction and single-direction suffixes
+  ---
+  duration_ms: 0.255542
+  type: 'test'
+  ...
+# Subtest: slow, stale and opposite-posture taps cannot fabricate a long command
+ok 28 - slow, stale and opposite-posture taps cannot fabricate a long command
+  ---
+  duration_ms: 0.126666
+  type: 'test'
+  ...
+# Subtest: held movement supports a single directional attack without inventing a diagonal sequence
+ok 29 - held movement supports a single directional attack without inventing a diagonal sequence
+  ---
+  duration_ms: 0.122958
+  type: 'test'
+  ...
+# Subtest: follow-ups need an active predecessor, including its actual linked air recovery
+ok 30 - follow-ups need an active predecessor, including its actual linked air recovery
+  ---
+  duration_ms: 0.183708
+  type: 'test'
+  ...
+# Subtest: unavailable long specials remain selected so the engine can explicitly reject them
+ok 31 - unavailable long specials remain selected so the engine can explicitly reject them
+  ---
+  duration_ms: 0.108833
+  type: 'test'
+  ...
+# Subtest: every advertised manual command addresses preserved native animation and RES data
+ok 32 - every advertised manual command addresses preserved native animation and RES data
+  ---
+  duration_ms: 1.133458
+  type: 'test'
+  ...
+# Subtest: the requested blade spin, sword flurry, spear circles and airborne stabs use distinct original poses
+ok 33 - the requested blade spin, sword flurry, spear circles and airborne stabs use distinct original poses
+  ---
+  duration_ms: 0.681791
+  type: 'test'
+  ...
+# Subtest: separate source command tables resolve the ambiguous spear and blade pose-reference rows
+ok 34 - separate source command tables resolve the ambiguous spear and blade pose-reference rows
+  ---
+  duration_ms: 0.182083
+  type: 'test'
+  ...
+# Subtest: ordinary chains and conditional second stages preserve their distinct command prerequisites
+ok 35 - ordinary chains and conditional second stages preserve their distinct command prerequisites
+  ---
+  duration_ms: 2.175041
+  type: 'test'
+  ...
+# Subtest: catalog scope and unresolved projectile commands are explicit rather than silently substituted
+ok 36 - catalog scope and unresolved projectile commands are explicit rather than silently substituted
+  ---
+  duration_ms: 0.64925
+  type: 'test'
+  ...
+# Subtest: every usable command has a real bone/weapon hit or an implemented projectile emitter, including its automatic phases
+ok 37 - every usable command has a real bone/weapon hit or an implemented projectile emitter, including its automatic phases
+  ---
+  duration_ms: 0.387709
+  type: 'test'
+  ...
+# Subtest: the actual guide renders every catalog entry exactly once and rejects unequipped families
+ok 38 - the actual guide renders every catalog entry exactly once and rejects unequipped families
+  ---
+  duration_ms: 2.178792
+  type: 'test'
+  ...
+# Subtest: the reported spins, multi-thrust and four melee plunges show their complete distinct commands
+ok 39 - the reported spins, multi-thrust and four melee plunges show their complete distinct commands
+  ---
+  duration_ms: 8.445125
+  type: 'test'
+  ...
+# Subtest: rage costs and unavailable projectile specials remain visible next to their commands
+ok 40 - rage costs and unavailable projectile specials remain visible next to their commands
+  ---
+  duration_ms: 7.573667
+  type: 'test'
+  ...
+# Subtest: follow-up requirements are explained by move names and arrow commands are screen-reader labeled
+ok 41 - follow-up requirements are explained by move names and arrow commands are screen-reader labeled
+  ---
+  duration_ms: 3.527083
+  type: 'test'
+  ...
+1..41
+# tests 41
+# suites 0
+# pass 41
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 586.920667

@@ -1,0 +1,81 @@
+{
+  "schema": 1,
+  "characterId": 0,
+  "appearance": "hutao",
+  "label": "胡桃 · MOD适配预览",
+  "mesh": "mesh.json",
+  "complete": false,
+  "completeness": {
+    "bodyGeometry": true,
+    "headHairGeometry": true,
+    "eyes": true,
+    "faceGeometry": false,
+    "originalGenshinSkeleton": false
+  },
+  "incompleteReason": "此GIMI MOD未包含原神原生脸部几何；只有眼虹膜、帽发和身体，暂不能作为完整人物启用。",
+  "stats": {
+    "sourceVertices": 14672,
+    "sourceTriangles": 17361,
+    "vertices": 14672,
+    "triangles": 17361,
+    "bones": 30,
+    "dummies": 6,
+    "bodyDiffuse": [
+      4096,
+      4096
+    ],
+    "headDiffuse": [
+      1024,
+      1024
+    ]
+  },
+  "retarget": {
+    "method": "Semantic source bone-group mapping plus anatomical A-pose to p0 T-pose rest-space warp; original p0 BNC/AMB drives exported skin.",
+    "provisional": true,
+    "sourceSkeletonMissing": true,
+    "hairPhysics": false,
+    "fingerArticulation": "hand-bound approximation"
+  },
+  "provenance": {
+    "source": "User-provided HuTaoMod4K; original files read-only. No injection code executed.",
+    "textures": "Blender lossless BC7 DDS RGB decode to PNG; GI alpha masks ignored for opacity, LightMap/MetalMap not misused as PBR normal maps.",
+    "face": "No invented/replacement face added. Original face texture retained as pending dependency.",
+    "limits": [
+      "Incomplete face geometry",
+      "Original Genshin bone hierarchy and bind matrices absent",
+      "Retarget and cloth/hair are a first-pass approximation, not Genshin animation or physics"
+    ]
+  },
+  "sourceBuffers": [
+    {
+      "file": "HuTaoPosition.buf",
+      "bytes": 586880,
+      "sha256": "49b98f40c675aa5d05af9e82c0be35ebc0adbf3d35faf33bc87659e7c8b2b6b9"
+    },
+    {
+      "file": "HuTaoBlend.buf",
+      "bytes": 469504,
+      "sha256": "3bacab295c54fc72662dc13b065369e615d4f70f44df0ac42b07245487159d0a"
+    },
+    {
+      "file": "HuTaoTexcoord.buf",
+      "bytes": 176064,
+      "sha256": "7a77b6bf250b64745c2b0afc2edbdf01a4bad69724213b28be63a3adee170152"
+    },
+    {
+      "file": "HuTaoHead.ib",
+      "bytes": 66036,
+      "sha256": "179c6dd3cc7b9829d23c756b88d077208d8caf25ad50b3cd535251960358b5f0"
+    },
+    {
+      "file": "HuTaoBody.ib",
+      "bytes": 142296,
+      "sha256": "a1fd36218c9fd76141957a27324c23cbb53aaa61fbfa1e43384ac973eba41f08"
+    },
+    {
+      "file": "HuTao.ini",
+      "bytes": 2245,
+      "sha256": "2cf662f0ed0e4c231035cf51f40904c31ee023a877daa8716376b8a4f3803367"
+    }
+  ]
+}

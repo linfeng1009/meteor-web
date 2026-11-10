@@ -1,0 +1,15 @@
+00514ac3 PUSH EBP
+00514ac4 MOV EBP,ESP
+00514ac6 PUSH ECX
+00514ac7 FSTCW word ptr [EBP + -0x4]
+00514acb MOV EAX,dword ptr [EBP + 0xc]
+00514ace MOV ECX,EAX
+00514ad0 AND EAX,dword ptr [EBP + 0x8]
+00514ad3 NOT ECX
+00514ad5 AND ECX,dword ptr [EBP + -0x4]
+00514ad8 OR ECX,EAX
+00514ada MOV dword ptr [EBP + 0xc],ECX
+00514add FLDCW word ptr [EBP + 0xc]
+00514ae0 MOVSX EAX,word ptr [EBP + -0x4]
+00514ae4 LEAVE
+00514ae5 RET

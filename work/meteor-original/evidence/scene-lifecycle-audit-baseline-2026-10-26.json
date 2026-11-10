@@ -1,0 +1,72 @@
+{
+  "date": "2026-10-26",
+  "kind": "scene-state-lifecycle-audit",
+  "confirmed": true,
+  "originalState": {
+    "stone": {
+      "pose": 0,
+      "state": 3,
+      "active": 1,
+      "collision": 1
+    },
+    "drop": {
+      "active": 0,
+      "interactive": 0
+    },
+    "mode": "story"
+  },
+  "destroyed": {
+    "stone": {
+      "pose": 1,
+      "state": 3,
+      "active": 0,
+      "collision": 0
+    },
+    "drop": {
+      "active": 1,
+      "interactive": 1
+    },
+    "mode": "story"
+  },
+  "afterMenu": {
+    "stone": {
+      "pose": 1,
+      "state": 3,
+      "active": 0,
+      "collision": 0
+    },
+    "drop": {
+      "active": 1,
+      "interactive": 1
+    },
+    "mode": "training"
+  },
+  "afterTraining": {
+    "stone": {
+      "pose": 1,
+      "state": 3,
+      "active": 0,
+      "collision": 0
+    },
+    "drop": {
+      "active": 1,
+      "interactive": 1
+    },
+    "mode": "training"
+  },
+  "afterStoryRestart": {
+    "stone": {
+      "pose": 0,
+      "state": 3,
+      "active": 1,
+      "collision": 1
+    },
+    "drop": {
+      "active": 0,
+      "interactive": 0
+    },
+    "mode": "story"
+  },
+  "finding": "Source story destruction/drop state persists through production menu and same-map training start because cached props are never restored.",
+  "scope": "Original sn01 DES/cmodel/FMC/PST and production menu/start; synthetic attack callback and lightweight actors, no browser or ordinary combat claim."
+}

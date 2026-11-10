@@ -1,0 +1,474 @@
+TAP version 13
+# Subtest: native Move/Value packing preserves their separate motion/time meanings and original float32 wire rounding
+ok 1 - native Move/Value packing preserves their separate motion/time meanings and original float32 wire rounding
+  ---
+  duration_ms: 0.869166
+  type: 'test'
+  ...
+# Subtest: one-frame airborne source loops hold exactly one transform and cannot sample another pose or generate endless vertical velocity
+ok 2 - one-frame airborne source loops hold exactly one transform and cannot sample another pose or generate endless vertical velocity
+  ---
+  duration_ms: 0.505042
+  type: 'test'
+  ...
+# Subtest: source reaction selection uses native signed angles, exact sector boundaries and append-time fallback
+ok 3 - source reaction selection uses native signed angles, exact sector boundaries and append-time fallback
+  ---
+  duration_ms: 0.23225
+  type: 'test'
+  ...
+# Subtest: source guard selection retains each weapon-state list, all four front variants and its fixed side/back entries
+ok 4 - source guard selection retains each weapon-state list, all four front variants and its fixed side/back entries
+  ---
+  duration_ms: 0.293292
+  type: 'test'
+  ...
+# Subtest: front guard follows the original CRT53-bit draw distribution, including the maximum draw selecting slot4
+ok 5 - front guard follows the original CRT53-bit draw distribution, including the maximum draw selecting slot4
+  ---
+  duration_ms: 3.5355
+  type: 'test'
+  ...
+# Subtest: real hit events, original animation and impact sound all use the selected front/back/side source pose
+ok 6 - real hit events, original animation and impact sound all use the selected front/back/side source pose
+  ---
+  duration_ms: 339.9495
+  type: 'test'
+  ...
+# Subtest: an interrupted native hit blend starts from the actual displayed bones and weapon attachments without a pose pop
+ok 7 - an interrupted native hit blend starts from the actual displayed bones and weapon attachments without a pose pop
+  ---
+  duration_ms: 55.870541
+  type: 'test'
+  ...
+# Subtest: a blocked rear blow plays the defender sword guard pose, moves by native DefenseMove, holds DefenseValue and returns to guard
+ok 8 - a blocked rear blow plays the defender sword guard pose, moves by native DefenseMove, holds DefenseValue and returns to guard
+  ---
+  duration_ms: 59.031417
+  type: 'test'
+  ...
+# Subtest: public held guard can be released and pressed during block stun, repeated blocks preserve HP and a source break-guard hit interrupts it
+ok 9 - public held guard can be released and pressed during block stun, repeated blocks preserve HP and a source break-guard hit interrupts it
+  ---
+  duration_ms: 49.110542
+  type: 'test'
+  ...
+# Subtest: a native light-hit reaction discards queued offense and cannot be canceled by normal attack or locomotion input
+ok 10 - a native light-hit reaction discards queued offense and cannot be canceled by normal attack or locomotion input
+  ---
+  duration_ms: 1.613709
+  type: 'test'
+  ...
+# Subtest: native knockdowns keep their POS down links and recover through original animation rather than instantly standing
+ok 11 - native knockdowns keep their POS down links and recover through original animation rather than instantly standing
+  ---
+  duration_ms: 0.657958
+  type: 'test'
+  ...
+# Subtest: airborne prone reactions wait for floor contact and repeated light hits do not snap a prone actor upright
+ok 12 - airborne prone reactions wait for floor contact and repeated light hits do not snap a prone actor upright
+  ---
+  duration_ms: 0.411625
+  type: 'test'
+  ...
+# Subtest: a real native sword hit visibly plays its authored target pose and locks ordinary AI movement and offense
+ok 13 - a real native sword hit visibly plays its authored target pose and locks ordinary AI movement and offense
+  ---
+  duration_ms: 48.572042
+  type: 'test'
+  ...
+# Subtest: three ordinary public attack inputs can hit and knock down a real native opponent on the source sword third strike
+ok 14 - three ordinary public attack inputs can hit and knock down a real native opponent on the source sword third strike
+  ---
+  duration_ms: 77.0925
+  type: 'test'
+  ...
+# Subtest: rapid public attack presses retain all three original sword strike windows before the third hit knocks down
+ok 15 - rapid public attack presses retain all three original sword strike windows before the third hit knocks down
+  ---
+  duration_ms: 57.637958
+  type: 'test'
+  ...
+# Subtest: guarded contact does not turn a blocked blow into knockdown, while a lethal blow keeps death priority
+ok 16 - guarded contact does not turn a blocked blow into knockdown, while a lethal blow keeps death priority
+  ---
+  duration_ms: 46.687375
+  type: 'test'
+  ...
+# Subtest: a player receiving a native reaction cannot jump or buffer an attack out of it and regains control after recovery
+not ok 17 - a player receiving a native reaction cannot jump or buffer an attack out of it and regains control after recovery
+  ---
+  duration_ms: 56.485375
+  type: 'test'
+  location: '/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/tests/native-hit-reaction.test.mjs:284:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    16 !== 6
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 6
+  actual: 16
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/tests/native-hit-reaction.test.mjs:294:53)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: real impact feedback freezes only the contacting actors and consumes only its pause portion of the next update
+ok 18 - real impact feedback freezes only the contacting actors and consumes only its pause portion of the next update
+  ---
+  duration_ms: 49.125334
+  type: 'test'
+  ...
+# Subtest: misses produce no contact freeze, guarded impact keeps HP and death interrupts an existing freeze immediately
+ok 19 - misses produce no contact freeze, guarded impact keeps HP and death interrupts an existing freeze immediately
+  ---
+  duration_ms: 53.848792
+  type: 'test'
+  ...
+# Subtest: every catalog command selects its original pose with its required stance and predecessor
+not ok 20 - every catalog command selects its original pose with its required stance and predecessor
+  ---
+  duration_ms: 5.101417
+  type: 'test'
+  location: '/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/tests/native-input.test.mjs:15:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    →A qiankun
+    + actual - expected
+    
+    + 'qiankun-432'
+    - 'qiankun-440'
+                ^
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'qiankun-440'
+  actual: 'qiankun-432'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/tests/native-input.test.mjs:19:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: three-direction commands win over two-direction and single-direction suffixes
+ok 21 - three-direction commands win over two-direction and single-direction suffixes
+  ---
+  duration_ms: 0.459333
+  type: 'test'
+  ...
+# Subtest: slow, stale and opposite-posture taps cannot fabricate a long command
+ok 22 - slow, stale and opposite-posture taps cannot fabricate a long command
+  ---
+  duration_ms: 0.184792
+  type: 'test'
+  ...
+# Subtest: held movement supports a single directional attack without inventing a diagonal sequence
+ok 23 - held movement supports a single directional attack without inventing a diagonal sequence
+  ---
+  duration_ms: 0.141542
+  type: 'test'
+  ...
+# Subtest: follow-ups need an active predecessor, including its actual linked air recovery
+ok 24 - follow-ups need an active predecessor, including its actual linked air recovery
+  ---
+  duration_ms: 0.221917
+  type: 'test'
+  ...
+# Subtest: unavailable long specials remain selected so the engine can explicitly reject them
+ok 25 - unavailable long specials remain selected so the engine can explicitly reject them
+  ---
+  duration_ms: 0.2885
+  type: 'test'
+  ...
+# Subtest: source items retain their actual models, handedness and original stance
+ok 26 - source items retain their actual models, handedness and original stance
+  ---
+  duration_ms: 154.346417
+  type: 'test'
+  ...
+# Subtest: dual ordinary attack inputs traverse actual native bones and each source window once
+ok 27 - dual ordinary attack inputs traverse actual native bones and each source window once
+  ---
+  duration_ms: 27.219042
+  type: 'test'
+  ...
+# Subtest: hammer ordinary attack inputs traverse actual native bones and each source window once
+ok 28 - hammer ordinary attack inputs traverse actual native bones and each source window once
+  ---
+  duration_ms: 12.875541
+  type: 'test'
+  ...
+# Subtest: knuckle ordinary attack inputs traverse actual native bones and each source window once
+ok 29 - knuckle ordinary attack inputs traverse actual native bones and each source window once
+  ---
+  duration_ms: 15.034542
+  type: 'test'
+  ...
+# Subtest: dual actual blocked first strike preserves HP and selects its source guard sound family
+ok 30 - dual actual blocked first strike preserves HP and selects its source guard sound family
+  ---
+  duration_ms: 7.0485
+  type: 'test'
+  ...
+# Subtest: hammer actual blocked first strike preserves HP and selects its source guard sound family
+ok 31 - hammer actual blocked first strike preserves HP and selects its source guard sound family
+  ---
+  duration_ms: 5.926709
+  type: 'test'
+  ...
+# Subtest: knuckle actual blocked first strike preserves HP and selects its source guard sound family
+ok 32 - knuckle actual blocked first strike preserves HP and selects its source guard sound family
+  ---
+  duration_ms: 5.402167
+  type: 'test'
+  ...
+# Subtest: mission weapon profiles keep plain-A separate from the authored directional branches
+ok 33 - mission weapon profiles keep plain-A separate from the authored directional branches
+  ---
+  duration_ms: 0.196667
+  type: 'test'
+  ...
+# Subtest: ordinary jump and attack inputs render the original dual, hammer and knuckle air poses and return to their source stances
+ok 34 - ordinary jump and attack inputs render the original dual, hammer and knuckle air poses and return to their source stances
+  ---
+  duration_ms: 40.268833
+  type: 'test'
+  ...
+# Subtest: every advertised manual command addresses preserved native animation and RES data
+not ok 35 - every advertised manual command addresses preserved native animation and RES data
+  ---
+  duration_ms: 1.095
+  type: 'test'
+  location: '/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/tests/native-move-catalog.test.mjs:16:1'
+  failureType: 'testCodeFailure'
+  error: 'ninja-526: native attack phase'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/tests/native-move-catalog.test.mjs:35:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: the requested blade spin, sword flurry, spear circles and airborne stabs use distinct original poses
+ok 36 - the requested blade spin, sword flurry, spear circles and airborne stabs use distinct original poses
+  ---
+  duration_ms: 3.165833
+  type: 'test'
+  ...
+# Subtest: separate source command tables resolve the ambiguous spear and blade pose-reference rows
+ok 37 - separate source command tables resolve the ambiguous spear and blade pose-reference rows
+  ---
+  duration_ms: 0.240375
+  type: 'test'
+  ...
+# Subtest: ordinary chains and conditional second stages preserve their distinct command prerequisites
+ok 38 - ordinary chains and conditional second stages preserve their distinct command prerequisites
+  ---
+  duration_ms: 1.092292
+  type: 'test'
+  ...
+# Subtest: catalog scope and unresolved projectile commands are explicit rather than silently substituted
+not ok 39 - catalog scope and unresolved projectile commands are explicit rather than silently substituted
+  ---
+  duration_ms: 0.94625
+  type: 'test'
+  location: '/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/tests/native-move-catalog.test.mjs:85:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'blade',
+        'dagger',
+        'dart',
+        'dual',
+        'hammer',
+    +   'knuckle',
+    +   'musket',
+    +   'ninja',
+    +   'qiankun',
+        'spear',
+        'sword',
+    +   'wheel'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'blade'
+    1: 'dagger'
+    2: 'dart'
+    3: 'dual'
+    4: 'hammer'
+    5: 'spear'
+    6: 'sword'
+  actual:
+    0: 'blade'
+    1: 'dagger'
+    2: 'dart'
+    3: 'dual'
+    4: 'hammer'
+    5: 'knuckle'
+    6: 'musket'
+    7: 'ninja'
+    8: 'qiankun'
+    9: 'spear'
+    10: 'sword'
+    11: 'wheel'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/tests/native-move-catalog.test.mjs:87:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: every usable command has a real bone/weapon hit or an implemented projectile emitter, including its automatic phases
+not ok 40 - every usable command has a real bone/weapon hit or an implemented projectile emitter, including its automatic phases
+  ---
+  duration_ms: 0.396791
+  type: 'test'
+  location: '/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/tests/native-move-catalog.test.mjs:102:1'
+  failureType: 'testCodeFailure'
+  error: 'musket-206: a pure effect window cannot be advertised as a functioning hit'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/tests/native-move-catalog.test.mjs:110:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: the actual guide renders every catalog entry exactly once and rejects unequipped families
+not ok 41 - the actual guide renders every catalog entry exactly once and rejects unequipped families
+  ---
+  duration_ms: 1.659625
+  type: 'test'
+  location: '/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/tests/native-move-guide.test.mjs:16:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /id="combo-group-air"/. Input:
+    
+    '<div class="combo-weapon-heading"><h3 id="guide-weapon-heading">火铳招式</h3><span>5 项指令 · 3 项可用</span></div><section class="combo-group" aria-labelledby="combo-group-ground"><h4 id="combo-group-ground">地面招式<span>按顺序连续输入</span></h4><ul class="combo-move-list"><li data-move-id="musket-206"><div class="combo-move-title"><strong>烟声</strong></div><span class="combo-command" aria-label="攻击"><span aria-hidden="true"><kbd>A</kbd></span></span></li><li data-move-id="musket-207"><div class="combo-move-title"><strong>焦野</strong></div><span class="combo-command" aria-label="上 攻击"><span aria-hidden="true"><kbd>↑</kbd><kbd>A</kbd></span></span></li></ul></section><section class="combo-group" aria-labelledby="combo-group-rage"><h4 id="combo-group-rage">怒气招式<span>怒气满足条件后施展</span></h4><ul class="combo-move-list"><li data-move-id="musket-208"><div class="combo-move-title"><strong>熔铁</strong><span class="combo-rage">怒气 20</span></div><span class="combo-command" aria-label="下 攻击"><span aria-hidden="true"><kbd>↓</kbd><kbd>A</kbd></span></span></li><li data-move-id="musket-216" class="combo-pending"><div class="combo-move-title"><strong>炎狱</strong><span class="combo-rage">怒气 60</span><span class="combo-status">暂不可用</span></div><span class="combo-command" aria-label="下 上 攻击"><span aria-hidden="true"><kbd>↓</kbd><kbd>↑</kbd><kbd>A</kbd></span></span><p>怒瞄准与原版特殊弹道尚未恢复</p></li><li data-move-id="musket-215" class="combo-pending"><div class="combo-move-title"><strong>焚雷</strong><span class="combo-rage">怒气 100</span><span class="combo-status">暂不可用</span></div><span class="combo-command" aria-label="下 上 上 攻击"><span aria-hidden="true"><kbd>↓</kbd><kbd>↑</kbd><kbd>↑</kbd><kbd>A</kbd></span></span><p>原版必杀弹道与范围效果尚未恢复</p></li></ul></section>'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: '<div class="combo-weapon-heading"><h3 id="guide-weapon-heading">火铳招式</h3><span>5 项指令 · 3 项可用</span></div><section class="combo-group" aria-labelledby="combo-group-ground"><h4 id="combo-group-ground">地面招式<span>按顺序连续输入</span></h4><ul class="combo-move-list"><li data-move-id="musket-206"><div class="combo-move-title"><strong>烟声</strong></div><span class="combo-command" aria-label="攻击"><span aria-hidden="true"><kbd>A</kbd></span></span></li><li data-move-id="musket-207"><div class="combo-move-title"><strong>焦野</strong></div><span class="combo-command" aria-label="上 攻击"><span aria-hidden="true"><kbd>↑</kbd><kbd>A</kbd></span></span></li></ul></section><section class="combo-group" aria-labelledby="combo-group-rage"><h4 id="combo-group-rage">怒气招式<span>怒气满足条件后施展</span></h4><ul class="combo-move-list"><li data-move-id="musket-208"><div class="combo-move-title"><strong>熔铁</strong><span class="combo-rage">怒气 20</span></div><span class="combo-command" aria-label="下 攻击"><span aria-hidden="true"><kbd>↓</kbd><kbd>A</kbd></span></span></li><li data-move-id="musket-216" class="combo-pending"><div class="combo-move-title"><strong>炎狱</strong><span class="combo-rage">怒气 60</span><span class="combo-status">暂不可用</span></div><span class="combo-command" aria-label="下 上 攻击"><span aria-hidden="true"><kbd>↓</kbd><kbd>↑</kbd><kbd>A</kbd></span></span><p>怒瞄准与原版特殊弹道尚未恢复</p></li><li data-move-id="musket-215" class="combo-pending"><div class="combo-move-title"><strong>焚雷</strong><span class="combo-rage">怒气 100</span><span class="combo-status">暂不可用</span></div><span class="combo-command" aria-label="下 上 上 攻击"><span aria-hidden="true"><kbd>↓</kbd><kbd>↑</kbd><kbd>↑</kbd><kbd>A</kbd></span></span><p>原版必杀弹道与范围效果尚未恢复</p></li></ul></section>'
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/tests/native-move-guide.test.mjs:27:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: the reported spins, multi-thrust and four melee plunges show their complete distinct commands
+ok 42 - the reported spins, multi-thrust and four melee plunges show their complete distinct commands
+  ---
+  duration_ms: 2.364291
+  type: 'test'
+  ...
+# Subtest: rage costs and unavailable projectile specials remain visible next to their commands
+not ok 43 - rage costs and unavailable projectile specials remain visible next to their commands
+  ---
+  duration_ms: 4.531208
+  type: 'test'
+  location: '/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/tests/native-move-guide.test.mjs:46:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    31 !== 7
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 7
+  actual: 31
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/tests/native-move-guide.test.mjs:60:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: follow-up requirements are explained by move names and arrow commands are screen-reader labeled
+ok 44 - follow-up requirements are explained by move names and arrow commands are screen-reader labeled
+  ---
+  duration_ms: 2.051167
+  type: 'test'
+  ...
+# Subtest: original musket models, source stance and actual guard table are present
+ok 45 - original musket models, source stance and actual guard table are present
+  ---
+  duration_ms: 12.305375
+  type: 'test'
+  ...
+# Subtest: musket NPC ordinary attacks use source206 and do not invent airborne gunfire
+ok 46 - musket NPC ordinary attacks use source206 and do not invent airborne gunfire
+  ---
+  duration_ms: 3.303041
+  type: 'test'
+  ...
+# Subtest: actual POS206/207/208 releases hit once using each original RES modifier
+ok 47 - actual POS206/207/208 releases hit once using each original RES modifier
+  ---
+  duration_ms: 3.229125
+  type: 'test'
+  ...
+# Subtest: source weapon variants retain their own RES damage rather than default gun stats
+ok 48 - source weapon variants retain their own RES damage rather than default gun stats
+  ---
+  duration_ms: 0.819708
+  type: 'test'
+  ...
+# Subtest: guard and friendly contact preserve recovered damage arithmetic
+ok 49 - guard and friendly contact preserve recovered damage arithmetic
+  ---
+  duration_ms: 0.297042
+  type: 'test'
+  ...
+# Subtest: nearest actor or original map triangle wins, including a muzzle beyond a wall
+ok 50 - nearest actor or original map triangle wins, including a muzzle beyond a wall
+  ---
+  duration_ms: 1.217459
+  type: 'test'
+  ...
+# Subtest: host must choose ray range; pause, miss, stale windows and special EF do not duplicate shots
+ok 51 - host must choose ray range; pause, miss, stale windows and special EF do not duplicate shots
+  ---
+  duration_ms: 0.181917
+  type: 'test'
+  ...
+1..51
+# tests 51
+# suites 0
+# pass 44
+# fail 7
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1067.541625

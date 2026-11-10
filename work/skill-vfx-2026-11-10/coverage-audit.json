@@ -1,0 +1,3542 @@
+{
+  "scope": "Offline source-controller presentation audit; source timeline uses grounded=true to finish holds. Not a native EXE run or manual combat completion.",
+  "manifestSha256": "e6003856b8045f04f4e81997f83339b7968bda75b9aa2747452fac407fffe5b4",
+  "definitions": 76,
+  "nodeTypes": {
+    "AUDIO": 349,
+    "BILLBOARD": 106,
+    "SPHERE": 154,
+    "PLANE": 160,
+    "PARTICLE": 187,
+    "CYLINDER": 91,
+    "DONUT": 6,
+    "BOX": 47
+  },
+  "texturedSupportedShapes": 392,
+  "textureRecords": 53,
+  "sourceDragPoses": 132,
+  "sourceDragWindows": 143,
+  "supportedWeaponSocketModels": 70,
+  "oldBrightness": 0.65,
+  "brightness": 1,
+  "colorGain": 1.15,
+  "oldTailSeconds": 0.18,
+  "detachedAnchorPolicy": "last source skeleton sample frozen; internal keyed nodes continue",
+  "controllerMoves": [
+    {
+      "id": "dart-201",
+      "name": "八方绝",
+      "weapon": "dart",
+      "rage": 60,
+      "effects": [
+        "pos201"
+      ],
+      "ended": true
+    },
+    {
+      "id": "dart-203",
+      "name": "落樱雪",
+      "weapon": "dart",
+      "rage": 100,
+      "effects": [
+        "pos203",
+        "pos204",
+        "pos329"
+      ],
+      "ended": true
+    },
+    {
+      "id": "dart-551",
+      "name": "八方绝",
+      "weapon": "dart",
+      "rage": 60,
+      "effects": [
+        "pos551",
+        "pos332"
+      ],
+      "ended": true
+    },
+    {
+      "id": "dagger-558",
+      "name": "暗犽",
+      "weapon": "dagger",
+      "rage": 60,
+      "effects": [
+        "pos558"
+      ],
+      "ended": true
+    },
+    {
+      "id": "dagger-259",
+      "name": "阎罗",
+      "weapon": "dagger",
+      "rage": 100,
+      "effects": [
+        "pos259"
+      ],
+      "ended": true
+    },
+    {
+      "id": "dagger-559",
+      "name": "降神",
+      "weapon": "dagger",
+      "rage": 60,
+      "effects": [
+        "pos559"
+      ],
+      "ended": true
+    },
+    {
+      "id": "sword-561",
+      "name": "凤凰雏",
+      "weapon": "sword",
+      "rage": 60,
+      "effects": [
+        "pos561"
+      ],
+      "ended": true
+    },
+    {
+      "id": "sword-560",
+      "name": "血残气丧",
+      "weapon": "sword",
+      "rage": 60,
+      "effects": [
+        "pos560"
+      ],
+      "ended": true
+    },
+    {
+      "id": "sword-368",
+      "name": "凤凰羽",
+      "weapon": "sword",
+      "rage": 100,
+      "effects": [
+        "pos368",
+        "pos369"
+      ],
+      "ended": true
+    },
+    {
+      "id": "spear-571",
+      "name": "狂龙穿心破",
+      "weapon": "spear",
+      "rage": 60,
+      "effects": [
+        "pos571"
+      ],
+      "ended": true
+    },
+    {
+      "id": "spear-562",
+      "name": "伏龙翔天破",
+      "weapon": "spear",
+      "rage": 60,
+      "effects": [
+        "pos562",
+        "pos563"
+      ],
+      "ended": true
+    },
+    {
+      "id": "spear-293",
+      "name": "万圣龙王破",
+      "weapon": "spear",
+      "rage": 100,
+      "effects": [
+        "pos293",
+        "pos294"
+      ],
+      "ended": true
+    },
+    {
+      "id": "blade-572",
+      "name": "狂风",
+      "weapon": "blade",
+      "rage": 60,
+      "effects": [
+        "pos572",
+        "pos573"
+      ],
+      "ended": true
+    },
+    {
+      "id": "blade-565",
+      "name": "雷斩",
+      "weapon": "blade",
+      "rage": 60,
+      "effects": [
+        "pos565"
+      ],
+      "ended": true
+    },
+    {
+      "id": "blade-310",
+      "name": "腥风",
+      "weapon": "blade",
+      "rage": 100,
+      "effects": [
+        "pos310",
+        "pos311",
+        "pos312",
+        "pos313",
+        "pos314",
+        "pos331"
+      ],
+      "ended": true
+    },
+    {
+      "id": "dual-244",
+      "name": "合太极",
+      "weapon": "dual",
+      "rage": 100,
+      "effects": [
+        "pos244",
+        "pos350",
+        "pos351",
+        "pos352",
+        "pos353",
+        "pos354",
+        "pos355",
+        "pos356",
+        "pos357",
+        "pos358",
+        "pos359",
+        "pos360",
+        "pos361",
+        "pos362",
+        "pos363",
+        "pos364"
+      ],
+      "ended": true
+    },
+    {
+      "id": "dual-556",
+      "name": "祥龙摆尾",
+      "weapon": "dual",
+      "rage": 60,
+      "effects": [
+        "pos556"
+      ],
+      "ended": true
+    },
+    {
+      "id": "hammer-566",
+      "name": "焚雷震八方",
+      "weapon": "hammer",
+      "rage": 60,
+      "effects": [
+        "pos566"
+      ],
+      "ended": true
+    },
+    {
+      "id": "hammer-567",
+      "name": "金钟罩",
+      "weapon": "hammer",
+      "rage": 100,
+      "effects": [
+        "pos489"
+      ],
+      "ended": true
+    },
+    {
+      "id": "hammer-325",
+      "name": "俯爆压头灯",
+      "weapon": "hammer",
+      "rage": 100,
+      "effects": [
+        "pos325",
+        "pos326",
+        "pos327",
+        "pos328"
+      ],
+      "ended": true
+    },
+    {
+      "id": "musket-208",
+      "name": "熔铁",
+      "weapon": "musket",
+      "rage": 20,
+      "effects": [
+        "pos208"
+      ],
+      "ended": true
+    },
+    {
+      "id": "musket-216",
+      "name": "炎狱",
+      "weapon": "musket",
+      "rage": 60,
+      "effects": [
+        "pos216",
+        "pos217",
+        "pos212"
+      ],
+      "ended": true
+    },
+    {
+      "id": "musket-215",
+      "name": "焚雷",
+      "weapon": "musket",
+      "rage": 100,
+      "effects": [
+        "pos215",
+        "pos212"
+      ],
+      "ended": true
+    },
+    {
+      "id": "wheel-552",
+      "name": "千刀万刮",
+      "weapon": "wheel",
+      "rage": 60,
+      "effects": [
+        "pos552"
+      ],
+      "ended": true
+    },
+    {
+      "id": "wheel-224",
+      "name": "万劫千秋",
+      "weapon": "wheel",
+      "rage": 100,
+      "effects": [
+        "pos224"
+      ],
+      "ended": true
+    },
+    {
+      "id": "wheel-554",
+      "name": "夺命轮盘",
+      "weapon": "wheel",
+      "rage": 60,
+      "effects": [
+        "pos554",
+        "pos555"
+      ],
+      "ended": true
+    },
+    {
+      "id": "knuckle-416",
+      "name": "虎啸波",
+      "weapon": "knuckle",
+      "rage": 60,
+      "effects": [
+        "pos416"
+      ],
+      "ended": true
+    },
+    {
+      "id": "knuckle-489",
+      "name": "饿虎嗜血",
+      "weapon": "knuckle",
+      "rage": 100,
+      "effects": [
+        "pos489"
+      ],
+      "ended": true
+    },
+    {
+      "id": "knuckle-421",
+      "name": "虎王虐袭杀",
+      "weapon": "knuckle",
+      "rage": 100,
+      "effects": [
+        "pos421",
+        "pos422",
+        "pos423",
+        "pos424",
+        "pos425",
+        "pos426",
+        "pos488"
+      ],
+      "ended": true
+    },
+    {
+      "id": "qiankun-568",
+      "name": "霸王落",
+      "weapon": "qiankun",
+      "rage": 60,
+      "effects": [
+        "pos568",
+        "pos569"
+      ],
+      "ended": true
+    },
+    {
+      "id": "qiankun-570",
+      "name": "勾魂锁",
+      "weapon": "qiankun",
+      "rage": 60,
+      "effects": [
+        "pos570"
+      ],
+      "ended": true
+    },
+    {
+      "id": "qiankun-451",
+      "name": "死斗",
+      "weapon": "qiankun",
+      "rage": 100,
+      "effects": [
+        "pos451",
+        "pos452",
+        "pos453",
+        "pos454",
+        "pos455",
+        "pos456"
+      ],
+      "ended": true
+    }
+  ],
+  "observedEffects": [
+    {
+      "id": "pos201",
+      "pose": 201,
+      "hostLastSample": 0.9333333333333346,
+      "visualEnd": 1.003333330154419,
+      "shapes": [
+        {
+          "name": "Board_2",
+          "type": "BILLBOARD",
+          "start": 0.1366666704416275,
+          "end": 0.7699999809265137
+        },
+        {
+          "name": "Attack102",
+          "type": "SPHERE",
+          "start": 0.3400000035762787,
+          "end": 0.7066666483879089
+        },
+        {
+          "name": "Sphere_3",
+          "type": "SPHERE",
+          "start": 0,
+          "end": 1.003333330154419
+        },
+        {
+          "name": "Attack201",
+          "type": "SPHERE",
+          "start": 0.40666666626930237,
+          "end": 0.7733333110809326
+        },
+        {
+          "name": "Attack101",
+          "type": "SPHERE",
+          "start": 0.33666667342185974,
+          "end": 0.70333331823349
+        },
+        {
+          "name": "Attack203",
+          "type": "SPHERE",
+          "start": 0.40666666626930237,
+          "end": 0.7733333110809326
+        },
+        {
+          "name": "Attack202",
+          "type": "SPHERE",
+          "start": 0.40666666626930237,
+          "end": 0.7733333110809326
+        },
+        {
+          "name": "Attack103",
+          "type": "SPHERE",
+          "start": 0.3400000035762787,
+          "end": 0.70333331823349
+        },
+        {
+          "name": "Board_2",
+          "type": "BILLBOARD",
+          "start": 0.1366666704416275,
+          "end": 0.7699999809265137
+        },
+        {
+          "name": "Attack301",
+          "type": "SPHERE",
+          "start": 0.47999998927116394,
+          "end": 0.8399999737739563
+        },
+        {
+          "name": "Attack305",
+          "type": "SPHERE",
+          "start": 0.47999998927116394,
+          "end": 0.8399999737739563
+        },
+        {
+          "name": "Attack303",
+          "type": "SPHERE",
+          "start": 0.47999998927116394,
+          "end": 0.8399999737739563
+        },
+        {
+          "name": "Attack304",
+          "type": "SPHERE",
+          "start": 0.47999998927116394,
+          "end": 0.8399999737739563
+        },
+        {
+          "name": "Attack204",
+          "type": "SPHERE",
+          "start": 0.40666666626930237,
+          "end": 0.7733333110809326
+        },
+        {
+          "name": "Attack302",
+          "type": "SPHERE",
+          "start": 0.47999998927116394,
+          "end": 0.8399999737739563
+        },
+        {
+          "name": "Board_33",
+          "type": "BILLBOARD",
+          "start": 0.07000000029802322,
+          "end": 0.6100000143051147
+        },
+        {
+          "name": "Board_34",
+          "type": "BILLBOARD",
+          "start": 0.07000000029802322,
+          "end": 0.503333330154419
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos203",
+      "pose": 203,
+      "hostLastSample": 0.9333333333333346,
+      "visualEnd": 1.1366666555404663,
+      "shapes": [
+        {
+          "name": "Rectangle_9",
+          "type": "PLANE",
+          "start": 0.70333331823349,
+          "end": 0.9399999976158142
+        },
+        {
+          "name": "AttackBall",
+          "type": "SPHERE",
+          "start": 0.0033333334140479565,
+          "end": 1.1366666555404663
+        }
+      ],
+      "clippedByOldTail": true,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos204",
+      "pose": 204,
+      "hostLastSample": 0.9333333333333346,
+      "visualEnd": 0.9700000286102295,
+      "shapes": [
+        {
+          "name": "AttackBall",
+          "type": "SPHERE",
+          "start": 0.0033333334140479565,
+          "end": 0.9366666674613953
+        },
+        {
+          "name": "AttackWave02",
+          "type": "CYLINDER",
+          "start": 0.17666666209697723,
+          "end": 0.903333306312561
+        },
+        {
+          "name": "AttackWave04",
+          "type": "CYLINDER",
+          "start": 0.23666666448116302,
+          "end": 0.9700000286102295
+        },
+        {
+          "name": "AttackWave01",
+          "type": "CYLINDER",
+          "start": 0.1433333307504654,
+          "end": 0.8766666650772095
+        },
+        {
+          "name": "AttackWave03",
+          "type": "CYLINDER",
+          "start": 0.20999999344348907,
+          "end": 0.9366666674613953
+        },
+        {
+          "name": "Sphere_7",
+          "type": "SPHERE",
+          "start": 0.07000000029802322,
+          "end": 0.9366666674613953
+        },
+        {
+          "name": "AttackWave05",
+          "type": "CYLINDER",
+          "start": 0.27000001072883606,
+          "end": 0.79666668176651
+        },
+        {
+          "name": "AttackWave06",
+          "type": "CYLINDER",
+          "start": 0.3033333420753479,
+          "end": 0.8366666436195374
+        },
+        {
+          "name": "AttackWave06",
+          "type": "CYLINDER",
+          "start": 0.3400000035762787,
+          "end": 0.8666666746139526
+        },
+        {
+          "name": "Cylinder_15",
+          "type": "CYLINDER",
+          "start": 0.3733333349227905,
+          "end": 0.8999999761581421
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos329",
+      "pose": 329,
+      "hostLastSample": 1.3533333306511244,
+      "visualEnd": 0,
+      "shapes": [],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos551",
+      "pose": 551,
+      "hostLastSample": 0.966666666666668,
+      "visualEnd": 1.003333330154419,
+      "shapes": [
+        {
+          "name": "Board_2",
+          "type": "BILLBOARD",
+          "start": 0.13333334028720856,
+          "end": 1.003333330154419
+        },
+        {
+          "name": "Attack102",
+          "type": "SPHERE",
+          "start": 0.40666666626930237,
+          "end": 0.7733333110809326
+        },
+        {
+          "name": "Sphere_3",
+          "type": "SPHERE",
+          "start": 0,
+          "end": 1.003333330154419
+        },
+        {
+          "name": "Attack103",
+          "type": "SPHERE",
+          "start": 0.4099999964237213,
+          "end": 0.7733333110809326
+        },
+        {
+          "name": "Attack201",
+          "type": "SPHERE",
+          "start": 0.503333330154419,
+          "end": 0.8700000047683716
+        },
+        {
+          "name": "Attack101",
+          "type": "SPHERE",
+          "start": 0.40666666626930237,
+          "end": 0.7733333110809326
+        },
+        {
+          "name": "Attack202",
+          "type": "SPHERE",
+          "start": 0.503333330154419,
+          "end": 0.8700000047683716
+        },
+        {
+          "name": "Board_2",
+          "type": "BILLBOARD",
+          "start": 0.13333334028720856,
+          "end": 1.003333330154419
+        },
+        {
+          "name": "Attack204",
+          "type": "SPHERE",
+          "start": 0.503333330154419,
+          "end": 0.8700000047683716
+        },
+        {
+          "name": "Attack301",
+          "type": "SPHERE",
+          "start": 0.6033333539962769,
+          "end": 1.003333330154419
+        },
+        {
+          "name": "Attack203",
+          "type": "SPHERE",
+          "start": 0.503333330154419,
+          "end": 0.8700000047683716
+        },
+        {
+          "name": "Attack304",
+          "type": "SPHERE",
+          "start": 0.6033333539962769,
+          "end": 1.003333330154419
+        },
+        {
+          "name": "Attack305",
+          "type": "SPHERE",
+          "start": 0.6033333539962769,
+          "end": 1.003333330154419
+        },
+        {
+          "name": "Attack302",
+          "type": "SPHERE",
+          "start": 0.6033333539962769,
+          "end": 1.003333330154419
+        },
+        {
+          "name": "Board_32",
+          "type": "BILLBOARD",
+          "start": 0.30666667222976685,
+          "end": 0.7733333110809326
+        },
+        {
+          "name": "Attack303",
+          "type": "SPHERE",
+          "start": 0.6033333539962769,
+          "end": 1.003333330154419
+        },
+        {
+          "name": "Board_33",
+          "type": "BILLBOARD",
+          "start": 0.06666667014360428,
+          "end": 0.503333330154419
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos332",
+      "pose": 211,
+      "hostLastSample": 0.19999999999999998,
+      "visualEnd": 0,
+      "shapes": [],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos558",
+      "pose": 558,
+      "hostLastSample": 2.033333333333331,
+      "visualEnd": 1.003333330154419,
+      "shapes": [
+        {
+          "name": "Board_8",
+          "type": "BILLBOARD",
+          "start": 0.47333332896232605,
+          "end": 0.7666666507720947
+        },
+        {
+          "name": "KnifeWave",
+          "type": "CYLINDER",
+          "start": 0.6399999856948853,
+          "end": 0.8733333349227905
+        },
+        {
+          "name": "Rectangle_14",
+          "type": "PLANE",
+          "start": 0.7366666793823242,
+          "end": 1.003333330154419
+        },
+        {
+          "name": "Rectangle_15",
+          "type": "PLANE",
+          "start": 0.7366666793823242,
+          "end": 1.003333330154419
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos259",
+      "pose": 259,
+      "hostLastSample": 1.266666666666667,
+      "visualEnd": 1.003333330154419,
+      "shapes": [
+        {
+          "name": "Board_8",
+          "type": "BILLBOARD",
+          "start": 0.28999999165534973,
+          "end": 0.5833333134651184
+        },
+        {
+          "name": "KNightWave01",
+          "type": "CYLINDER",
+          "start": 0.7099999785423279,
+          "end": 0.8700000047683716
+        },
+        {
+          "name": "Rectangle_9",
+          "type": "PLANE",
+          "start": 0.6766666769981384,
+          "end": 1.003333330154419
+        },
+        {
+          "name": "Rectangle_10",
+          "type": "PLANE",
+          "start": 0.6766666769981384,
+          "end": 1
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos559",
+      "pose": 559,
+      "hostLastSample": 1.397058814729649,
+      "visualEnd": 1.0099999904632568,
+      "shapes": [
+        {
+          "name": "Sphere_4",
+          "type": "SPHERE",
+          "start": 0.27000001072883606,
+          "end": 1.0099999904632568
+        },
+        {
+          "name": "Sphere_5",
+          "type": "SPHERE",
+          "start": 0.23666666448116302,
+          "end": 1.0099999904632568
+        },
+        {
+          "name": "Board_10",
+          "type": "BILLBOARD",
+          "start": 0.07666666805744171,
+          "end": 0.33666667342185974
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos561",
+      "pose": 561,
+      "hostLastSample": 1.5333333333333328,
+      "visualEnd": 1.1033333539962769,
+      "shapes": [
+        {
+          "name": "Board_12",
+          "type": "BILLBOARD",
+          "start": 0.07000000029802322,
+          "end": 0.3033333420753479
+        },
+        {
+          "name": "AttackSlash01",
+          "type": "SPHERE",
+          "start": 0.27000001072883606,
+          "end": 0.5699999928474426
+        },
+        {
+          "name": "AttackSlash02",
+          "type": "SPHERE",
+          "start": 0.5366666913032532,
+          "end": 0.8433333039283752
+        },
+        {
+          "name": "AttackSlash03",
+          "type": "SPHERE",
+          "start": 0.8033333420753479,
+          "end": 1.1033333539962769
+        },
+        {
+          "name": "Cylinder_15",
+          "type": "CYLINDER",
+          "start": 0.2666666805744171,
+          "end": 1.0700000524520874
+        },
+        {
+          "name": "Rectangle_16",
+          "type": "PLANE",
+          "start": 0.06666667014360428,
+          "end": 0.3733333349227905
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos560",
+      "pose": 560,
+      "hostLastSample": 1.3333333333333335,
+      "visualEnd": 1.0099999904632568,
+      "shapes": [
+        {
+          "name": "Sphere_11",
+          "type": "SPHERE",
+          "start": 0.36666667461395264,
+          "end": 0.6100000143051147
+        },
+        {
+          "name": "Board_14",
+          "type": "BILLBOARD",
+          "start": 0.3700000047683716,
+          "end": 0.6100000143051147
+        },
+        {
+          "name": "AttackWave01",
+          "type": "PLANE",
+          "start": 0.3700000047683716,
+          "end": 0.6100000143051147
+        },
+        {
+          "name": "Board_16",
+          "type": "BILLBOARD",
+          "start": 0.10333333164453506,
+          "end": 0.3033333420753479
+        },
+        {
+          "name": "Sphere_12",
+          "type": "SPHERE",
+          "start": 0.7366666793823242,
+          "end": 1.0099999904632568
+        },
+        {
+          "name": "Board_15",
+          "type": "BILLBOARD",
+          "start": 0.7366666793823242,
+          "end": 1.0099999904632568
+        },
+        {
+          "name": "AttackWave02",
+          "type": "PLANE",
+          "start": 0.7366666793823242,
+          "end": 1.0099999904632568
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos368",
+      "pose": 368,
+      "hostLastSample": 1.8999999999999981,
+      "visualEnd": 2.236666679382324,
+      "shapes": [
+        {
+          "name": "Cylinder_12",
+          "type": "CYLINDER",
+          "start": 0.6366666555404663,
+          "end": 2.2033333778381348
+        },
+        {
+          "name": "Board_8",
+          "type": "BILLBOARD",
+          "start": 0.6666666865348816,
+          "end": 2.1066665649414062
+        },
+        {
+          "name": "Rectangle_10",
+          "type": "PLANE",
+          "start": 0.6666666865348816,
+          "end": 1.8733333349227905
+        },
+        {
+          "name": "Rectangle_9",
+          "type": "PLANE",
+          "start": 0.6666666865348816,
+          "end": 1.8666666746139526
+        },
+        {
+          "name": "Rectangle_15",
+          "type": "PLANE",
+          "start": 0.5099999904632568,
+          "end": 1.9733333587646484
+        },
+        {
+          "name": "Cylinder_11",
+          "type": "CYLINDER",
+          "start": 0.5099999904632568,
+          "end": 2.140000104904175
+        },
+        {
+          "name": "Box_14",
+          "type": "BOX",
+          "start": 0.5099999904632568,
+          "end": 2.236666679382324
+        }
+      ],
+      "clippedByOldTail": true,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos369",
+      "pose": 369,
+      "hostLastSample": 1.4866666639844572,
+      "visualEnd": 0.5066666603088379,
+      "shapes": [
+        {
+          "name": "Sphere_11",
+          "type": "SPHERE",
+          "start": 0.03999999910593033,
+          "end": 0.503333330154419
+        },
+        {
+          "name": "AttackWave01",
+          "type": "PLANE",
+          "start": 0.03999999910593033,
+          "end": 0.5066666603088379
+        },
+        {
+          "name": "AttackWave02",
+          "type": "PLANE",
+          "start": 0.04333333298563957,
+          "end": 0.5
+        },
+        {
+          "name": "Board_11",
+          "type": "BILLBOARD",
+          "start": 0.04333333298563957,
+          "end": 0.503333330154419
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos571",
+      "pose": 571,
+      "hostLastSample": 1.3666666666666667,
+      "visualEnd": 1.503333330154419,
+      "shapes": [
+        {
+          "name": "AttackWave01",
+          "type": "CYLINDER",
+          "start": 0.46666666865348816,
+          "end": 0.6733333468437195
+        },
+        {
+          "name": "AttackWave02",
+          "type": "CYLINDER",
+          "start": 0.6466666460037231,
+          "end": 0.8666666746139526
+        },
+        {
+          "name": "Cylinder_14",
+          "type": "CYLINDER",
+          "start": 0.6399999856948853,
+          "end": 0.8033333420753479
+        },
+        {
+          "name": "Board_15",
+          "type": "BILLBOARD",
+          "start": 0.27000001072883606,
+          "end": 0.4833333194255829
+        },
+        {
+          "name": "Cylinder_15",
+          "type": "CYLINDER",
+          "start": 0.6700000166893005,
+          "end": 0.8700000047683716
+        },
+        {
+          "name": "Rectangle_14",
+          "type": "PLANE",
+          "start": 0.1666666716337204,
+          "end": 1.503333330154419
+        },
+        {
+          "name": "Rectangle_15",
+          "type": "PLANE",
+          "start": 0.1666666716337204,
+          "end": 1.503333330154419
+        },
+        {
+          "name": "Cylinder_16",
+          "type": "CYLINDER",
+          "start": 0.7333333492279053,
+          "end": 1.006666660308838
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos562",
+      "pose": 562,
+      "hostLastSample": 0.966666666666668,
+      "visualEnd": 0.8766666650772095,
+      "shapes": [
+        {
+          "name": "AttackWind",
+          "type": "CYLINDER",
+          "start": 0.25,
+          "end": 0.8766666650772095
+        },
+        {
+          "name": "Board_11",
+          "type": "BILLBOARD",
+          "start": 0.07666666805744171,
+          "end": 0.27666667103767395
+        },
+        {
+          "name": "KnifeWave",
+          "type": "CYLINDER",
+          "start": 0.20999999344348907,
+          "end": 0.46666666865348816
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos563",
+      "pose": 563,
+      "hostLastSample": 1.3333333333333335,
+      "visualEnd": 1.006666660308838,
+      "shapes": [
+        {
+          "name": "Board_11",
+          "type": "BILLBOARD",
+          "start": 0.07666666805744171,
+          "end": 0.27666667103767395
+        },
+        {
+          "name": "Sphere_12",
+          "type": "SPHERE",
+          "start": 0.5766666531562805,
+          "end": 0.7333333492279053
+        },
+        {
+          "name": "Sphere_13",
+          "type": "SPHERE",
+          "start": 0.5766666531562805,
+          "end": 1.006666660308838
+        },
+        {
+          "name": "Rectangle_16",
+          "type": "PLANE",
+          "start": 0.6066666841506958,
+          "end": 1.006666660308838
+        },
+        {
+          "name": "Rectangle_15",
+          "type": "PLANE",
+          "start": 0.6066666841506958,
+          "end": 1.006666660308838
+        },
+        {
+          "name": "Cylinder_15",
+          "type": "CYLINDER",
+          "start": 0.6066666841506958,
+          "end": 0.903333306312561
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos293",
+      "pose": 293,
+      "hostLastSample": 3.349999999999993,
+      "visualEnd": 3.3499999046325684,
+      "shapes": [
+        {
+          "name": "AttackBall01",
+          "type": "SPHERE",
+          "start": 0.0033333334140479565,
+          "end": 3.3499999046325684
+        },
+        {
+          "name": "Cylinder_10",
+          "type": "CYLINDER",
+          "start": 0.07333333045244217,
+          "end": 3.3499999046325684
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos294",
+      "pose": 294,
+      "hostLastSample": 2.2999999999999967,
+      "visualEnd": 2.1033332347869873,
+      "shapes": [
+        {
+          "name": "Sphere_13",
+          "type": "SPHERE",
+          "start": 0.0033333334140479565,
+          "end": 2.1033332347869873
+        },
+        {
+          "name": "AttackShock",
+          "type": "CYLINDER",
+          "start": 0.23666666448116302,
+          "end": 1.003333330154419
+        },
+        {
+          "name": "AttackWave01",
+          "type": "CYLINDER",
+          "start": 0.23666666448116302,
+          "end": 0.596666693687439
+        },
+        {
+          "name": "Box_7",
+          "type": "BOX",
+          "start": 0.20333333313465118,
+          "end": 2.1033332347869873
+        },
+        {
+          "name": "AttackBall",
+          "type": "SPHERE",
+          "start": 0.0033333334140479565,
+          "end": 0.33666667342185974
+        },
+        {
+          "name": "Rectangle_14",
+          "type": "PLANE",
+          "start": 0.23666666448116302,
+          "end": 0.5099999904632568
+        },
+        {
+          "name": "Sphere_3",
+          "type": "SPHERE",
+          "start": 0.23666666448116302,
+          "end": 2.009999990463257
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos572",
+      "pose": 572,
+      "hostLastSample": 2.922222222222257,
+      "visualEnd": 3,
+      "shapes": [
+        {
+          "name": "Sphere_15",
+          "type": "SPHERE",
+          "start": 2.5466666221618652,
+          "end": 2.9033334255218506
+        },
+        {
+          "name": "AttackWave01",
+          "type": "SPHERE",
+          "start": 1.4366666078567505,
+          "end": 2.556666612625122
+        },
+        {
+          "name": "WIND",
+          "type": "CYLINDER",
+          "start": 1.006666660308838,
+          "end": 3
+        },
+        {
+          "name": "Board_23",
+          "type": "BILLBOARD",
+          "start": 1.100000023841858,
+          "end": 1.4333332777023315
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos573",
+      "pose": 573,
+      "hostLastSample": 1.033333333333359,
+      "visualEnd": 0.8066666722297668,
+      "shapes": [
+        {
+          "name": "AttackWave02",
+          "type": "SPHERE",
+          "start": 0.07999999821186066,
+          "end": 0.2666666805744171
+        },
+        {
+          "name": "Rectangle_13",
+          "type": "PLANE",
+          "start": 0.1066666692495346,
+          "end": 0.3400000035762787
+        },
+        {
+          "name": "Rectangle_11",
+          "type": "PLANE",
+          "start": 0.1066666692495346,
+          "end": 0.3400000035762787
+        },
+        {
+          "name": "Rectangle_20",
+          "type": "PLANE",
+          "start": 0.14000000059604645,
+          "end": 0.8066666722297668
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos565",
+      "pose": 565,
+      "hostLastSample": 2.213333333333379,
+      "visualEnd": 1.5333333015441895,
+      "shapes": [
+        {
+          "name": "Rectangle_11",
+          "type": "PLANE",
+          "start": 0.8666666746139526,
+          "end": 1.1066666841506958
+        },
+        {
+          "name": "Lighting01_2",
+          "type": "PLANE",
+          "start": 0.8766666650772095,
+          "end": 1.2366666793823242
+        },
+        {
+          "name": "Light01_2",
+          "type": "BILLBOARD",
+          "start": 0.8433333039283752,
+          "end": 1.2366666793823242
+        },
+        {
+          "name": "Lighting01_1",
+          "type": "PLANE",
+          "start": 0.8766666650772095,
+          "end": 1.2366666793823242
+        },
+        {
+          "name": "Rectangle_20",
+          "type": "PLANE",
+          "start": 0.8700000047683716,
+          "end": 1.5099999904632568
+        },
+        {
+          "name": "Board_23",
+          "type": "BILLBOARD",
+          "start": 0.09333333373069763,
+          "end": 0.36000001430511475
+        },
+        {
+          "name": "Light01_1",
+          "type": "BILLBOARD",
+          "start": 0.8433333039283752,
+          "end": 1.2366666793823242
+        },
+        {
+          "name": "BladeWave02",
+          "type": "SPHERE",
+          "start": 0.7733333110809326,
+          "end": 1.0633333921432495
+        },
+        {
+          "name": "Rectangle_13",
+          "type": "PLANE",
+          "start": 0.8666666746139526,
+          "end": 1.1066666841506958
+        },
+        {
+          "name": "Light03_1",
+          "type": "BILLBOARD",
+          "start": 1.1066666841506958,
+          "end": 1.5333333015441895
+        },
+        {
+          "name": "Light02_1",
+          "type": "BILLBOARD",
+          "start": 0.9800000190734863,
+          "end": 1.3733333349227905
+        },
+        {
+          "name": "Lighting02_1",
+          "type": "PLANE",
+          "start": 1.0133333206176758,
+          "end": 1.3733333349227905
+        },
+        {
+          "name": "Light02_2",
+          "type": "BILLBOARD",
+          "start": 0.9800000190734863,
+          "end": 1.3733333349227905
+        },
+        {
+          "name": "Light03_2",
+          "type": "BILLBOARD",
+          "start": 1.1066666841506958,
+          "end": 1.5333333015441895
+        },
+        {
+          "name": "Lighting02_2",
+          "type": "PLANE",
+          "start": 1.0133333206176758,
+          "end": 1.3733333349227905
+        },
+        {
+          "name": "Lighting03_1",
+          "type": "PLANE",
+          "start": 1.1466666460037231,
+          "end": 1.5333333015441895
+        },
+        {
+          "name": "Lighting02_2",
+          "type": "PLANE",
+          "start": 1.1466666460037231,
+          "end": 1.5333333015441895
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos310",
+      "pose": 310,
+      "hostLastSample": 1.1666666666666674,
+      "visualEnd": 1.1733332872390747,
+      "shapes": [
+        {
+          "name": "Board_6",
+          "type": "BILLBOARD",
+          "start": 0.8433333039283752,
+          "end": 1.1699999570846558
+        },
+        {
+          "name": "AttackWave01",
+          "type": "CYLINDER",
+          "start": 0.8433333039283752,
+          "end": 1.1699999570846558
+        },
+        {
+          "name": "Rectangle_15",
+          "type": "PLANE",
+          "start": 0.8433333039283752,
+          "end": 1.1699999570846558
+        },
+        {
+          "name": "AttackBall",
+          "type": "SPHERE",
+          "start": 0.23333333432674408,
+          "end": 1.1733332872390747
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos311",
+      "pose": 311,
+      "hostLastSample": 0.3922222195400233,
+      "visualEnd": 1.006666660308838,
+      "shapes": [
+        {
+          "name": "Rectangle_15",
+          "type": "PLANE",
+          "start": 0.8633333444595337,
+          "end": 1.006666660308838
+        }
+      ],
+      "clippedByOldTail": true,
+      "entirelyMissingShapesWithOldTail": [
+        "Rectangle_15"
+      ]
+    },
+    {
+      "id": "pos312",
+      "pose": 312,
+      "hostLastSample": 1.4866666639844575,
+      "visualEnd": 1.0766667127609253,
+      "shapes": [
+        {
+          "name": "AttackWave",
+          "type": "PLANE",
+          "start": 0.27000001072883606,
+          "end": 1.0766667127609253
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos313",
+      "pose": 313,
+      "hostLastSample": 2.019999997317789,
+      "visualEnd": 1.899999976158142,
+      "shapes": [
+        {
+          "name": "AttackWave",
+          "type": "PLANE",
+          "start": 0.27000001072883606,
+          "end": 1.0766667127609253
+        },
+        {
+          "name": "Sphere_7",
+          "type": "SPHERE",
+          "start": 1.506666660308838,
+          "end": 1.899999976158142
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos314",
+      "pose": 314,
+      "hostLastSample": 1.5199999973177907,
+      "visualEnd": 1.403333306312561,
+      "shapes": [
+        {
+          "name": "Sphere_8",
+          "type": "SPHERE",
+          "start": 0.27666667103767395,
+          "end": 1.403333306312561
+        },
+        {
+          "name": "Sphere_7",
+          "type": "SPHERE",
+          "start": 0,
+          "end": 0.33666667342185974
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos331",
+      "pose": 331,
+      "hostLastSample": 1.9866666639844557,
+      "visualEnd": 0.5099999904632568,
+      "shapes": [
+        {
+          "name": "Rectangle_7",
+          "type": "PLANE",
+          "start": 0.04333333298563957,
+          "end": 0.5099999904632568
+        },
+        {
+          "name": "AttackThunder",
+          "type": "SPHERE",
+          "start": 0.0033333334140479565,
+          "end": 0.503333330154419
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos244",
+      "pose": 244,
+      "hostLastSample": 0.850000000000001,
+      "visualEnd": 0.8666666746139526,
+      "shapes": [
+        {
+          "name": "AttackBall",
+          "type": "SPHERE",
+          "start": 0.3700000047683716,
+          "end": 0.8666666746139526
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos350",
+      "pose": 350,
+      "hostLastSample": 0.2333333333333333,
+      "visualEnd": 0.7699999809265137,
+      "shapes": [
+        {
+          "name": "Rectangle_4",
+          "type": "PLANE",
+          "start": 0.21666666865348816,
+          "end": 0.7699999809265137
+        },
+        {
+          "name": "Sphere_4",
+          "type": "SPHERE",
+          "start": 0.10000000149011612,
+          "end": 0.503333330154419
+        }
+      ],
+      "clippedByOldTail": true,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos351",
+      "pose": 351,
+      "hostLastSample": 0.6000000000000002,
+      "visualEnd": 0.503333330154419,
+      "shapes": [
+        {
+          "name": "Sphere_4",
+          "type": "SPHERE",
+          "start": 0.04333333298563957,
+          "end": 0.23666666448116302
+        },
+        {
+          "name": "AttackWave01",
+          "type": "CYLINDER",
+          "start": 0.17000000178813934,
+          "end": 0.503333330154419
+        },
+        {
+          "name": "Rectangle_10",
+          "type": "PLANE",
+          "start": 0.17000000178813934,
+          "end": 0.503333330154419
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos352",
+      "pose": 352,
+      "hostLastSample": 0.6388888734358338,
+      "visualEnd": 0.5099999904632568,
+      "shapes": [
+        {
+          "name": "Rectangle_8",
+          "type": "PLANE",
+          "start": 0.20333333313465118,
+          "end": 0.5099999904632568
+        },
+        {
+          "name": "Rectangle_9",
+          "type": "PLANE",
+          "start": 0.20333333313465118,
+          "end": 0.5099999904632568
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos353",
+      "pose": 353,
+      "hostLastSample": 0.711111111111125,
+      "visualEnd": 0.6700000166893005,
+      "shapes": [
+        {
+          "name": "AttackWave01",
+          "type": "PLANE",
+          "start": 0.0033333334140479565,
+          "end": 0.6700000166893005
+        },
+        {
+          "name": "AttackWave02",
+          "type": "PLANE",
+          "start": 0.0033333334140479565,
+          "end": 0.6700000166893005
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos354",
+      "pose": 354,
+      "hostLastSample": 0.4833333333333333,
+      "visualEnd": 0.5099999904632568,
+      "shapes": [
+        {
+          "name": "AttackWave01",
+          "type": "PLANE",
+          "start": 0.0033333334140479565,
+          "end": 0.5099999904632568
+        },
+        {
+          "name": "AttackWave02",
+          "type": "PLANE",
+          "start": 0.0033333334140479565,
+          "end": 0.5099999904632568
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos355",
+      "pose": 355,
+      "hostLastSample": 0.41666666666666663,
+      "visualEnd": 0.5099999904632568,
+      "shapes": [
+        {
+          "name": "AttackWave01",
+          "type": "PLANE",
+          "start": 0.0033333334140479565,
+          "end": 0.5099999904632568
+        },
+        {
+          "name": "AttackWave02",
+          "type": "PLANE",
+          "start": 0.0033333334140479565,
+          "end": 0.5099999904632568
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos356",
+      "pose": 356,
+      "hostLastSample": 0.42777776342851204,
+      "visualEnd": 0.5099999904632568,
+      "shapes": [
+        {
+          "name": "AttackWave02",
+          "type": "PLANE",
+          "start": 0.0033333334140479565,
+          "end": 0.5099999904632568
+        },
+        {
+          "name": "AttackWave01",
+          "type": "PLANE",
+          "start": 0.0033333334140479565,
+          "end": 0.5099999904632568
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos357",
+      "pose": 357,
+      "hostLastSample": 0.42777777005125,
+      "visualEnd": 0.503333330154419,
+      "shapes": [
+        {
+          "name": "AttackWave01",
+          "type": "PLANE",
+          "start": 0.07000000029802322,
+          "end": 0.503333330154419
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos358",
+      "pose": 358,
+      "hostLastSample": 0.9111110835163703,
+      "visualEnd": 0.503333330154419,
+      "shapes": [
+        {
+          "name": "AttackWave01",
+          "type": "PLANE",
+          "start": 0.04333333298563957,
+          "end": 0.503333330154419
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos359",
+      "pose": 359,
+      "hostLastSample": 0.6444444444444447,
+      "visualEnd": 0.6700000166893005,
+      "shapes": [
+        {
+          "name": "AttackWave01",
+          "type": "PLANE",
+          "start": 0.0033333334140479565,
+          "end": 0.6700000166893005
+        },
+        {
+          "name": "AttackWave02",
+          "type": "PLANE",
+          "start": 0.0033333334140479565,
+          "end": 0.6700000166893005
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos360",
+      "pose": 360,
+      "hostLastSample": 0.7388888668130791,
+      "visualEnd": 0.6366666555404663,
+      "shapes": [
+        {
+          "name": "AttackWave01",
+          "type": "PLANE",
+          "start": 0.2633333206176758,
+          "end": 0.6366666555404663
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos361",
+      "pose": 361,
+      "hostLastSample": 0.7222222034577983,
+      "visualEnd": 0.7366666793823242,
+      "shapes": [
+        {
+          "name": "AttackWave01",
+          "type": "PLANE",
+          "start": 0.2633333206176758,
+          "end": 0.7366666793823242
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos362",
+      "pose": 362,
+      "hostLastSample": 0.5500000000000134,
+      "visualEnd": 1.003333330154419,
+      "shapes": [
+        {
+          "name": "AttackWave01",
+          "type": "PLANE",
+          "start": 0.23666666448116302,
+          "end": 1.003333330154419
+        },
+        {
+          "name": "AttackWave01",
+          "type": "PLANE",
+          "start": 0.23666666448116302,
+          "end": 1.003333330154419
+        }
+      ],
+      "clippedByOldTail": true,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos363",
+      "pose": 363,
+      "hostLastSample": 0.6222222222222225,
+      "visualEnd": 0.503333330154419,
+      "shapes": [
+        {
+          "name": "AttackWave",
+          "type": "CYLINDER",
+          "start": 0.23666666448116302,
+          "end": 0.503333330154419
+        },
+        {
+          "name": "Rectangle_7",
+          "type": "PLANE",
+          "start": 0.0033333334140479565,
+          "end": 0.503333330154419
+        },
+        {
+          "name": "Rectangle_8",
+          "type": "PLANE",
+          "start": 0,
+          "end": 0.503333330154419
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos364",
+      "pose": 364,
+      "hostLastSample": 1.6416666610788113,
+      "visualEnd": 1.003333330154419,
+      "shapes": [
+        {
+          "name": "Rectangle_11",
+          "type": "PLANE",
+          "start": 0.43666666746139526,
+          "end": 1.003333330154419
+        },
+        {
+          "name": "Rectangle_7",
+          "type": "PLANE",
+          "start": 0.0033333334140479565,
+          "end": 1.003333330154419
+        },
+        {
+          "name": "Rectangle_8",
+          "type": "PLANE",
+          "start": 0.0033333334140479565,
+          "end": 1.003333330154419
+        },
+        {
+          "name": "Board_12",
+          "type": "BILLBOARD",
+          "start": 0.4099999964237213,
+          "end": 1.003333330154419
+        },
+        {
+          "name": "Rectangle_10",
+          "type": "PLANE",
+          "start": 0.43666666746139526,
+          "end": 1.003333330154419
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos556",
+      "pose": 556,
+      "hostLastSample": 1.4666666666666663,
+      "visualEnd": 1.503333330154419,
+      "shapes": [
+        {
+          "name": "Board_2",
+          "type": "BILLBOARD",
+          "start": 0.43666666746139526,
+          "end": 1.503333330154419
+        },
+        {
+          "name": "AttackWave",
+          "type": "SPHERE",
+          "start": 0.4699999988079071,
+          "end": 1.3700000047683716
+        },
+        {
+          "name": "Board_1",
+          "type": "BILLBOARD",
+          "start": 0.43666666746139526,
+          "end": 1.503333330154419
+        },
+        {
+          "name": "Board_6",
+          "type": "BILLBOARD",
+          "start": 0.17000000178813934,
+          "end": 0.6433333158493042
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos566",
+      "pose": 566,
+      "hostLastSample": 2.4933333333334264,
+      "visualEnd": 1.7066667079925537,
+      "shapes": [
+        {
+          "name": "AttackBall01",
+          "type": "SPHERE",
+          "start": 0.7733333110809326,
+          "end": 1.2799999713897705
+        },
+        {
+          "name": "BurnWave01",
+          "type": "CYLINDER",
+          "start": 0.7733333110809326,
+          "end": 1.2799999713897705
+        },
+        {
+          "name": "AttackUPWave",
+          "type": "CYLINDER",
+          "start": 0.800000011920929,
+          "end": 1.0399999618530273
+        },
+        {
+          "name": "Board_14",
+          "type": "BILLBOARD",
+          "start": 0.1733333319425583,
+          "end": 0.4000000059604645
+        },
+        {
+          "name": "AttackBall02",
+          "type": "SPHERE",
+          "start": 0.8666666746139526,
+          "end": 1.440000057220459
+        },
+        {
+          "name": "AttackBall03",
+          "type": "SPHERE",
+          "start": 0.9666666388511658,
+          "end": 1.7066667079925537
+        },
+        {
+          "name": "BurnWave02",
+          "type": "CYLINDER",
+          "start": 0.800000011920929,
+          "end": 1.3733333349227905
+        },
+        {
+          "name": "Rectangle_18",
+          "type": "PLANE",
+          "start": 0.7733333110809326,
+          "end": 1.2066667079925537
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos489",
+      "pose": 567,
+      "hostLastSample": 0.8666666666666677,
+      "visualEnd": 1.003333330154419,
+      "shapes": [
+        {
+          "name": "Rectangle_15",
+          "type": "PLANE",
+          "start": 0.23666666448116302,
+          "end": 0.6399999856948853
+        },
+        {
+          "name": "Sphere_9",
+          "type": "SPHERE",
+          "start": 0.6366666555404663,
+          "end": 0.903333306312561
+        },
+        {
+          "name": "Sphere_8",
+          "type": "SPHERE",
+          "start": 0.503333330154419,
+          "end": 0.7766666412353516
+        },
+        {
+          "name": "Board_10",
+          "type": "BILLBOARD",
+          "start": 0.503333330154419,
+          "end": 1.003333330154419
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos325",
+      "pose": 325,
+      "hostLastSample": 5.2999999999999865,
+      "visualEnd": 5.303333282470703,
+      "shapes": [
+        {
+          "name": "AttackBall",
+          "type": "SPHERE",
+          "start": 2.0366666316986084,
+          "end": 5.303333282470703
+        },
+        {
+          "name": "Rectangle_10",
+          "type": "PLANE",
+          "start": 2,
+          "end": 3.8366665840148926
+        },
+        {
+          "name": "AttackWave",
+          "type": "CYLINDER",
+          "start": 2.003333330154419,
+          "end": 3.8366665840148926
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos326",
+      "pose": 326,
+      "hostLastSample": 1.4199999973177908,
+      "visualEnd": 2.236666679382324,
+      "shapes": [
+        {
+          "name": "AttackWave01",
+          "type": "CYLINDER",
+          "start": 1.1033333539962769,
+          "end": 2.003333330154419
+        },
+        {
+          "name": "AttackWave02",
+          "type": "CYLINDER",
+          "start": 1.1033333539962769,
+          "end": 2.003333330154419
+        },
+        {
+          "name": "Rectangle_10",
+          "type": "PLANE",
+          "start": 1.1033333539962769,
+          "end": 2.236666679382324
+        },
+        {
+          "name": "AttackBall01",
+          "type": "SPHERE",
+          "start": 0.0033333334140479565,
+          "end": 1
+        },
+        {
+          "name": "AttackBall02",
+          "type": "SPHERE",
+          "start": 1.003333330154419,
+          "end": 2.003333330154419
+        },
+        {
+          "name": "Rectangle_13",
+          "type": "PLANE",
+          "start": 1.1033333539962769,
+          "end": 2.003333330154419
+        }
+      ],
+      "clippedByOldTail": true,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos327",
+      "pose": 327,
+      "hostLastSample": 0.6866666639844582,
+      "visualEnd": 0,
+      "shapes": [],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos328",
+      "pose": 328,
+      "hostLastSample": 4.1033333306511155,
+      "visualEnd": 0,
+      "shapes": [],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos208",
+      "pose": 208,
+      "hostLastSample": 2.2666666666666635,
+      "visualEnd": 1.190000057220459,
+      "shapes": [
+        {
+          "name": "Cylinder_17",
+          "type": "CYLINDER",
+          "start": 0,
+          "end": 0.23666666448116302
+        },
+        {
+          "name": "Sphere_3",
+          "type": "SPHERE",
+          "start": 0.0033333334140479565,
+          "end": 0.9100000262260437
+        },
+        {
+          "name": "Box_7",
+          "type": "BOX",
+          "start": 0,
+          "end": 1.190000057220459
+        },
+        {
+          "name": "Sphere_13",
+          "type": "SPHERE",
+          "start": 0,
+          "end": 1
+        },
+        {
+          "name": "Board_14",
+          "type": "BILLBOARD",
+          "start": 0.0033333334140479565,
+          "end": 0.3100000023841858
+        },
+        {
+          "name": "Cylinder_16",
+          "type": "CYLINDER",
+          "start": 0,
+          "end": 0.17000000178813934
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos216",
+      "pose": 216,
+      "hostLastSample": 0.6000000000000002,
+      "visualEnd": 1,
+      "shapes": [
+        {
+          "name": "Board_8",
+          "type": "BILLBOARD",
+          "start": 0.07333333045244217,
+          "end": 1
+        }
+      ],
+      "clippedByOldTail": true,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos217",
+      "pose": 217,
+      "hostLastSample": 0.6333333333333336,
+      "visualEnd": 1.003333330154419,
+      "shapes": [
+        {
+          "name": "Sphere_13",
+          "type": "SPHERE",
+          "start": 0,
+          "end": 0.5366666913032532
+        },
+        {
+          "name": "AttackWave02",
+          "type": "CYLINDER",
+          "start": 0.0033333334140479565,
+          "end": 0.23666666448116302
+        },
+        {
+          "name": "AttackWave01",
+          "type": "CYLINDER",
+          "start": 0.0033333334140479565,
+          "end": 0.5366666913032532
+        },
+        {
+          "name": "AttackBall",
+          "type": "SPHERE",
+          "start": 0,
+          "end": 0.27000001072883606
+        },
+        {
+          "name": "Box_7",
+          "type": "BOX",
+          "start": 0.0033333334140479565,
+          "end": 1.003333330154419
+        },
+        {
+          "name": "Sphere_3",
+          "type": "SPHERE",
+          "start": 0.0033333334140479565,
+          "end": 0.5366666913032532
+        }
+      ],
+      "clippedByOldTail": true,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos212",
+      "pose": 212,
+      "hostLastSample": 1.1199999973177919,
+      "visualEnd": 0,
+      "shapes": [],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos215",
+      "pose": 215,
+      "hostLastSample": 1.9999999999999978,
+      "visualEnd": 2.2300000190734863,
+      "shapes": [
+        {
+          "name": "AGunWave_09",
+          "type": "SPHERE",
+          "start": 1,
+          "end": 1.1433333158493042
+        },
+        {
+          "name": "GunLight_12",
+          "type": "BILLBOARD",
+          "start": 1.2366666793823242,
+          "end": 1.5366666316986084
+        },
+        {
+          "name": "AGunWave_12",
+          "type": "SPHERE",
+          "start": 1.2033333778381348,
+          "end": 1.3366667032241821
+        },
+        {
+          "name": "GunLight_02",
+          "type": "BILLBOARD",
+          "start": 0.5766666531562805,
+          "end": 0.8433333039283752
+        },
+        {
+          "name": "AGunWave_02",
+          "type": "SPHERE",
+          "start": 0.5400000214576721,
+          "end": 0.6700000166893005
+        },
+        {
+          "name": "GunLight_09",
+          "type": "BILLBOARD",
+          "start": 1.0366666316986084,
+          "end": 1.3366667032241821
+        },
+        {
+          "name": "AGunWave_04",
+          "type": "SPHERE",
+          "start": 0.6766666769981384,
+          "end": 0.8033333420753479
+        },
+        {
+          "name": "GunLight_03",
+          "type": "BILLBOARD",
+          "start": 0.6499999761581421,
+          "end": 0.903333306312561
+        },
+        {
+          "name": "AGunWave_01",
+          "type": "SPHERE",
+          "start": 0.46666666865348816,
+          "end": 0.6366666555404663
+        },
+        {
+          "name": "AGunWave_03",
+          "type": "SPHERE",
+          "start": 0.6000000238418579,
+          "end": 0.7366666793823242
+        },
+        {
+          "name": "AGunWave_06",
+          "type": "SPHERE",
+          "start": 0.8033333420753479,
+          "end": 0.9333333373069763
+        },
+        {
+          "name": "Rectangle_11",
+          "type": "PLANE",
+          "start": 1.6433333158493042,
+          "end": 2.2300000190734863
+        },
+        {
+          "name": "AGunWave_05",
+          "type": "SPHERE",
+          "start": 0.7366666793823242,
+          "end": 0.8666666746139526
+        },
+        {
+          "name": "AGunWave_07",
+          "type": "SPHERE",
+          "start": 0.8700000047683716,
+          "end": 1.2033333778381348
+        },
+        {
+          "name": "GunLight_07",
+          "type": "BILLBOARD",
+          "start": 0.903333306312561,
+          "end": 1.2033333778381348
+        },
+        {
+          "name": "GunLight_05",
+          "type": "BILLBOARD",
+          "start": 0.7733333110809326,
+          "end": 1.0666667222976685
+        },
+        {
+          "name": "AGunWave_11",
+          "type": "SPHERE",
+          "start": 1.1399999856948853,
+          "end": 1.2699999809265137
+        },
+        {
+          "name": "AttackBall",
+          "type": "SPHERE",
+          "start": 0.5099999904632568,
+          "end": 2.003333330154419
+        },
+        {
+          "name": "GunLight_04",
+          "type": "BILLBOARD",
+          "start": 0.7133333086967468,
+          "end": 1.0099999904632568
+        },
+        {
+          "name": "BombWave",
+          "type": "CYLINDER",
+          "start": 1.6433333158493042,
+          "end": 2.003333330154419
+        },
+        {
+          "name": "AGunWave_08",
+          "type": "SPHERE",
+          "start": 0.9366666674613953,
+          "end": 1.2766666412353516
+        },
+        {
+          "name": "GunLight_10",
+          "type": "BILLBOARD",
+          "start": 1.1033333539962769,
+          "end": 1.403333306312561
+        },
+        {
+          "name": "GunLight_01",
+          "type": "BILLBOARD",
+          "start": 0.5099999904632568,
+          "end": 0.7799999713897705
+        },
+        {
+          "name": "GunLight_06",
+          "type": "BILLBOARD",
+          "start": 0.8399999737739563,
+          "end": 1.1399999856948853
+        },
+        {
+          "name": "AGunWave_13",
+          "type": "SPHERE",
+          "start": 1.2733333110809326,
+          "end": 1.403333306312561
+        },
+        {
+          "name": "GunLight_13",
+          "type": "BILLBOARD",
+          "start": 1.3033334016799927,
+          "end": 1.6033333539962769
+        },
+        {
+          "name": "AGunWave_15",
+          "type": "SPHERE",
+          "start": 1.403333306312561,
+          "end": 1.533333420753479
+        },
+        {
+          "name": "GunLight_15",
+          "type": "BILLBOARD",
+          "start": 1.433333396911621,
+          "end": 1.746666669845581
+        },
+        {
+          "name": "AGunWave_14",
+          "type": "SPHERE",
+          "start": 1.3366667032241821,
+          "end": 1.4766666889190674
+        },
+        {
+          "name": "GunLight_11",
+          "type": "BILLBOARD",
+          "start": 1.1699999570846558,
+          "end": 1.4700000286102295
+        },
+        {
+          "name": "GunLight_16",
+          "type": "BILLBOARD",
+          "start": 1.506666660308838,
+          "end": 1.8066667318344116
+        },
+        {
+          "name": "AGunWave_16",
+          "type": "SPHERE",
+          "start": 1.4700000286102295,
+          "end": 1.6066666841506958
+        },
+        {
+          "name": "AGunWave_10",
+          "type": "SPHERE",
+          "start": 1.0700000524520874,
+          "end": 1.2033333778381348
+        },
+        {
+          "name": "GunLight_17",
+          "type": "BILLBOARD",
+          "start": 1.5666667222976685,
+          "end": 1.8799999952316284
+        },
+        {
+          "name": "GunLight_08",
+          "type": "BILLBOARD",
+          "start": 0.9700000286102295,
+          "end": 1.2766666412353516
+        },
+        {
+          "name": "GunLight_14",
+          "type": "BILLBOARD",
+          "start": 1.3700000047683716,
+          "end": 1.6766667366027832
+        },
+        {
+          "name": "AGunWave_17",
+          "type": "SPHERE",
+          "start": 1.5366666316986084,
+          "end": 1.6666667461395264
+        },
+        {
+          "name": "Board_82",
+          "type": "BILLBOARD",
+          "start": 0.07333333045244217,
+          "end": 0.5
+        }
+      ],
+      "clippedByOldTail": true,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos552",
+      "pose": 552,
+      "hostLastSample": 1.6444444444444637,
+      "visualEnd": 2,
+      "shapes": [
+        {
+          "name": "AttackWind04",
+          "type": "CYLINDER",
+          "start": 0.5733333230018616,
+          "end": 2
+        },
+        {
+          "name": "AttackWind03",
+          "type": "CYLINDER",
+          "start": 0.5733333230018616,
+          "end": 2
+        },
+        {
+          "name": "Board_30",
+          "type": "BILLBOARD",
+          "start": 0.5733333230018616,
+          "end": 1.506666660308838
+        },
+        {
+          "name": "Rectangle_9",
+          "type": "PLANE",
+          "start": 0.5733333230018616,
+          "end": 1.0399999618530273
+        },
+        {
+          "name": "Sphere_7",
+          "type": "SPHERE",
+          "start": 0.2666666805744171,
+          "end": 1.503333330154419
+        },
+        {
+          "name": "Board_31",
+          "type": "BILLBOARD",
+          "start": 0.5733333230018616,
+          "end": 1.506666660308838
+        },
+        {
+          "name": "Board_14",
+          "type": "BILLBOARD",
+          "start": 0.07666666805744171,
+          "end": 0.503333330154419
+        },
+        {
+          "name": "Board_16",
+          "type": "BILLBOARD",
+          "start": 0.1366666704416275,
+          "end": 1.003333330154419
+        },
+        {
+          "name": "AttackWind01",
+          "type": "CYLINDER",
+          "start": 0.1133333370089531,
+          "end": 0.49666666984558105
+        }
+      ],
+      "clippedByOldTail": true,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos224",
+      "pose": 224,
+      "hostLastSample": 1.7666666666666653,
+      "visualEnd": 2.006666660308838,
+      "shapes": [
+        {
+          "name": "Rectangle_9",
+          "type": "PLANE",
+          "start": 0.6433333158493042,
+          "end": 1.006666660308838
+        },
+        {
+          "name": "Sphere_7",
+          "type": "SPHERE",
+          "start": 0.07000000029802322,
+          "end": 0.9366666674613953
+        },
+        {
+          "name": "AttackCY08",
+          "type": "CYLINDER",
+          "start": 0.6399999856948853,
+          "end": 1.003333330154419
+        },
+        {
+          "name": "AttackWind03",
+          "type": "CYLINDER",
+          "start": 0.6700000166893005,
+          "end": 2.006666660308838
+        },
+        {
+          "name": "AttackCY02",
+          "type": "CYLINDER",
+          "start": 0.05999999865889549,
+          "end": 0.7333333492279053
+        },
+        {
+          "name": "AttackCY04",
+          "type": "CYLINDER",
+          "start": 0.7333333492279053,
+          "end": 1.7699999809265137
+        },
+        {
+          "name": "AttackCY05",
+          "type": "CYLINDER",
+          "start": 0.6399999856948853,
+          "end": 0.7333333492279053
+        },
+        {
+          "name": "AttackCY06",
+          "type": "CYLINDER",
+          "start": 0.7333333492279053,
+          "end": 1.7699999809265137
+        },
+        {
+          "name": "AttackCY07",
+          "type": "CYLINDER",
+          "start": 0.7333333492279053,
+          "end": 1.7699999809265137
+        },
+        {
+          "name": "AttackCY03",
+          "type": "CYLINDER",
+          "start": 0.05999999865889549,
+          "end": 0.7333333492279053
+        },
+        {
+          "name": "AttackCY01",
+          "type": "CYLINDER",
+          "start": 0.05666666850447655,
+          "end": 0.7333333492279053
+        },
+        {
+          "name": "AttackWind02",
+          "type": "CYLINDER",
+          "start": 0.6700000166893005,
+          "end": 2.006666660308838
+        },
+        {
+          "name": "Board_29",
+          "type": "BILLBOARD",
+          "start": 0.6733333468437195,
+          "end": 2.006666660308838
+        },
+        {
+          "name": "AttackWind04",
+          "type": "CYLINDER",
+          "start": 0.6700000166893005,
+          "end": 2.006666660308838
+        },
+        {
+          "name": "Board_28",
+          "type": "BILLBOARD",
+          "start": 0.6733333468437195,
+          "end": 2.006666660308838
+        },
+        {
+          "name": "Board_31",
+          "type": "BILLBOARD",
+          "start": 0.6733333468437195,
+          "end": 2.006666660308838
+        },
+        {
+          "name": "AttackWind01",
+          "type": "CYLINDER",
+          "start": 0.6700000166893005,
+          "end": 2.006666660308838
+        },
+        {
+          "name": "Board_30",
+          "type": "BILLBOARD",
+          "start": 0.6733333468437195,
+          "end": 2.006666660308838
+        }
+      ],
+      "clippedByOldTail": true,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos554",
+      "pose": 554,
+      "hostLastSample": 0.8333333333333343,
+      "visualEnd": 1.5,
+      "shapes": [
+        {
+          "name": "BlackBall",
+          "type": "SPHERE",
+          "start": 0.2566666603088379,
+          "end": 0.4099999964237213
+        },
+        {
+          "name": "Board_5",
+          "type": "BILLBOARD",
+          "start": 0.07000000029802322,
+          "end": 0.503333330154419
+        },
+        {
+          "name": "Board_31",
+          "type": "BILLBOARD",
+          "start": 0.40666666626930237,
+          "end": 1.5
+        },
+        {
+          "name": "AttackBall",
+          "type": "SPHERE",
+          "start": 0.4033333361148834,
+          "end": 1.0099999904632568
+        },
+        {
+          "name": "Board_30",
+          "type": "BILLBOARD",
+          "start": 0.07333333045244217,
+          "end": 0.7066666483879089
+        }
+      ],
+      "clippedByOldTail": true,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos555",
+      "pose": 555,
+      "hostLastSample": 1.4133333333333333,
+      "visualEnd": 0,
+      "shapes": [],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos416",
+      "pose": 416,
+      "hostLastSample": 1.866666666666665,
+      "visualEnd": 2.506666660308838,
+      "shapes": [
+        {
+          "name": "Cylinder_13",
+          "type": "CYLINDER",
+          "start": 1.0533332824707031,
+          "end": 1.1799999475479126
+        },
+        {
+          "name": "Cylinder_14",
+          "type": "CYLINDER",
+          "start": 1.0800000429153442,
+          "end": 1.306666612625122
+        },
+        {
+          "name": "Board_0",
+          "type": "BILLBOARD",
+          "start": 0.4099999964237213,
+          "end": 2.5
+        },
+        {
+          "name": "Board_2",
+          "type": "BILLBOARD",
+          "start": 0,
+          "end": 2.5
+        },
+        {
+          "name": "Board_5",
+          "type": "BILLBOARD",
+          "start": 0.40666666626930237,
+          "end": 2.506666660308838
+        },
+        {
+          "name": "Board_3",
+          "type": "BILLBOARD",
+          "start": 0.40666666626930237,
+          "end": 2.506666660308838
+        },
+        {
+          "name": "Board_4",
+          "type": "BILLBOARD",
+          "start": 0.40666666626930237,
+          "end": 2.506666660308838
+        },
+        {
+          "name": "Sphere_10",
+          "type": "SPHERE",
+          "start": 0.30000001192092896,
+          "end": 1.7733333110809326
+        }
+      ],
+      "clippedByOldTail": true,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos421",
+      "pose": 421,
+      "hostLastSample": 0.6000000000000002,
+      "visualEnd": 0.6399999856948853,
+      "shapes": [
+        {
+          "name": "Rectangle_15",
+          "type": "PLANE",
+          "start": 0.23333333432674408,
+          "end": 0.6399999856948853
+        },
+        {
+          "name": "AttackWave02",
+          "type": "CYLINDER",
+          "start": 0.23999999463558197,
+          "end": 0.6399999856948853
+        },
+        {
+          "name": "AttackWave01",
+          "type": "CYLINDER",
+          "start": 0.27000001072883606,
+          "end": 0.6399999856948853
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos422",
+      "pose": 422,
+      "hostLastSample": 0.26666666666666666,
+      "visualEnd": 0.27000001072883606,
+      "shapes": [
+        {
+          "name": "Sphere_6",
+          "type": "SPHERE",
+          "start": 0.036666665226221085,
+          "end": 0.27000001072883606
+        },
+        {
+          "name": "Sphere_7",
+          "type": "SPHERE",
+          "start": 0.04333333298563957,
+          "end": 0.27000001072883606
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos423",
+      "pose": 423,
+      "hostLastSample": 1.1666666666666674,
+      "visualEnd": 1.1399999856948853,
+      "shapes": [
+        {
+          "name": "Cylinder_16",
+          "type": "CYLINDER",
+          "start": 0.7400000095367432,
+          "end": 0.9399999976158142
+        },
+        {
+          "name": "Cylinder_6",
+          "type": "CYLINDER",
+          "start": 0.10000000149011612,
+          "end": 0.273333340883255
+        },
+        {
+          "name": "Cylinder_5",
+          "type": "CYLINDER",
+          "start": 0.03999999910593033,
+          "end": 0.20666666328907013
+        },
+        {
+          "name": "Cylinder_7",
+          "type": "CYLINDER",
+          "start": 0.1666666716337204,
+          "end": 0.3400000035762787
+        },
+        {
+          "name": "Cylinder_8",
+          "type": "CYLINDER",
+          "start": 0.23333333432674408,
+          "end": 0.40666666626930237
+        },
+        {
+          "name": "Cylinder_10",
+          "type": "CYLINDER",
+          "start": 0.36666667461395264,
+          "end": 0.5400000214576721
+        },
+        {
+          "name": "Cylinder_11",
+          "type": "CYLINDER",
+          "start": 0.4333333373069763,
+          "end": 0.6066666841506958
+        },
+        {
+          "name": "Cylinder_12",
+          "type": "CYLINDER",
+          "start": 0.5066666603088379,
+          "end": 0.6666666865348816
+        },
+        {
+          "name": "Cylinder_13",
+          "type": "CYLINDER",
+          "start": 0.5733333230018616,
+          "end": 0.7400000095367432
+        },
+        {
+          "name": "Cylinder_9",
+          "type": "CYLINDER",
+          "start": 0.30666667222976685,
+          "end": 0.47333332896232605
+        },
+        {
+          "name": "Cylinder_15",
+          "type": "CYLINDER",
+          "start": 0.6933333277702332,
+          "end": 0.8733333349227905
+        },
+        {
+          "name": "Cylinder_14",
+          "type": "CYLINDER",
+          "start": 0.6333333253860474,
+          "end": 0.8066666722297668
+        },
+        {
+          "name": "Cylinder_17",
+          "type": "CYLINDER",
+          "start": 0.800000011920929,
+          "end": 1
+        },
+        {
+          "name": "Cylinder_18",
+          "type": "CYLINDER",
+          "start": 0.8666666746139526,
+          "end": 1.0666667222976685
+        },
+        {
+          "name": "Cylinder_19",
+          "type": "CYLINDER",
+          "start": 0.9333333373069763,
+          "end": 1.1399999856948853
+        },
+        {
+          "name": "Sphere_23",
+          "type": "SPHERE",
+          "start": 0.03999999910593033,
+          "end": 1.100000023841858
+        },
+        {
+          "name": "Sphere_24",
+          "type": "SPHERE",
+          "start": 0.06666667014360428,
+          "end": 1
+        },
+        {
+          "name": "Board_21",
+          "type": "BILLBOARD",
+          "start": 0.07333333045244217,
+          "end": 1.100000023841858
+        },
+        {
+          "name": "Board_22",
+          "type": "BILLBOARD",
+          "start": 0.07333333045244217,
+          "end": 1.100000023841858
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos424",
+      "pose": 424,
+      "hostLastSample": 0.7000000000000005,
+      "visualEnd": 0.7366666793823242,
+      "shapes": [
+        {
+          "name": "AttackUPWave",
+          "type": "CYLINDER",
+          "start": 0.503333330154419,
+          "end": 0.7099999785423279
+        },
+        {
+          "name": "Sphere_7",
+          "type": "SPHERE",
+          "start": 0.43666666746139526,
+          "end": 0.7099999785423279
+        },
+        {
+          "name": "Rectangle_12",
+          "type": "PLANE",
+          "start": 0.44333332777023315,
+          "end": 0.7366666793823242
+        },
+        {
+          "name": "Board_13",
+          "type": "BILLBOARD",
+          "start": 0.07000000029802322,
+          "end": 0.6366666555404663
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos425",
+      "pose": 425,
+      "hostLastSample": 1.0000000000000013,
+      "visualEnd": 1.2733333110809326,
+      "shapes": [
+        {
+          "name": "Cylinder_7",
+          "type": "CYLINDER",
+          "start": 0.30666667222976685,
+          "end": 0.5
+        },
+        {
+          "name": "Sphere_6",
+          "type": "SPHERE",
+          "start": 0.30666667222976685,
+          "end": 0.5
+        },
+        {
+          "name": "Board_9",
+          "type": "BILLBOARD",
+          "start": 0.30666667222976685,
+          "end": 1.2733333110809326
+        },
+        {
+          "name": "Sphere_12",
+          "type": "SPHERE",
+          "start": 0.6399999856948853,
+          "end": 1.0399999618530273
+        }
+      ],
+      "clippedByOldTail": true,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos426",
+      "pose": 426,
+      "hostLastSample": 2.166666666666664,
+      "visualEnd": 3.006666660308838,
+      "shapes": [
+        {
+          "name": "Board_0",
+          "type": "BILLBOARD",
+          "start": 0.07333333045244217,
+          "end": 3.006666660308838
+        },
+        {
+          "name": "Board_2",
+          "type": "BILLBOARD",
+          "start": 0.07333333045244217,
+          "end": 3.006666660308838
+        },
+        {
+          "name": "Cylinder_13",
+          "type": "CYLINDER",
+          "start": 1.2333333492279053,
+          "end": 1.5399999618530273
+        },
+        {
+          "name": "Board_5",
+          "type": "BILLBOARD",
+          "start": 0.40666666626930237,
+          "end": 2.506666660308838
+        },
+        {
+          "name": "Board_3",
+          "type": "BILLBOARD",
+          "start": 0.40666666626930237,
+          "end": 2.496666669845581
+        },
+        {
+          "name": "Cylinder_14",
+          "type": "CYLINDER",
+          "start": 1.2333333492279053,
+          "end": 1.6666666269302368
+        },
+        {
+          "name": "Sphere_10",
+          "type": "SPHERE",
+          "start": 0.30000001192092896,
+          "end": 1.8033332824707031
+        },
+        {
+          "name": "Board_4",
+          "type": "BILLBOARD",
+          "start": 0.40666666626930237,
+          "end": 2.496666669845581
+        },
+        {
+          "name": "Cylinder_15",
+          "type": "CYLINDER",
+          "start": 1.2066667079925537,
+          "end": 1.6033333539962769
+        },
+        {
+          "name": "Board_23",
+          "type": "BILLBOARD",
+          "start": 1.2366666793823242,
+          "end": 2.003333330154419
+        },
+        {
+          "name": "AttackBall02",
+          "type": "SPHERE",
+          "start": 1.5700000524520874,
+          "end": 2.503333330154419
+        },
+        {
+          "name": "Cylinder_21",
+          "type": "CYLINDER",
+          "start": 1.5099999904632568,
+          "end": 2.503333330154419
+        },
+        {
+          "name": "Cylinder_22",
+          "type": "CYLINDER",
+          "start": 1.6033333539962769,
+          "end": 2.503333330154419
+        },
+        {
+          "name": "AttackBall03",
+          "type": "SPHERE",
+          "start": 1.5700000524520874,
+          "end": 2.503333330154419
+        }
+      ],
+      "clippedByOldTail": true,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos488",
+      "pose": 488,
+      "hostLastSample": 1.0000000000000013,
+      "visualEnd": 0,
+      "shapes": [],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos568",
+      "pose": 568,
+      "hostLastSample": 0.6333333333333336,
+      "visualEnd": 0.5,
+      "shapes": [
+        {
+          "name": "HitWave",
+          "type": "CYLINDER",
+          "start": 0.30666667222976685,
+          "end": 0.5
+        },
+        {
+          "name": "Board_15",
+          "type": "BILLBOARD",
+          "start": 0.10999999940395355,
+          "end": 0.30666667222976685
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos569",
+      "pose": 569,
+      "hostLastSample": 1.2333333333333338,
+      "visualEnd": 1.0366666316986084,
+      "shapes": [
+        {
+          "name": "AttackWave05",
+          "type": "CYLINDER",
+          "start": 0.6600000262260437,
+          "end": 1.0366666316986084
+        },
+        {
+          "name": "Board_9",
+          "type": "BILLBOARD",
+          "start": 0.47333332896232605,
+          "end": 0.6600000262260437
+        },
+        {
+          "name": "AttackWave01",
+          "type": "CYLINDER",
+          "start": 0.5299999713897705,
+          "end": 0.7099999785423279
+        },
+        {
+          "name": "AttackWave02",
+          "type": "CYLINDER",
+          "start": 0.5633333325386047,
+          "end": 0.7433333396911621
+        },
+        {
+          "name": "AttackWave03",
+          "type": "CYLINDER",
+          "start": 0.5933333039283752,
+          "end": 0.8100000023841858
+        },
+        {
+          "name": "Board_10",
+          "type": "BILLBOARD",
+          "start": 0.5333333611488342,
+          "end": 0.7799999713897705
+        },
+        {
+          "name": "Board_11",
+          "type": "BILLBOARD",
+          "start": 0.6000000238418579,
+          "end": 0.9399999976158142
+        },
+        {
+          "name": "AttackWave04",
+          "type": "CYLINDER",
+          "start": 0.6266666650772095,
+          "end": 0.903333306312561
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos570",
+      "pose": 570,
+      "hostLastSample": 1.4999999999999996,
+      "visualEnd": 0.8266666531562805,
+      "shapes": [
+        {
+          "name": "AttackWave02",
+          "type": "CYLINDER",
+          "start": 0.36666667461395264,
+          "end": 0.5
+        },
+        {
+          "name": "Cylinder_14",
+          "type": "CYLINDER",
+          "start": 0.4000000059604645,
+          "end": 0.5333333611488342
+        },
+        {
+          "name": "Board_15",
+          "type": "BILLBOARD",
+          "start": 0.10000000149011612,
+          "end": 0.30666667222976685
+        },
+        {
+          "name": "AttackSPEED",
+          "type": "SPHERE",
+          "start": 0.3799999952316284,
+          "end": 0.5
+        },
+        {
+          "name": "Cylinder_15",
+          "type": "CYLINDER",
+          "start": 0.4333333373069763,
+          "end": 0.5733333230018616
+        },
+        {
+          "name": "Cylinder_16",
+          "type": "CYLINDER",
+          "start": 0.47333332896232605,
+          "end": 0.6000000238418579
+        },
+        {
+          "name": "AttackLight01",
+          "type": "PLANE",
+          "start": 0.47333332896232605,
+          "end": 0.8266666531562805
+        },
+        {
+          "name": "AttackLight02",
+          "type": "PLANE",
+          "start": 0.47333332896232605,
+          "end": 0.8266666531562805
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos451",
+      "pose": 451,
+      "hostLastSample": 1.0555555505885033,
+      "visualEnd": 1.3033332824707031,
+      "shapes": [
+        {
+          "name": "集氣１",
+          "type": "SPHERE",
+          "start": 0.476666659116745,
+          "end": 0.9700000286102295
+        },
+        {
+          "name": "集氣２",
+          "type": "SPHERE",
+          "start": 0.6366666555404663,
+          "end": 1.1433333158493042
+        },
+        {
+          "name": "集氣３",
+          "type": "SPHERE",
+          "start": 0.8033333420753479,
+          "end": 1.3033332824707031
+        },
+        {
+          "name": "Board_21",
+          "type": "BILLBOARD",
+          "start": 0.6100000143051147,
+          "end": 1.1033333539962769
+        }
+      ],
+      "clippedByOldTail": true,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos452",
+      "pose": 452,
+      "hostLastSample": 0.6611111111111115,
+      "visualEnd": 0.5299999713897705,
+      "shapes": [
+        {
+          "name": "Rectangle_19",
+          "type": "PLANE",
+          "start": 0.07000000029802322,
+          "end": 0.5299999713897705
+        },
+        {
+          "name": "Board_11",
+          "type": "BILLBOARD",
+          "start": 0.07666666805744171,
+          "end": 0.5299999713897705
+        },
+        {
+          "name": "Sphere_10",
+          "type": "SPHERE",
+          "start": 0.07666666805744171,
+          "end": 0.3633333444595337
+        },
+        {
+          "name": "Rectangle_20",
+          "type": "PLANE",
+          "start": 0.07000000029802322,
+          "end": 0.5299999713897705
+        }
+      ],
+      "clippedByOldTail": false,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos453",
+      "pose": 453,
+      "hostLastSample": 0.5833333333333335,
+      "visualEnd": 0.8700000047683716,
+      "shapes": [
+        {
+          "name": "Sphere_10",
+          "type": "SPHERE",
+          "start": 0.17666666209697723,
+          "end": 0.503333330154419
+        },
+        {
+          "name": "Board_11",
+          "type": "BILLBOARD",
+          "start": 0.07000000029802322,
+          "end": 0.5299999713897705
+        },
+        {
+          "name": "Sphere_11",
+          "type": "SPHERE",
+          "start": 0.5299999713897705,
+          "end": 0.8700000047683716
+        },
+        {
+          "name": "Board_12",
+          "type": "BILLBOARD",
+          "start": 0.49666666984558105,
+          "end": 0.8433333039283752
+        }
+      ],
+      "clippedByOldTail": true,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos454",
+      "pose": 454,
+      "hostLastSample": 0.6666666666666671,
+      "visualEnd": 0.8700000047683716,
+      "shapes": [
+        {
+          "name": "Board_11",
+          "type": "BILLBOARD",
+          "start": 0.07000000029802322,
+          "end": 0.5299999713897705
+        },
+        {
+          "name": "Sphere_10",
+          "type": "SPHERE",
+          "start": 0.17666666209697723,
+          "end": 0.503333330154419
+        },
+        {
+          "name": "Sphere_11",
+          "type": "SPHERE",
+          "start": 0.5299999713897705,
+          "end": 0.8700000047683716
+        },
+        {
+          "name": "Board_12",
+          "type": "BILLBOARD",
+          "start": 0.49666666984558105,
+          "end": 0.8433333039283752
+        }
+      ],
+      "clippedByOldTail": true,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos455",
+      "pose": 455,
+      "hostLastSample": 0.6000000000000002,
+      "visualEnd": 1.003333330154419,
+      "shapes": [
+        {
+          "name": "Board_11",
+          "type": "BILLBOARD",
+          "start": 0.27666667103767395,
+          "end": 0.6700000166893005
+        },
+        {
+          "name": "Sphere_10",
+          "type": "SPHERE",
+          "start": 0.3033333420753479,
+          "end": 1.003333330154419
+        },
+        {
+          "name": "Rectangle_20",
+          "type": "PLANE",
+          "start": 0.3166666626930237,
+          "end": 0.6700000166893005
+        }
+      ],
+      "clippedByOldTail": true,
+      "entirelyMissingShapesWithOldTail": []
+    },
+    {
+      "id": "pos456",
+      "pose": 456,
+      "hostLastSample": 1.3444444444444648,
+      "visualEnd": 2.6533334255218506,
+      "shapes": [
+        {
+          "name": "Board_11",
+          "type": "BILLBOARD",
+          "start": 0.5099999904632568,
+          "end": 0.8366666436195374
+        },
+        {
+          "name": "Board_11",
+          "type": "BILLBOARD",
+          "start": 1.403333306312561,
+          "end": 1.8733333349227905
+        },
+        {
+          "name": "Sphere_10",
+          "type": "SPHERE",
+          "start": 0.5366666913032532,
+          "end": 1.2633333206176758
+        },
+        {
+          "name": "Cylinder_22",
+          "type": "CYLINDER",
+          "start": 0.5099999904632568,
+          "end": 0.6700000166893005
+        },
+        {
+          "name": "Sphere_10",
+          "type": "SPHERE",
+          "start": 1.2000000476837158,
+          "end": 1.4133332967758179
+        },
+        {
+          "name": "SLASH02",
+          "type": "SPHERE",
+          "start": 1.6833332777023315,
+          "end": 1.84333336353302
+        },
+        {
+          "name": "SLASH05",
+          "type": "SPHERE",
+          "start": 2.1666667461395264,
+          "end": 2.380000114440918
+        },
+        {
+          "name": "SLASH01",
+          "type": "SPHERE",
+          "start": 1.5099999904632568,
+          "end": 1.6833332777023315
+        },
+        {
+          "name": "SLASH04",
+          "type": "SPHERE",
+          "start": 2.013333320617676,
+          "end": 2.2333333492279053
+        },
+        {
+          "name": "SLASH03",
+          "type": "SPHERE",
+          "start": 1.84333336353302,
+          "end": 2.0433332920074463
+        },
+        {
+          "name": "SLASH06",
+          "type": "SPHERE",
+          "start": 2.306666612625122,
+          "end": 2.6533334255218506
+        },
+        {
+          "name": "SLASH_L04",
+          "type": "PLANE",
+          "start": 1.8700000047683716,
+          "end": 2.309999942779541
+        },
+        {
+          "name": "SLASH_L05",
+          "type": "PLANE",
+          "start": 2.003333330154419,
+          "end": 2.4033334255218506
+        },
+        {
+          "name": "SLASH_L02",
+          "type": "PLANE",
+          "start": 1.6033333539962769,
+          "end": 2.0766665935516357
+        },
+        {
+          "name": "SLASH_L06",
+          "type": "PLANE",
+          "start": 2.136666774749756,
+          "end": 2.503333330154419
+        },
+        {
+          "name": "SLASH_L03",
+          "type": "PLANE",
+          "start": 1.743333339691162,
+          "end": 2.2033333778381348
+        },
+        {
+          "name": "SLASH_L01",
+          "type": "PLANE",
+          "start": 1.4733333587646484,
+          "end": 1.9700000286102295
+        }
+      ],
+      "clippedByOldTail": true,
+      "entirelyMissingShapesWithOldTail": [
+        "SLASH02",
+        "SLASH05",
+        "SLASH04",
+        "SLASH03",
+        "SLASH06",
+        "SLASH_L04",
+        "SLASH_L05",
+        "SLASH_L02",
+        "SLASH_L06",
+        "SLASH_L03"
+      ]
+    }
+  ],
+  "truncatedEffects": [
+    "pos203",
+    "pos368",
+    "pos311",
+    "pos350",
+    "pos362",
+    "pos326",
+    "pos216",
+    "pos217",
+    "pos215",
+    "pos552",
+    "pos224",
+    "pos554",
+    "pos416",
+    "pos425",
+    "pos426",
+    "pos451",
+    "pos453",
+    "pos454",
+    "pos455",
+    "pos456"
+  ],
+  "unportedTypes": [
+    "PARTICLE",
+    "DONUT"
+  ],
+  "originalAssetsChanged": false,
+  "originalExecutableExecuted": false,
+  "gameplayRulesChanged": false
+}

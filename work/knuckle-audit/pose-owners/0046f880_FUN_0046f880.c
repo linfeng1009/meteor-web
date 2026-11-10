@@ -1,0 +1,90 @@
+/* Original Meteor.exe static export @ 0046f880; original sample not executed. */
+
+undefined4 __fastcall FUN_0046f880(undefined4 *param_1)
+
+{
+  undefined4 uVar1;
+  undefined4 uVar2;
+  undefined4 local_c;
+  undefined4 local_8;
+  undefined4 local_4;
+  
+  FUN_00429990(0);
+  FUN_00429aa0(s_tlist_bmp_005c7c1c,0,0x1ab,0x16a);
+  uVar1 = FUN_00429c30(0);
+  *param_1 = uVar1;
+  uVar2 = __ftol();
+  uVar2 = __ftol(uVar2);
+  FUN_00429d00(uVar1,uVar2);
+  FUN_00429d80(*param_1,0,0,0,1);
+  FUN_00429de0(*param_1,0);
+  FUN_00429dc0(*param_1,DAT_005c7b60,DAT_005c7b60);
+  FUN_00429990(0);
+  FUN_00429aa0(s_sslist_bmp_005c7c10,0,0x1ab,0x155);
+  uVar1 = FUN_00429c30(0);
+  param_1[0xb] = uVar1;
+  uVar2 = __ftol();
+  uVar2 = __ftol(uVar2);
+  FUN_00429d00(uVar1,uVar2);
+  FUN_00429de0(param_1[0xb],0);
+  FUN_00429d80(param_1[0xb],0,0,0,1);
+  FUN_00429dc0(param_1[0xb],DAT_005c7b60,DAT_005c7b60);
+  uVar1 = FUN_00404fe0(0,s_tback_005c7c08,0,0x42e30000,0x42be0000,0,0,0,0);
+  param_1[3] = uVar1;
+  FUN_00405660(uVar1,0x3e800000);
+  FUN_004054e0(param_1[3],0x17,3);
+  FUN_004054e0(param_1[3],0x16,1);
+  FUN_0040c770(param_1[3],0);
+  local_c = 0x3e4ccccd;
+  local_8 = 0x40866666;
+  local_4 = 0;
+  thunk_FUN_00407260(param_1[3],&local_c,0,0);
+  uVar1 = FUN_00404fe0(0,s_tback_005c7c08,0,0x42e30000,0x42b40000,0,0,0,0);
+  param_1[4] = uVar1;
+  FUN_00405660(uVar1,0x3e800000);
+  FUN_004054e0(param_1[4],0x17,3);
+  FUN_004054e0(param_1[4],0x16,1);
+  FUN_0040c770(param_1[4],0);
+  local_c = 0x3e4ccccd;
+  local_8 = 0x40c66666;
+  local_4 = 0;
+  thunk_FUN_00407260(param_1[4],&local_c,0,0);
+  FUN_00429990(0);
+  FUN_00429aa0(s_tl_bmp_005c7c00,0,0x1a5,0x12);
+  uVar1 = FUN_00429c30(0);
+  param_1[5] = uVar1;
+  uVar2 = __ftol();
+  uVar2 = __ftol(uVar2);
+  FUN_00429d00(uVar1,uVar2);
+  FUN_00429de0(param_1[5],0);
+  FUN_00429dc0(param_1[5],DAT_005c7b60,DAT_005c7b60);
+  FUN_00429990(0);
+  FUN_00429aa0(s_tr_bmp_005c7bf8,0,0x1a5,0x12);
+  uVar1 = FUN_00429c30(0);
+  param_1[6] = uVar1;
+  uVar2 = __ftol();
+  uVar2 = __ftol(uVar2);
+  FUN_00429d00(uVar1,uVar2);
+  FUN_00429de0(param_1[6],0);
+  FUN_00429dc0(param_1[6],DAT_005c7b60,DAT_005c7b60);
+  FUN_00429990(0);
+  FUN_00429b80(1,1,1,100,0x18);
+  uVar1 = FUN_00429c30(0);
+  param_1[7] = uVar1;
+  uVar2 = __ftol();
+  uVar2 = __ftol(uVar2);
+  FUN_00429d00(uVar1,uVar2);
+  FUN_00429d80(param_1[7],0,0,0,1);
+  FUN_00429de0(param_1[7],0);
+  FUN_00429990(0);
+  FUN_00429b80(1,1,1,100,0x18);
+  uVar1 = FUN_00429c30(0);
+  param_1[8] = uVar1;
+  uVar2 = __ftol();
+  uVar2 = __ftol(uVar2);
+  FUN_00429d00(uVar1,uVar2);
+  FUN_00429d80(param_1[8],0,0,0,1);
+  FUN_00429de0(param_1[8],0);
+  return 1;
+}
+

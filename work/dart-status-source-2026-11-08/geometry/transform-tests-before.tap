@@ -1,0 +1,98 @@
+TAP version 13
+# Subtest: original203 empty rotation binding keeps native world axes while its origin follows the animated bone
+not ok 1 - original203 empty rotation binding keeps native world axes while its origin follows the animated bone
+  ---
+  duration_ms: 3.47725
+  type: 'test'
+  location: '/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/work/dart-status-source-2026-11-08/geometry/binding-before-v15p4uq6/binding-before.test.mjs:36:1'
+  failureType: 'testCodeFailure'
+  error: '203 bone origin plus native world offset: 6.985937671209001,0.8646083846062192,-8.987917965796749 versus 7,0.8638912200927733,-9'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    closeVector (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/work/dart-status-source-2026-11-08/geometry/binding-before-v15p4uq6/binding-before.test.mjs:18:47)
+    TestContext.<anonymous> (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/work/dart-status-source-2026-11-08/geometry/binding-before-v15p4uq6/binding-before.test.mjs:45:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: original204 split bone/Character binding uses the Character basis for key offsets
+not ok 2 - original204 split bone/Character binding uses the Character basis for key offsets
+  ---
+  duration_ms: 0.401458
+  type: 'test'
+  location: '/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/work/dart-status-source-2026-11-08/geometry/binding-before-v15p4uq6/binding-before.test.mjs:54:1'
+  failureType: 'testCodeFailure'
+  error: '204 offset must follow Character axes, not the animated bone: 7.013118481478352,1.230915576954756,-8.985755602629704 versus 7,1.230133056640625,-9'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    closeVector (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/work/dart-status-source-2026-11-08/geometry/binding-before-v15p4uq6/binding-before.test.mjs:18:47)
+    TestContext.<anonymous> (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/work/dart-status-source-2026-11-08/geometry/binding-before-v15p4uq6/binding-before.test.mjs:60:3)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: native relative and world position flags produce different fixed coordinates under a turned caster
+not ok 3 - native relative and world position flags produce different fixed coordinates under a turned caster
+  ---
+  duration_ms: 0.55225
+  type: 'test'
+  location: '/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/work/dart-status-source-2026-11-08/geometry/binding-before-v15p4uq6/binding-before.test.mjs:65:1'
+  failureType: 'testCodeFailure'
+  error: 'relative key offset: -5.677625050284715,27.86636954906308,11.199999999999996 versus -7.6,27.4,11.2'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    closeVector (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/work/dart-status-source-2026-11-08/geometry/binding-before-v15p4uq6/binding-before.test.mjs:18:47)
+    TestContext.<anonymous> (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/work/dart-status-source-2026-11-08/geometry/binding-before-v15p4uq6/binding-before.test.mjs:67:3)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: separate position and rotation parents preserve a sheared affine basis and never inherit position-parent rotation
+not ok 4 - separate position and rotation parents preserve a sheared affine basis and never inherit position-parent rotation
+  ---
+  duration_ms: 0.300625
+  type: 'test'
+  location: '/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/work/dart-status-source-2026-11-08/geometry/binding-before-v15p4uq6/binding-before.test.mjs:74:1'
+  failureType: 'testCodeFailure'
+  error: 'decomposing the independent rotation parent would discard shear'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    closeMatrix (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/work/dart-status-source-2026-11-08/geometry/binding-before-v15p4uq6/binding-before.test.mjs:19:47)
+    TestContext.<anonymous> (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/work/dart-status-source-2026-11-08/geometry/binding-before-v15p4uq6/binding-before.test.mjs:82:3)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 0
+# fail 4
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 149.115167

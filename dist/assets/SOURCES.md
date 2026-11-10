@@ -33,3 +33,48 @@
 ## 运行库
 
 [Three.js r170](https://github.com/mrdoob/three.js/tree/r170)，MIT 许可。许可文件：`../vendor/LICENSE-three.txt`。
+
+
+## 本地人物工坊（2026-10-28）
+
+- `enhanced/p0/`：原孟星魂模型的Blender几何与材质改良试版，脸部贴图使用AI辅助细化；不是完整手工重制。
+- `enhanced/hutao/`：用户提供的完整「胡桃喵1.0.pmx」转换，源目录标注摸鱼大水怪，PMX内嵌说明署名模型提供 miHoYo、模型改造观海。保留完整模型造型，本地适配《流星》骨架。来源与完整说明见本地 `work/hutao-pmx-quality/source-audit.json`。
+- 先前 `HuTaoMod4K` GIMI包不包含脸部几何，且UV与此PMX不同；未与PMX拼接，不作为当前可玩角色素材。
+
+胡桃模型内嵌说明要求非商业、不可二次配布。本次转换仅供用户本机使用，未上传或更新线上站点。原MMD物理、表情、sphere/toon着色与《流星》动作的材质及骨架适配有差异。
+
+
+## YS-影本地外观（2026-10-28）
+
+`enhanced/raiden/` 来自用户提供的「礼服影.pmx」及配套贴图。原24,203顶点、30,604三角面完整保留，27材质、7张源颜色图（6张2K、1张1K），沿用原p0骨架与游戏动作。肌肤贴花保留原透明裁切。
+
+原readme署名：头部 miHoYo／ota／ash.k／manashiku；身体 miHoYo／观海子；改模 花咲十七夜。原说明注明非商业、不可二次配布。本次只读原包，转换结果保存在本机，未上传。模型内的MMD物理与表情尚未接入；完整来源与检查见本地`work/raiden-pmx-quality/`及`work/raiden-pmx-model/`。
+
+
+## RE0-爱蜜莉雅本地外观（2026-10-29）
+
+`enhanced/emilia/` 来自用户提供的「Emilia_v1.pmx」。源16,493顶点、23,854三角；运行14,236三角、8材质。原SHADING的9,618面与Cloth+Skin的位置、UV和权重一致，已将SDW透明阴影图合成至CLOTH，避免重合表面闪烁；完整Face、Cloth、Skin及其他实际表面保留。4张运行颜色图由5张源PNG转换，原FACE/HAIR/ACCS内容保留。
+
+原包内嵌署名为 Skymoons／Elemental Craft／Kadokawa corp／chenxs（陈心舒），没有明示使用许可。署名与原说明保存在本地工作目录。本次是用户指定本地模型的离线转换，未上传站点。MMD物理、表情与完整手指尚未接入，头发与衣袖采用简化骨骼适配。
+
+
+## 2026-11-06 关卡扩展复用
+
+决死阵 sn09 与飞鹏堡 sn15 复用本地原地图 GMB/DES/WP、cmodel/FMC、Level/NPC PST、人物与兵器资源，没有下载或生成替代模型。脚本道具身份与数值来自已导出的 Meteor.res type2/id4、id14。两关配乐选用本地原 s1.mp3 / s2.mp3，具体曲目对应关系为 Web 选择，未声称由 EXE 恢复。
+
+## 霜翎凤鸣枪外观（2026-11-06）
+
+依据用户提供的双尖冰晶凤翼长枪概念图制作，运行模型为 `dist/phoenix-spear.js` 中的三维几何与程序纹理。图中背面、厚度、凤羽与挂饰连接按游戏模型需要推测；未直接使用画面背景或将概念图贴在平面上。外观沿用原版 W7_0 的握持方向与长度，原版模型继续承担攻击范围计算。参考图、几何导出、实际模型预览及 Blender 工程保存在 `work/phoenix-spear/`。
+
+
+## 栖云古庭原创战场（2026-11-10）
+
+`enhanced/maps/qiyun/` 的场景模型由本项目的 `scripts/blender/build_qiyun_courtyard.py` 在本机 Blender 中程序建模，包含石板庭院、山门、亭台、树木、植被、岩壁和远山。石材颜色贴图通过内置 image_gen 生成，最终提示词保存在 `work/qiyun-courtyard/stone-texture-prompt.txt`。运行模型按材质合批，并独立制作地面、台阶和建筑碰撞。天空、雾、水流与风由 `dist/qiyun-courtyard.js` 实现。可编辑 Blender 工程、GLB、预览和验收记录保存在 `work/qiyun-courtyard/`。
+
+## 怒气技能视觉层（2026-11-06）
+
+2026-11-10 修正：乾坤刀末击的SLASH01–06及SLASH_L01–06均沿用原EF键和`LIGHTa00.bmp`转换贴图，按可绘制节点末键延长视觉播放，防止POS动画先结束而漏掉刀光。普通挥砍和怒招拖尾读取原POS Drag时间窗/颜色/时长与原武器DES端点，使用Web柔边光带绘制。亮度、拖尾采样/渐隐、完成后的挂点快照属于显示适配；本轮未新增或替换原纹理，也未改变攻击碰撞、伤害和怒气规则。原粒子发射、DONUT及完整材质通道仍未完全恢复。
+
+`original/rage-vfx/` 来自用户本地客户端的 PonEF V1.00 定义、`ETexture.pak` 和 `TexturePatch.pak`。`scripts/import-rage-vfx.py` 按当前可用怒气招式与自动衔接动作导出 54 组定义、236 个带贴图的形状节点、49 项贴图/序列引用；BMP/TGA 无损转 PNG，保留原尺寸与透明度。每个 EF 及纹理归档成员的 SHA-256 保存在清单中。武器特效挂点取原版 DES，与外观皮肤独立。
+
+Web 视觉播放器读取原关键帧位置、旋转、缩放、透明度，使用基本形状表现蓄力光、旋风、光刃与冲击波。插值、形状网格构建、亮度上限与 IFL 30fps 播放是明确的 Web 适配；原版粒子发射、DONUT、完整材质通道语义及特效专属远程碰撞仍未完全恢复。不会将视觉形状直接作为攻击范围。恢复记录在 `work/rage-vfx/2026-11-06_逆向-怒气特效-report.md`。

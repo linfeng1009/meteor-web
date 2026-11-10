@@ -1,0 +1,1110 @@
+{
+  "id": "E-directional-guard-source-2026-11-06",
+  "observedAt": "2026-11-06",
+  "sampleSha256": "289afb0aa44a47921d167fc24d6d404c60d6d00c299ac27d45fc61e16231b498",
+  "originalExecuted": false,
+  "originalModified": false,
+  "scope": "work/meteor-original/scope.md",
+  "method": "PE section-mapped bytes/tables, readOnly/noanalysis Ghidra, runtime profile comparison; no original executable launched.",
+  "grammar": [
+    {
+      "rule": 57,
+      "field": "targetpose",
+      "recordOffset": "0x48",
+      "rhs": [
+        "KEY_targetpose",
+        "KEY_number"
+      ]
+    },
+    {
+      "rule": 58,
+      "field": "targetposefront",
+      "recordOffset": "0x4c",
+      "rhs": [
+        "KEY_targetposefront",
+        "KEY_number"
+      ]
+    },
+    {
+      "rule": 59,
+      "field": "targetposeback",
+      "recordOffset": "0x50",
+      "rhs": [
+        "KEY_targetposeback",
+        "KEY_number"
+      ]
+    },
+    {
+      "rule": 60,
+      "field": "targetposeleft",
+      "recordOffset": "0x54",
+      "rhs": [
+        "KEY_targetposeleft",
+        "KEY_number"
+      ]
+    },
+    {
+      "rule": 61,
+      "field": "targetposeright",
+      "recordOffset": "0x58",
+      "rhs": [
+        "KEY_targetposeright",
+        "KEY_number"
+      ]
+    }
+  ],
+  "angleThresholds": {
+    "005ab620": -2.3561924999999997,
+    "005ab628": -0.7853975,
+    "005ab630": 2.3561924999999997,
+    "005ab638": 0.7853975
+  },
+  "direction": {
+    "producer": "004f3380 ->00548270",
+    "facingGetter": "004dc060: minus native row1 of actor matrix",
+    "webAxes": "native(x,y)=(Web x,-Web z); use target yaw and vector from target to attacker",
+    "sectors": [
+      "0:front, -low<angle<low, TargetPoseFront",
+      "1:negative side, -high<angle<=-low, TargetPoseRight",
+      "2:positive side, low<=angle<high, TargetPoseLeft",
+      "3:back, angle<=-high or angle>=high, TargetPoseBack"
+    ],
+    "fallback": "005754d0 copies TargetPose to directional fields left unset(-1)"
+  },
+  "guard": {
+    "server": "004af630: AttackType0 and held-guard flag; direction does not create a damage cone",
+    "clientPath": "004f4010 ->004d04d0 ->weapon-state+1c/004dcf10 ->state+68/004dce50 ->004d03f0",
+    "selector": "front trunc(CRT15-bit rand*(4/32767)); directions1/2/3 use list4/5/6",
+    "profiles": {
+      "sword": {
+        "initializer": "004dd370",
+        "guardStance": 16,
+        "poses": [
+          60,
+          61,
+          62,
+          63,
+          80,
+          81,
+          82
+        ]
+      },
+      "spear": {
+        "initializer": "004ddac0",
+        "guardStance": 17,
+        "poses": [
+          64,
+          65,
+          66,
+          67,
+          86,
+          87,
+          88
+        ]
+      },
+      "blade": {
+        "initializer": "004de220",
+        "guardStance": 18,
+        "poses": [
+          68,
+          69,
+          70,
+          71,
+          80,
+          81,
+          82
+        ]
+      },
+      "dart": {
+        "initializer": "004df190",
+        "guardStance": 11,
+        "poses": [
+          40,
+          41,
+          42,
+          43,
+          77,
+          78,
+          79
+        ]
+      },
+      "hammer": {
+        "initializer": "004e0080",
+        "guardStance": 19,
+        "poses": [
+          72,
+          73,
+          74,
+          75,
+          77,
+          78,
+          79
+        ]
+      },
+      "dagger": {
+        "initializer": "004e07c0",
+        "guardStance": 15,
+        "poses": [
+          56,
+          57,
+          58,
+          59,
+          83,
+          84,
+          85
+        ]
+      },
+      "dual": {
+        "initializer": "004e0ed0",
+        "guardStance": 14,
+        "poses": [
+          52,
+          53,
+          54,
+          55,
+          77,
+          78,
+          79
+        ]
+      }
+    },
+    "randomScale": 0.00012207403790398877,
+    "randomScaleBytes": "800040002000203f",
+    "crtRandom": {
+      "function": "0050a8de",
+      "update": "state=state*214013+2531011 modulo2^32; return(state>>16)&32767",
+      "frontSlotCountsOverAllDrawsByPrecision": {
+        "24": [
+          8192,
+          8192,
+          8192,
+          8191,
+          1
+        ],
+        "53": [
+          8192,
+          8192,
+          8192,
+          8191,
+          1
+        ],
+        "64": [
+          8192,
+          8192,
+          8192,
+          8192,
+          0
+        ]
+      }
+    },
+    "parameters": "DefenseMove/DefenseValue from high16 message halves, using existing recovered hundredth wire conversion"
+  },
+  "forcedBlend": {
+    "entry": "004cfc00 ->state+30/004dd070 ->00559720 ->004dbf80/0055d260",
+    "defaultBits": "3df5c28f",
+    "defaultSeconds": 0.11999999731779099,
+    "guardListMemberBits": "3c23d70a",
+    "guardListMemberSeconds": 0.009999999776482582,
+    "timer": "Animation minimum-duration clock advances after its forced blend; source timeline stays at Start during blending"
+  },
+  "floatingPointPolicy": {
+    "crtInitializer": "0050f131: controlfp(0x10000,0x30000)",
+    "hardwareMapping": "0051283e maps0x10000 precision to CW0x200 (53-bit)",
+    "roundingAndTruncation": "00509980 changes only rounding bits for FISTP, then restores CW; preceding FMUL uses the active precision",
+    "deviceCreation": "00481fe0 creates D3D8; 00482e30 calls CreateDevice with enumerated behavior flags",
+    "inference": "The normal CRT53-bit path, or Direct3D default24-bit path, both select guard slot4 for draw32767; arbitrary driver/plugin control-word changes are not observed or emulated.",
+    "primaryReferences": [
+      "https://learn.microsoft.com/en-us/windows/win32/dxtecharts/top-issues-for-windows-titles",
+      "https://learn.microsoft.com/en-us/previous-versions/ms889264(v=msdn.10)"
+    ]
+  },
+  "boundaries": [
+    "Front guard variant uses Web RNG; original CRT seed/sequence and multiplayer message scheduling are not reproduced.",
+    "World yaw, current pose snapshots, gravity, contact and collision remain Web host implementations; full native vector/physics parity is not asserted.",
+    "Signed-angle selection uses recovered sectors with Web coordinates and JS arithmetic, not an x87 instruction emulator.",
+    "Some common/personal POS versions differ in frame offsets; runtime retains the current character personal POS, without rewriting source files.",
+    "Five remaining weapon families, complete EF, exact input scheduling and remaining story missions remain incomplete."
+  ],
+  "artifacts": [
+    {
+      "path": "work/meteor-original/evidence/directional-guard-native-2026-11-06/004cfd20_FUN_004cfd20.asm",
+      "bytes": 672,
+      "sha256": "2b68e7ebe6aa808d6df7d144375a31c415b5e278d8beb23c2aa6027ad90373c9"
+    },
+    {
+      "path": "work/meteor-original/evidence/directional-guard-native-2026-11-06/004cfd20_FUN_004cfd20.c",
+      "bytes": 495,
+      "sha256": "3923d15799ba949ebbae2377de13af9bc1968d866f1256ff4768bd790d5bd8f9"
+    },
+    {
+      "path": "work/meteor-original/evidence/directional-guard-native-2026-11-06/004d0db0_FUN_004d0db0.asm",
+      "bytes": 153,
+      "sha256": "dc375f6dd302233b87d8ace5a3661fec1e159218d141083fd88b8d93c870e042"
+    },
+    {
+      "path": "work/meteor-original/evidence/directional-guard-native-2026-11-06/004d0db0_FUN_004d0db0.c",
+      "bytes": 280,
+      "sha256": "fbeedd393c56bbabc137306d9f4b64eea51da4b233801052f65dac9126e4bf61"
+    },
+    {
+      "path": "work/meteor-original/evidence/directional-guard-native-2026-11-06/004d0e10_FUN_004d0e10.asm",
+      "bytes": 2383,
+      "sha256": "ad7a838c2039a209dc76b2012be0625f060bb63e7384d8b8b4286fd3685f96a8"
+    },
+    {
+      "path": "work/meteor-original/evidence/directional-guard-native-2026-11-06/004d0e10_FUN_004d0e10.c",
+      "bytes": 1115,
+      "sha256": "299e55f72b967e6394588ec5eb531d4b31b7556b348764dbafec78d6b5c75676"
+    },
+    {
+      "path": "work/meteor-original/evidence/directional-guard-native-2026-11-06/004f3380_FUN_004f3380.asm",
+      "bytes": 15167,
+      "sha256": "3fe7707e8a256a5c6e5b36fc7fac49af80281ab0d5f07b692dabb44f871ea6a1"
+    },
+    {
+      "path": "work/meteor-original/evidence/directional-guard-native-2026-11-06/004f3380_FUN_004f3380.c",
+      "bytes": 9129,
+      "sha256": "cdd53bed807bdc7bd930bb78685597d946012cdc5529f480a1e02550a5bdc5cb"
+    },
+    {
+      "path": "work/meteor-original/evidence/directional-guard-native-2026-11-06/004f4010_FUN_004f4010.asm",
+      "bytes": 1926,
+      "sha256": "091bb02b2c13720deed4058faa119bc4f44d77845b0cbd3e88df64732d4603f2"
+    },
+    {
+      "path": "work/meteor-original/evidence/directional-guard-native-2026-11-06/004f4010_FUN_004f4010.c",
+      "bytes": 1083,
+      "sha256": "c9665750f326f4cc2777b05f0607f0e62f4e2555991cc24593f76a1a2aa739e4"
+    },
+    {
+      "path": "work/meteor-original/evidence/directional-guard-native-2026-11-06/00548270_FUN_00548270.asm",
+      "bytes": 2579,
+      "sha256": "2fd774b96b0ba20ef1acdfc000ee75183bb60194c24d4b88ac8aa9ca3970e05b"
+    },
+    {
+      "path": "work/meteor-original/evidence/directional-guard-native-2026-11-06/00548270_FUN_00548270.c",
+      "bytes": 1398,
+      "sha256": "a5b177e6753e5c7d2a99a0ecb191078ff799fae88665c675704eeb3acaa84c5c"
+    },
+    {
+      "path": "work/meteor-original/evidence/directional-guard-native-2026-11-06/functions.tsv",
+      "bytes": 155,
+      "sha256": "a1392f55ee8735dda494312372cd7afa60b103f021c73fc2d1b13e3f1fb88e1d"
+    },
+    {
+      "path": "work/meteor-original/evidence/directional-guard-native-2026-11-06/references.txt",
+      "bytes": 4620,
+      "sha256": "920a0b2665f03c311c2d69d48412a557485771acbbd2d7cab8eb571a95b4f0b5"
+    },
+    {
+      "path": "work/meteor-original/evidence/directional-guard-state-native-2026-11-06/004e3d80_FUN_004e3d80.asm",
+      "bytes": 449,
+      "sha256": "d0bd4c420f01e2c2c8a73ebe58223b242fe72ee04752607ce872d592beaeaf69"
+    },
+    {
+      "path": "work/meteor-original/evidence/directional-guard-state-native-2026-11-06/004e3d80_FUN_004e3d80.c",
+      "bytes": 958,
+      "sha256": "8c383da0838fcf25b4ed66d7ded2388663da0e10c078bf6d9b06145408855ee2"
+    },
+    {
+      "path": "work/meteor-original/evidence/directional-guard-state-native-2026-11-06/00502d80_FUN_00502d80.asm",
+      "bytes": 650,
+      "sha256": "9d45d205a66be5ac07fca929ea0883897dac833ae315d8f3def06034e0b5cac3"
+    },
+    {
+      "path": "work/meteor-original/evidence/directional-guard-state-native-2026-11-06/00502d80_FUN_00502d80.c",
+      "bytes": 540,
+      "sha256": "56b5bf67afb0b990e9ff3155be6d799b6ebc756bd1f208e641035272ca9c00d4"
+    },
+    {
+      "path": "work/meteor-original/evidence/directional-guard-state-native-2026-11-06/0057aaf0_FUN_0057aaf0.asm",
+      "bytes": 35425,
+      "sha256": "c0c84ba4193b5c6a2611d533abcb09ef00b015909179ebee460938b85117163f"
+    },
+    {
+      "path": "work/meteor-original/evidence/directional-guard-state-native-2026-11-06/0057aaf0_FUN_0057aaf0.c",
+      "bytes": 24905,
+      "sha256": "2f154f15138c531cf1b690944b953f4b7578c4027776e802f9059442c6049a0a"
+    },
+    {
+      "path": "work/meteor-original/evidence/directional-guard-state-native-2026-11-06/functions.tsv",
+      "bytes": 77,
+      "sha256": "7c020e7b2ad0ecaa20040df0621c1bf30d46b8bb0325b2d108de05d4d4a4b58e"
+    },
+    {
+      "path": "work/meteor-original/evidence/directional-guard-state-native-2026-11-06/references.txt",
+      "bytes": 1664,
+      "sha256": "ffba6db49cb36d3e5ff11e7c636c5d6f1cd10614b9dd53e9110ef7250ae8b1b7"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-factories-2026-11-06/004dd320_FUN_004dd320.asm",
+      "bytes": 336,
+      "sha256": "0ab57f5e7eea980a24cf632765edf8bcdd28c05bd91b6c9fad18d3b56e418e7c"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-factories-2026-11-06/004dd320_FUN_004dd320.c",
+      "bytes": 310,
+      "sha256": "86603e2e8c7a117b4fdde6a7f691bb4fbd5d3272472c4d931fc46ffbe7f5688a"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-factories-2026-11-06/004dda70_FUN_004dda70.asm",
+      "bytes": 336,
+      "sha256": "32790df791bae2353a9c9ed530221230831cd176f816d149a14dae7899b55e2c"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-factories-2026-11-06/004dda70_FUN_004dda70.c",
+      "bytes": 310,
+      "sha256": "dcd2572b6545ccd7e7388ebbfbb536e07114bbebcc72363c2138333badb7e1a6"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-factories-2026-11-06/004de1d0_FUN_004de1d0.asm",
+      "bytes": 336,
+      "sha256": "91aac2f122a172a7a0ea2054f370a6a3778af6352b77e645199d6cd3bf4e306b"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-factories-2026-11-06/004de1d0_FUN_004de1d0.c",
+      "bytes": 310,
+      "sha256": "87e4e8879c2e75e6bb7a11eda58131421b9cc7d7007cdac10edf72d09faff269"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-factories-2026-11-06/004de920_FUN_004de920.asm",
+      "bytes": 336,
+      "sha256": "ece44ea3cbe27d0d8eeeb38a0ba4f4be5733b9c0a1d1d8dcee399eef97d07e8f"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-factories-2026-11-06/004de920_FUN_004de920.c",
+      "bytes": 310,
+      "sha256": "4b6ce0b5f8ac0df13abd2208935339726925e38ba9fa968656ad59c33254bc19"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-factories-2026-11-06/004df140_FUN_004df140.asm",
+      "bytes": 336,
+      "sha256": "db4a37ed098dd91c4b9717f6e45cf51c9f50e28c9da0f8d91ed01155ac7b63cd"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-factories-2026-11-06/004df140_FUN_004df140.c",
+      "bytes": 310,
+      "sha256": "65eedce870dab7b9dc333febe8865bad47b7580ec7b75cac3015a5cddd9c94cd"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-factories-2026-11-06/004df8e0_FUN_004df8e0.asm",
+      "bytes": 336,
+      "sha256": "1c934041b73e8023ad48026b398284aae224dbefdc4a86914d8d483b020385a5"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-factories-2026-11-06/004df8e0_FUN_004df8e0.c",
+      "bytes": 310,
+      "sha256": "1788c05ee110cff7edab3869f3965d044ccfe83bff292ab46eb70f18cc612fae"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-factories-2026-11-06/004e0030_FUN_004e0030.asm",
+      "bytes": 336,
+      "sha256": "64e04655a9c351a1aa7cf23a953a0b8cb55843adb9c7b07451dd4cffe6a06e61"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-factories-2026-11-06/004e0030_FUN_004e0030.c",
+      "bytes": 310,
+      "sha256": "fabba001e182b319144c4da32472759ed1483a95caeba3eefe0b237483109591"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-factories-2026-11-06/004e0770_FUN_004e0770.asm",
+      "bytes": 336,
+      "sha256": "801ea3220176fe24deaf2cfa1b2bf5bbce26eaeee345e4557f07bd6506480616"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-factories-2026-11-06/004e0770_FUN_004e0770.c",
+      "bytes": 310,
+      "sha256": "469176afb8d4fb306caa5a3c7272ddb8a2191822a3fb276b543353e721eecfcc"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-factories-2026-11-06/004e0e80_FUN_004e0e80.asm",
+      "bytes": 336,
+      "sha256": "b5047ad4e9baf2120d1d56f6fa7628e476a964d87ae2c09c25dee07bfa0ca712"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-factories-2026-11-06/004e0e80_FUN_004e0e80.c",
+      "bytes": 310,
+      "sha256": "1171b2109aab97b4a0f36d2e77885de800bc32c5ebb49c6b1d368bd65eceebe0"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-factories-2026-11-06/004e18c0_FUN_004e18c0.asm",
+      "bytes": 336,
+      "sha256": "f057a9176068cb883196c581c9112f7a92038a8d69f26d94c165c3dd35c02acf"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-factories-2026-11-06/004e18c0_FUN_004e18c0.c",
+      "bytes": 427,
+      "sha256": "4e7e9f11e2581cbf395ff2dfcb067cd43aba8120418852a77afa9b4a0f17750e"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-factories-2026-11-06/004e2e60_FUN_004e2e60.asm",
+      "bytes": 336,
+      "sha256": "48299020bcc5c4953ebc01332e86deb7ae3825e69a355bc56505d4c852da2c37"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-factories-2026-11-06/004e2e60_FUN_004e2e60.c",
+      "bytes": 310,
+      "sha256": "fd2f0a24ca576d5609207bbbbcbee7d648db17af58aa59e2644ffd6cfa00d4a9"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-factories-2026-11-06/004e3720_FUN_004e3720.asm",
+      "bytes": 336,
+      "sha256": "f356aea3a5014339427d4e0cf2fa03c285466c0eea0c58790041474cea9cb36f"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-factories-2026-11-06/004e3720_FUN_004e3720.c",
+      "bytes": 310,
+      "sha256": "dc60eadf98a6809a7f913f128b6f4ba0154d691ff04225221cdd920190de5046"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-factories-2026-11-06/functions.tsv",
+      "bytes": 300,
+      "sha256": "f0b7743b6cb277d1a47760f67168013feed9bc352545cd0f8df555b00d3850bd"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-factories-2026-11-06/references.txt",
+      "bytes": 5462,
+      "sha256": "ae541ec0a37131b62931ff28cfdeb69a1b0ebf7ec84bfe97b17c478b8f28351d"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-constructors-2026-11-06/004dd170_FUN_004dd170.asm",
+      "bytes": 515,
+      "sha256": "fbf75904849dee37a02164224ea5d19d3dba2392de26cc2c68d51b27d379368a"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-constructors-2026-11-06/004dd170_FUN_004dd170.c",
+      "bytes": 489,
+      "sha256": "1493c3b91c4f9eca352d69ab2463e1454ebe622ed91343170fd51395d1e012c4"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-constructors-2026-11-06/004dd8c0_FUN_004dd8c0.asm",
+      "bytes": 515,
+      "sha256": "ee3c18cd39bad1e7de931c3cca99d8f8dce38e4106c2a8f8dcfbf1f9d4187fb7"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-constructors-2026-11-06/004dd8c0_FUN_004dd8c0.c",
+      "bytes": 489,
+      "sha256": "cbf473bfbc743a85d32d89506eb3b49bf5528075115f969c0e77cfcea6166b30"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-constructors-2026-11-06/004de020_FUN_004de020.asm",
+      "bytes": 515,
+      "sha256": "fa91b325798ac1e75ebda194a48a4dd874a91f7b4d219f619e9b1272a5c53354"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-constructors-2026-11-06/004de020_FUN_004de020.c",
+      "bytes": 489,
+      "sha256": "648b1c39319b0986e7b6f1bb99320e999bdc01e74406040d61cb0a2648760e79"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-constructors-2026-11-06/004de770_FUN_004de770.asm",
+      "bytes": 515,
+      "sha256": "9d049806102c54c3e9d389ccb555762f49ea5060269d62539002a191fd68e2ec"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-constructors-2026-11-06/004de770_FUN_004de770.c",
+      "bytes": 489,
+      "sha256": "ee99549e5941d2278387bc35ecc5ffea3481c0c6636db91db5fbd478602b3ee1"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-constructors-2026-11-06/004def90_FUN_004def90.asm",
+      "bytes": 515,
+      "sha256": "10b16b80f6388e85365f171cde457ea8c603e04e82f2ef7a8aba13d2607c0f56"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-constructors-2026-11-06/004def90_FUN_004def90.c",
+      "bytes": 489,
+      "sha256": "493a3f97160c332e9de32eb3cdbfd0e133ee659db6bae7d68354279e57aab901"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-constructors-2026-11-06/004df730_FUN_004df730.asm",
+      "bytes": 515,
+      "sha256": "f6343b5507df8eed924d0f350cf951b396685d82249a0b2a75b96290c02a11c9"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-constructors-2026-11-06/004df730_FUN_004df730.c",
+      "bytes": 489,
+      "sha256": "bb7693075a599f0000076f08771d0ff93549cf7432ae308e9e433305c2b548f9"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-constructors-2026-11-06/004dfe80_FUN_004dfe80.asm",
+      "bytes": 515,
+      "sha256": "ad0b6f95e9ffa6da17e4c1c2f95cce8ab09ed3eefe9055900a101e4d7f3b28c5"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-constructors-2026-11-06/004dfe80_FUN_004dfe80.c",
+      "bytes": 489,
+      "sha256": "b367b4f8ff0df6e4b3c96c61f2dce68eb00041e8b0a873c49054ad177391e6fb"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-constructors-2026-11-06/004e05c0_FUN_004e05c0.asm",
+      "bytes": 515,
+      "sha256": "30f558f0e080a3abec7da3c86a5c9caa8b54f1497428d08fb25f068c106a178f"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-constructors-2026-11-06/004e05c0_FUN_004e05c0.c",
+      "bytes": 489,
+      "sha256": "aa4d6d4ea5950a92487e92482c497e2534baf77c268ca74e4e8c2c0027a84cd3"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-constructors-2026-11-06/004e0cd0_FUN_004e0cd0.asm",
+      "bytes": 515,
+      "sha256": "c29bf62f0d3a32ff9bab87bf34b7a676a35ba9e3fba8ef0340b4bb2b4ea492bf"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-constructors-2026-11-06/004e0cd0_FUN_004e0cd0.c",
+      "bytes": 489,
+      "sha256": "1f5c908478d4d138d5cf22a8a4fe2a3ff731fb7f78a6614b8f7eb20de4badcdc"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-constructors-2026-11-06/004e1420_FUN_004e1420.asm",
+      "bytes": 2697,
+      "sha256": "36d72578e7852fb2e1d54e38aeef1caebbcff9fee2b8d9bf72f60f54dc20c079"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-constructors-2026-11-06/004e1420_FUN_004e1420.c",
+      "bytes": 1771,
+      "sha256": "dfe0009eda4e8f6f83b01d64a314a2370ed8aed7b64db34dffb82d82ff9d86c2"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-constructors-2026-11-06/004e2cb0_FUN_004e2cb0.asm",
+      "bytes": 515,
+      "sha256": "f54ed580033f8a21f9953a9e97199790d8f5f009176bcd39d1656bba132dd804"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-constructors-2026-11-06/004e2cb0_FUN_004e2cb0.c",
+      "bytes": 489,
+      "sha256": "681f6b25d1635deb2d776ae85b895b7679bf8af9e0145a8f810b1d5c8a66f14f"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-constructors-2026-11-06/004e3530_FUN_004e3530.asm",
+      "bytes": 695,
+      "sha256": "335b65febf387b658d9604920b0c3843afc7aa57cd369d1d08433aa31e632866"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-constructors-2026-11-06/004e3530_FUN_004e3530.c",
+      "bytes": 552,
+      "sha256": "47d07a43acaec7b7900b09bc483c7147b5005afaefbdbdb6d7c6c1a1cb7411cd"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-constructors-2026-11-06/callbacks.json",
+      "bytes": 1901,
+      "sha256": "1f1b83c05134df2cc350dd585e2c96e6b959d5b88ed5a97b0965ebfbd424a592"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-constructors-2026-11-06/functions.tsv",
+      "bytes": 301,
+      "sha256": "db4942c72e60e53d4006a88acfdd0a11c7755ed83d3913a6223e92a4d31c2e1b"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-state-constructors-2026-11-06/references.txt",
+      "bytes": 5333,
+      "sha256": "c5a6a3dc2187f362fa2bd2d2c0045899ba0538099483ad9b6a29d66defc825e4"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-world-getter-2026-11-06/004dbf60_FUN_004dbf60.asm",
+      "bytes": 227,
+      "sha256": "7a7bfc4b30d51114522bba8c9e307898f839b1f5a77944f347c6cbebdc3f0386"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-world-getter-2026-11-06/004dbf60_FUN_004dbf60.c",
+      "bytes": 227,
+      "sha256": "e6eddb4d6fa76dc6bd2e3f19875483f3302da5c6417c8c145c18147a3e487e9b"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-world-getter-2026-11-06/004dc060_FUN_004dc060.asm",
+      "bytes": 1947,
+      "sha256": "d673accc0cc5b525e60c86f379cb6bc684cc8bf9130861286f1472a5e362310d"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-world-getter-2026-11-06/004dc060_FUN_004dc060.c",
+      "bytes": 1018,
+      "sha256": "06eddd561d6e9aa781a1f8cd3509fd9f563390355996a569376ae807580187b4"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-world-getter-2026-11-06/functions.tsv",
+      "bytes": 51,
+      "sha256": "c972f9c787f1096919cda30ab575471b1057b31b79514f8e00d4f0d2758eded8"
+    },
+    {
+      "path": "work/meteor-original/evidence/actor-world-getter-2026-11-06/references.txt",
+      "bytes": 845,
+      "sha256": "cf90d01b347794a760bdcd8fb590ab60b6b3ff6911cc742b1dfae9b883abd794"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-blend-callback-native-2026-11-06/004db920_FUN_004db920.asm",
+      "bytes": 1290,
+      "sha256": "de83c8f82d6b5edd2c33c869b8de70ff021c399f5abc32b94f4b27beff76d414"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-blend-callback-native-2026-11-06/004db920_FUN_004db920.c",
+      "bytes": 948,
+      "sha256": "88bddc4d58e38473fe1f530fc06a6300ed309ef2449840b36e2528a66477f207"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-blend-callback-native-2026-11-06/004dbf60_FUN_004dbf60.asm",
+      "bytes": 227,
+      "sha256": "7a7bfc4b30d51114522bba8c9e307898f839b1f5a77944f347c6cbebdc3f0386"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-blend-callback-native-2026-11-06/004dbf60_FUN_004dbf60.c",
+      "bytes": 227,
+      "sha256": "e6eddb4d6fa76dc6bd2e3f19875483f3302da5c6417c8c145c18147a3e487e9b"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-blend-callback-native-2026-11-06/004dc060_FUN_004dc060.asm",
+      "bytes": 1947,
+      "sha256": "d673accc0cc5b525e60c86f379cb6bc684cc8bf9130861286f1472a5e362310d"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-blend-callback-native-2026-11-06/004dc060_FUN_004dc060.c",
+      "bytes": 1018,
+      "sha256": "06eddd561d6e9aa781a1f8cd3509fd9f563390355996a569376ae807580187b4"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-blend-callback-native-2026-11-06/004dcf10_FUN_004dcf10.asm",
+      "bytes": 669,
+      "sha256": "f21357c95c65013f15bb7751186eaec3c953eb33d0ed31b9a267dd4f38f13702"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-blend-callback-native-2026-11-06/004dcf10_FUN_004dcf10.c",
+      "bytes": 784,
+      "sha256": "6681ef630ca372eb9bfbde05414e695c2cecfb5293af8801c9f17fe4e5a0a537"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-blend-callback-native-2026-11-06/004dd070_FUN_004dd070.asm",
+      "bytes": 440,
+      "sha256": "64e7ed4b1e3f70d8523be824aff89e9ba325a86f3321c2274200e3910cf4c9ea"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-blend-callback-native-2026-11-06/004dd070_FUN_004dd070.c",
+      "bytes": 757,
+      "sha256": "9621e75bcab8183c1aad6f3c5d8780d4e5238782a00f824e86498d01bd40faf5"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-blend-callback-native-2026-11-06/functions.tsv",
+      "bytes": 127,
+      "sha256": "b9844aa2f0d0c51708f7224a026bbbf35dedf25d75ddee7b94e23a765cdf94fa"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-blend-callback-native-2026-11-06/references.txt",
+      "bytes": 2697,
+      "sha256": "d16249426a7ced2e1b54dc9634fe58ffaf4ff53e8ca2776ea9aeef829d7d8ed2"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004dce50_FUN_004dce50.asm",
+      "bytes": 1513,
+      "sha256": "55566428b926e67c6daa2a8f83bb21b997488afca6d1afaed3750a6f67c916a2"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004dce50_FUN_004dce50.c",
+      "bytes": 1156,
+      "sha256": "601243889435497db451844010e78f50a644b8b9ef8f927ca2fc0e096037d8fd"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004dd370_FUN_004dd370.asm",
+      "bytes": 9245,
+      "sha256": "71b6ccb54305f057242bc79b010ddb1255af107070f58bf9fe1435f5a653c8cc"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004dd370_FUN_004dd370.c",
+      "bytes": 8447,
+      "sha256": "cfd5a1e533ad4801da45a8729fdfb8ef6fec2f508963f6ced60353c3fb41dc59"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004ddac0_FUN_004ddac0.asm",
+      "bytes": 9308,
+      "sha256": "1f652d0a0517a4b1fdf1e76a9f71d10b2b97c1534d954ae65a6f9ca4d89f6c96"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004ddac0_FUN_004ddac0.c",
+      "bytes": 8485,
+      "sha256": "6f8708ddc28732e778512861e721563ec89bdad49f52649eb4135ea95f99208f"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004de220_FUN_004de220.asm",
+      "bytes": 9264,
+      "sha256": "95e876b3786f5944bb3f30525f30dee7f1e7f37c1cf6dbf2c9b4e87e05374a7d"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004de220_FUN_004de220.c",
+      "bytes": 8443,
+      "sha256": "0777181d917dbd4baa66e0984c1b47e320d82712c41bd819751a8a2cfc22e9b3"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004de970_FUN_004de970.asm",
+      "bytes": 6655,
+      "sha256": "3d220c606109b505ac4bc7fd2efe33b687d6729800bc7826acf7d919842bcf02"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004de970_FUN_004de970.c",
+      "bytes": 5464,
+      "sha256": "70604ef4de0575e3a19dd706a4484438e846abfa93b3aaab1d7911ae74d955eb"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004df190_FUN_004df190.asm",
+      "bytes": 7250,
+      "sha256": "3a004cce9c1acc2f20eb4b258ca80bb948867f79632835163450f85b5efad6a4"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004df190_FUN_004df190.c",
+      "bytes": 6123,
+      "sha256": "082da7fb6aedbe0e966e68f0c3012578fd601c55096b866e113e625ef1a2db00"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004df930_FUN_004df930.asm",
+      "bytes": 7006,
+      "sha256": "4b35b444a1e5e1aae4e657ada771a3a47b2f5da91ffe47ba964be9150bb69393"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004df930_FUN_004df930.c",
+      "bytes": 5837,
+      "sha256": "df4829513926070e8eb2a26655044508a7c44bee74cc02e4153fb951e5511bf3"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e0080_FUN_004e0080.asm",
+      "bytes": 9223,
+      "sha256": "3095f2f284389cd8b9f108f4ef9434730a40b6fed9cb1e378caade5b71d9070c"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e0080_FUN_004e0080.c",
+      "bytes": 8335,
+      "sha256": "ede5618a0f3508ab0021256c0ef58d028b133cb836516b420fe3eb54791e3fe2"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e07c0_FUN_004e07c0.asm",
+      "bytes": 8690,
+      "sha256": "2b361ae516988011a0f9e4ee7d1e3ffb061dcc8603ea28c41bb7d1476208eaeb"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e07c0_FUN_004e07c0.c",
+      "bytes": 7768,
+      "sha256": "e4129ca06a2ec70a0049235ccc8845c0453ba2622db4656b8537c3ae1e6d3851"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e0ed0_FUN_004e0ed0.asm",
+      "bytes": 9218,
+      "sha256": "ab4748c34e95b9194372b514c1e427dbc92d7cc072205f565a7608309fdc3d39"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e0ed0_FUN_004e0ed0.c",
+      "bytes": 8323,
+      "sha256": "5f6b08cca490a4a2c2c8cd2d7de532f121752402074e1a209910bf4cc6406abd"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e1910_FUN_004e1910.asm",
+      "bytes": 29739,
+      "sha256": "5507637faeb9f48da4c2cbb108d9b5b79cb9149a5b722bd3ca402024b2a1b71c"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e1910_FUN_004e1910.c",
+      "bytes": 20124,
+      "sha256": "4ba5299c89226c61333e6a3441a0f0f5deb06a303c86c647728c858cf7ed515d"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e2ba0_thunk_FUN_004dce50.asm",
+      "bytes": 24,
+      "sha256": "5ef236cab5fc3d6d4e0dbd07167774e09d4b0c0db9dc15394b9dd357f95d9757"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e2ba0_thunk_FUN_004dce50.c",
+      "bytes": 172,
+      "sha256": "031bf4c81dcb2491c3b6b4a4d19e9cd345458dd1de50b986ff8789aff8f94327"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e2eb0_FUN_004e2eb0.asm",
+      "bytes": 10899,
+      "sha256": "5c3ca04ba0326dee50e79e0bcba0f5d03018ede1cdff4d6dedbf3f37581773c2"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e2eb0_FUN_004e2eb0.c",
+      "bytes": 10395,
+      "sha256": "84a522872c502ed56f9b8fc10cca3acf878115c2c31eaa4d93f8f7d5cc1782c9"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e3770_FUN_004e3770.asm",
+      "bytes": 10446,
+      "sha256": "47303c3fa26748d5dc3e694aa6782e3a0a13ad7327db7f53b57c535d9527a4cb"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/004e3770_FUN_004e3770.c",
+      "bytes": 9322,
+      "sha256": "87a54b4351ca518afa659c0d43de5797471f04908f3b50c2548fc02b5045d42c"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/functions.tsv",
+      "bytes": 376,
+      "sha256": "236abc9d30965c18baf03c77279b81da34e29273df53ffffd5b21663d36ae9e2"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-selector-state-init-2026-11-06/references.txt",
+      "bytes": 6395,
+      "sha256": "fd397c4517a700dbd49f73e225c7a9e6a82e05e8e5d6219cbba331fcc4436ec8"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/00509980___ftol.asm",
+      "bytes": 427,
+      "sha256": "66eefc35bc30561fca51af2080603863bfeac3fedb300ba8a57d8fe8dda55a68"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/00509980___ftol.c",
+      "bytes": 34071,
+      "sha256": "ddb23f82f3cf67ff32ded67711874d375b52f5151b7b1cbae42d8ad799eb286f"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/00510040___trandisp1.asm",
+      "bytes": 788,
+      "sha256": "7a79a21d7a090ae72ea0dfb1787b3637984d8a865fccfe512104ae209b06f293"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/00510040___trandisp1.c",
+      "bytes": 1323,
+      "sha256": "e8f45925885c64f74c4ff1a40b7eaceb9e2eea224adfb8ba74a7a2825a5415d9"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/005100a7___trandisp2.asm",
+      "bytes": 1097,
+      "sha256": "ed109e10b9b69ba15874d1b81d0f16639998c792545c08ee8800b55ac9a89b93"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/005100a7___trandisp2.c",
+      "bytes": 1774,
+      "sha256": "eac3dd842530fc31ff408b788755c3a24369f9bb2a01e8fb26649651e342c1b9"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/00510227___startOneArgErrorHandling.asm",
+      "bytes": 668,
+      "sha256": "37bad84d76ec2133d71dc8f172d4aa4734bf697d1ac937ab509a8edfb1a7a6cc"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/00510227___startOneArgErrorHandling.c",
+      "bytes": 755,
+      "sha256": "eb29d35856e11ab028dcab780242515ffecaddbf5bb57b90c4197653c5656e18"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/00510285_FUN_00510285.asm",
+      "bytes": 169,
+      "sha256": "df9f492a3f8c0733da0ead8fc41429b4b4ff6fbc4a00867a2c2f9a9f3a4ad4a8"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/00510285_FUN_00510285.c",
+      "bytes": 213,
+      "sha256": "d6cbb5069d60100ad3aa1621a2930ee52217149c6ea2fac46578f62971544408"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/0051030e_FUN_0051030e.asm",
+      "bytes": 117,
+      "sha256": "e162d2f83cb86159cf469e6d339fc11e84d3cc9f22020a80a59c33f4f3311167"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/0051030e_FUN_0051030e.c",
+      "bytes": 474,
+      "sha256": "1985097341f03a6f158785836db7287ca4dfb765f3ffa6a9a2ae2a5a9e830626"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/0051031b___math_exit.asm",
+      "bytes": 318,
+      "sha256": "98f56d976afee1df991d0ee0b38d228409487e3bcdf77f241e0b81f32c3ff0ed"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/0051031b___math_exit.c",
+      "bytes": 472,
+      "sha256": "419d5b0e41d15a63421b04a9a8d555441103c5bdf4b111e0110db3ab06aaca01"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/00510359_FUN_00510359.asm",
+      "bytes": 1220,
+      "sha256": "4f00618fd7d4755c9b4eeed69160fe59f999d2d65004b488f1b152aaac1a1a0d"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/00510359_FUN_00510359.c",
+      "bytes": 880,
+      "sha256": "0d7b1e6a8da62abdb16c13a0efb56908c4934eabbc6a08dd3aa72da3d265a75e"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/00512761_FUN_00512761.asm",
+      "bytes": 588,
+      "sha256": "9712bf758490616a9c76e8b873518825faaa74af540d49279d027045bc1ba019"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/00512761_FUN_00512761.c",
+      "bytes": 315,
+      "sha256": "ada75926aac8bf0abdb60d5e7bb4b286b44fe8a9f148e2d56256c48ca9357f23"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/00514ac3_FUN_00514ac3.asm",
+      "bytes": 414,
+      "sha256": "4d33bd69e7a61ac37a18ba856d0c4eca7922e47d12f26fa73020c462fe164475"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/00514ac3_FUN_00514ac3.c",
+      "bytes": 616,
+      "sha256": "ba8ad4c92965b389d54149381e8ff81f58b20f8c1101ef780d568797a4473b3f"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/00593b72_FUN_00593b72.asm",
+      "bytes": 3116,
+      "sha256": "599a8b28671ed3583a2e62bd9f490974956eb96348c4004dbb15c088e1be006c"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/00593b72_FUN_00593b72.c",
+      "bytes": 3312,
+      "sha256": "192d484e1185e5bd13fbae324837122f2c41cab90c3dec46574eab9380664542"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/005942aa_FUN_005942aa.asm",
+      "bytes": 2427,
+      "sha256": "6eb3b8187f9bdd9df52f0250d38f6587cf75644283990ab49cf8c4e29209b010"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/005942aa_FUN_005942aa.c",
+      "bytes": 2173,
+      "sha256": "338b43ff228a6e339c2560fc3e20ac41b9dc6416a8c881bc19ba665456cf8983"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/00594c56_FUN_00594c56.asm",
+      "bytes": 3999,
+      "sha256": "77eb33a773c924f8c2d5ca6af3acc86f4ba6b4b02bdd2751d3e14ec6ef8a282f"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/00594c56_FUN_00594c56.c",
+      "bytes": 2570,
+      "sha256": "55a59aaa908200969cd014ed3d756b1dd3789244f02663c008d05dd139dd8503"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/00594e5c_FUN_00594e5c.asm",
+      "bytes": 1577,
+      "sha256": "92ae4f0be710d8d1f75d4d8d1d6bf2c7e1cac18c6d560d3db6a901d7adf049e9"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/00594e5c_FUN_00594e5c.c",
+      "bytes": 658,
+      "sha256": "27af0bae3d23e55a414b148b9b4c0bdf929dcf9fab389d15f4258f15a7ac7a9c"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-policy-native-2026-11-06/fpu-writers.tsv",
+      "bytes": 904,
+      "sha256": "a51589775d63c34bcab77d317c59979b28c956361ccd1a76e468ff8a2f025636"
+    },
+    {
+      "path": "work/meteor-original/evidence/d3d-init-native-2026-11-06/00515700_Direct3DCreate8.asm",
+      "bytes": 36,
+      "sha256": "d067b33adc99e087bb813d8dccc9001e3510960e1c23f20ea3d7350105f4bc6e"
+    },
+    {
+      "path": "work/meteor-original/evidence/d3d-init-native-2026-11-06/00515700_Direct3DCreate8.c",
+      "bytes": 348,
+      "sha256": "949fb9bf35d282e87301d305c049e2c6048a331adda128d722e486680360c80b"
+    },
+    {
+      "path": "work/meteor-original/evidence/d3d-init-native-2026-11-06/functions.tsv",
+      "bytes": 27,
+      "sha256": "7df889a740cc94764a168d42e46638ade081f47308463203b06bc9f2dc81b68f"
+    },
+    {
+      "path": "work/meteor-original/evidence/d3d-init-native-2026-11-06/references.txt",
+      "bytes": 403,
+      "sha256": "d81648867b56de0a23f50996a75c0211232902461cb3cadd9ad179720b87e69a"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-d3d-caller-native-2026-11-06/00481fe0_FUN_00481fe0.asm",
+      "bytes": 1633,
+      "sha256": "b3a215329d2db37091e60b0809a855ed072d2a142f4a2f4056bca5f8b9ffb1f3"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-d3d-caller-native-2026-11-06/00481fe0_FUN_00481fe0.c",
+      "bytes": 1207,
+      "sha256": "0aa2d342989a305d5063936548f9322c9deb79e8daa0fb9315bf7ae73c15fb4a"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-d3d-caller-native-2026-11-06/00512796_FUN_00512796.asm",
+      "bytes": 193,
+      "sha256": "6ded1fcc2f3b5ae05467c6a80d596cde61138d51936df26f265ccd52c36da0ab"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-d3d-caller-native-2026-11-06/00512796_FUN_00512796.c",
+      "bytes": 235,
+      "sha256": "8e2a77f4db4b7f75bd3971ad793361e9129cc701a0e7a4b741ac00bea4e35ac8"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-d3d-caller-native-2026-11-06/functions.tsv",
+      "bytes": 51,
+      "sha256": "2a686ba57e1b0cd3d2a9095904c6b6d2e6ceb58850767efc1fee5d43294a9314"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-d3d-caller-native-2026-11-06/references.txt",
+      "bytes": 781,
+      "sha256": "2ee9e465a7e366adce2c9fdd6e3436495f9ee107a7b15650d443f21319fe5dbf"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-device-creation-native-2026-11-06/00482e30_FUN_00482e30.asm",
+      "bytes": 9660,
+      "sha256": "ae100846379fca2e622e485212163082937446e68fed35753bbcae1c37d46fc9"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-device-creation-native-2026-11-06/00482e30_FUN_00482e30.c",
+      "bytes": 5271,
+      "sha256": "1322a45d064afe6dcbfcec092c6e8b63d59c310b3d1475de17629f2efc803b6b"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-device-creation-native-2026-11-06/0050f131_FUN_0050f131.asm",
+      "bytes": 116,
+      "sha256": "78e0823d1b9fdc04dddd3e5d80189310e4e49f487d1aaebb2364e80d9ba44622"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-device-creation-native-2026-11-06/0050f131_FUN_0050f131.c",
+      "bytes": 195,
+      "sha256": "49303bf6023818a143ac7663dcb372c093347fb3dea7f4746245698ed96fe732"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-device-creation-native-2026-11-06/0051283e_FUN_0051283e.asm",
+      "bytes": 1147,
+      "sha256": "87809b1db517261cd63f9ad264d474f7da20f43aa9386c7370271eef4a9ae458"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-device-creation-native-2026-11-06/0051283e_FUN_0051283e.c",
+      "bytes": 986,
+      "sha256": "9eaaa25a6a4a474074301f2caf3bf588fc3ce428e1c4b81778fdc2239b9723f7"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-device-creation-native-2026-11-06/functions.tsv",
+      "bytes": 78,
+      "sha256": "726aadab41b3c40e42491f116f3679ca4e878284ce39ea8891910b344a0e293f"
+    },
+    {
+      "path": "work/meteor-original/evidence/fpu-device-creation-native-2026-11-06/references.txt",
+      "bytes": 1361,
+      "sha256": "6a9a74256cfef312360f2d3c271aa74c14e78574c7f98c57de080bf2ab572afd"
+    },
+    {
+      "path": "work/meteor-original/evidence/decompiled/005754d0_FUN_005754d0.c",
+      "bytes": 1101,
+      "sha256": "a8ec06c0ec3f72acf885e53dbaff36575e0eed41ae58cba619fa07740f94758b"
+    },
+    {
+      "path": "work/meteor-original/evidence/combat-motion-bridge-2026-11-06/004cfc00_FUN_004cfc00.asm",
+      "bytes": 1198,
+      "sha256": "492d569b90de9e4ba9991966aad98109a99377f9388bbd651dbee848a7a79efc"
+    },
+    {
+      "path": "work/meteor-original/evidence/combat-scene-delta-native-2026-11-06/004db920_FUN_004db920.c",
+      "bytes": 948,
+      "sha256": "88bddc4d58e38473fe1f530fc06a6300ed309ef2449840b36e2528a66477f207"
+    },
+    {
+      "path": "work/meteor-original/evidence/guard-crt-rand-2026-11-06.asm",
+      "bytes": 545,
+      "sha256": "9b9c1f578a0c0f040d7dd14da6735be467dd9d4e63a446cd6086fe6d5977dedc"
+    },
+    {
+      "path": "scripts/analysis/ReadOnlyFpuPolicy.java",
+      "bytes": 2247,
+      "sha256": "e0a4089b68f316ab555af9e4923697cf97d48abc8e61423fa20647e6172835b9"
+    },
+    {
+      "path": "work/meteor-original/evidence/directional-guard-source-audit-2026-11-06.py",
+      "bytes": 10002,
+      "sha256": "fcd9967186b15453ab6623f053b52e54c1f203acbdeb91ebc9c1a6afb2352b07"
+    }
+  ]
+}

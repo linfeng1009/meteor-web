@@ -1,0 +1,266 @@
+{
+  "id": "E-VFX01",
+  "observedAt": "2026-11-10T02:08:13.503935+00:00",
+  "scope": "work/meteor-original/scope.md",
+  "originalExecuted": false,
+  "version": "0.7.6",
+  "sourceExecutableSha256": "289afb0aa44a47921d167fc24d6d404c60d6d00c299ac27d45fc61e16231b498",
+  "existingImportsEvidence": "E-imports.json",
+  "sourceClockEvidence": "Existing005663e0 EF seconds path; current original POS/EF source-controller audit, no new EXE decompilation in this stage.",
+  "qiankunFinale": {
+    "pose": 456,
+    "hostDurationSeconds": 1.3444444444444648,
+    "oldTailSeconds": 0.18,
+    "oldCutoffSeconds": 1.5244444444444647,
+    "finalVisualKeySeconds": 2.6533334255218506,
+    "sourceShapes": [
+      {
+        "name": "SLASH02",
+        "start": 1.6833332777023315,
+        "end": 1.84333336353302
+      },
+      {
+        "name": "SLASH05",
+        "start": 2.1666667461395264,
+        "end": 2.380000114440918
+      },
+      {
+        "name": "SLASH01",
+        "start": 1.5099999904632568,
+        "end": 1.6833332777023315
+      },
+      {
+        "name": "SLASH04",
+        "start": 2.013333320617676,
+        "end": 2.2333333492279053
+      },
+      {
+        "name": "SLASH03",
+        "start": 1.84333336353302,
+        "end": 2.0433332920074463
+      },
+      {
+        "name": "SLASH06",
+        "start": 2.306666612625122,
+        "end": 2.6533334255218506
+      },
+      {
+        "name": "SLASH_L04",
+        "start": 1.8700000047683716,
+        "end": 2.309999942779541
+      },
+      {
+        "name": "SLASH_L05",
+        "start": 2.003333330154419,
+        "end": 2.4033334255218506
+      },
+      {
+        "name": "SLASH_L02",
+        "start": 1.6033333539962769,
+        "end": 2.0766665935516357
+      },
+      {
+        "name": "SLASH_L06",
+        "start": 2.136666774749756,
+        "end": 2.503333330154419
+      },
+      {
+        "name": "SLASH_L03",
+        "start": 1.743333339691162,
+        "end": 2.2033333778381348
+      },
+      {
+        "name": "SLASH_L01",
+        "start": 1.4733333587646484,
+        "end": 1.9700000286102295
+      }
+    ],
+    "sourceGeometryAndTexturesPreserved": true,
+    "publicInput": "↓↓A → ↓↓↑A",
+    "payOnceRage": 100
+  },
+  "coverage": {
+    "manifestSha256": "e6003856b8045f04f4e81997f83339b7968bda75b9aa2747452fac407fffe5b4",
+    "definitions": 76,
+    "nodeTypes": {
+      "AUDIO": 349,
+      "BILLBOARD": 106,
+      "SPHERE": 154,
+      "PLANE": 160,
+      "PARTICLE": 187,
+      "CYLINDER": 91,
+      "DONUT": 6,
+      "BOX": 47
+    },
+    "texturedSupportedShapes": 392,
+    "textureRecords": 53,
+    "sourceDragPoses": 132,
+    "sourceDragWindows": 143,
+    "supportedWeaponSocketModels": 70,
+    "truncatedEffects": [
+      "pos203",
+      "pos368",
+      "pos311",
+      "pos350",
+      "pos362",
+      "pos326",
+      "pos216",
+      "pos217",
+      "pos215",
+      "pos552",
+      "pos224",
+      "pos554",
+      "pos416",
+      "pos425",
+      "pos426",
+      "pos451",
+      "pos453",
+      "pos454",
+      "pos455",
+      "pos456"
+    ],
+    "unportedTypes": [
+      "PARTICLE",
+      "DONUT"
+    ]
+  },
+  "presentationAdapters": {
+    "brightnessOpacity": 1,
+    "colorGain": 1.15,
+    "minimumTail": 0.18,
+    "naturalTail": "last supported textured visual key, excluding attack-only bounds/audio/unimplemented emitters",
+    "detachedAnchors": "last sampled source pose; internal EF nodes continue animation",
+    "interruption": "cancel live cast and trails; completed detached stages finish unless death/dispose/map/weapon cleanup",
+    "drag": "original POS windows/color/time and original DES blade endpoints; soft ribbon edges and bounded history are Web display",
+    "trailLimits": {
+      "pointsPerStrip": 40,
+      "strips": 24,
+      "samplesPerInterval": 4,
+      "lifetimeScale": 1.35,
+      "lifetimeMin": 0.06,
+      "lifetimeMax": 0.4
+    }
+  },
+  "gameplayRulesChanged": false,
+  "nativeAssetFilesChanged": false,
+  "newDownloadsRequired": false,
+  "browser": {
+    "method": "CUA; visible preview controls run production equip/public inputs/source combat controller; fixed frame comparison uses an unmodified old VFX renderer copy. No browser hidden-state writes. Preview target animation only, not combat/physics.",
+    "screenshots": [
+      "work/skill-vfx-2026-11-10/final-slashes-comparison.jpg",
+      "work/skill-vfx-2026-11-10/final-slashes-bright.jpg",
+      "work/skill-vfx-2026-11-10/blade-trail-comparison.jpg"
+    ],
+    "consoleWarningsOrErrors": [],
+    "originalTextureShaderCompiled": true,
+    "previewNotPackaged": true
+  },
+  "limits": [
+    "Original PARTICLE/DONUT/MODEL renderers and complete native material channels are not implemented.",
+    "Detached anchor snapshot and soft trails are Web presentation adapters, not a claim of exact native renderer recovery.",
+    "No manual mission completion or remote deployment was performed."
+  ],
+  "artifacts": [
+    {
+      "path": "work/skill-vfx-2026-11-10/audit.json",
+      "sha256": "03e54b4ab7c7b9c8e0bd6a545476de88b6448a18c7a1b9972725413cc9cdfa87"
+    },
+    {
+      "path": "work/skill-vfx-2026-11-10/audit.mjs",
+      "sha256": "ff30a8611728e69f404b686e9812bea30f9a54b3cdaf8a415385e19c5e3d42c3"
+    },
+    {
+      "path": "work/skill-vfx-2026-11-10/coverage-audit.json",
+      "sha256": "6332a75b69a292e6d938702a39e53c3282aa107e0b7f256262f66c770ef478c2"
+    },
+    {
+      "path": "work/skill-vfx-2026-11-10/browser-logs.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "work/skill-vfx-2026-11-10/focused-vfx-tests.tap",
+      "sha256": "7c50fa195f1e4d5cd61db0a1761ba5102f794655f33855a40e7072d924f49431"
+    },
+    {
+      "path": "work/skill-vfx-2026-11-10/real-qiankun-tests.tap",
+      "sha256": "883e337ffd4164630935ca075ec2c9c082517c0f7d463181fb8d5f0c99250332"
+    },
+    {
+      "path": "work/skill-vfx-2026-11-10/map-fixture-tests.tap",
+      "sha256": "3298c9c8c7ac424975494109414ddc6141f7514e30e6d1cfa0e39719f457dbc1"
+    },
+    {
+      "path": "work/meteor-original/evidence/native-runtime-vfx-first-2026-11-10.tap",
+      "sha256": "f070744120796e3b136f1b403f388e3ebba4c7ba1811e520d11384d955f48b0c"
+    },
+    {
+      "path": "work/meteor-original/evidence/native-vfx-syntax-2026-11-10.log",
+      "sha256": "d96b3cdea1616414b4299c1f26b161f25e2de01bbe74e6b62fb5ebfded2ac4e8"
+    },
+    {
+      "path": "work/meteor-original/evidence/native-vfx-assets-2026-11-10.log",
+      "sha256": "5cd453bdd097f1977d461fc6c80b711f889497c93b2ffa0d784c8a75bab34229"
+    },
+    {
+      "path": "work/skill-vfx-2026-11-10/final-slashes-comparison.jpg",
+      "sha256": "996c7e218edbc5f5379ebc56bd0b8e97498c8671f0a2d1b4ea6665be5213f8d0"
+    },
+    {
+      "path": "work/skill-vfx-2026-11-10/final-slashes-bright.jpg",
+      "sha256": "6b0d27445d183e157addea26c0fd91cbcaa8079659c4de921b39ed920fb79c1b"
+    },
+    {
+      "path": "work/skill-vfx-2026-11-10/blade-trail-comparison.jpg",
+      "sha256": "af9bb37dc176303bd2417cb9fa40c1db7b501e541a50a8d16eff6bff70b5821a"
+    },
+    {
+      "path": "work/meteor-original/evidence/native-runtime-vfx-final-2026-11-10.tap",
+      "sha256": "84887079edfd13f52ff2b688870295f2e7216c72a49a713fa51a34fafbe1ef09"
+    },
+    {
+      "path": "work/meteor-original/evidence/vfx-validation-start-2026-11-10.json",
+      "sha256": "fcacff0701968cc3b3aa3a8d3707f73ba6c8f992092c7d6d3b749378e38112ad"
+    },
+    {
+      "path": "artifacts/meteor-web-v0.7.6.verification.json",
+      "sha256": "c01b8fa1cb66a2e052cd432875b731d841cf56d8f091acac0fb4c198d6ff0f8c"
+    }
+  ],
+  "finalSuite": {
+    "tests": "381",
+    "pass": "381",
+    "fail": "0",
+    "cancelled": "0",
+    "skipped": "0",
+    "duration_ms": "57799.223625",
+    "allPassed": true
+  },
+  "package": {
+    "archive": "artifacts/meteor-web-v0.7.6.zip",
+    "version": "0.7.6",
+    "bytes": 136390096,
+    "sha256": "edf7ee0cdda734dfad9c55bcc1f4482a48841cd022aaf6ecbf8bc84ee79f193a",
+    "verifiedFiles": 4095,
+    "characters": [
+      {
+        "id": "hutao",
+        "label": "YS-胡桃 · 完整模型适配",
+        "mesh": "dist/assets/enhanced/hutao/mesh.json",
+        "textures": 5
+      },
+      {
+        "id": "raiden",
+        "label": "YS-影 · 礼服 · 完整模型适配",
+        "mesh": "dist/assets/enhanced/raiden/mesh.json",
+        "textures": 7
+      },
+      {
+        "id": "emilia",
+        "label": "RE0-爱蜜莉雅 · 完整模型适配",
+        "mesh": "dist/assets/enhanced/emilia/mesh.json",
+        "textures": 4
+      }
+    ],
+    "originalPmxRequired": false
+  }
+}

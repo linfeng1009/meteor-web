@@ -1,0 +1,152 @@
+{
+  "id": "E-native-hell-semantics",
+  "date": "2026-10-26",
+  "sampleSha256": "289afb0aa44a47921d167fc24d6d404c60d6d00c299ac27d45fc61e16231b498",
+  "method": "Existing Ghidra12.1.4 database, readOnly/noanalysis export; x86 disassembly and original source data only; original EXE not executed or modified.",
+  "status": "static-death-transition-verified",
+  "finding": "Original DES name hell classifies a direct death region, not a numeric periodic damage surface.",
+  "path": [
+    {
+      "va": "00563300",
+      "meaning": "Compares scene property name at object+0x28 with exact NUL-terminated hell string at005d1588; returns type4."
+    },
+    {
+      "va": "005637d0",
+      "meaning": "Registers scene type4 among types3..7 in original scene records; record stride0xac."
+    },
+    {
+      "va": "00564ab0",
+      "meaning": "Queries character+1c4/+1d0 collision bound against active/interactable scene region via00570630; matching scene type4 returns result type2. Leaving original map bounds also returns type2."
+    },
+    {
+      "va": "00494250",
+      "meaning": "Scene vtable005a9068 slot+d8 forwards to00564ab0."
+    },
+    {
+      "va": "004ebc10",
+      "meaning": "Server actor loop calls scene query at004ebca8. Result2 branches at004ebcba to004ebd7e. If alive/active checks pass, sends actor event0x18 (004ebdc9), event0x2c (004ebdda), writesactor+200=2 (004ebdeb), increments death counter+218 (004ebe04) when mode allows, clears timers and source callback state."
+    },
+    {
+      "va": "004af630",
+      "meaning": "Independent HP-zero combat death branch also sends actor event0x18, writesactor+200=2, increments+218 and prints BeKill_hp_d, corroborating the result2 transition as death."
+    }
+  ],
+  "notApplied": [
+    "No periodic damage constant found or needed in the verified hell branch.",
+    "No target defense, guard or team damage formula applied in the verified direct-death branch."
+  ],
+  "limits": [
+    "No original EXE dynamic cross-check.",
+    "This verifies source class/category and native death transition, not exact00570630 overlap primitive, orientation semantics, tolerance or sampling cadence.",
+    "The native result2 branch sets death state but does not explicitly subtract HP; a browser HP=0 display is a host state mapping.",
+    "Original alive/state and active/check gates remain separate from the Web capsule approximation."
+  ],
+  "artifacts": [
+    {
+      "path": "work/meteor-original/evidence/hell-native-2026-10-26/00494250_FUN_00494250.c",
+      "bytes": 228,
+      "sha256": "88c845535bcb15f52620fcd60b2689fa59e6df6568e0cc8f887252e4813c0ce5"
+    },
+    {
+      "path": "work/meteor-original/evidence/hell-native-2026-10-26/00564ab0_FUN_00564ab0.asm",
+      "bytes": 8740,
+      "sha256": "7d8c3ad31cd28661f2f82c8d3c399265af399f59bfd0882dc95e59616e5c05d2"
+    },
+    {
+      "path": "work/meteor-original/evidence/hell-native-2026-10-26/00563300_FUN_00563300.asm",
+      "bytes": 4799,
+      "sha256": "d48d695fbbcbf4501935d4249f159ada3e6f3d0156b48623e7466ccc1ca36581"
+    },
+    {
+      "path": "work/meteor-original/evidence/hell-native-2026-10-26/functions.tsv",
+      "bytes": 77,
+      "sha256": "0b0048a2e5ed3a6b8bd0c1037197fd28d132e47d8fbafbf2aa270375325f4761"
+    },
+    {
+      "path": "work/meteor-original/evidence/hell-native-2026-10-26/00563300_FUN_00563300.c",
+      "bytes": 4569,
+      "sha256": "be5575b9d0e58de078ca9a7abc70ab7a8c7bf808f6b9688276651dec87cb953e"
+    },
+    {
+      "path": "work/meteor-original/evidence/hell-native-2026-10-26/00564ab0_FUN_00564ab0.c",
+      "bytes": 4683,
+      "sha256": "3e14900a5f65595a4c5e977df5761d211084922fddda4f4ee704979fce9f004c"
+    },
+    {
+      "path": "work/meteor-original/evidence/hell-native-2026-10-26/references.txt",
+      "bytes": 1489,
+      "sha256": "ab0382ade940710eefa207312c3791d002934ebbdb942ffe54bad984e70b309d"
+    },
+    {
+      "path": "work/meteor-original/evidence/hell-native-2026-10-26/00494250_FUN_00494250.asm",
+      "bytes": 234,
+      "sha256": "49ab39fb52dd9c9a828a0d1c53ab297cbb01f9af0998be8de233387cf71436c4"
+    },
+    {
+      "path": "work/meteor-original/evidence/hell-native-consumers-2026-10-26/004eca2d_FUN_004eca2d.asm",
+      "bytes": 2680,
+      "sha256": "ca76b0003b5fbb54c2c61f51f0139b18bc652f85007e26eee0840ad9b1a84f0b"
+    },
+    {
+      "path": "work/meteor-original/evidence/hell-native-consumers-2026-10-26/functions.tsv",
+      "bytes": 130,
+      "sha256": "6557ab9e80cac968efcdc008d05f67041646b08e5ebd370ef7dc8f17b80ddfa9"
+    },
+    {
+      "path": "work/meteor-original/evidence/hell-native-consumers-2026-10-26/004ebc10_FUN_004ebc10.asm",
+      "bytes": 6894,
+      "sha256": "f8860fac776e66d22bc1bb871ac07fecc0659a52c7cd6029c1777d9e2c95e187"
+    },
+    {
+      "path": "work/meteor-original/evidence/hell-native-consumers-2026-10-26/004b14c0_FUN_004b14c0.c",
+      "bytes": 2906,
+      "sha256": "74cd6074d63eaed5bd521a1113c4751f77ee320163e9b0b002bd950d9284f94c"
+    },
+    {
+      "path": "work/meteor-original/evidence/hell-native-consumers-2026-10-26/004f2bfd_FUN_004f2bfd.c",
+      "bytes": 195,
+      "sha256": "4c3f7d4725e566a2ff7e36bf4030f0393a1323b9a8dbc471df0ba75f12755d07"
+    },
+    {
+      "path": "work/meteor-original/evidence/hell-native-consumers-2026-10-26/004cc130_FUN_004cc130.c",
+      "bytes": 5969,
+      "sha256": "939673a70dde2dd0eef5426fe822dec8d21f20714f65ad1b13493f35f7820a68"
+    },
+    {
+      "path": "work/meteor-original/evidence/hell-native-consumers-2026-10-26/004f2bfd_FUN_004f2bfd.asm",
+      "bytes": 126,
+      "sha256": "cf9e14f9dc4c8c168144ba167e6ff6fdd0b6989bf5906b8df21db2455aa1ae98"
+    },
+    {
+      "path": "work/meteor-original/evidence/hell-native-consumers-2026-10-26/004b14c0_FUN_004b14c0.asm",
+      "bytes": 4839,
+      "sha256": "512051916127a43de0c113c19662602e8487225aa94a878c8b08fc8ce0b683b0"
+    },
+    {
+      "path": "work/meteor-original/evidence/hell-native-consumers-2026-10-26/references.txt",
+      "bytes": 1919,
+      "sha256": "4cdf1f70ba44a6b323dee563605c5fc1868817ea1cabf0e23086b6552502df20"
+    },
+    {
+      "path": "work/meteor-original/evidence/hell-native-consumers-2026-10-26/004ebc10_FUN_004ebc10.c",
+      "bytes": 4848,
+      "sha256": "2ff6e27a6649400c4bf438970c4a47f95dcf4491480a6d1515bfd7bdfcee015a"
+    },
+    {
+      "path": "work/meteor-original/evidence/hell-native-consumers-2026-10-26/004eca2d_FUN_004eca2d.c",
+      "bytes": 2239,
+      "sha256": "5042fb695535a35a649e9ca5eec6932c6a9cadf444d93c321c255b11ae899fba"
+    },
+    {
+      "path": "work/meteor-original/evidence/hell-native-consumers-2026-10-26/004cc130_FUN_004cc130.asm",
+      "bytes": 10798,
+      "sha256": "c764383f119697906e585c3caed5964a60144257657da2669edbe3026fb06c83"
+    },
+    {
+      "path": "work/meteor-original/evidence/decompiled/004af630_FUN_004af630.c",
+      "bytes": 6614,
+      "sha256": "1a970412cbbae8f8e9c4be28309fd7d188f26bf19a8986abf323606921bb85af"
+    }
+  ],
+  "reproduction": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home /opt/homebrew/Cellar/ghidra/12.1.4/libexec/support/analyzeHeadless work/meteor-original/ghidra-project MeteorOriginal -process Meteor.exe -readOnly -noanalysis -scriptPath scripts/analysis -postScript ReadOnlyProjectileTrace.java work/meteor-original/evidence/hell-native-reproduce 00563300 00564ab0 00494250 004ebca8 004af630"
+}

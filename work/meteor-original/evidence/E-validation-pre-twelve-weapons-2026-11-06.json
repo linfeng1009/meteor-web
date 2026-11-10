@@ -1,0 +1,145 @@
+{
+  "id": "E-validation-current",
+  "observedAt": "2026-11-06T09:06:55.941745+08:00",
+  "version": "0.6.1",
+  "scope": "work/meteor-original/scope.md",
+  "originalExecuted": false,
+  "status": "validated-local-working-tree",
+  "fullSuite": {
+    "command": "npm test",
+    "total": 234,
+    "passed": 234,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "durationMs": 28716.11525,
+    "runner": "lead",
+    "artifactPath": "evidence/native-runtime-motion-fidelity-2026-11-06.tap",
+    "contentHash": "sha256:f02e7719b5f29ffca77a5a98b2ded4bf3882012d8bb725aa7dc9309b00e01d07",
+    "rawTapArchived": true
+  },
+  "syntax": {
+    "command": "npm run check",
+    "runtimeModules": 19,
+    "passed": 19,
+    "failed": 0,
+    "artifactPath": "evidence/native-motion-fidelity-syntax-2026-11-06.log"
+  },
+  "assets": {
+    "verifiedEntries": 3858,
+    "issues": 0,
+    "artifactPath": "evidence/E-asset-coverage-current.json"
+  },
+  "newMissions": {
+    "artifactPath": "evidence/E-new-missions-2026-11-06.json",
+    "integrationTests": 8,
+    "scriptItemTests": 5,
+    "missions": [
+      "sn09",
+      "sn15"
+    ]
+  },
+  "motionIntegration": {
+    "sourceEvidence": "evidence/E-combat-motion-source-2026-11-06.json",
+    "sourceEvidenceSha256": "784715e2f13c73cad9485582e31230ce0a2ecd0f168c94db75ba70c4531af2c8",
+    "motionTrack": "original AMB d_base; raw differences rotated by Web actor yaw, through collision/hazard host",
+    "reaction": "original Move multiplier and Value minimum duration with native uint16/float32 packet rounding",
+    "naturalCommandRoutes": {
+      "ready": 111,
+      "blocked": 7,
+      "extraAltitudeAssigned": false,
+      "naturalDaggerAirChain": [
+        245,
+        246,
+        247
+      ],
+      "fixtureBoundary": "Individual route fixtures reset spawn and rage; CPU textures/audio/rendering and enemy retaliation omitted."
+    },
+    "bugsFixed": [
+      "one-frame air pose sampled adjacent frame and never landed",
+      "accepted ACT continuation dropped after landing",
+      "attackless startup movement omitted"
+    ],
+    "reportPath": "work/meteor-original/report/2026-11-06_逆向-原位移与受击时长-report.md"
+  },
+  "browser": {
+    "completed": false,
+    "inApp": "Timed out waiting for Browser webview to attach.",
+    "chrome": "Computer Use was not approved to use Google Chrome; no further reason returned.",
+    "hiddenGameStateManipulated": false,
+    "screenshot": null,
+    "manualCompletionAsserted": false,
+    "attemptedThisStage": false,
+    "priorAttemptArtifact": "evidence/E-validation-pre-motion-2026-11-06.json"
+  },
+  "deployment": {
+    "changed": false,
+    "note": "Local working tree only; no publishing or asset upload attempted."
+  },
+  "boundaries": [
+    "Five other source story missions remain outside the playable registry; four currently registered missions pass regression.",
+    "Full scene-vector production, rotation, directional target-pose selection, guard recoil and forced-hit blending remain incomplete.",
+    "D_base authored motion is integrated; freefall gravity, collision, jump decisions and NPC navigation remain Web adapters.",
+    "An accepted ACT continuation survives landing by an explicit Web input-host policy; exact original input scheduling is not recovered.",
+    "NPC secondary gun/flywheel behavior, remaining five weapon families, complete EF, original PRNG/clock and full native combat fidelity remain incomplete.",
+    "CPU individual command routes and isolated mission chains are not complete human playthroughs or proof of all remote EF effects.",
+    "Source P0 target Move/Value are present and nonnegative; unknown generic negative duration sentinels are not implemented.",
+    "Native inspected loop clamp discards excess update time; universal frame-partition equivalence is not asserted.",
+    "The combat-fidelity goal remains active; this motion stage does not complete the full port."
+  ],
+  "moduleSha256": {
+    "server.mjs": "20b47ebac81b6ba72edde122661d915634e319922f352e4a49d2b4a7ad08b429",
+    "package.json": "bcb0346ec2df31276b393f8074a94e83a26de4f92fa4fafc6884745ef438dc42",
+    "dist/index.html": "5f3ce8f3da17adacc4fdb2e69760d97f5189202e958ce77acbfaeea95e6813db",
+    "dist/style.css": "b7704d5570cc7b31e594072216bca49241478c1b29eaa4c81e32240f6f93973b",
+    "dist/app.js": "70e36aa4ea42ebdd5a9de0b6a78395a84084ace53be7e3932fac6501b4b1dadb",
+    "dist/character-appearances.js": "611c1e892f2c4c1133588d0e4e9dc5980bc6ce88ee674f19c426c32d70165c00",
+    "dist/character-compare.js": "e190e41ac84fa24e5193ffdd1771155851214b65f7ecfb5505c125bb257a1429",
+    "dist/engine.js": "f075fec2e93d2a16cb0e861bb8653fad1acc4c0a2ba72c713dd5ca98bb2b5f67",
+    "dist/gmc-loader.js": "849cc2c5a1a6c25f27864f9974dd36c99dae31bfe338b7fbdb57297e3341db5b",
+    "dist/native-character.js": "16e530ee59b21efd5296572d7e48febb20ec97a7f8ec9cff99db87f9a1c5e89b",
+    "dist/native-combat.js": "0d370cd72f7d5a86d76082627313017d70c3a497e7c1a1d116ded5c922b7a8fe",
+    "dist/native-environment.js": "4afb874e1379818263fa09f503a4f4fb46e8878e20abf46d6dc47c40a2cc68ac",
+    "dist/native-impact-feedback.js": "087e11c85945ab5b33ee6c8b64aaf933f1f499f1fdbf329c5270bfc8aa797a5f",
+    "dist/native-input.js": "0300733187353aad0ebb8598212846e8cec11ef673a1f1ea09d920825b299b33",
+    "dist/native-items.js": "77cf3168a19656877148f59fd5c7f44181c5d3fe44b51290ecae73367da3e5dd",
+    "dist/native-mission-host.js": "939bb594186961044719eec7dfe18fea98a25488adf1700c27de9b816cda8d1c",
+    "dist/native-missions.js": "6c80c3b2b6e26b60c1c768cdef9dd9bd37a2de3dfcae930ae8363ce2020eefc2",
+    "dist/native-move-catalog.js": "e01051c7f778800408f034a402bf6ff87965902ec04b1df5a00a1a9327fda921",
+    "dist/native-move-guide.js": "18803efd31b424651da2a012ebec1999b53afda8b93fa33f95da94ca5660eb68",
+    "dist/native-projectiles.js": "201e32251adc6f3ede67dee5308aa356a1b62d1f9940b9df33947b1c67cdd0ed",
+    "dist/native-scene-models.js": "a2fa31f694b7576ed8fc628fcf8d4994f278b7e17d059a8e538405bd02d0b468",
+    "dist/native-script.js": "5ac8f1f947e6d113b653195ae1deb203a9afc660a423acc501335f4ec00761ff",
+    "tests/native-command-engine.test.mjs": "9a19a7f41967bbfe6f310277bf7ebc7ba0c8d287d895e76452986629ddf6a900",
+    "tests/native-hit-reaction.test.mjs": "3f00134f56a21b9ed836f4d53d15abf67d3f4e73bab1195a32ace77dbaf71337",
+    "tests/native-combo-controller.test.mjs": "69515dee5a47ec2ffe757bd2b2d8e11726101d2659bcefa4a4ec57e3fb746214",
+    "tests/native-mission-expansion.test.mjs": "0dbdcb2647d8302742453e0a232d3f9fad620129429691b200eb70a83b452b9c",
+    "tests/native-mission-island.test.mjs": "b6d37604d6a901a96db396bc430e0e9693660d7cab4ac11ce87dfb292a00f3ff",
+    "tests/native-jump-camera.test.mjs": "ec1312468c7b6275f2593e5bcc6c4a29f4bc6fe15ac82d22b343e043cdb384df",
+    "tests/native-mission-weapons.test.mjs": "597f5b685fdd13f8c02f077ed6fd42a96900d9939d52f8f2334996e98fef49ae",
+    "tests/helpers/native-mission-fixture.mjs": "1af9712c62fc8b91e8829f86469cf49b8241e0b95680d54f034e2bf21bffa6b4"
+  },
+  "artifacts": [
+    {
+      "path": "work/meteor-original/evidence/E-combat-motion-source-2026-11-06.json",
+      "sha256": "784715e2f13c73cad9485582e31230ce0a2ecd0f168c94db75ba70c4531af2c8"
+    },
+    {
+      "path": "work/meteor-original/report/2026-11-06_逆向-原位移与受击时长-report.md",
+      "sha256": "d3600f75cb1fbf63f5aaacacccea0871bdecee6560a10f6fed672fcb2fc8f80d"
+    },
+    {
+      "path": "README.md",
+      "sha256": "d914c6fde7076f5c119dc455bce7e8a0acb31a156d3138e68e324266af41ac2b"
+    },
+    {
+      "path": "work/meteor-original/evidence/native-motion-fidelity-syntax-2026-11-06.log",
+      "sha256": "1effc0155ed72f4dfce35c9e9974e2d748e4530db9cc774b1f66221a58c388ad"
+    },
+    {
+      "path": "work/meteor-original/evidence/E-asset-coverage-current.json",
+      "sha256": "b8142dcc80ba2b91e9fe53fa13e261ddc76fb95d3e67ae6e4949e8d71c3acf76"
+    }
+  ],
+  "historicalValidation": "evidence/E-validation-pre-motion-2026-11-06.json"
+}

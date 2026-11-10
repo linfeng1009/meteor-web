@@ -1,0 +1,84 @@
+{
+  "id": "E-validation-current",
+  "observedAt": "2026-11-06",
+  "version": "0.6.0",
+  "scope": "work/meteor-original/scope.md",
+  "originalExecuted": false,
+  "status": "validated-local-working-tree",
+  "fullSuite": {
+    "command": "npm test",
+    "total": 228,
+    "passed": 228,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "durationMs": 29351.317708,
+    "runner": "lead",
+    "artifactPath": "evidence/native-runtime-new-missions-2026-11-06.tap",
+    "contentHash": "sha256:0d12ad5d82dad9acc8c879c3bb6904c7870575d6120c8699e931cd45c2efd292",
+    "rawTapArchived": true
+  },
+  "syntax": {
+    "command": "npm run check",
+    "runtimeModules": 19,
+    "passed": 19,
+    "failed": 0,
+    "artifactPath": "evidence/native-new-missions-syntax-2026-11-06.log"
+  },
+  "assets": {
+    "verifiedEntries": 3858,
+    "issues": 0,
+    "artifactPath": "evidence/E-asset-coverage-current.json"
+  },
+  "newMissions": {
+    "artifactPath": "evidence/E-new-missions-2026-11-06.json",
+    "integrationTests": 8,
+    "scriptItemTests": 5,
+    "missions": [
+      "sn09",
+      "sn15"
+    ]
+  },
+  "browser": {
+    "completed": false,
+    "inApp": "Timed out waiting for Browser webview to attach.",
+    "chrome": "Computer Use was not approved to use Google Chrome; no further reason returned.",
+    "hiddenGameStateManipulated": false,
+    "screenshot": null,
+    "manualCompletionAsserted": false
+  },
+  "deployment": {
+    "changed": false,
+    "note": "Local working tree only; no publishing or asset upload attempted."
+  },
+  "boundaries": [
+    "Five other source story missions remain outside the playable registry; non-script maps are not presented as story missions.",
+    "NPC secondary gun/flywheel behavior, complete EF, original PRNG/navigation/clock scheduling and full native combat/input fidelity remain incomplete.",
+    "sn09 uses a waypoint-directed CPU input driver, not a human browser playthrough; sn15 win/escape isolate specified systems.",
+    "The previous combat-fidelity goal remains active; these mission checks do not complete the full port.",
+    "Interrupted flight, freefall gravity, collision, jump decision timing and full native movement are Web adapters. Natural full air-chain parity is not asserted; catalog routing fixture uses controlled high altitude.",
+    "Web fractional elapsed-second accumulation; native per-server-tick truncation/scheduling not recovered."
+  ],
+  "moduleSha256": {
+    "dist/native-missions.js": "6c80c3b2b6e26b60c1c768cdef9dd9bd37a2de3dfcae930ae8363ce2020eefc2",
+    "dist/native-mission-host.js": "939bb594186961044719eec7dfe18fea98a25488adf1700c27de9b816cda8d1c",
+    "dist/native-items.js": "77cf3168a19656877148f59fd5c7f44181c5d3fe44b51290ecae73367da3e5dd",
+    "dist/native-character.js": "16e530ee59b21efd5296572d7e48febb20ec97a7f8ec9cff99db87f9a1c5e89b",
+    "dist/native-combat.js": "843b5abce20a10e3dcc0446a34c3f310dd1f3bc40673a02903ba3f386b217935",
+    "dist/native-input.js": "0300733187353aad0ebb8598212846e8cec11ef673a1f1ea09d920825b299b33",
+    "dist/native-move-catalog.js": "e01051c7f778800408f034a402bf6ff87965902ec04b1df5a00a1a9327fda921",
+    "dist/native-move-guide.js": "18803efd31b424651da2a012ebec1999b53afda8b93fa33f95da94ca5660eb68",
+    "dist/engine.js": "c442494980aeb24f7730e17aee027b2cd2747386eb511f76a322d5a6a935f3fb",
+    "dist/app.js": "70e36aa4ea42ebdd5a9de0b6a78395a84084ace53be7e3932fac6501b4b1dadb",
+    "dist/index.html": "e400ae6213fa1083c060c683136204df112fba81cb5c11dc85b8caf7f3130e54",
+    "dist/style.css": "b7704d5570cc7b31e594072216bca49241478c1b29eaa4c81e32240f6f93973b",
+    "package.json": "8aebb2fbf40050c7fc97edce0572cdd2ab2489fa7280e8d84dd0fc76933c25ae",
+    "tests/native-mission-expansion.test.mjs": "00c7caa7aa24b1f40d007ec0288bc7bd27198d1f5ca801c0728e8df648e81e1f",
+    "tests/helpers/native-mission-fixture.mjs": "1af9712c62fc8b91e8829f86469cf49b8241e0b95680d54f034e2bf21bffa6b4",
+    "tests/native-script-items.test.mjs": "f9e60f2889a0c5b681e6c2a340466df215066051eaf3fcaddde61297f02606dd",
+    "tests/native-jump-camera.test.mjs": "ec1312468c7b6275f2593e5bcc6c4a29f4bc6fe15ac82d22b343e043cdb384df",
+    "tests/native-command-engine.test.mjs": "2c2588f9c40399c1a397a03ba721dbb4a7f3cf4f07365ccf84b18f183dfa824d",
+    "tests/mission-acceptance.test.mjs": "a0050003995e1533bc08cbaaefde4246c64abd349bf4dde4dc87000c0836cf9f"
+  },
+  "historicalValidation": "evidence/E-validation-pre-missions-2026-11-06.json"
+}

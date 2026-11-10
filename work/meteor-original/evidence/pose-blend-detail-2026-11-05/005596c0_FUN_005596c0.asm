@@ -1,0 +1,4 @@
+005596c0 MOV EAX,dword ptr [ESP + 0x4]
+005596c4 MOV dword ptr [ECX + 0x110],EAX
+005596ca MOV EAX,0x1
+005596cf RET 0x4

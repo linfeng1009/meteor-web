@@ -1,0 +1,79 @@
+import * as THREE from './vendor/three.module.js';
+
+// Original PonEF channels and bindings, shared by drawing and attack queries.
+// Interpolation and the native-to-Web transform are host implementations.
+const ROOT = new URL('./assets/original/rage-vfx/', import.meta.url);
+const NATIVE_TO_WEB = new THREE.Matrix4().makeRotationX(-Math.PI / 2);
+const UNIT = new THREE.Vector3(1, 1, 1);
+let manifestPromise;
+export function loadNativeEffectManifest() {
+  return manifestPromise ||= fetch(new URL('manifest.json', ROOT)).then(response => {
+    if (!response.ok) throw new Error('Original effect manifest unavailable');
+    return response.json();
+  }).catch(error => { manifestPromise = null; throw error; });
+}
+
+export function sampleEffectKeys(keys, time, result = new Array(28)) {
+  if (!keys?.length || !Number.isFinite(time)) return null;
+  let lo = keys[0], hi = lo;
+  if (time >= keys.at(-1)[0]) lo = hi = keys.at(-1);
+  else for (let i = 1; i < keys.length; i++) { hi = keys[i]; if (time <= hi[0]) { lo = keys[i - 1]; break; } }
+  const t = hi[0] > lo[0] ? THREE.MathUtils.clamp((time - lo[0]) / (hi[0] - lo[0]), 0, 1) : 0;
+  for (let i = 0; i < 28; i++) result[i] = THREE.MathUtils.lerp(lo[i], hi[i], t);
+  const a = new THREE.Quaternion(...lo.slice(4, 8)).normalize(), b = new THREE.Quaternion(...hi.slice(4, 8)).normalize();
+  a.slerp(b, t); result.splice(4, 4, a.x, a.y, a.z, a.w);
+  return result;
+}
+
+export function createEffectTransforms(actor, definition, manifest) {
+  const graph = { actor, manifest, time: 0, nodes: [], names: new Map() };
+  for (const source of definition.nodes) {
+    const node = { source, matrix: new THREE.Matrix4(), local: new THREE.Matrix4(), key: new Array(28), valid: false };
+    graph.nodes.push(node);
+    if (source.type !== 'AUDIO' && !graph.names.has(source.name.toLowerCase())) graph.names.set(source.name.toLowerCase(), node);
+  }
+  return graph;
+}
+export function setEffectTime(graph, time) {
+  graph.time = time;
+  for (const node of graph.nodes) { node.updated = false; node.valid = false; }
+}
+
+function anchor(graph, name, visiting) {
+  const { actor, manifest } = graph, key = String(name || 'Character').toLowerCase();
+  if (key === 'character') {
+    if (actor.character.nativeSpace) { actor.character.nativeSpace.updateWorldMatrix(true, false); return actor.character.nativeSpace.matrixWorld; }
+    actor.root.updateWorldMatrix(true, false);
+    return actor.root.matrixWorld.clone().multiply(NATIVE_TO_WEB).scale(new THREE.Vector3().setScalar(.08));
+  }
+  const parent = graph.names.get(key);
+  if (parent) return effectNodeMatrix(graph, parent, visiting);
+  const attachment = actor.character.getAttachment?.(name) || actor.character.getAttachment?.(name.trim().replace(/\s+/g, '_'));
+  if (attachment) { attachment.updateWorldMatrix(true, false); return attachment.matrixWorld; }
+  for (const model of actor.weaponModels || (actor.weaponModel ? [actor.weaponModel] : [])) {
+    const dummy = manifest.weaponAttachments?.[model.name.toLowerCase()]?.[key];
+    if (!dummy) continue;
+    model.updateWorldMatrix(true, false);
+    const q = dummy.quaternion, local = new THREE.Matrix4().compose(new THREE.Vector3(...dummy.position), new THREE.Quaternion(q[1], q[2], q[3], q[0]).normalize(), UNIT);
+    return model.matrixWorld.clone().multiply(NATIVE_TO_WEB).multiply(local);
+  }
+  return null;
+}
+export function effectNodeMatrix(graph, node, visiting = new Set()) {
+  if (node.updated) return node.valid ? node.matrix : null;
+  if (visiting.has(node)) return null;
+  visiting.add(node); node.updated = true; node.valid = false;
+  const source = node.source, key = sampleEffectKeys(source.keys, graph.time, node.key);
+  if (!key) { visiting.delete(node); return null; }
+  const positionAnchor = anchor(graph, source.bindings[0], visiting), rotationAnchor = source.bindings[0] === source.bindings[1] ? positionAnchor : anchor(graph, source.bindings[1], visiting);
+  if (!positionAnchor || !rotationAnchor) { visiting.delete(node); return null; }
+  const position = new THREE.Vector3(...key.slice(1, 4)), quaternion = new THREE.Quaternion(...key.slice(4, 8)).normalize(), scale = new THREE.Vector3(...key.slice(8, 11));
+  if (positionAnchor === rotationAnchor) node.matrix.copy(positionAnchor).multiply(node.local.compose(position, quaternion, scale));
+  else {
+    const origin = new THREE.Vector3(), rotation = new THREE.Quaternion(), inheritedScale = new THREE.Vector3();
+    rotationAnchor.decompose(origin, rotation, inheritedScale); position.applyMatrix4(positionAnchor);
+    node.matrix.compose(position, rotation.multiply(quaternion), scale.multiply(inheritedScale));
+  }
+  node.valid = node.matrix.elements.every(Number.isFinite); visiting.delete(node);
+  return node.valid ? node.matrix : null;
+}

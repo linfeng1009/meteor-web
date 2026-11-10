@@ -1,0 +1,14 @@
+flowchart LR
+  fields["原 POS 方向字段"] --> sector["原方向扇区"]
+  facing["朝向与目标到攻击者向量"] --> sector
+  sector --> direction["方向码与目标 Pose"]
+  direction --> guard{"原 AttackType / guard 分支"}
+  guard -->|"普通受击"| hit["方向受击 Pose"]
+  guard -->|"格挡"| table["防御者原兵器 Pose 表"]
+  hit --> timing["原 .12 / 表内 .01 过渡"]
+  table --> timing
+  timing --> blend["Web 混合与原帧播放"]
+  snapshot["Web 当前显示姿态快照"] --> blend
+  blend --> motion["原 Move / Value 与 d_base"]
+  motion --> collision["Web 墙体 / 地面 / 险地检测"]
+  blend --> output["原骨骼 / 挂点 / 事件 / 音效"]

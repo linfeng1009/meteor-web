@@ -1,0 +1,33 @@
+TAP version 13
+# Subtest: dagger YanLuo uses its original effect-only box window, source109 reaction and349 finish through public input
+not ok 1 - dagger YanLuo uses its original effect-only box window, source109 reaction and349 finish through public input
+  ---
+  duration_ms: 201.511542
+  type: 'test'
+  location: '/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/tests/native-effect-contacts.test.mjs:86:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/tests/native-effect-contacts.test.mjs:99:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# [{"frame":9551,"time":0.6666666666666671,"position":[0,0.01499999999999946,2.4270050048828127],"boxes":[[0,1.6149999999999993,3.648626347855979]]},{"frame":9551.25,"time":0.6833333333333338,"position":[0,0.014999999999999326,3.0337562561035156],"boxes":[[0,1.614999999999999,4.255377599076682]]},{"frame":9551.5,"time":0.7000000000000005,"position":[0,0.014999999999999191,3.6405075073242186],"boxes":[[0,1.614999999999999,4.429696423437919]]},{"frame":9551.75,"time":0.7166666666666672,"position":[0,0.014999999999999056,4.2472587585449215],"boxes":[[0,1.614999999999999,4.604015247799158]]},{"frame":9552,"time":0.733333333333334,"position":[0,0.014999999999998922,4.8540100097656245],"boxes":[[0,1.614999999999999,4.778334072160396]]},{"frame":9552.25,"time":0.7500000000000007,"position":[0,0.014999999999998787,5.460761260986327],"boxes":[[0,1.614999999999999,4.952652896521634]]},{"frame":9552.5,"time":0.7666666666666674,"position":[0,0.014999999999998652,6.06751251220703],"boxes":[[0,1.6149999999999989,5.126971720882872]]},{"frame":9552.75,"time":0.7833333333333341,"position":[0,0.014999999999998518,6.674263763427733],"boxes":[[0,1.6149999999999989,5.474263763427734]]},{"frame":9553,"time":0.8000000000000008,"position":[0,0.014999999999998383,7.281015014648436],"boxes":[[0,1.6149999999999987,6.081015014648437]]},{"frame":9553,"time":0.8166666666666675,"position":[0,0.014999999999998383,7.281015014648436],"boxes":[[0,1.6149999999999987,6.081015014648437]]},{"frame":9553,"time":0.8333333333333343,"position":[0,0.014999999999998383,7.281015014648436],"boxes":[[0,1.6149999999999987,6.081015014648437]]},{"frame":9553,"time":0.850000000000001,"position":[0,0.014999999999998383,7.281015014648436],"boxes":[[0,1.6149999999999987,6.081015014648437]]},{"frame":9553,"time":0.8666666666666677,"position":[0,0.014999999999998383,7.281015014648436],"boxes":[[0,1.6149999999999987,6.081015014648437]]}]
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 330.771292

@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: mission source items retain their actual dual or hammer models, handedness and original stance
+ok 1 - mission source items retain their actual dual or hammer models, handedness and original stance
+  ---
+  duration_ms: 70.3375
+  type: 'test'
+  ...
+# Subtest: dual ordinary attack inputs traverse actual native bones and each source window once
+ok 2 - dual ordinary attack inputs traverse actual native bones and each source window once
+  ---
+  duration_ms: 29.090541
+  type: 'test'
+  ...
+# Subtest: hammer ordinary attack inputs traverse actual native bones and each source window once
+ok 3 - hammer ordinary attack inputs traverse actual native bones and each source window once
+  ---
+  duration_ms: 18.024333
+  type: 'test'
+  ...
+# Subtest: dual actual blocked first strike preserves HP and selects its source guard sound family
+ok 4 - dual actual blocked first strike preserves HP and selects its source guard sound family
+  ---
+  duration_ms: 7.35675
+  type: 'test'
+  ...
+# Subtest: hammer actual blocked first strike preserves HP and selects its source guard sound family
+ok 5 - hammer actual blocked first strike preserves HP and selects its source guard sound family
+  ---
+  duration_ms: 4.571333
+  type: 'test'
+  ...
+# Subtest: mission weapon profiles retain authored airborne chains and guard poses without claiming a full directional catalog
+ok 6 - mission weapon profiles retain authored airborne chains and guard poses without claiming a full directional catalog
+  ---
+  duration_ms: 0.29025
+  type: 'test'
+  ...
+# Subtest: ordinary jump and attack inputs render the original dual and hammer air poses and return to their source stances
+ok 7 - ordinary jump and attack inputs render the original dual and hammer air poses and return to their source stances
+  ---
+  duration_ms: 23.90475
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 275.976333

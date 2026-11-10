@@ -159,7 +159,17 @@ test('real native attacks defeat source NPC HP and produce one story win, then r
     game._placeFighter(game.hero, { position: victim.root.position.clone().add(vector(0, 0, -1.1)) });
     game.locked = victim;
     for (let frame = 0; frame < 6000 && !victim.dead && game.running; frame++) {
-      game.action('attack');
+      // Plain dagger input is the source 248→249 chain; 250/251 need ↑A.
+      // Time the second click after the first actual hit window instead of
+      // clicking every rendered frame and cancelling the first strike before
+      // it can contact. The real original cancel graph still controls linking.
+      const combat = game.hero.combat, timeline = combat.timeline;
+      // Keep the controlled contact fixture near the stationary victim after
+      // each complete combo; native entry-frame/root motion can carry the
+      // attacker past them. This is not movement or live-AI acceptance.
+      if (!combat.busy) game._placeFighter(game.hero, { position: victim.root.position.clone().add(vector(0, 0, -1.1)) });
+      const lastHit = Math.max(...(timeline?.pose.attacks.map(attack => attack.end) || []));
+      if (!combat.busy || combat.queued == null && timeline.canCancel && timeline.frame > lastHit) game.action('attack');
       tick(game, 1 / 60, { enemies: false });
     }
     assert.equal(victim.dead, true, `normal dagger attacks did not defeat ${victim.name} (HP=${victim.hp})`);
@@ -182,9 +192,15 @@ test('real native attacks defeat source NPC HP and produce one story win, then r
   assert.equal(game.kills, 0); assert.equal(game.deaths, 0); assert.equal(game.storyResult, null);
 });
 
-test('walking normally into the source enemies causes player death and one failure, and restart resets accumulated state', async () => {
-  const { game, endings } = await cave();
+for (const seed of [1, 2, 3, 4]) test(`walking normally into the source enemies causes player death and one failure, and restart resets accumulated state (jitter seed ${seed})`, async t => {
+  // Control browser AI cooldown jitter so failures can be replayed. This is
+  // test input, not recovery of the original process-wide random sequence.
+  const priorRandom = Math.random; let randomState = seed;
+  Math.random = () => { randomState = (Math.imul(randomState, 214013) + 2531011) >>> 0; return ((randomState >>> 16) & 32767) / 32768; };
+  t.after(() => { Math.random = priorRandom; });
+  const { game, endings, events } = await cave();
   const host = game.missionHost;
+  const recent = [];
   for (const id of host.route(9, 53)) {
     const goal = host.points.get(id).navigationPosition;
     for (let frame = 0; frame < 600 && game.running; frame++) {
@@ -199,16 +215,31 @@ test('walking normally into the source enemies causes player death and one failu
   // the living enemies rather than overriding that original script intent.
   for (let frame = 0; frame < 3600 && game.running; frame++) {
     const enemy = game._nearest(), delta = enemy.root.position.clone().sub(game.hero.root.position);
+    if (frame % 300 === 0) recent.push({ time: game.matchElapsed, hp: game.hero.hp, position: game.hero.root.position.toArray(),
+      enemies: game.enemies.map(actor => ({ id: actor.scriptId, position: actor.root.position.toArray(), intent: actor.scriptIntent?.mode,
+        paused: actor.scriptControl?.paused, canAttack: actor.scriptControl?.canAttack, distance: actor.root.position.distanceTo(game.hero.root.position),
+        lineOfSight: game.hasScriptLineOfSight(actor, game.hero), pose: actor.combat.timeline?.pose.id })) });
     game.action('forward', false);
     if (Math.hypot(delta.x, delta.z) > 1.1) {
       game.cameraAngle = Math.atan2(-delta.x, -delta.z); game.action('forward');
     }
     tick(game, 1 / 30);
   }
-  assert.equal(game.hero.dead, true, `source enemies failed to defeat an approaching player; HP=${game.hero.hp}`);
+  if (!game.hero.dead) t.diagnostic(`Natural source-enemy failure trace: ${JSON.stringify(recent)}`);
+  else t.diagnostic(`Jitter seed ${seed}: source enemies caused natural failure after ${game.matchElapsed.toFixed(2)} seconds; no HP/dead assignment.`);
+  assert.equal(game.hero.dead, true, `source enemies failed to defeat an approaching player; HP=${game.hero.hp}; ${JSON.stringify(recent.at(-1))}`);
   assert.equal(game.hero.hp, 0); assert.equal(game.hero.respawn, Infinity);
   assert.equal(game.running, false); assert.equal(endings.length, 1); assert.equal(endings[0].win, false);
-  assert.equal(game.deaths, 1); assert.equal(game.totalDamage, 0);
+  assert.equal(game.deaths, 1);
+  // Original102–106/111 reactions include body attack windows. Walking into
+  // enemies can therefore cause passive impact damage after a knockback.
+  // The acceptance contract forbids player attack input, not source body hits.
+  assert.equal(events.filter(event => event.type === 'move').length, 0);
+  const passiveHits = events.filter(event => event.type === 'hit' && event.attackerHero);
+  const reactionBodies = new Set([...combat.poses.values()].filter(pose => pose.id >= 90 && pose.id <= 120 &&
+    pose.attacks.some(attack => attack.bones.length && attack.bones.every(bone => !['weapon','effect'].includes(bone)))).map(pose => pose.id));
+  assert.ok(passiveHits.every(hit => reactionBodies.has(hit.poseId)), 'damage without attack input must come from a source reaction body window');
+  assert.equal(game.totalDamage, passiveHits.reduce((sum, hit) => sum + hit.amount, 0));
   assert.equal(game.storyResult.reason, 'player-death');
   assert.ok(game.hero.rage > 0, 'actual prior hits accumulated native victim rage');
   const oldActors = [...game.enemies];

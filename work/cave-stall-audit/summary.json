@@ -1,0 +1,306 @@
+{
+  "status": "original-unseeded-failure-not-reproduced",
+  "scope": "CPU input-only investigation; original EXE not executed; browser not used; no dist/tests edits",
+  "oldFailure": "work/meteor-original/evidence/native-runtime-directional-guard-resumed-2026-11-06.tap: 253 tests, natural-player-death check stopped at HP287; original random draw sequence and actor load order were not captured",
+  "runs": {
+    "productionStyleHelperSeeds": {
+      "seeds": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "cases": 12,
+      "allNaturalDeaths": true,
+      "simulatedSeconds": [
+        41.63333333333353,
+        74.79999999999832
+      ]
+    },
+    "npcPstLoadPermutations": {
+      "seed": 5,
+      "cases": 6,
+      "allNaturalDeaths": true,
+      "delayMsPerRequestedOrderSlot": 35,
+      "orders": {
+        "123": [
+          1,
+          2,
+          3
+        ],
+        "132": [
+          1,
+          3,
+          2
+        ],
+        "213": [
+          2,
+          1,
+          3
+        ],
+        "231": [
+          2,
+          3,
+          1
+        ],
+        "312": [
+          3,
+          1,
+          2
+        ],
+        "321": [
+          3,
+          2,
+          1
+        ]
+      },
+      "simulatedSeconds": [
+        44.30000000000005,
+        61.633333333332395
+      ]
+    },
+    "acceptanceStyleNoSceneResolver": {
+      "seeds": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "cases": 12,
+      "allNaturalDeaths": true,
+      "simulatedSeconds": [
+        41.700000000000195,
+        74.79999999999832
+      ],
+      "pendingSceneContactCount": 18,
+      "pendingSceneObjectNames": [
+        "D_BBox19",
+        "D_BBox20",
+        "D_BBox21",
+        "D_St02",
+        "D_St11",
+        "D_St12",
+        "D_St29"
+      ]
+    }
+  },
+  "findings": [
+    {
+      "confidence": "high",
+      "finding": "Asynchronous NPC PST/model/weapon loading changes game.enemies order, independently of the fixed jitter seed. Engine actor update/separation iteration uses that array. Host actors/npcVms insertion follows asynchronous instantiate completion too.",
+      "source": [
+        "dist/native-mission-host.js:addNpc/instantiateNpc",
+        "dist/engine.js:createScriptActor/_update/_separateCharacters"
+      ],
+      "causeOfOldStallEstablished": false
+    },
+    {
+      "confidence": "high",
+      "finding": "mission-acceptance cave() omits the original scene damage resolver that production initialization and common helper install. It therefore emits damagePending scene contacts where production can call original scene OnAttack. All 12 matching no-resolver cases still naturally kill the player, so this mismatch is not proven to explain HP287.",
+      "source": [
+        "dist/engine.js:initialize source resolver",
+        "tests/mission-acceptance.test.mjs:cave",
+        "tests/helpers/native-mission-fixture.mjs:nativeMission"
+      ],
+      "causeOfOldStallEstablished": false
+    },
+    {
+      "confidence": "high",
+      "finding": "No 20-second damage plateau or HP287 failure reproduced in these 30 cases. This is bounded evidence, not proof that all input/random/load-order paths are free of stalls.",
+      "causeOfOldStallEstablished": false
+    }
+  ],
+  "recommendations": [
+    "Keep the old failed TAP and issue open; do not call it fixed because sampled seeds pass.",
+    "Future failing runs should record the random draws, initial engine actor order and host VM/actor insertion order, plus collision/LOS/script snapshots.",
+    "Align acceptance fixture sceneDamageResolver with normal production setup as a separate fixture correction, then revalidate; this is not a proven stall fix.",
+    "Do not change production PST intents, chase behavior, damage or collision merely to force natural failure tests green."
+  ],
+  "reproCommands": [
+    "node work/cave-stall-audit/probe.mjs 5 6 7 8 9 10 11 12 13 14 15 16",
+    "node work/cave-stall-audit/permutation-probe.mjs",
+    "node work/cave-stall-audit/acceptance-probe.mjs 5 6 7 8 9 10 11 12 13 14 15 16"
+  ],
+  "boundaries": [
+    "Search stopped at the parent request to continue other missions; no additional combat matrix was started.",
+    "The initial helper run source-hashes file was subsequently replaced by the permutation run snapshot; use the explicitly named permutation/acceptance source hash files for those later runs, not as a fingerprint of the first helper run."
+  ],
+  "artifacts": [
+    {
+      "path": "work/cave-stall-audit/acceptance-fixture.mjs",
+      "sha256": "e3c2d12d1a9e40d72c6c12ca4baf171de1d4690908708ba3e3562e8e38028d30"
+    },
+    {
+      "path": "work/cave-stall-audit/acceptance-probe.mjs",
+      "sha256": "965ea2732e9147e9fd55bc827bad5cc915a79601aa6cf60eff5233c300ca6161"
+    },
+    {
+      "path": "work/cave-stall-audit/acceptance-run-source-hashes.json",
+      "sha256": "2d649e5cbc59ec30a01a041d9ef506c9ebb3da9bc6d58c32262b482e2fb67ce3"
+    },
+    {
+      "path": "work/cave-stall-audit/acceptance-seed-10.json",
+      "sha256": "cdb816390837d452b60bee45ebe4329bb4b4f2818c6bc29825fae714140c9786"
+    },
+    {
+      "path": "work/cave-stall-audit/acceptance-seed-11.json",
+      "sha256": "ca4a56257524203b750e6ebf8c33a26c2c31941b051bb3e0c928fe58d3b3c160"
+    },
+    {
+      "path": "work/cave-stall-audit/acceptance-seed-12.json",
+      "sha256": "bacf04302b37399b3f8f6d85187e566a5c378a3d48acf7e228465a4b61adb76b"
+    },
+    {
+      "path": "work/cave-stall-audit/acceptance-seed-13.json",
+      "sha256": "1c91d9f177fa0c37af5b64bffea4425aa6f17b1ce7f6984f45783a999421a0f1"
+    },
+    {
+      "path": "work/cave-stall-audit/acceptance-seed-14.json",
+      "sha256": "7aa30d8a13a75985bc09007fedbf05449c3c22e63177e2f161a17b309c7ba3cb"
+    },
+    {
+      "path": "work/cave-stall-audit/acceptance-seed-15.json",
+      "sha256": "a2fe6018eb4eaf40aabf6120ba8b2da547d99838e07aac8176c96f8054db68c4"
+    },
+    {
+      "path": "work/cave-stall-audit/acceptance-seed-16.json",
+      "sha256": "2e45c3db32548635e0f80411d73ff93cbee98a9f78a02feccabc986c2a81ea29"
+    },
+    {
+      "path": "work/cave-stall-audit/acceptance-seed-5.json",
+      "sha256": "214f4874f84c32e71758fe43a43ef5427cada24ec4553235d3ea5de2f001191d"
+    },
+    {
+      "path": "work/cave-stall-audit/acceptance-seed-6.json",
+      "sha256": "497895da2cab3820c7201cdf1f1669fdca6070eaca4358f1f3fc4ab73ac996c8"
+    },
+    {
+      "path": "work/cave-stall-audit/acceptance-seed-7.json",
+      "sha256": "da326aaae7222218eb421511edbd5f63e247dff0dc342bbe7dc86bc5a9538fdc"
+    },
+    {
+      "path": "work/cave-stall-audit/acceptance-seed-8.json",
+      "sha256": "46cd0ebd3bc2b67b2d669e47ab8cfb199c0feb2e078c0732ff488192f7aa3169"
+    },
+    {
+      "path": "work/cave-stall-audit/acceptance-seed-9.json",
+      "sha256": "17c2ef70b042294d9174ed9e3defbfcc8356c988c911c07db0f112be498a06df"
+    },
+    {
+      "path": "work/cave-stall-audit/acceptance-seeds.jsonl",
+      "sha256": "e89c2b4ee8bb10586917c7596beab8cf3cc20f4802c4d28166584a18130735fe"
+    },
+    {
+      "path": "work/cave-stall-audit/order-123-seed-5.json",
+      "sha256": "9042ce0f0dbb5cb8802d8ae45972be882916afa243f77718f0f95efaa8d5ddf0"
+    },
+    {
+      "path": "work/cave-stall-audit/order-132-seed-5.json",
+      "sha256": "354585f6a5afe167aa927798dc8bf9dfc8e5f7fd38f21f3cea3e8650baa58a0c"
+    },
+    {
+      "path": "work/cave-stall-audit/order-213-seed-5.json",
+      "sha256": "56786a68550dd9094dcbbfebbabb79156c031d213fb30175f0bfb6b000d146dc"
+    },
+    {
+      "path": "work/cave-stall-audit/order-231-seed-5.json",
+      "sha256": "99a600aa0e546ca96f73c8069b58d7bb0bd9e376e50c53efe29fd4b6a83a0a50"
+    },
+    {
+      "path": "work/cave-stall-audit/order-312-seed-5.json",
+      "sha256": "bee486d96c951220a106b5f66b5966352cec8b55e10097861eba4fe1524aa1b7"
+    },
+    {
+      "path": "work/cave-stall-audit/order-321-seed-5.json",
+      "sha256": "1e4d6c5b567857898a93eca36d3b43f2b1f680b1984f24648e1b5d6545d2e3b4"
+    },
+    {
+      "path": "work/cave-stall-audit/permutation-probe.mjs",
+      "sha256": "0a70c3900df21f3ccf7441cb7fbed026a9c1c370a04de62fc1d93e05cf8c9276"
+    },
+    {
+      "path": "work/cave-stall-audit/permutation-run-source-hashes.json",
+      "sha256": "2d649e5cbc59ec30a01a041d9ef506c9ebb3da9bc6d58c32262b482e2fb67ce3"
+    },
+    {
+      "path": "work/cave-stall-audit/permutations.jsonl",
+      "sha256": "0ea980bc12b8265e564a8f8a7fc26bde2fa83485237ce9b217ce4b949f9446f8"
+    },
+    {
+      "path": "work/cave-stall-audit/probe.mjs",
+      "sha256": "de40e038ae634e3d93e47f256e243f3ffb083ea59ca379d02761a767d839885a"
+    },
+    {
+      "path": "work/cave-stall-audit/seed-10.json",
+      "sha256": "99966d7da2ed682ee54a99fff7a858ffadf9d7fb541681d5d28fa670ca667cac"
+    },
+    {
+      "path": "work/cave-stall-audit/seed-11.json",
+      "sha256": "c31318e969e6a6a35928f0b414bb2920f89d19dfdf5a6aed4791502745ea5692"
+    },
+    {
+      "path": "work/cave-stall-audit/seed-12.json",
+      "sha256": "352536bce779f66cd42d02151e7d94442ba82de316d7add3dff48528bd165a29"
+    },
+    {
+      "path": "work/cave-stall-audit/seed-13.json",
+      "sha256": "ded29e41d49ed96e8afcb3cb4d683e16b2153320bd6efb7e4b8b72c624c4704c"
+    },
+    {
+      "path": "work/cave-stall-audit/seed-14.json",
+      "sha256": "0f74b635deb5eb6bead2dd76f2f59d9e2950fddc7d94e784af69c34924a7b037"
+    },
+    {
+      "path": "work/cave-stall-audit/seed-15.json",
+      "sha256": "6ab3c99259b90cb3b22a7859f8c0f5883f7b4f306f3ad8d2f2bad2045046448f"
+    },
+    {
+      "path": "work/cave-stall-audit/seed-16.json",
+      "sha256": "9ece9f191a7d2a29e6afa3afc250291e8ad405ce0fe0c6503603641483c5b208"
+    },
+    {
+      "path": "work/cave-stall-audit/seed-5.json",
+      "sha256": "9abcf9d12e534c20abeba47954f517131fc1a63c957dab8b56c7eb56866349f5"
+    },
+    {
+      "path": "work/cave-stall-audit/seed-6.json",
+      "sha256": "fc1b8bb7833d3fc59233b8ee25590f1dd181de8ed50361829306fa630621a6a5"
+    },
+    {
+      "path": "work/cave-stall-audit/seed-7.json",
+      "sha256": "ac3eab61f74675288f6ea1ace70efb1d3c3afb4ef4ebdd8c7a8d541472860746"
+    },
+    {
+      "path": "work/cave-stall-audit/seed-8.json",
+      "sha256": "720b9500ffc015f38a630958fee4aa4e674524dd5de532ad09f9fe3b2926be51"
+    },
+    {
+      "path": "work/cave-stall-audit/seed-9.json",
+      "sha256": "d81e576f24e56ac623e9735fa8914a4e7381bba1528652dc24cd309edf318a93"
+    },
+    {
+      "path": "work/cave-stall-audit/seeds.jsonl",
+      "sha256": "e08dd6c877e55327a7ddd232ace32bd6999dc4beaf811c1b5aef09703b43ec96"
+    },
+    {
+      "path": "work/cave-stall-audit/source-hashes.json",
+      "sha256": "2d649e5cbc59ec30a01a041d9ef506c9ebb3da9bc6d58c32262b482e2fb67ce3"
+    }
+  ]
+}

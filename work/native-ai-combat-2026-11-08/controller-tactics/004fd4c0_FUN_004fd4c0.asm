@@ -1,0 +1,29 @@
+004fd4c0 SUB ESP,0xc
+004fd4c3 LEA EAX,[ECX + 0x18]
+004fd4c6 MOV EDX,dword ptr [ECX + 0x18]
+004fd4c9 MOV dword ptr [ESP],EDX
+004fd4cd MOV EDX,dword ptr [EAX + 0x4]
+004fd4d0 MOV dword ptr [ESP + 0x4],EDX
+004fd4d4 MOV EAX,dword ptr [EAX + 0x8]
+004fd4d7 MOV dword ptr [ESP + 0x8],EAX
+004fd4db MOV EAX,dword ptr [ECX + 0x58]
+004fd4de FLD float ptr [ESP + 0x8]
+004fd4e2 TEST EAX,EAX
+004fd4e4 JL 0x004fd4f8
+004fd4e6 LEA EDX,[EAX*0x8 + 0x0]
+004fd4ed SUB EDX,EAX
+004fd4ef FADD float ptr [EDX*0x8 + 0x666a08]
+004fd4f6 JMP 0x004fd4fe
+004fd4f8 FADD float ptr [0x005a8dbc]
+004fd4fe FSTP float ptr [ESP + 0x8]
+004fd502 LEA EAX,[ECX + 0x40]
+004fd505 ADD ECX,0xe0
+004fd50b PUSH EAX
+004fd50c PUSH ECX
+004fd50d MOV ECX,dword ptr [ESP + 0x18]
+004fd511 LEA EDX,[ESP + 0x8]
+004fd515 PUSH ECX
+004fd516 PUSH EDX
+004fd517 CALL 0x00501670
+004fd51c ADD ESP,0x1c
+004fd51f RET 0x4

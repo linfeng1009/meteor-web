@@ -1,0 +1,82 @@
+00515a7f PUSH EBP
+00515a80 MOV EBP,ESP
+00515a82 PUSH ECX
+00515a83 PUSH ECX
+00515a84 FLD float ptr [EBP + 0x1c]
+00515a87 MOV ECX,dword ptr [EBP + 0xc]
+00515a8a FMUL float ptr [EBP + 0x1c]
+00515a8d MOV EDX,dword ptr [EBP + 0x10]
+00515a90 FLD float ptr [EBP + 0x1c]
+00515a93 MOV EAX,dword ptr [EBP + 0x8]
+00515a96 PUSH ESI
+00515a97 FMUL ST1
+00515a99 MOV ESI,dword ptr [EBP + 0x14]
+00515a9c FLD float ptr [0x005a8b80]
+00515aa2 PUSH EDI
+00515aa3 FLD ST2
+00515aa5 MOV EDI,dword ptr [EBP + 0x18]
+00515aa8 FMUL ST1
+00515aaa FSUB ST0,ST2
+00515aac FSUB float ptr [EBP + 0x1c]
+00515aaf FSTP float ptr [EBP + -0x8]
+00515ab2 FLD ST1
+00515ab4 FMUL float ptr [0x005a8e84]
+00515aba FLD ST3
+00515abc FMUL float ptr [0x005a8f74]
+00515ac2 FSUBR ST0,ST1
+00515ac4 FADD ST0,ST2
+00515ac6 FSTP float ptr [EBP + -0x4]
+00515ac9 FLD ST3
+00515acb FMUL float ptr [0x005a8cf0]
+00515ad1 FSUB ST0,ST1
+00515ad3 FADD float ptr [EBP + 0x1c]
+00515ad6 FSTP float ptr [EBP + 0x1c]
+00515ad9 FSTP ST0
+00515adb FSTP ST0
+00515add FSUBRP
+00515adf FLD float ptr [0x005a83e8]
+00515ae5 FLD float ptr [EBP + -0x8]
+00515ae8 FMUL float ptr [ECX]
+00515aea FLD float ptr [EBP + -0x4]
+00515aed FMUL float ptr [EDX]
+00515aef FADDP
+00515af1 FLD float ptr [EBP + 0x1c]
+00515af4 FMUL float ptr [ESI]
+00515af6 FADDP
+00515af8 FLD ST2
+00515afa FMUL float ptr [EDI]
+00515afc FADDP
+00515afe FMUL ST1
+00515b00 FSTP float ptr [EAX]
+00515b02 FLD ST1
+00515b04 FMUL float ptr [EDI + 0x4]
+00515b07 FLD float ptr [EBP + 0x1c]
+00515b0a FMUL float ptr [ESI + 0x4]
+00515b0d FADDP
+00515b0f FLD float ptr [EBP + -0x4]
+00515b12 FMUL float ptr [EDX + 0x4]
+00515b15 FADDP
+00515b17 FLD float ptr [EBP + -0x8]
+00515b1a FMUL float ptr [ECX + 0x4]
+00515b1d FADDP
+00515b1f FMUL ST1
+00515b21 FSTP float ptr [EAX + 0x4]
+00515b24 FLD ST1
+00515b26 FMUL float ptr [EDI + 0x8]
+00515b29 POP EDI
+00515b2a FLD float ptr [EBP + 0x1c]
+00515b2d FMUL float ptr [ESI + 0x8]
+00515b30 POP ESI
+00515b31 FADDP
+00515b33 FLD float ptr [EBP + -0x4]
+00515b36 FMUL float ptr [EDX + 0x8]
+00515b39 FADDP
+00515b3b FLD float ptr [EBP + -0x8]
+00515b3e FMUL float ptr [ECX + 0x8]
+00515b41 FADDP
+00515b43 FMUL ST1
+00515b45 FSTP float ptr [EAX + 0x8]
+00515b48 FSTP ST0
+00515b4a FSTP ST0
+00515b4c LEAVE
+00515b4d RET 0x18

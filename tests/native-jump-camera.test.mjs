@@ -80,6 +80,22 @@ test('authored non-in-place jump remains available with its original d_base disp
   } finally { character.dispose(); }
 });
 
+test('normal L takeoff moves the collision root by the original d_base curve without adding it twice to the skin', () => {
+  const state = fixture();
+  try {
+    const { game, hero } = state, pose = hero.combat.data.poses.get(151), start = hero.root.position.y;
+    const origin = hero.character.sampleSceneMotion(pose.source, pose.start).z;
+    game.action('jump');
+    for (let index = 1; index <= 27; index++) {
+      game._updateFighter(hero, 1/60);
+      const expected = (hero.character.sampleSceneMotion(pose.source, pose.start + index/2).z - origin)*.08;
+      assert.ok(Math.abs(hero.root.position.y - start - expected) < 1e-5);
+      assert.ok(Math.abs(hero.character.getAttachment('d_base').getWorldPosition(v()).y - hero.root.position.y) < .01);
+    }
+    assert.ok(hero.root.position.y > 5.5, 'authored elevation must permit the sn09 central platform');
+  } finally { state.dispose(); }
+});
+
 for (const locked of [false, true]) test(`the real L jump stays in view ${locked ? 'with an enemy locked' : 'on open ground'} and lands with the collider`, () => {
   const state = fixture({ locked });
   try {

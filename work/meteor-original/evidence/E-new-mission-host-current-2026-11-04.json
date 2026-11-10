@@ -1,0 +1,507 @@
+{
+  "observedAt": "2026-11-04",
+  "method": "Production PST VM/host with original imported text and metadata, mocked actor/scene bridges; no native binary execution.",
+  "moduleSha256": "916caf25910421810acb1d1e678f8255c3b7ffbce2545be380b7ba123c32f8a3",
+  "elapsed": "100 simulated seconds, 0.1sec updates, no actor movement or retaliation.",
+  "results": [
+    {
+      "mapId": "sn03",
+      "rule": 2,
+      "roundTime": 15,
+      "startError": null,
+      "configurations": [
+        {
+          "name": "土匪﹒铁胡子",
+          "model": 2,
+          "weapon": 8,
+          "weaponModel": "w5_0",
+          "weaponSupported": true,
+          "team": 0,
+          "hp": 1500,
+          "spawn": 5
+        },
+        {
+          "name": "夜猫子",
+          "model": 3,
+          "weapon": 4,
+          "weaponModel": "w8_0r",
+          "weaponSupported": false,
+          "team": 2,
+          "hp": 2000,
+          "spawn": 82
+        },
+        {
+          "name": "火枪哨兵﹒甲",
+          "model": 8,
+          "weapon": 3,
+          "weaponModel": "w2_0",
+          "weaponSupported": false,
+          "team": 2,
+          "hp": 1500,
+          "spawn": 98
+        },
+        {
+          "name": "火枪哨兵﹒乙",
+          "model": 8,
+          "weapon": 3,
+          "weaponModel": "w2_0",
+          "weaponSupported": false,
+          "team": 2,
+          "hp": 1500,
+          "spawn": 99
+        },
+        {
+          "name": "火枪哨兵﹒丙",
+          "model": 8,
+          "weapon": 3,
+          "weaponModel": "w2_0",
+          "weaponSupported": false,
+          "team": 2,
+          "hp": 1500,
+          "spawn": 100
+        },
+        {
+          "name": "疾剑哨兵长",
+          "model": 9,
+          "weapon": 15,
+          "weaponModel": "w0_1",
+          "weaponSupported": true,
+          "team": 2,
+          "hp": 2500,
+          "spawn": 20
+        }
+      ],
+      "after100": {
+        "elapsed": 99.9999999999986,
+        "completed": null,
+        "globals": {
+          "Rule": 2,
+          "RoundTime": 15,
+          "PlayerSpawn": 53,
+          "PlayerSpawnDir": 0,
+          "PlayerWeapon": 15,
+          "PlayerWeapon2": 0,
+          "PlayerHP": 1500,
+          "trg0": 0,
+          "trg1": 0,
+          "trg2": 0,
+          "trg3": 0,
+          "trg4": 0,
+          "trg5": 0,
+          "trg6": 0,
+          "trg7": 0,
+          "trg8": 0,
+          "trg9": 1,
+          "timer0": 0,
+          "timer1": 0,
+          "gameover": 0,
+          "now": 99
+        },
+        "dialogues": 1,
+        "disabledCallbacks": []
+      },
+      "failureProbe": {
+        "assignedHP": true,
+        "completed": {
+          "win": false,
+          "reason": "player-death",
+          "provenance": "PlayerHP reaches zero; mission failure adapter."
+        },
+        "sourceGameover": -1
+      },
+      "diagnostics": [],
+      "endings": [
+        {
+          "win": false,
+          "reason": "player-death",
+          "provenance": "PlayerHP reaches zero; mission failure adapter."
+        }
+      ],
+      "unsupportedPerform": []
+    },
+    {
+      "mapId": "sn04",
+      "rule": 3,
+      "roundTime": 20,
+      "startError": {
+        "message": "sn04/sn04.pst:33:2: Mission host does not implement SetScene",
+        "code": "UNKNOWN_NATIVE"
+      },
+      "configurations": [],
+      "after100": {
+        "elapsed": 0,
+        "completed": null,
+        "globals": {
+          "Rule": 3,
+          "RoundTime": 20,
+          "PlayerSpawn": 15,
+          "PlayerSpawnDir": 250,
+          "PlayerWeapon": 16,
+          "PlayerWeapon2": 13,
+          "PlayerHP": 2000,
+          "trg0": 0,
+          "trg1": 0,
+          "trg2": 0,
+          "trg3": 0,
+          "now": 0,
+          "survivor": -1,
+          "gameover": 0,
+          "timer0": 0
+        },
+        "dialogues": 0,
+        "disabledCallbacks": [
+          "sn04/sn04.pst:Scene_OnLoad"
+        ]
+      },
+      "failureProbe": null,
+      "diagnostics": [
+        {
+          "type": "mission-diagnostic",
+          "code": "UNSUPPORTED_NATIVE",
+          "text": "原脚本 API 尚未接入：SetScene",
+          "api": "SetScene",
+          "arguments": [
+            "snow",
+            1
+          ],
+          "file": "sn04/sn04.pst"
+        },
+        {
+          "type": "mission-diagnostic",
+          "code": "UNKNOWN_NATIVE",
+          "text": "sn04/sn04.pst:33:2: Mission host does not implement SetScene",
+          "file": "sn04/sn04.pst",
+          "callback": "Scene_OnLoad"
+        }
+      ],
+      "endings": [],
+      "unsupportedPerform": []
+    },
+    {
+      "mapId": "sn09",
+      "rule": 1,
+      "roundTime": 5,
+      "startError": null,
+      "configurations": [
+        {
+          "name": "冷燕",
+          "model": 1,
+          "weapon": 33,
+          "weaponModel": "w0_3",
+          "weaponSupported": true,
+          "team": 2,
+          "hp": 3000,
+          "spawn": 7
+        },
+        {
+          "name": "屠城",
+          "model": 15,
+          "weapon": 36,
+          "weaponModel": "w4_3",
+          "weaponSupported": false,
+          "team": 0,
+          "hp": 9990,
+          "spawn": 0
+        }
+      ],
+      "after100": {
+        "elapsed": 99.9999999999986,
+        "completed": null,
+        "globals": {
+          "Rule": 1,
+          "RoundTime": 5,
+          "PlayerSpawn": 20,
+          "PlayerSpawnDir": 90,
+          "PlayerWeapon": 5,
+          "PlayerWeapon2": 1,
+          "PlayerHP": 3000,
+          "trg0": 4,
+          "trg1": 0,
+          "timer0": 19,
+          "timer1": 0,
+          "gameover": 0
+        },
+        "dialogues": 20,
+        "disabledCallbacks": []
+      },
+      "failureProbe": {
+        "assignedHP": true,
+        "completed": null,
+        "sourceGameover": -1
+      },
+      "diagnostics": [
+        {
+          "type": "mission-diagnostic",
+          "code": "UNSUPPORTED_ITEM_EFFECT",
+          "text": "原物品效果尚未接入：14",
+          "api": "Perform:use",
+          "itemId": 14,
+          "scriptId": 0
+        }
+      ],
+      "endings": [],
+      "unsupportedPerform": []
+    },
+    {
+      "mapId": "sn13",
+      "rule": 4,
+      "roundTime": 15,
+      "startError": null,
+      "configurations": [
+        {
+          "name": "冷燕",
+          "model": 1,
+          "weapon": 13,
+          "weaponModel": "w8_1r",
+          "weaponSupported": false,
+          "team": 1,
+          "hp": 2000,
+          "spawn": 62
+        },
+        {
+          "name": "捕头﹒王强",
+          "model": 9,
+          "weapon": 17,
+          "weaponModel": "w5_1",
+          "weaponSupported": true,
+          "team": 2,
+          "hp": 3000,
+          "spawn": 2
+        },
+        {
+          "name": "军枪官差﹒甲",
+          "model": 8,
+          "weapon": 16,
+          "weaponModel": "w7_1",
+          "weaponSupported": true,
+          "team": 2,
+          "hp": 2000,
+          "spawn": 200
+        },
+        {
+          "name": "军枪官差﹒乙",
+          "model": 8,
+          "weapon": 16,
+          "weaponModel": "w7_1",
+          "weaponSupported": true,
+          "team": 2,
+          "hp": 2000,
+          "spawn": 219
+        },
+        {
+          "name": "夜猫子",
+          "model": 3,
+          "weapon": 12,
+          "weaponModel": "w2_1",
+          "weaponSupported": false,
+          "team": 2,
+          "hp": 2500,
+          "spawn": 127
+        },
+        {
+          "name": "官差﹒甲",
+          "model": 2,
+          "weapon": 8,
+          "weaponModel": "w5_0",
+          "weaponSupported": true,
+          "team": 2,
+          "hp": 1500,
+          "spawn": 247
+        },
+        {
+          "name": "官差﹒乙",
+          "model": 2,
+          "weapon": 8,
+          "weaponModel": "w5_0",
+          "weaponSupported": true,
+          "team": 2,
+          "hp": 1500,
+          "spawn": 246
+        },
+        {
+          "name": "官差﹒丙",
+          "model": 2,
+          "weapon": 8,
+          "weaponModel": "w5_0",
+          "weaponSupported": true,
+          "team": 2,
+          "hp": 1500,
+          "spawn": 248
+        }
+      ],
+      "after100": {
+        "elapsed": 99.9999999999986,
+        "completed": null,
+        "globals": {
+          "Rule": 4,
+          "RoundTime": 15,
+          "PlayerSpawn": 249,
+          "PlayerSpawnDir": 90,
+          "PlayerWeapon": 24,
+          "PlayerWeapon2": 14,
+          "PlayerHP": 2000,
+          "g_counter": 1001,
+          "trg0": 1,
+          "trg1": 0,
+          "trg2": 0,
+          "trg3": 0,
+          "trg4": 0,
+          "trg5": 1,
+          "timer0": 25,
+          "survivor": -1
+        },
+        "dialogues": 4,
+        "disabledCallbacks": []
+      },
+      "failureProbe": {
+        "assignedHP": true,
+        "completed": {
+          "win": false,
+          "reason": "player-death",
+          "provenance": "PlayerHP reaches zero; mission failure adapter."
+        }
+      },
+      "diagnostics": [],
+      "endings": [
+        {
+          "win": false,
+          "reason": "player-death",
+          "provenance": "PlayerHP reaches zero; mission failure adapter."
+        }
+      ],
+      "unsupportedPerform": []
+    },
+    {
+      "mapId": "sn15",
+      "rule": 4,
+      "roundTime": 25,
+      "startError": null,
+      "configurations": [
+        {
+          "name": "萧安",
+          "model": 7,
+          "weapon": 24,
+          "weaponModel": "w0_2",
+          "weaponSupported": true,
+          "team": 2,
+          "hp": 7500,
+          "spawn": 73
+        },
+        {
+          "name": "左护法",
+          "model": 4,
+          "weapon": 15,
+          "weaponModel": "w0_1",
+          "weaponSupported": true,
+          "team": 2,
+          "hp": 5000,
+          "spawn": 71
+        },
+        {
+          "name": "右护法",
+          "model": 5,
+          "weapon": 18,
+          "weaponModel": "w4_1",
+          "weaponSupported": false,
+          "team": 2,
+          "hp": 5000,
+          "spawn": 70
+        },
+        {
+          "name": "金枪侍卫﹒甲",
+          "model": 8,
+          "weapon": 25,
+          "weaponModel": "w7_2",
+          "weaponSupported": true,
+          "team": 2,
+          "hp": 2500,
+          "spawn": 114
+        },
+        {
+          "name": "金枪侍卫﹒乙",
+          "model": 8,
+          "weapon": 25,
+          "weaponModel": "w7_2",
+          "weaponSupported": true,
+          "team": 2,
+          "hp": 2500,
+          "spawn": 115
+        },
+        {
+          "name": "金枪侍卫﹒丙",
+          "model": 8,
+          "weapon": 25,
+          "weaponModel": "w7_2",
+          "weaponSupported": true,
+          "team": 2,
+          "hp": 2500,
+          "spawn": 5
+        },
+        {
+          "name": "金枪侍卫﹒丁",
+          "model": 8,
+          "weapon": 25,
+          "weaponModel": "w7_2",
+          "weaponSupported": true,
+          "team": 2,
+          "hp": 2500,
+          "spawn": 2
+        }
+      ],
+      "after100": {
+        "elapsed": 99.9999999999986,
+        "completed": null,
+        "globals": {
+          "Rule": 4,
+          "RoundTime": 25,
+          "PlayerSpawn": 30,
+          "PlayerSpawnDir": 80,
+          "PlayerWeapon": 13,
+          "PlayerWeapon2": 10,
+          "PlayerHP": 2500,
+          "trg0": 1,
+          "trg1": 0,
+          "trg2": 0,
+          "trg3": 1,
+          "trg4": 1,
+          "trg5": 0,
+          "trg6": 0,
+          "trg7": 0,
+          "trg8": 0,
+          "trg9": 0,
+          "trg10": 0,
+          "timer0": 0,
+          "timer1": 0,
+          "timer2": 0,
+          "timer3": 0,
+          "gameover": 0
+        },
+        "dialogues": 13,
+        "disabledCallbacks": []
+      },
+      "failureProbe": {
+        "assignedHP": true,
+        "completed": {
+          "win": false,
+          "reason": "player-death",
+          "provenance": "PlayerHP reaches zero; mission failure adapter."
+        },
+        "sourceGameover": 0
+      },
+      "diagnostics": [],
+      "endings": [
+        {
+          "win": false,
+          "reason": "player-death",
+          "provenance": "PlayerHP reaches zero; mission failure adapter."
+        }
+      ],
+      "unsupportedPerform": []
+    }
+  ],
+  "limits": [
+    "Unsupported primary weapons are recorded but deliberately accepted by this mock; this is not successful gameplay initialization.",
+    "Scene poses complete immediately in mock objects; no physical mechanism completion proved.",
+    "Failure probe directly assigns hero HP0 only to inspect completion priority; not natural death acceptance."
+  ]
+}

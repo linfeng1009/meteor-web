@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from '../dist/vendor/three.module.js';
-import {NetworkReplicaMotion} from '../dist/network-game.js';
+import {NetworkReplicaMotion,NetworkGame} from '../dist/network-game.js';
 
 function fixture(){
   const actor={root:new THREE.Group(),hp:1000,combat:{timeline:{pose:{start:0,end:100},frame:0}},character:{frame:0,setPoseFrame(source,frame){this.source=source;this.frame=frame;}}};
@@ -30,4 +30,13 @@ test('new actions and looping frames never blend unrelated animation frames',()=
   const {actor,motion,state}=fixture();motion.receive(actor,{...state,frame:50},.1,{poseChanged:true});assert.equal(actor.character.frame,50);
   motion.receive(actor,{...state,frame:5},.1);motion.update(actor,.05);assert.equal(actor.character.frame,5);
   motion.receive(actor,{...state,source:1,frame:30},.1);assert.equal(actor.character.frame,30);
+});
+test('guest interpolation runs on render presentation, independently of fixed combat ticks',()=>{
+  const {actor,state}=fixture(),peer=fixture().actor;actor.networkId='guest';peer.networkId='host';let drawn=0;
+  const original=function(){drawn++;},game={hero:actor,enemies:[peer],pause(){},_updatePresentation:original};
+  const session=new NetworkGame(game,{host:false,playerId:'guest',send(){}},{players:[{id:'host'},{id:'guest'}]});session.active=true;
+  session.presentation.receive(actor,state,.1);session.presentation.receive(actor,{...state,position:[2,0,0]},.1);
+  game._updateFighter(actor,1/60);assert.equal(actor.root.position.x,0,'guest combat tick must not advance presentation or simulation');
+  game._updatePresentation(.025);assert.equal(actor.root.position.x,.5);assert.equal(drawn,1);
+  session.dispose();assert.equal(game._updatePresentation,original,'leaving restores the single-player presentation hook');
 });

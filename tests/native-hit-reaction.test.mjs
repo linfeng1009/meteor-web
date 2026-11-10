@@ -132,6 +132,43 @@ test('listen-host remote inputs use native movement and hit the actual host, the
   }finally{session.dispose();}
 });
 
+test('fixed world replay preserves sword hits, death, respawn and movement across render rates and stalls',async()=>{
+  const results=[];
+  for(const deltas of [Array(180).fill(1/30),Array(360).fill(1/60),Array(864).fill(1/144),Array(60).fill(.1)]){
+    const {game,hero,target}=await fixture();game.updateAccum=0;target.hp=1;
+    let tickIndex=0;const frames=[],step=game._stepWorld.bind(game);
+    game._stepWorld=dt=>{
+      if(tickIndex===0)game.action('attack');
+      if(tickIndex===210)game.action('right');
+      if(tickIndex===240){game.action('right',false);game.action('jump');}
+      if(tickIndex===300)game.action('guard');
+      if(tickIndex===330)game.action('guard',false);
+      step(dt);tickIndex++;
+      frames.push([hero.root.position.toArray(),hero.hp,hero.rage,hero.combat.timeline.pose.id,hero.character.frame,hero.grounded,hero.guard,target.hp,target.dead,target.root.position.toArray(),game.kills,game.matchElapsed]);
+    };
+    for(const delta of deltas)game._advanceWorld(delta);
+    assert.equal(tickIndex,360);assert.ok(frames.some(f=>f[8]),'actual sword hit must kill the wounded target');
+    assert.equal(target.dead,false,'the original respawn path must run during fixed ticks');
+    assert.equal(game.kills,1);assert.ok(frames.some(f=>!f[5]),'jump input must reach airborne state');assert.ok(hero.root.position.x>1,'movement must run');
+    results.push(frames);
+  }
+  for(const frames of results.slice(1))assert.deepEqual(frames,results[0]);
+});
+
+test('fixed world replay preserves all sword combo contacts at 30/60/144Hz and 100ms stalls',async()=>{
+  const results=[];
+  for(const deltas of [Array(90).fill(1/30),Array(180).fill(1/60),Array(432).fill(1/144),Array(30).fill(.1)]){
+    const {game,hero,target,events}=await fixture();game.updateAccum=0;let index=0;const step=game._stepWorld.bind(game),states=[];
+    game._stepWorld=dt=>{
+      if(index%6===0&&game.contactHits<3)game.action('attack');
+      step(dt);index++;states.push([hero.combat.timeline.pose.id,hero.character.frame,target.hp,target.rage,target.combat.timeline.pose.id,target.root.position.toArray()]);
+    };
+    for(const dt of deltas)game._advanceWorld(dt);
+    assert.deepEqual(events.filter(e=>e.type==='hit').map(e=>e.poseId),[262,263,264]);results.push(states);
+  }
+  for(const states of results.slice(1))assert.deepEqual(states,results[0]);
+});
+
 test('real hit events, original animation and impact sound all use the selected front/back/side source pose', async () => {
   for (const [offset, expected] of [[v(0, 0, 1.1), 93], [v(1.1, 0, 0), 94], [v(-1.1, 0, 0), 91], [v(0, 0, -1.1), 92]]) {
     const { game, hero, target, events, sounds } = await fixture();

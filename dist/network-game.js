@@ -45,7 +45,7 @@ export class NetworkGame{
     this.scores=new Map(room.players.map(p=>[p.id,{kills:0,deaths:0}]));
     this.presentation=new NetworkReplicaMotion();
     this.remote={keys:new Set(),directionBuffer:[],recoveryAttack:null,traversalTap:null,locked:null,cameraAngle:Math.PI};
-    this.original={};for(const key of ['action','pause','_updateFighter','_separateCharacters','_hud','_kill'])this.original[key]=game[key];
+    this.original={};for(const key of ['action','pause','_updateFighter','_updatePresentation','_separateCharacters','_hud','_kill'])this.original[key]=game[key];
     const session=this;
     game.action=function(name,down=true){
       if(!session.active)return;if(name==='switch'||/^weapon/.test(name)||name==='pickup')return;
@@ -53,7 +53,8 @@ export class NetworkGame{
       return session.original.action.call(game,name,down);
     };
     game.pause=function(value=true){client.send('clear',false);if(client.host)session.original.action.call(game,'guard',false);session.original.pause.call(game,session.active?false:value);if(value){game.keyboard?.reset();game.mouseLook?.release();game.keys.clear();}};
-    game._updateFighter=function(f,dt){if(!session.active)return;if(!client.host){session.presentation.update(f,dt);return;}if(f===game.hero)return session.original._updateFighter.call(game,f,dt);session.context(f,()=>session.original._updateFighter.call(game,f,dt));};
+    game._updateFighter=function(f,dt){if(!session.active||!client.host)return;if(f===game.hero)return session.original._updateFighter.call(game,f,dt);session.context(f,()=>session.original._updateFighter.call(game,f,dt));};
+    game._updatePresentation=function(dt){if(session.active&&!client.host)for(const actor of session.actors.values())session.presentation.update(actor,dt);session.original._updatePresentation.call(game,dt);};
     game._separateCharacters=function(dt){if(client.host&&session.active){const actors=[game.hero,...game.enemies],flags=actors.map(f=>f.hero);try{for(const f of actors)f.hero=false;session.original._separateCharacters.call(game,dt);}finally{actors.forEach((f,i)=>f.hero=flags[i]);}}};
     game._hud=function(){if(!session.inRemote)session.original._hud.call(game);};
     game._kill=function(target,options){const wasDead=target.dead;session.original._kill.call(game,target,options);if(!wasDead&&target.dead){session.scores.get(target.networkId).deaths++;if(options?.awardKill!==false){const rival=[...session.scores.keys()].find(id=>id!==target.networkId);session.scores.get(rival).kills++;}}const score=session.scores.get(client.playerId);game.kills=score.kills;game.deaths=score.deaths;};

@@ -1,5 +1,7 @@
 import { traversalTap, NATIVE_ROLL_POSES, nativeDashPose } from './native-traversal.js';
 import { FixedStepClock } from './fixed-step.js';
+import { FrameMeter, RenderScaleController, createFrameOverlay } from './frame-meter.js';
+import { StaticColliderIndex } from './collision-index.js';
 import { bindLocalPlayerControl, clearPlayerCommands } from './player-control.js';
 import { createMouseLook, turnMouseCamera } from './mouse-look.js';
 import { bindKeyboard, defaultBindings } from './keybindings.js';
@@ -60,6 +62,8 @@ export class MeteorGame {
     this.scene.add(new THREE.HemisphereLight(0xffffff, 0x596675, 2.7));
     const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(-20, 50, 30); this.scene.add(key);
     this.baseLights = this.scene.children.filter(object => object.isLight);
+    this.frameMeter = new FrameMeter(); this.frameOverlay = createFrameOverlay(canvas.ownerDocument);
+    this.renderScale = new RenderScaleController(this.renderer.getPixelRatio());
     this.clock = new THREE.Clock(); this.simulationClock = new FixedStepClock(); this.elapsed = 0; this.updateAccum = 0; this.running = false; this.paused = false;
     this.map = 'sifang'; this.weapon = 'sword'; this.swordStyle = 'butterfly'; this.spearStyle = 'original'; this.infiniteRage = false; this.characterId = 0; this.characterAppearance = 'original'; this.appearanceRequest = 0; this.actorSerial = 0; this.mode = 'training'; this.enemies = []; this.keys = new Set();
     this.cameraManualUntil = 0; this.cameraAngle = .4; this.cameraPitch = .45; this.cameraDistance = 8; this.cameraTarget = v3(); this.locked = null;
@@ -402,7 +406,11 @@ export class MeteorGame {
     this.raycaster.set(v3(x, ceiling, z), v3(0, -1, 0));
     return this.raycaster.intersectObjects(this._collisionCandidates(x, z), false).find(hit => surfaceY(hit) > .38) || null;
   }
-  _collisionCandidates(x, z, radius = 1) { return [...this.currentMap.colliders, ...(this.currentMap.props?.getCollidersNear(x, z, radius) || [])]; }
+  _collisionCandidates(x, z, radius = 1) {
+    const map = this.currentMap;
+    if (!map.collisionIndex || map.collisionIndex.objects !== map.colliders || map.collisionIndex.length !== map.colliders.length) map.collisionIndex = new StaticColliderIndex(map.colliders);
+    return [...map.collisionIndex.near(x, z, radius), ...(map.props?.getCollidersNear(x, z, radius) || [])];
+  }
   get sceneObjects() { return this.currentMap?.sceneObjects || new Map(); }
   getSceneObject(name) { return typeof name === 'number' ? [...this.sceneObjects.values()].find(o => o.id === name || o.runtimeId === name) : this.sceneObjects.get(String(name).toLowerCase()); }
   playScenePose(name, pose, loop = false) { return this.getSceneObject(name)?.playPose(pose, { loop: !!loop }) || false; }
@@ -614,7 +622,7 @@ export class MeteorGame {
     this._hud();
   }
   setMuted(value) { this.muted = !!value; if (this.master) this.master.gain.value = value ? 0 : .25; }
-  setQuality(value) { this.quality = value; this.butterflyVfx?.setQuality(value); this._applyMapPresentation(); this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, value === 'low' ? 1 : 2)); this.resize(); }
+  setQuality(value) { this.quality = value; this.butterflyVfx?.setQuality(value); this._applyMapPresentation(); this.renderScale.reset(Math.min(window.devicePixelRatio || 1, value === 'low' ? 1 : 2)); this.renderer.setPixelRatio(this.renderScale.ratio); this.resize(); }
   setDamageResolver(resolver) { if (resolver !== null && typeof resolver !== 'function') throw new Error('Damage resolver must be a function or null'); this.damageResolver = resolver; }
   _beginJump(actor) {
     if (!actor.grounded || actor.combat.busy) return false;
@@ -1049,11 +1057,19 @@ export class MeteorGame {
       desired = target.clone().add(v3(Math.sin(this.cameraAngle) * this.cameraDistance, Math.sin(this.cameraPitch) * this.cameraDistance + 1, Math.cos(this.cameraAngle) * this.cameraDistance));
     }
     this.cameraTarget.lerp(target, 1 - Math.exp(-dt * 8));
+    const hasLiveLock = this.locked && !this.locked.dead && !this.locked.disposed;
+    const directLook = this.running && !this.paused && !hasLiveLock && (this.mouseLook?.locked || this.pointer?.moved);
+    if (directLook) {
+      // Follow translation smoothly, but apply the sampled mouse orbit in this
+      // render frame. Position lerp here added ~100ms of angular chase/drag.
+      desired = this.cameraTarget.clone().add(v3(Math.sin(this.cameraAngle) * this.cameraDistance, Math.sin(this.cameraPitch) * this.cameraDistance + 1, Math.cos(this.cameraAngle) * this.cameraDistance));
+    }
     const safe = this._safeCameraPosition(this.cameraTarget, desired);
-    this.camera.position.lerp(safe, 1 - Math.exp(-dt * 10));
+    if (directLook) this.camera.position.copy(safe);
+    else this.camera.position.lerp(safe, 1 - Math.exp(-dt * 10));
     // Recheck the interpolated point too: smoothing must not cross a wall while
     // the player or locked target moves around a corner.
-    this.camera.position.copy(this._safeCameraPosition(this.cameraTarget, this.camera.position)); this.camera.lookAt(this.cameraTarget);
+    if (!directLook) this.camera.position.copy(this._safeCameraPosition(this.cameraTarget, this.camera.position)); this.camera.lookAt(this.cameraTarget);
     this.hero.root.visible = !this.running || this.camera.position.distanceTo(eye) >= 2.1;
   }
   _hud() {
@@ -1070,7 +1086,7 @@ export class MeteorGame {
     this.onUpdate({ infiniteRage: !!this.infiniteRage, characterAppearance: f.character.appearanceStatus, pickup, statuses, inputBlocked: !!f.scriptInputBlocked, hp: f.hp, maxHp: f.maxHp, playerReaction: f.combat.reactionPhase, rage: f.rage, hits: this.contactHits, kills: this.kills, deaths: this.deaths, time: this.matchElapsed, enemy, combo: f.combat.attacking ? f.combat.combo : 0, moveName: f.combat.busy ? f.combat.currentMove?.name : null, moveCommand: f.combat.busy ? f.combat.currentMove?.command : null, queuedMoveName: f.combat.queuedMove?.name || null, locked: !!this.locked, position: { x: f.root.position.x, z: f.root.position.z }, enemies: this.enemies.filter(e => !e.dead && !e.scriptRemoved && e.team !== f.team && e.team !== 0).map(e => ({ x: e.root.position.x, z: e.root.position.z })), allies: this.enemies.filter(e => !e.dead && !e.scriptRemoved && e.team === f.team).map(e => ({ x: e.root.position.x, z: e.root.position.z })), weapon: f.weapon, weaponId: f.weaponId, weaponName: f.weaponName, weaponMode: f.combat.weaponMode, mission: this.missionState, paused: this.paused, mapBounds: b ? { minX: b.min.x, maxX: b.max.x, minZ: b.min.z, maxZ: b.max.z } : null, native: { pose: f.combat.timeline?.pose.id, source: f.character.source, frame: f.character.frame, contacts: this.contactHits, damagePending: !this.damageResolver, hpSourcePending: !f.hpSourceVerified, physicsPending: true, sceneDamagePending: this.mode === 'story' && !this.sceneDamageResolver, projectilePending: false, projectileSpecialsPending: true, projectilePhysics: NATIVE_DART_PROFILE.provenance.flight, projectiles: this.projectiles?.size || 0, missionVmPending: this.mode === 'story' ? !this.missionHost?.started : false } });
   }
   _emit(text, type = 'info', amount, point, extra = {}) { const p = point?.clone().project(this.camera); this.onEvent({ text, type, amount, x: p ? (p.x + 1) / 2 : undefined, y: p ? (1 - p.y) / 2 : undefined, ...extra }); }
-  _resetWorldClock() { this.simulationClock?.reset(); this.clock?.getDelta(); }
+  _resetWorldClock() { this.simulationClock?.reset(); this.clock?.getDelta(); this.frameMeter?.reset(); }
   _advanceWorld(seconds) {
     this.simulationClock ||= new FixedStepClock();
     if (!this.hero || this.paused || this.disposed) { this.simulationClock.reset(); return; }
@@ -1097,19 +1113,30 @@ export class MeteorGame {
       this.butterflyVfx?.update(dt, { attacking: !!this.hero?.combat?.attacking, camera: this.camera });
       if (this.hero?.phoenixSpear?.visible) this.hero.phoenixSpear.userData.update(this.elapsed);
   }
-  _frame() {
+  _frame(timestamp) {
     if (this.disposed) return; this.raf = requestAnimationFrame(this._frame);
+    const started = performance.now();
     const seconds = this.clock.getDelta(), dt = Number.isFinite(seconds) ? Math.max(0, Math.min(.05, seconds)) : 0;
     this._advanceWorld(seconds);
     if (this.hero && !this.paused) this._updatePresentation(dt);
+    const worldEnd = performance.now();
     this._tickCamera(dt);
+    const cameraEnd = performance.now();
     const offset = this.impactFeedback?.cameraOffset;
     if (offset) this.camera.position.add(offset);
     this.renderer.render(this.scene, this.camera);
     if (offset) this.camera.position.sub(offset);
+    const ended = performance.now();
+    const stats = this.frameMeter?.sample(Number.isFinite(timestamp) ? timestamp : started, { cpu: ended - started, world: worldEnd - started, camera: cameraEnd - worldEnd, render: ended - cameraEnd });
+    if (stats) {
+      this.frameOverlay?.update(stats, this.renderer);
+      const ratio = this.renderScale?.update(stats, this.running && !this.paused && !document.hidden);
+      if (ratio && Math.abs(ratio - this.renderer.getPixelRatio()) > .001) { this.renderer.setPixelRatio(ratio); this.resize(); }
+    }
   }
   _bind() {
     const bind = (el, name, fn, options) => { el.addEventListener(name, fn, options); this._listeners.push(() => el.removeEventListener(name, fn, options)); };
+    bind(document, 'visibilitychange', () => { this.frameMeter.reset(); this.clock.getDelta(); this.simulationClock.reset(); });
     this.keyboard = bindKeyboard(window, { bindings: defaultBindings(), enabled: () => this.running && !this.paused && !document.querySelector('dialog[open]') && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName), action: (name, down) => this.action(name, down) });
     this._listeners.push(() => this.keyboard.dispose());
     this.mouseLook = createMouseLook(this.canvas, { active: () => this.running && !this.paused && !document.querySelector('dialog[open]'), move: (dx, dy) => turnMouseCamera(this, dx, dy), action: (name, down) => this.action(name, down), onUnlock: () => this.onEvent({ type: 'pointer-unlock' }), onError: () => this.onEvent({ type: 'pointer-error', text: '鼠标锁定未成功，请点击游戏画面重试；也可继续使用键盘操作。' }) });
@@ -1153,6 +1180,7 @@ export class MeteorGame {
     } catch (error) { console.warn('Original sound could not be played:', file.id, error); }
   }
   dispose() {
+    this.frameOverlay?.dispose();
     this.weather?.dispose();
     this.rageVfx?.dispose(); this.effectContacts?.dispose(); this.projectiles?.dispose(); this.muskets?.dispose(); this.wheels?.dispose(); this.impactFeedback?.dispose(); this.items?.dispose(); this.missionHost?.dispose(); this.disposed = true; cancelAnimationFrame(this.raf); this._listeners.forEach(fn => fn()); this.hero?.character.dispose(); this.enemies.forEach(f => { this._disposeNameplate(f); f.character.dispose(); });
     for (const data of this.mapData.values()) this._disposeMap(data); this.mapData.clear(); this.mapCache.clear();

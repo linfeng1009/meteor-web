@@ -1,0 +1,59 @@
+{
+  "date": "2026-11-10",
+  "mode": "full suite plus targeted rechecks",
+  "uniqueTestCasesCovered": 389,
+  "finalUnresolvedFailures": 0,
+  "firstFullRun": {
+    "tests": 389,
+    "passCount": 387,
+    "failCount": 1,
+    "cancelled": 1,
+    "durationMs": 106354.802083
+  },
+  "rechecks": {
+    "mission": {
+      "tests": 10,
+      "passed": 10,
+      "timeoutMs": 180000,
+      "durationMs": 56916.892542
+    },
+    "raidenAssets": {
+      "tests": 3,
+      "passed": 3
+    }
+  },
+  "hairTests": {
+    "tests": 8,
+    "passed": 8
+  },
+  "syntax": {
+    "runtimeModules": 33,
+    "passed": true
+  },
+  "browser": {
+    "appearances": [
+      "hutao",
+      "raiden",
+      "emilia"
+    ],
+    "actions": [
+      "run",
+      "jump",
+      "attack"
+    ],
+    "physicsToggle": true,
+    "cachedSwitch": true,
+    "consoleErrors": 0,
+    "consoleWarnings": 0,
+    "screenshot": "restrained-hair-preview.png",
+    "limits": "Workshop interaction verified; gameplay for all three appearances not manually replayed through every mission."
+  },
+  "artifacts": {
+    "hair-tests.tap": "9d252235ac33eccb2a286a050695024715cce9d4824e2c974a7533cae940a5f7",
+    "full-tests.tap": "6b1c517a69e80f42438a1c4f02fbe1653bc3e3c9a667e4f0906227920c895920",
+    "mission-recheck.tap": "244d46dbf1345219820166dedae746e3df44897e538b2877965e43b3274bdb3a",
+    "raiden-recheck.tap": "a1f8e986248791d849f6c3dad7a44080fac9cd09de0d017366d01dcfe2cee7fc",
+    "restrained-motion.json": "c1f6292b92a868e4b73aeba714592a40d2ddce62d940c3148ff36769ce9a3a00",
+    "restrained-hair-preview.png": "70770e7f3f8744cf252793bb3c0b487ca22030aa69b1cd84e545531a76931839"
+  }
+}

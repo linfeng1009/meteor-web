@@ -42,9 +42,9 @@ npm run dev
 
 ## 打包本地游戏
 
-执行 `npm run package`（打包时需要 Python 3），生成 `artifacts/meteor-web-v<版本>.zip`。压缩包包含整个 `dist/`、本地服务器和启动文件，YS-胡桃、YS-影、RE0-爱蜜莉雅的转换网格 JSON 和全部 PNG 贴图会一同打入。打包不依赖 Git 是否暂存这些资源。
+执行 `npm run package`（打包时需要 Python 3），生成 `artifacts/meteor-web-v<版本>.zip`。压缩包包含整个 `dist/`、本地服务器和启动文件，YS-胡桃、YS-影、RE0-爱蜜莉雅、豆包、春田的转换网格和原贴图会一同打入。打包不依赖 Git 是否暂存这些资源。
 
-打包后自动校验包内文件哈希、模块导入和三个人物的网格/贴图引用，并生成 `.verification.json` 与 `.zip.sha256`。完整解压后可双击「启动游戏.command」或运行 `npm start`。游戏运行无需原始 PMX、Blender 或 Downloads 目录；角色运行资源已保存在项目内的 `dist/assets/enhanced/`。
+打包后自动校验包内文件哈希、模块导入和五个导入人物的网格/贴图引用，并生成 `.verification.json` 与 `.zip.sha256`。完整解压后可双击「启动游戏.command」或运行 `npm start`。游戏运行无需原始 PMX、Blender 或 Downloads 目录；角色运行资源已保存在项目内的 `dist/assets/enhanced/`。
 
 ## 操作
 
@@ -123,15 +123,23 @@ npm run dev
 
 ## 本地人物工坊
 
-启动游戏后，点击首页底部「人物工坊」，右侧可选择「孟星魂 · 高清试版」、「YS-胡桃 · 模型适配」、「YS-影 · 模型适配」或「RE0-爱蜜莉雅 · 模型适配」。两侧同步动作、镜头和进度，可检查站姿、跑步、出招、跳跃、防御及脸部。点击「使用此外观进入游戏」会选中孟星魂的外观槽位；游戏设置中也可切换。
+启动游戏后，点击首页底部「人物工坊」，右侧可选择「孟星魂 · 高清试版」、「YS-胡桃 · 模型适配」、「YS-影 · 模型适配」、「RE0-爱蜜莉雅 · 模型适配」、「豆包 · 模型适配」或「春田 · 泳装P3」。两侧同步动作、镜头和进度，可检查站姿、跑步、出招、跳跃、防御及脸部。首页「选择人物」和游戏设置也能切换，剧情仍使用原角色身份。
 
-胡桃采用用户提供的完整「胡桃喵1.0.pmx」及5张2K原贴图。保留完整脸、眼睛、猫耳和服装；由原版30骨架与动作驱动，剧情仍是原角色身份。原黑丝4K GIMI MOD缺脸且UV不同，没有拼接混贴。当前发尾、衣摆、手指和面部表情采用简化骨骼适配，未实现MMD物理或原神着色系统。
+胡桃采用用户提供的完整「胡桃喵1.0.pmx」及5张2K原贴图。保留完整脸、眼睛、猫耳和服装；由原版30骨架与动作驱动，剧情仍是原角色身份。原黑丝4K GIMI MOD缺脸且UV不同，没有拼接混贴。发尾已接入独立 Web 弹簧骨骼；衣摆、手指和面部表情仍为简化适配，未实现原MMD物理或原神着色系统。
 
-YS-影使用完整「礼服影.pmx」与7张原颜色贴图，全部30,604三角面保留。Blender源：`work/raiden-pmx-model/雷神影-礼服模型-流星动作适配.blend`。长发刚性随头骨，礼服和发尾物理尚未实现，大幅动作仍可能局部变形或穿插。
+YS-影使用完整「礼服影.pmx」与7张原颜色贴图，全部30,604三角面保留。Blender源：`work/raiden-pmx-model/雷神影-礼服模型-流星动作适配.blend`。长发已接入独立 Web 弹簧骨骼；礼服物理尚未实现，大幅动作仍可能局部变形或穿插。
 
 RE0-爱蜜莉雅采用「Emilia_v1.pmx」，完整脸与衣装保留，重复透明阴影层合成进贴图后移除重叠pass。Blender源：`work/emilia-pmx-model/爱蜜莉雅-完整模型-流星动作适配.blend`，含待机、跑步、跳跃局部姿势、攻击四段动作。原包署名 Skymoons／Elemental Craft／Kadokawa corp／chenxs（陈心舒），保存在本地来源记录中。
 
+豆包采用项目内归档的完整PMX和原4K JPEG贴图，保留107,855顶点、180,698三角面，适配原30根身体骨骼、武器挂点与9根轻微摆动发骨。已修正原绑定在裙摆与腋下的突变权重。版权归属《豆包》，建模原作者sdn1111，绑定鹿铃；署名保存在工坊和资源说明中。运行仅加载 `dist/assets/enhanced/doubao/`，源文件整套保存在 `assets/source/doubao/`，可编辑且贴图内嵌的文件为 `work/doubao-import-2026-11-10/豆包-完整人物-流星动作适配.blend`。运行和重建均不需要下载目录；详见[导入记录](work/doubao-import-2026-11-10/README.md)。
+
+春田保留原PMX的61,222顶点、81,307个默认可见三角面及原贴图。已修正初版把躯干压进孟星魂关节比例的问题：网格只做等比缩放，由独立显示骨架保留原身材并跟随《流星》动作；武器显示挂点同步跟随手掌，原战斗骨架不变。皮肤法线按Unity RG/AG通道解码，粗糙度读取原RMO的R通道。工坊新增「原模型姿态」可查看原始造型。身体原贴图为1024²，未生成或伪装为4K；完整原渲染器的卡通、球面及灯光效果尚未复现。模型署名Sunborn Network Technology，绑定修正DesmondChan／摸鱼的可露凯；来源说明完整保留，仅作本机适配。源归档、内嵌33张贴图和四段动作的Blender工程、复现说明见[春田记录](work/springfield-import-2026-11-10/README.md)。
+
 Blender编辑源：`work/hutao-pmx-model/胡桃喵-完整模型-流星动作适配.blend`，含站姿、跑步、跳跃局部姿势和持剑攻击4段动作。孟星魂对照源：`work/character-hd/孟星魂-高清对照.blend`；本轮已修复其Blender静止骨骼方向。两者均保留原游戏武器挂点的数据。
+
+三个导入人物的头发现在采用轻微跟随：98%运动随头部传递，整束偏转上限约2.3°，强阻尼抑制停步后反复晃动。工坊「头发物理」开关可比较效果。头部、胸部、肩部有近似碰撞体；原MMD刚体求解器、头发自碰撞和衣裙物理仍未接入。
+
+带发束骨骼的 Blender 文件在 `work/hair-physics-2026-11-10/`，Web 中运行物理，Blender 文件保留可编辑骨骼和权重。重建时，先运行原 `build_*_pmx.py`（需要原下载目录），再运行 `/Applications/Blender.app/Contents/MacOS/Blender --background --python scripts/blender/add_hair_springs.py`；只重建头发不需要已清理的下载目录。详细复现与验证见[头发物理记录](work/hair-physics-2026-11-10/README.md)。
 
 人物显示名使用「YS-胡桃」「YS-影」「RE0-爱蜜莉雅」，原 PMX、Blender 和历史报告文件名保留实际名称。2026-11-06 已修正全局替换误改的路径并更新当前哈希，原校验快照另行归档；见[改名修正记录](work/appearance-name-fix-2026-11-06/README.md)。
 
@@ -139,7 +147,13 @@ Blender编辑源：`work/hutao-pmx-model/胡桃喵-完整模型-流星动作适�
 
 ## 验证和追溯
 
-2026-11-10 当前本地 v0.7.6：**381/381测试通过**（57.799秒），32个运行模块语法与3,885条原版资产核验通过。乾坤刀末击12个原刀光形状全部显示，32个怒招/76组EF审计中的20组尾段截断统一修正；原POS的143段Drag窗口接入柔边武器拖尾。深浅地面及大刀拖尾浏览器对照无新增错误。原粒子发射与完整材质仍待恢复。见[本轮报告](work/meteor-original/report/2026-11-10_逆向-技能光效与刀光补全-report.md)、[完整TAP](work/meteor-original/evidence/native-runtime-vfx-final-2026-11-10.tap)与[当前验证](work/meteor-original/evidence/E-validation-current.json)。
+2026-11-10 春田原比例与皮肤修正：**413/413测试通过**（171.573秒），11项春田专项及36个运行模块语法检查通过。逐顶点核对原PMX形状、法线和UV，45个动作采样有限且原关节不变；原姿态运行蒙皮最大偏差2.31e-7世界单位。运行包4,144文件全部核验。浏览器检查全身、脸部、原姿态、跑跳、出招及实际演武，控制台无error/warn。见[验证摘要](work/springfield-import-2026-11-10/validation.json)及[完整TAP](work/springfield-import-2026-11-10/quality-full-tests.tap)。
+
+2026-11-10 豆包接入时快照：**396/396测试通过**（127.514秒），33个运行模块语法检查通过；45个动作采样有限且原关节不变。Blender文件重新打开确认4K贴图内嵌、四段动作保留；当时本地运行包4,100文件全部核验。见[完整TAP](work/doubao-import-2026-11-10/full-tests.tap)和[验证摘要](work/doubao-import-2026-11-10/validation.json)。
+
+2026-11-10 当前人物头发调整：新增8项专项通过，**389个用例获得通过覆盖**（全套加受影响文件定向复验），33个运行模块语法检查通过。已收紧三个导入人物的惯性和摆幅，原身体/脸部绑定与武器挂点保持；完整首轮的旧刚性头发断言与长时任务超时及复验结果均保留在[本轮验证记录](work/hair-physics-2026-11-10/README.md)。
+
+2026-11-10 同日技能光效阶段 v0.7.6：**381/381测试通过**（57.799秒），32个运行模块语法与3,885条原版资产核验通过。乾坤刀末击12个原刀光形状全部显示，32个怒招/76组EF审计中的20组尾段截断统一修正；原POS的143段Drag窗口接入柔边武器拖尾。深浅地面及大刀拖尾浏览器对照无新增错误。原粒子发射与完整材质仍待恢复。见[本轮报告](work/meteor-original/report/2026-11-10_逆向-技能光效与刀光补全-report.md)、[完整TAP](work/meteor-original/evidence/native-runtime-vfx-final-2026-11-10.tap)与[当阶段验证](work/meteor-original/evidence/E-validation-current.json)。
 
 2026-11-09 此前本地 v0.7.5：**370/370测试通过**（69.793秒），30个运行模块语法与3,885条原版资产核验通过。↓↓A收刀现在将刀身送入鞘内，刀柄外露，拔刀攻击后可再次回鞘；公开输入、四款原模型、混合帧和换兵器清理均进入验收。本地包4,089文件，含转换后的角色网格与贴图。见[本轮报告](work/meteor-original/report/2026-11-09_逆向-乾坤刀收刀入鞘-report.md)、[最终TAP](work/meteor-original/evidence/native-runtime-sheathing-final-2026-11-09.tap)与[当阶段验证](work/meteor-original/evidence/E-validation-sheathing-2026-11-09.json)。
 

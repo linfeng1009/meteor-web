@@ -62,7 +62,7 @@ test('Emilia geometry has finite unit normals and normalized compatible native b
     let sum = 0;
     for (let j = 0; j < 4; j++) {
       const bone = skin.skinIndices[i * 4 + j], weight = skin.skinWeights[i * 4 + j];
-      assert.ok(Number.isInteger(bone) && bone >= 0 && bone < 30); assert.ok(Number.isFinite(weight) && weight >= 0);
+      assert.ok(Number.isInteger(bone) && bone >= 0 && bone < 30 + (skin.secondaryMotion?.bones.length || 0)); assert.ok(Number.isFinite(weight) && weight >= 0);
       sum += weight; if (weight > .01) bones.add(bone);
     }
     assert.ok(Math.abs(sum - 1) < 2e-5);

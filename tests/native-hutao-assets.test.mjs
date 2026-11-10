@@ -63,7 +63,7 @@ test('the complete PMX export has finite unit normals, native bone weights and n
     let sum = 0;
     for (let j = 0; j < 4; j++) {
       const index = skin.skinIndices[i * 4 + j], weight = skin.skinWeights[i * 4 + j];
-      assert.ok(Number.isInteger(index) && index >= 0 && index < 30);
+      assert.ok(Number.isInteger(index) && index >= 0 && index < 30 + (skin.secondaryMotion?.bones.length || 0));
       assert.ok(Number.isFinite(weight) && weight >= 0 && weight <= 1);
       sum += weight;
       if (weight > .01) usedBones.add(index);

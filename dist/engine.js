@@ -21,6 +21,7 @@ import { NativeEffectContacts } from './native-effect-contacts.js';
 import { bindQiankunGrip } from './native-qiankun-grip.js';
 import { createButterflySword, createSwordEnvironment, disposeButterflySword } from './butterfly-sword.js';
 import { createPhoenixSpear, disposePhoenixSpear } from './phoenix-spear.js';
+import { loadRaidenSword, disposeRaidenSword } from './raiden-sword.js';
 import { ButterflySwordVfx } from './butterfly-vfx.js';
 import { loadQiyunCourtyard, QIYUN_MAP } from './qiyun-courtyard.js';
 
@@ -315,6 +316,18 @@ export class MeteorGame {
     const modelURL = new URL(entry.modelUrl, base), loader = entry.format === 'GMB' ? loadGmb : loadGmc;
     return loader(modelURL.href, { scale: 1, groundZ: 0, textureMap, textureAlphaMap, texturePath: new URL('textures/', modelURL).href, unlit: true, name: modelId, source: `local:cmodel/${modelId}` });
   }
+  async _loadRaidenSwordTemplate() {
+    if (this.raidenSwordTemplate) return this.raidenSwordTemplate;
+    return this.raidenSwordLoad ||= loadRaidenSword({ environment: this.butterflyEnvironment }).then(template => {
+      if (this.disposed) { disposeRaidenSword(template); return null; }
+      this.raidenSwordTemplate = template; return template;
+    }).catch(error => {
+      this.raidenSwordLoad = null;
+      console.warn('雷电影佩刀未能载入：', error);
+      if (this.swordStyle === 'raiden') this._emit('雷电影佩刀载入失败，暂用原版长剑', 'info');
+      return null;
+    });
+  }
   async _equip(f, selection) {
     this.rageVfx?.clearActor(f);
     this.effectContacts?.clearActor(f);
@@ -328,6 +341,7 @@ export class MeteorGame {
     f.combat.setWeapon(name); f.combat.play(NATIVE_WEAPONS[name].stance, { loop: true, force: true }); f.heldPose = NATIVE_WEAPONS[name].stance;
     if (f.hero) { this.directionBuffer = []; this.recoveryAttack = null; }
     if (f.butterflySword) { disposeButterflySword(f.butterflySword); if (f.hero) this.butterflyVfx?.bind(null); }
+    f.raidenSword?.removeFromParent(); f.raidenSword = null;
     disposePhoenixSpear(f.phoenixSpear); f.phoenixSpear = null;
     for (const model of f.weaponModels || (f.weaponModel ? [f.weaponModel] : [])) model.removeFromParent(); f.weaponModels = []; f.weaponModel = null; f.butterflySword = null;
     const ids = item.modelIds.map(id => id.toLowerCase());
@@ -344,6 +358,7 @@ export class MeteorGame {
         // Qiankun starts at the palm grips; its pose binding then seats the
         // blade in the sheath for closed/return phases.
         f.character.getAttachment(`d_wpn${hand}${name === 'qiankun' ? 'P' : ''}`).add(model);
+        f.character.registerVisualAttachment?.(model,`d_wpn${hand}${name === 'qiankun' ? 'P' : ''}`);
       }
       f.weaponModels = models; f.weaponModel = models[0];
       if (name === 'qiankun') f.weaponPoseUnsubscribe = bindQiankunGrip(f, this.combatData, gripManifest);
@@ -354,17 +369,23 @@ export class MeteorGame {
         // 每次装备都新建一份：userData.update（飘带/呼吸光）是闭包，Object3D.clone
         // 会对 userData 做 JSON 序列化从而丢掉函数，所以这里不复用模板。
         if (!this.butterflyEnvironment) { try { this.butterflyEnvironment = createSwordEnvironment(this.renderer); } catch (error) { console.warn('月蝶剑环境贴图不可用：', error); } }
+        const raidenTemplate = await this._loadRaidenSwordTemplate();
+        if (this.disposed || f.disposed || request !== f.equipRequest) return;
         const variant = createButterflySword({ environment: this.butterflyEnvironment });
         variant.userData.butterflySword = true; variant.rotation.x = Math.PI / 2;
-        f.character.getAttachment('d_wpnR').add(variant); f.butterflySword = variant;
+        f.character.getAttachment('d_wpnR').add(variant); f.character.registerVisualAttachment?.(variant,'d_wpnR'); f.butterflySword = variant;
         this.butterflyVfx ||= new ButterflySwordVfx(this.scene, { quality: this.quality || 'high' });
+        if (raidenTemplate) {
+          const raiden = raidenTemplate.clone(true); raiden.rotation.x = Math.PI / 2;
+          f.character.getAttachment('d_wpnR').add(raiden); f.character.registerVisualAttachment?.(raiden,'d_wpnR'); f.raidenSword = raiden;
+        }
         this.butterflyVfx.bind(variant); this._syncSwordStyle(f);
       }
       if (f.hero && name === 'spear') {
         if (!this.butterflyEnvironment) { try { this.butterflyEnvironment = createSwordEnvironment(this.renderer); } catch (error) { console.warn('兵器环境贴图不可用：', error); } }
         const variant = createPhoenixSpear({ environment: this.butterflyEnvironment });
         variant.rotation.x = Math.PI / 2;
-        f.character.getAttachment('d_wpnR').add(variant); f.phoenixSpear = variant;
+        f.character.getAttachment('d_wpnR').add(variant); f.character.registerVisualAttachment?.(variant,'d_wpnR'); f.phoenixSpear = variant;
         this._syncSpearStyle(f);
       }
     } catch (error) { this._emit(`原版兵器读取失败：${name}`, 'info'); console.error(error); }
@@ -544,12 +565,16 @@ export class MeteorGame {
     return status;
   }
   _syncSwordStyle(actor) {
-    if (!actor?.butterflySword || !actor.weaponModel) return;
-    const enhanced=this.swordStyle==='butterfly'; actor.weaponModel.visible=!enhanced; actor.butterflySword.visible=enhanced;
-    if (actor.hero) this.butterflyVfx?.setVisible(enhanced);
+    if (!actor?.weaponModel) return;
+    const butterfly = this.swordStyle === 'butterfly' && !!actor.butterflySword;
+    const raiden = this.swordStyle === 'raiden' && !!actor.raidenSword;
+    actor.weaponModel.visible = !butterfly && !raiden;
+    if (actor.butterflySword) actor.butterflySword.visible = butterfly;
+    if (actor.raidenSword) actor.raidenSword.visible = raiden;
+    if (actor.hero) this.butterflyVfx?.setVisible(butterfly);
   }
   setSwordStyle(style) {
-    if (!['original','butterfly'].includes(style)) throw new Error('Unknown sword style');
+    if (!['original','butterfly','raiden'].includes(style)) throw new Error('Unknown sword style');
     this.swordStyle=style; this._syncSwordStyle(this.hero);
   }
   _syncSpearStyle(actor) {
@@ -577,7 +602,7 @@ export class MeteorGame {
     this._hud();
   }
   setMuted(value) { this.muted = !!value; if (this.master) this.master.gain.value = value ? 0 : .25; }
-  setQuality(value) { this.quality = value; this.butterflyVfx?.setQuality(value); this._applyMapPresentation(); this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, value === 'low' ? 1 : 1.75)); this.resize(); }
+  setQuality(value) { this.quality = value; this.butterflyVfx?.setQuality(value); this._applyMapPresentation(); this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, value === 'low' ? 1 : 2)); this.resize(); }
   setDamageResolver(resolver) { if (resolver !== null && typeof resolver !== 'function') throw new Error('Damage resolver must be a function or null'); this.damageResolver = resolver; }
   _beginJump(actor) {
     if (!actor.grounded || actor.combat.busy) return false;
@@ -1005,6 +1030,8 @@ export class MeteorGame {
       this.weather?.update(dt, this.hero?.root.position);
       if (this.running) { this.matchElapsed += dt; this._updateFighter(this.hero, dt); for (const f of this.enemies) { if (!this.running) break; this._updateFighter(f, dt); } this._separateCharacters(dt); if (this.running) { this.projectiles?.update(dt); this.wheels?.update(dt); } }
       else { const state = this.hero.combat.update(dt); if (state) this.hero.character.setPoseFrame(state.source, state.frame); }
+      // Run cosmetic springs once, after final body motion and separation.
+      for (const actor of [this.hero,...this.enemies]) if(actor?.root.visible&&!actor.disposed)actor.character.updateSecondaryMotion?.(dt,{groundY:actor.grounded?actor.root.position.y:undefined});
       for (let i = this.effects.length - 1; i >= 0; i--) { const e = this.effects[i]; e.life -= dt; e.mesh.material.opacity = Math.max(0, e.life / .14); if (e.life <= 0) { e.mesh.removeFromParent(); e.mesh.geometry.dispose(); e.mesh.material.dispose(); this.effects.splice(i, 1); } }
       this.impactFeedback?.update(dt);
       this.rageVfx?.update(dt, this.camera);
@@ -1069,6 +1096,7 @@ export class MeteorGame {
     this.butterflyVfx?.dispose(); this.butterflyVfx = null;
     disposePhoenixSpear(this.hero?.phoenixSpear);
     disposeButterflySword(this.hero?.butterflySword); disposeButterflySword(this.butterflySwordTemplate); this.butterflySwordTemplate = null;
+    disposeRaidenSword(this.raidenSwordTemplate); this.raidenSwordTemplate = null;
     this.butterflyEnvironment?.dispose(); this.butterflyEnvironment = null;
     geometries.forEach(g => g.dispose()); materials.forEach(m => m.dispose()); textures.forEach(t => t.dispose()); this.collisionMaterial.dispose(); this.renderer.dispose(); this.audio?.close();
   }

@@ -10,9 +10,9 @@ const requestedAppearance = new URL(location.href).searchParams.get('appearance'
 const initialAppearance = WORKSHOP_APPEARANCES.includes(requestedAppearance) ? requestedAppearance : 'hd';
 $('#compare-appearance').replaceChildren(...WORKSHOP_APPEARANCES.map(id => { const option = document.createElement('option'); option.value = id; option.textContent = appearanceDetails(id).title; return option; }));
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const state = { appearance: initialAppearance, complete: true, motion: 'idle', playing: false, time: 0, angle: .1, pitch: .1, distance: 6.2, focus: 1.45, view: 'full', ready: false };
+const state = { appearance: initialAppearance, complete: true, motion: 'idle', playing: false, physics:true, time: 0, angle: .1, pitch: .1, distance: 6.2, focus: 1.45, view: 'full', ready: false };
 const definitions = { idle: { label: '站姿', ids: [6] }, run: { label: '跑步', ids: [144] }, attack: { label: '出招', ids: [262, 263, 264] }, jump: { label: '跳跃', ids: [151, 152, 180] }, guard: { label: '防御', ids: [16] } };
-let renderer, camera, actors = [], scenes = [], motions, raf, pointer = null, lastFrame = performance.now(), lastLabel = 0, width = 1, height = 1, disposed = false;
+let renderer, camera, actors = [], scenes = [], workshopWeapons = [], motions, raf, pointer = null, lastFrame = performance.now(), lastLabel = 0, width = 1, height = 1, disposed = false;
 
 function resize() {
   width = stage.clientWidth; height = stage.clientHeight;
@@ -20,17 +20,26 @@ function resize() {
 }
 function setMotion(name) {
   if (!motions?.[name]) return;
+  actors.forEach(actor=>actor.setSourceRestPose?.(false)); updateSourceRestControl();
   state.motion = name; state.time = 0;
   document.querySelectorAll('[data-motion]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.motion === name)));
-  renderPose(); render();
+  renderPose(); actors.forEach(actor=>actor.resetSecondaryMotion()); render();
 }
 function setView(view) {
-  state.view = view; state.distance = view === 'face' ? 1.25 : 6.2; state.focus = view === 'face' ? 2.68 : 1.45; state.pitch = view === 'face' ? .015 : .1; state.angle = .1;
+  const sourceProportions=actors[1]?.sourceRestAvailable;
+  state.view = view; state.distance = view === 'face' ? (sourceProportions ? 1.5 : 1.25) : 6.2; state.focus = view === 'face' ? (sourceProportions ? 2.85 : 2.68) : 1.45; state.pitch = view === 'face' ? .015 : .1; state.angle = .1;
   document.querySelectorAll('[data-view]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.view === view)));
   render();
 }
 function setPlaying(value) {
+  if(value&&actors[1]?.sourceRestPose){actors[1].setSourceRestPose(false);updateSourceRestControl();renderPose();}
   state.playing = value; $('#play-toggle').setAttribute('aria-pressed', String(value)); $('#play-toggle').textContent = value ? '暂停动作' : '播放动作';
+}
+function updateSourceRestControl(){
+  const available=!!actors[1]?.sourceRestAvailable,active=!!actors[1]?.sourceRestPose,button=$('#source-rest');
+  button.hidden=!available;button.setAttribute('aria-pressed',String(active));button.textContent=active?'返回动作预览':'原模型姿态';
+  $('#hair-physics').disabled=active;$('#hair-physics').textContent=active?'头发物理：暂停':state.physics?'头发物理：开':'头发物理：关';
+  $('#motion-frame').disabled=active;if(workshopWeapons[1])workshopWeapons[1].visible=!active;
 }
 function renderPose(updateLabel = true) {
   if (!state.ready) return;
@@ -44,7 +53,7 @@ function renderPose(updateLabel = true) {
   if (!updateLabel) return;
   const fraction = (state.time % motion.duration) / motion.duration;
   $('#motion-frame').value = String(Math.round(fraction * 1000)); $('#progress-label').textContent = `${Math.round(fraction * 100)}%`;
-  $('#frame-label').textContent = `同步：${definitions[state.motion].label} · ${Math.round(fraction * 100)}%`;
+  $('#frame-label').textContent = actors[1]?.sourceRestPose ? '原模型姿态' : `同步：${definitions[state.motion].label} · ${Math.round(fraction * 100)}%`;
 }
 function render() {
   if (!renderer || !camera) return;
@@ -65,6 +74,7 @@ function frame(now) {
   if (disposed) return;
   const dt = Math.min(.05, Math.max(0, (now - lastFrame) / 1000)); lastFrame = now;
   if (state.ready && state.playing && !document.hidden) { state.time += dt; const updateLabel = now - lastLabel > 65; renderPose(updateLabel); if (updateLabel) lastLabel = now; }
+  if(state.ready&&!document.hidden)actors.forEach(actor=>actor.updateSecondaryMotion(dt,{groundY:0}));
   render(); raf = requestAnimationFrame(frame);
 }
 function studio(actor) {
@@ -84,11 +94,12 @@ async function sword() {
   for (const texture of item.textures) { const path = texture.url || texture.frames?.[0]?.url; if (path) textureMap[texture.reference.toLowerCase()] = new URL(path, root).href; if (texture.alphaMask) textureAlphaMap[texture.reference.toLowerCase()] = new URL(texture.alphaMask, root).href; }
   const url = new URL(item.modelUrl, root), loader = item.format === 'GMB' ? loadGmb : loadGmc;
   const model = await loader(url.href, { scale: 1, groundZ: 0, textureMap, textureAlphaMap, texturePath: new URL('textures/', url).href, unlit: true });
-  for (const actor of actors) { const clone = model.clone(true); clone.rotation.x = Math.PI / 2; actor.getAttachment('d_wpnR').add(clone); }
+  for (const actor of actors) { const clone = model.clone(true); clone.rotation.x = Math.PI / 2; actor.getAttachment('d_wpnR').add(clone); actor.registerVisualAttachment?.(clone,'d_wpnR'); workshopWeapons.push(clone); }
 }
 function updateVariantLabels() {
   const details = appearanceDetails(state.appearance), pmx = details.kind === 'pmx';
   $('#compare-appearance').value = state.appearance;
+  updateSourceRestControl();
   $('#compare-name').textContent = details.name;
   $('#variant-title').textContent = details.title;
   $('#variant-kicker').textContent = pmx ? 'LOCAL PMX ADAPTATION' : 'BLENDER STUDY';
@@ -105,7 +116,7 @@ $('#compare-appearance').value = initialAppearance;
 $('#compare-appearance').addEventListener('change', async event => {
   if (!state.ready) return;
   const requested = event.target.value, select = event.target; select.disabled = true; $('#apply-hd').disabled = true;
-  try { const status = await actors[1].setAppearance(requested, { allowIncomplete: true }); if (!status.available) throw new Error(status.reason || '外观无法载入'); state.appearance = requested; state.complete = status.complete !== false; updateVariantLabels(); renderPose(); render(); }
+  try { const status = await actors[1].setAppearance(requested, { allowIncomplete: true }); if (!status.available) throw new Error(status.reason || '外观无法载入'); state.appearance = requested; state.complete = status.complete !== false; updateVariantLabels(); renderPose(); actors[1].resetSecondaryMotion(); render(); }
   catch (error) { await actors[1].setAppearance(state.appearance, { allowIncomplete: true }); select.value = state.appearance; updateVariantLabels(); $('#appearance-note').textContent = error.message+'。已恢复此前外观，可稍后重试。'; }
   finally { select.disabled = false; $('#apply-hd').disabled = !state.complete || actors[1].appearance !== state.appearance; }
 });
@@ -113,7 +124,9 @@ document.querySelectorAll('[data-motion]').forEach(button => button.addEventList
 document.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => setView(button.dataset.view)));
 $('#reset-view').addEventListener('click', () => setView(state.view));
 $('#play-toggle').addEventListener('click', () => setPlaying(!state.playing));
-$('#motion-frame').addEventListener('input', event => { if (!state.ready) return; setPlaying(false); state.time = Number(event.target.value) / 1000 * motions[state.motion].duration; if (Number(event.target.value) === 1000) state.time -= 1e-6; renderPose(); render(); });
+$('#source-rest').addEventListener('click',()=>{const value=!actors[1]?.sourceRestPose;if(value){setPlaying(false);setMotion('idle');}actors[1]?.setSourceRestPose(value);updateSourceRestControl();renderPose();render();});
+$('#hair-physics').addEventListener('click',()=>{state.physics=!state.physics;actors.forEach(actor=>actor.setSecondaryMotionEnabled(state.physics));$('#hair-physics').setAttribute('aria-pressed',String(state.physics));$('#hair-physics').textContent=state.physics?'头发物理：开':'头发物理：关';});
+$('#motion-frame').addEventListener('input', event => { if (!state.ready) return; setPlaying(false); state.time = Number(event.target.value) / 1000 * motions[state.motion].duration; if (Number(event.target.value) === 1000) state.time -= 1e-6; renderPose(); actors.forEach(actor=>actor.resetSecondaryMotion()); render(); });
 canvas.addEventListener('pointerdown', event => { if (event.button !== 0) return; pointer = { id: event.pointerId, x: event.clientX, y: event.clientY }; canvas.setPointerCapture(event.pointerId); canvas.focus(); });
 canvas.addEventListener('pointermove', event => { if (!pointer || pointer.id !== event.pointerId) return; state.angle -= (event.clientX - pointer.x) * .006; state.pitch = THREE.MathUtils.clamp(state.pitch + (event.clientY - pointer.y) * .004, -.25, .7); pointer.x = event.clientX; pointer.y = event.clientY; render(); });
 for (const name of ['pointerup', 'pointercancel', 'lostpointercapture']) canvas.addEventListener(name, () => { pointer = null; });
@@ -124,7 +137,7 @@ window.addEventListener('resize', () => { if (renderer) { resize(); render(); } 
 window.addEventListener('pagehide', () => { disposed = true; cancelAnimationFrame(raf); actors.forEach(actor => actor.dispose()); renderer?.dispose(); });
 
 try {
-  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' }); renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.75)); renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' }); renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2)); renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
   camera = new THREE.PerspectiveCamera(36, 1, .05, 100); resize();
   const [original, enhanced, combat] = await Promise.all([loadNativeCharacter(0, { inPlace: true }), loadNativeCharacter(0, { inPlace: true, appearance: initialAppearance }), loadNativeCombat()]);
   actors = [original, enhanced]; await enhanced.setAppearance(initialAppearance, { allowIncomplete: true }); state.complete = enhanced.appearanceStatus.complete !== false; if (enhanced.appearance !== initialAppearance) throw new Error(enhanced.appearanceStatus.reason || '所选外观尚未能载入');

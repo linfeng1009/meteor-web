@@ -1,0 +1,74 @@
+TAP version 13
+# Subtest: the actual source mission starts on real floors with the original distinct NPC configuration
+ok 1 - the actual source mission starts on real floors with the original distinct NPC configuration
+  ---
+  duration_ms: 336.639417
+  type: 'test'
+  ...
+# Subtest: a player dagger attack uses actual native pose, bones, weapon geometry and RES math to remove NPC HP
+ok 2 - a player dagger attack uses actual native pose, bones, weapon geometry and RES math to remove NPC HP
+  ---
+  duration_ms: 208.229208
+  type: 'test'
+  ...
+# Subtest: switching to the source secondary dart releases from the real hand and damages an original NPC only after flight
+ok 3 - switching to the source secondary dart releases from the real hand and damages an original NPC only after flight
+  ---
+  duration_ms: 125.580958
+  type: 'test'
+  ...
+# Subtest: all original mission NPC spawns are reachable from the player through WP edges and real collision geometry
+ok 4 - all original mission NPC spawns are reachable from the player through WP edges and real collision geometry
+  ---
+  duration_ms: 2086.442
+  type: 'test'
+  ...
+# Subtest: source patrol AI can reach and damage a player who enters the original guard area
+ok 5 - source patrol AI can reach and damage a player who enters the original guard area
+  ---
+  duration_ms: 1125.167584
+  type: 'test'
+  ...
+# Subtest: real native attacks defeat source NPC HP and produce one story win, then restart resets the mission
+ok 6 - real native attacks defeat source NPC HP and produce one story win, then restart resets the mission
+  ---
+  duration_ms: 4618.6385
+  type: 'test'
+  ...
+# Subtest: walking normally into the source enemies causes player death and one failure, and restart resets accumulated state (jitter seed 1)
+ok 7 - walking normally into the source enemies causes player death and one failure, and restart resets accumulated state (jitter seed 1)
+  ---
+  duration_ms: 11227.571584
+  type: 'test'
+  ...
+# Jitter seed 1: source enemies caused natural failure after 52.47 seconds; no HP/dead assignment.
+# Subtest: walking normally into the source enemies causes player death and one failure, and restart resets accumulated state (jitter seed 2)
+ok 8 - walking normally into the source enemies causes player death and one failure, and restart resets accumulated state (jitter seed 2)
+  ---
+  duration_ms: 11148.108083
+  type: 'test'
+  ...
+# Jitter seed 2: source enemies caused natural failure after 53.97 seconds; no HP/dead assignment.
+# Subtest: walking normally into the source enemies causes player death and one failure, and restart resets accumulated state (jitter seed 3)
+ok 9 - walking normally into the source enemies causes player death and one failure, and restart resets accumulated state (jitter seed 3)
+  ---
+  duration_ms: 13333.238917
+  type: 'test'
+  ...
+# Jitter seed 3: source enemies caused natural failure after 58.97 seconds; no HP/dead assignment.
+# Subtest: walking normally into the source enemies causes player death and one failure, and restart resets accumulated state (jitter seed 4)
+ok 10 - walking normally into the source enemies causes player death and one failure, and restart resets accumulated state (jitter seed 4)
+  ---
+  duration_ms: 12456.27675
+  type: 'test'
+  ...
+# Jitter seed 4: source enemies caused natural failure after 57.60 seconds; no HP/dead assignment.
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 56916.892542

@@ -1,0 +1,125 @@
+TAP version 13
+# Subtest: Springfield archive and editable actions do not depend on the original download directory
+not ok 1 - Springfield archive and editable actions do not depend on the original download directory
+  ---
+  duration_ms: 51.434583
+  type: 'test'
+  location: '/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/tests/native-springfield-character.test.mjs:21:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    33 !== 25
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 25
+  actual: 33
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/tests/native-springfield-character.test.mjs:27:78)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: Springfield keeps the complete default P3 surfaces, original textures, normals and author credits
+not ok 2 - Springfield keeps the complete default P3 surfaces, original textures, normals and author credits
+  ---
+  duration_ms: 108.470417
+  type: 'test'
+  location: '/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/tests/native-springfield-character.test.mjs:30:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    33 !== 25
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 25
+  actual: 33
+  operator: 'strictEqual'
+  stack: |-
+    file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/tests/native-springfield-character.test.mjs:40:66
+    async withFetch (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/tests/native-springfield-character.test.mjs:16:102)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: Springfield face stays rigid while authored hair retains separate head-rooted chains
+ok 3 - Springfield face stays rigid while authored hair retains separate head-rooted chains
+  ---
+  duration_ms: 7.271375
+  type: 'test'
+  ...
+# Subtest: all seven appearance variants retain native joints, cached meshes and weapon anchors
+not ok 4 - all seven appearance variants retain native joints, cached meshes and weapon anchors
+  ---
+  duration_ms: 443.318083
+  type: 'test'
+  location: '/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/tests/native-springfield-character.test.mjs:67:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/tests/native-springfield-character.test.mjs:77:104
+    async withFetch (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/tests/native-springfield-character.test.mjs:16:102)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: Springfield run, jump, guard and attack samples preserve native transforms, face and skirt seams
+not ok 5 - Springfield run, jump, guard and attack samples preserve native transforms, face and skirt seams
+  ---
+  duration_ms: 56.245166
+  type: 'test'
+  location: '/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/tests/native-springfield-character.test.mjs:85:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(point.distanceTo(other)<1e-5)
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/tests/native-springfield-character.test.mjs:103:209
+    async withFetch (file:///Users/dulinfeng/Desktop/linf_Ai_projects/%E9%99%A8%E6%98%9F/meteor-web/tests/native-springfield-character.test.mjs:16:102)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: Springfield long hair settles, obeys segment limits and retains a disabled setting after switches
+ok 6 - Springfield long hair settles, obeys segment limits and retains a disabled setting after switches
+  ---
+  duration_ms: 251.865958
+  type: 'test'
+  ...
+# Subtest: Springfield game adoption preserves mission identity, air motion, HP and command timeline
+ok 7 - Springfield game adoption preserves mission identity, air motion, HP and command timeline
+  ---
+  duration_ms: 28.037916
+  type: 'test'
+  ...
+# Subtest: missing Springfield assets retain the previous appearance and incompatible bodies remain original
+ok 8 - missing Springfield assets retain the previous appearance and incompatible bodies remain original
+  ---
+  duration_ms: 262.349959
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 4
+# fail 4
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1453.166209

@@ -32,13 +32,17 @@ test('Raiden retains the independently decoded complete face and rigid eye/mouth
     }
   }
   // A cross-head/torso blend stretched the long hair by 42cm in Pose264.
-  // The first playable version deliberately keeps the hair rigid with the head
-  // until a real secondary-motion rig can be added.
+  // Secondary hair bones must still descend exclusively from the head. A torso
+  // influence would reintroduce the old stretching defect during combat poses.
+  const headBones = new Set([13]);
+  for (const [i, bone] of (skin.secondaryMotion?.bones || []).entries()) {
+    assert.ok(headBones.has(bone.parent), 'every hair chain is rooted in the head'); headBones.add(30 + i);
+  }
   const hairMaterial = skin.materials.findIndex(m => nameOf(m) === '发'); assert.ok(hairMaterial >= 0);
   const hairVertices = new Set(skin.faces.filter(f => f.material === hairMaterial).flatMap(f => f.indices));
   for (const vertex of hairVertices) {
     let head = 0;
-    for (let j = 0; j < 4; j++) if (skin.skinIndices[vertex * 4 + j] === 13) head += skin.skinWeights[vertex * 4 + j];
+    for (let j = 0; j < 4; j++) if (headBones.has(skin.skinIndices[vertex * 4 + j])) head += skin.skinWeights[vertex * 4 + j];
     assert.ok(head > .99999, `hair vertex ${vertex}: no elastic cross-torso stretching`);
   }
 });
@@ -65,7 +69,7 @@ test('Raiden preserves seven local color maps and the skin cutouts actually used
   }
 });
 
-test('Raiden geometry uses finite normalized 30-bone skinning and valid triangle surfaces', () => {
+test('Raiden geometry uses normalized native and hair skinning with valid triangle surfaces', () => {
   assert.equal(skin.positions.length, skin.vertexCount * 3); assert.equal(skin.normals.length, skin.vertexCount * 3);
   assert.equal(skin.uvs.length, skin.vertexCount * 2); assert.equal(skin.skinIndices.length, skin.vertexCount * 4);
   assert.equal(skin.skinWeights.length, skin.vertexCount * 4); assert.equal(skin.faces.length, skin.triangleCount);
@@ -78,7 +82,7 @@ test('Raiden geometry uses finite normalized 30-bone skinning and valid triangle
     let sum = 0;
     for (let j = 0; j < 4; j++) {
       const index = skin.skinIndices[i * 4 + j], weight = skin.skinWeights[i * 4 + j];
-      assert.ok(Number.isInteger(index) && index >= 0 && index < 30);
+      assert.ok(Number.isInteger(index) && index >= 0 && index < 30 + (skin.secondaryMotion?.bones.length || 0));
       assert.ok(Number.isFinite(weight) && weight >= 0 && weight <= 1); sum += weight;
       if (weight > .01) used.add(index);
     }

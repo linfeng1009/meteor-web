@@ -1,0 +1,157 @@
+{
+  "date": "2026-11-10",
+  "status": "passed",
+  "source": {
+    "archive": "assets/source/springfield",
+    "files": 43,
+    "bytes": 24551400,
+    "downloadsRequired": false
+  },
+  "fullSuite": {
+    "tests": 413,
+    "passed": 413,
+    "failed": 0,
+    "durationMs": 171572.70375,
+    "log": "quality-full-tests.tap"
+  },
+  "springfieldTests": {
+    "tests": 11,
+    "passed": 11,
+    "failed": 0,
+    "log": "quality-tests.tap"
+  },
+  "syntaxModules": 36,
+  "geometry": {
+    "vertices": 61222,
+    "triangles": 81307,
+    "sourceTriangles": 87259,
+    "uniformSourceShape": true,
+    "independentSourceVertexNormalUvComparison": "all vertices; tests/native-springfield-character.test.mjs",
+    "sourceRestMaxError": 2.3033314659662066e-07
+  },
+  "motion": {
+    "samples": 45,
+    "allFinite": true,
+    "nativeJointsUnchanged": true,
+    "maxObservedEdgeGrowth": 0.07533800826603382
+  },
+  "blender": {
+    "version": "5.4.0 Alpha",
+    "packedImages": 33,
+    "actions": 4,
+    "linkedLibraries": 0,
+    "restMatrixError": 3.332272171974182e-06,
+    "poseMatrixError": 7.62939453125e-06,
+    "blend": "work/springfield-import-2026-11-10/春田-泳装P3-流星动作适配.blend",
+    "sha256": "0c6a97d02df6ae3b0db35f9836bd9df91b696088054173e5cf8bb9e98c1132c7"
+  },
+  "browser": {
+    "date": "2026-11-10",
+    "workshop": {
+      "url": "http://localhost:4173/character-compare.html?appearance=springfield",
+      "verified": [
+        "原模型姿态及恢复动作",
+        "全身和脸部取景",
+        "跑步",
+        "20%跳跃",
+        "20%出招",
+        "皮肤材质无着色编译错误"
+      ],
+      "warnings": []
+    },
+    "game": {
+      "map": "炼铁狱",
+      "appearance": "春田",
+      "verified": [
+        "实际演武入场",
+        "L跃起",
+        "J空中A后暂停"
+      ],
+      "consoleErrorsOrWarnings": 0,
+      "temporaryTabClosed": true
+    },
+    "existingMatchTabUntouched": true
+  },
+  "package": {
+    "archive": "artifacts/meteor-web-v0.7.6.zip",
+    "version": "0.7.6",
+    "bytes": 161109133,
+    "sha256": "3dc575f8e2f8897f776510cf3ef39d23a047220f972d63333e2a04a130cb29e6",
+    "verifiedFiles": 4144,
+    "characters": [
+      {
+        "id": "hutao",
+        "label": "YS-胡桃 · 完整模型适配",
+        "mesh": "dist/assets/enhanced/hutao/mesh.json",
+        "textures": 5
+      },
+      {
+        "id": "raiden",
+        "label": "YS-影 · 礼服 · 完整模型适配",
+        "mesh": "dist/assets/enhanced/raiden/mesh.json",
+        "textures": 7
+      },
+      {
+        "id": "emilia",
+        "label": "RE0-爱蜜莉雅 · 完整模型适配",
+        "mesh": "dist/assets/enhanced/emilia/mesh.json",
+        "textures": 4
+      },
+      {
+        "id": "doubao",
+        "label": "豆包 · 模型适配",
+        "mesh": "dist/assets/enhanced/doubao/mesh.json",
+        "textures": 1
+      },
+      {
+        "id": "springfield",
+        "label": "春田 · 泳装P3",
+        "mesh": "dist/assets/enhanced/springfield/mesh.json",
+        "textures": 33
+      }
+    ],
+    "originalPmxRequired": false
+  },
+  "scope": "Local model adaptation; no site upload or publication",
+  "limits": [
+    "Source skin texture is 1024²; original bytes preserved, no generated 4K.",
+    "Source MMD sphere/toon rendering and complete physics are not reproduced.",
+    "Cloth, facial morphs and independent fingers are not implemented.",
+    "Retargeted motion may still show local intersections."
+  ],
+  "hashes": {
+    "work/springfield-import-2026-11-10/source-copy.json": "a84309643d28ec0890d6ebd0965e4dd4eb28e0a5d13334f2fa77a6e784a095b1",
+    "work/springfield-import-2026-11-10/source-audit.json": "a1e65bced82e43255ef1407374005dbf91ecade8cc1effdb2d01f9ff7b0bc8d4",
+    "work/springfield-import-2026-11-10/build-evidence.json": "46d60f6330131ac9a27180a97fcbf1913c3d56ddac68e0c23a29016dd9968c90",
+    "work/springfield-import-2026-11-10/blend-validation.json": "c536c3036bc0eb2c8fcd83f133d792d23082cd73b20c563038e3c91a83d38375",
+    "work/springfield-import-2026-11-10/quality-tests.tap": "6a4450a2a5fe0fcf760161d813aaffe676c5bc7742581a0892323c02b1a57534",
+    "work/springfield-import-2026-11-10/quality-full-tests.tap": "783090913d22780909fd41c0eee38797352332f62c2d6a12213975218892647f",
+    "work/springfield-import-2026-11-10/quality-syntax.log": "374cf1bf17ddeb9d5b0d86c8208234b62b0060693897c0948b7a4fb5f96b034a",
+    "work/springfield-import-2026-11-10/quality-motion-summary.json": "fc571606283650a7b2d8e9af60d125558bfb52d732c78c39c164c18a0fa7f48a",
+    "work/springfield-import-2026-11-10/motion-probe.json": "18c3b9fb2851e24d97ec8969b645b50f688b9bcbbdd5bdee7e04a004677591b6",
+    "work/springfield-import-2026-11-10/packed-map-audit.json": "cfda480b8f5799b3fa4d8b3e3c7584d9040e095ddca7c04fd62079645b1de23c",
+    "work/springfield-import-2026-11-10/browser-validation.json": "95ad6466e7ebb6d78a9fe1685f540d8e4fc045490577ec39fcf5bcd829265720",
+    "work/springfield-import-2026-11-10/source-proportions-preview.png": "1154c10fbf130035d1a0995a9ca97dbf2c02210ab6d858798859b4374ac80a6b",
+    "work/springfield-import-2026-11-10/quality-face-preview.png": "6fc58bd7d217f1937718c72a65fbe08290e0ff4c283cca955074e5061cc1ba90",
+    "work/springfield-import-2026-11-10/quality-run-preview.png": "3c002e26fca1c09249a52e2e233cf4e87d8894202a26de35964f847dd527645b",
+    "work/springfield-import-2026-11-10/quality-jump-preview.png": "aa1d6a4c9ecf84c82599292761fccc90094c1b865aa7416efaff068ce106e48c",
+    "work/springfield-import-2026-11-10/quality-attack-preview.png": "69094170f9ef3fa66ce36f2b19df68fbbfe8e78d4c4e8c74274a847b13b800b5",
+    "work/springfield-import-2026-11-10/quality-game-preview.png": "6eeb1a69a0ea87f587d31420c168def3080a77c9195e87e4495873dc5daba071",
+    "work/springfield-import-2026-11-10/quality-game-jump-preview.png": "f24cd531fd32e232d84ef15b74a7241ce904e5c05aed722dbe6737fb2dd5c136",
+    "work/springfield-import-2026-11-10/春田-泳装P3-流星动作适配.blend": "0c6a97d02df6ae3b0db35f9836bd9df91b696088054173e5cf8bb9e98c1132c7",
+    "work/springfield-import-2026-11-10/report/2026-11-10_模型适配-春田原比例与材质-report.md": "a09ec01c870adfdb64aa795b3c9f31bb88acb26e20681e73841767f453e0a9d4",
+    "dist/native-character.js": "4c7a596774b40d27c52c6114ec4b30298e3b810b553e06d3ffaa61ed507449f0",
+    "dist/native-qiankun-grip.js": "26bc7e1ec8e5d3a96d0a8ab1819a32e3384c96ba275ff94b1bde812ed8abdafc",
+    "dist/proportional-rig.js": "58c7e2d946e712b1021f0d57b5c75b21f9a581f3b6267dfd6147987f1ddd972d",
+    "dist/character-materials.js": "0eab7c1ab9335053d5ba9e97b2c58e032f0a251b60eccea20b5922d5c79a413d",
+    "dist/character-compare.js": "32917cf12ef130bb2ba4fac702a6ee68e326dc4ef8a1649d9b1703c218ec59f7",
+    "dist/character-compare.html": "f89d1d5ef4fea6f3a985f8090a1ef9e4795a1715de071047a291333dae753067",
+    "dist/engine.js": "19ae92f70795d0b605e1819489a7f36ca70d7216abcd9fa71cc6083d39fbb637",
+    "dist/assets/enhanced/springfield/mesh.json": "1b430ed6e7980658ae165b29b436367dad94ace8e987de0402bf15162d25bba8",
+    "dist/assets/enhanced/springfield/manifest.json": "671aff1f9bd9df1c24b81751706fbcc0d1275aca4a31eeeff219effbfdbc3bcb",
+    "scripts/blender/build_springfield.py": "5273653c760b871ea0072fc1e8391434c59d2069cdd72e12abe5c03edc1320ae",
+    "scripts/blender/proportional_authoring.py": "a747fe2c3f9fdd8eafb87954e5da3cbd3519b3fbcb14431648858fdaf4fc9d6d",
+    "scripts/blender/check_springfield_build.py": "5bc75d16ceb45760403ab86e27aaee64729a8562284d1bdad2b898bc1079b783",
+    "tests/native-springfield-character.test.mjs": "12e03854327dfc8632ede19ebbf48bf56a955fb3f331554e95a0e448fba68fd1"
+  }
+}

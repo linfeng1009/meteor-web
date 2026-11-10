@@ -1,0 +1,15 @@
+ ArchWarn: ARCH_CACHE_LINE_SIZE != Arch_ObtainCacheLineSize()
+ Function: Arch_ValidateAssumptions
+     File: /Users/jonas/blender-dev-deps/build_darwin/deps_arm64/build/usd/src/external_usd/pxr/base/arch/assumptions.cpp
+     Line: 140
+00:00.500  blend            | Read blend: "/Users/dulinfeng/Desktop/linf_Ai_projects/陨星/meteor-web/assets/source/doubao/豆包模型.blend"
+00:00.551  reports          | ERROR Unable to pack file, source path '/e/AI娘10人_定稿分享_2026-10-22_by_sdn1111/模型/10_豆包_V2/tex/Color.jpg' not found
+Blender 5.4.0 Alpha (hash 93eeecf73c12 built 2026-10-23 01:52:25)
+00:00.551  reports          | ERROR Unable to pack file, source path '/e/AI娘10人_定稿分享_2026-10-22_by_sdn1111/模型/10_豆包_V2/tex/Color.jpg' not found
+ERROR: Image "E:\AI娘10人_定稿分享_2026-10-22_by_sdn1111\模型\10_豆包_V2\tex\Color.jpg" not available. Keeping packed image
+00:00.637  image.write      | ERROR OpenImageIO write failed: Could not open file "/Users/dulinfeng/.thumbnails/large/blender_73260_862be71f71191ba04b023e0762890de6.png.png"
+Info: Saved as "豆包-源模型-贴图已内嵌.blend"
+SOURCE_AUDIT {"objects": [{"name": "豆包", "type": "EMPTY", "vertices": null, "bones": 0}, {"name": "无标题3_arm", "type": "ARMATURE", "vertices": null, "bones": 124}, {"name": "无标题3_mesh", "type": "MESH", "vertices": 107855, "bones": 0}], "images": [{"name": "Color.jpg", "original": "E:/AI娘10人_定稿分享_2026-10-22_by_sdn1111/模型/10_豆包_V2/tex/Color.jpg", "archivePath": "assets/source/doubao/Color.jpg", "packed": true, "size": [4096, 4096]}]}
+ERROR: Image "E:\AI娘10人_定稿分享_2026-10-22_by_sdn1111\模型\10_豆包_V2\tex\Color.jpg" not available. Keeping packed image
+
+Blender quit

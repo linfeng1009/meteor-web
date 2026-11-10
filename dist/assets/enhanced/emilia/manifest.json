@@ -65,16 +65,19 @@
     ],
     "usedVertices": 9999,
     "unusedVertices": 6494,
-    "omittedTriangles": 9618
+    "omittedTriangles": 9618,
+    "secondaryBones": 20
   },
   "retarget": {
     "method": "Japanese PMX bone semantics and source joint positions map limbs to p0 BNC; continuous native-height torso weights avoid short PMX joint spacing shear. Original AMB drives 30 bones.",
     "provisional": true,
     "sourceSkeletonMissing": false,
-    "hairPhysics": false,
-    "hairBinding": "rigid native head approximation, no hair physics",
+    "hairPhysics": true,
+    "hairBinding": "independent recovered hair chains with restrained inertia, strong damping and body colliders",
     "clothPhysics": false,
-    "fingerArticulation": "PMX fingers follow native hands; no full MMD finger/morph/IK simulation"
+    "fingerArticulation": "PMX fingers follow native hands; no full MMD finger/morph/IK simulation",
+    "hairPhysicsProfile": "web-spring-bone-v2-restrained",
+    "originalMmdPhysics": false
   },
   "provenance": {
     "source": "User-provided complete Emilia_v1.pmx; source files read-only; no third-party plugin executed.",
@@ -86,10 +89,11 @@
     "license": "PMX supplies credits but no explicit usage license. Local user-requested conversion only, no upload or redistribution.",
     "limits": [
       "First-pass native p0 animation retarget",
-      "No MMD/source-game hair, cloth or rigid-body physics",
       "No MMD facial morph or finger simulation",
-      "MMD sphere/toon shading differs from Web PBR"
-    ]
+      "MMD sphere/toon shading differs from Web PBR",
+      "Web hair springs and approximate body colliders; original MMD rigid-body solver, cloth physics and hair self-collision are not reproduced."
+    ],
+    "hairPhysics": "Recovered source PMX bone positions/hierarchy; smooth proximity weights reconstructed from existing native mesh. Web spring parameters, not source MMD rigid bodies."
   },
   "omittedRenderPasses": [
     {

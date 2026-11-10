@@ -1,0 +1,306 @@
+{
+  "schema": 1,
+  "characterId": 0,
+  "appearance": "springfield",
+  "label": "春田 · 泳装P3",
+  "mesh": "mesh.json",
+  "complete": true,
+  "completeness": {
+    "bodyGeometry": true,
+    "headHairGeometry": true,
+    "eyes": true,
+    "faceGeometry": true,
+    "sourcePmxSkeleton": true,
+    "originalSourceGameSkeleton": false
+  },
+  "stats": {
+    "sourceVertices": 61222,
+    "sourceTriangles": 87259,
+    "vertices": 61222,
+    "triangles": 81307,
+    "sourceBones": 512,
+    "bones": 30,
+    "dummies": 6,
+    "secondaryBones": 71,
+    "materials": 36,
+    "textures": 25,
+    "omittedTriangles": 5952
+  },
+  "retarget": {
+    "method": "Source PMX joints and source hair weights to native p0; shared UV/material seams use merged source influences; original AMB/POS controls body and weapon anchors.",
+    "provisional": true,
+    "sourceSkeletonMissing": false,
+    "hairPhysics": true,
+    "hairPhysicsProfile": "web-spring-bone-v2-restrained",
+    "originalMmdPhysics": false,
+    "clothPhysics": false,
+    "fingerArticulation": "Fingers follow native hands; no independent morph or finger animation."
+  },
+  "provenance": {
+    "sourceArchive": "assets/source/springfield",
+    "sourceModel": "GirlsFrontline SpringfieldSSR0103 All P3 R4",
+    "modelAuthor": "Sunborn Network Technology",
+    "rigAuthor": "DesmondChan / 摸鱼的可露凯",
+    "credit": "Model Created by Sunborn Network Technology; rigged and fixed by DesmondChan / 摸鱼的可露凯。",
+    "license": "Original distribution readme retained verbatim. It restricts redistribution/commercial use and states MMD-only use; this is a user-requested local adaptation, not a rights grant or published distribution.",
+    "limits": [
+      "Approximate native p0 proportions and body retarget.",
+      "Source visible P3 modules retained; default alpha-zero alternative feet and eye shadow omitted.",
+      "Source hair skeleton/weights retained but MMD rigid bodies are not executed.",
+      "No cloth, expression morph or individual finger solver.",
+      "Color and normal maps retained; source sphere/toon and packed RMO passes not reproduced."
+    ]
+  },
+  "omittedRenderPasses": [
+    {
+      "material": "BodySkin(NoShoes/Hide)",
+      "sourceMaterial": 14,
+      "triangles": 4884,
+      "reason": "Authored default alpha is zero; alternate hidden foot/eye-shadow variant."
+    },
+    {
+      "material": "ToeNails(NoShoes/Hide)",
+      "sourceMaterial": 15,
+      "triangles": 988,
+      "reason": "Authored default alpha is zero; alternate hidden foot/eye-shadow variant."
+    },
+    {
+      "material": "EyeShadow",
+      "sourceMaterial": 37,
+      "triangles": 80,
+      "reason": "Authored default alpha is zero; alternate hidden foot/eye-shadow variant."
+    }
+  ],
+  "sourceFiles": [
+    {
+      "file": "春田_泳衣_全P3_刘海物理优化.pmx",
+      "bytes": 4959366,
+      "sha256": "4922126ed6d383b9f95619d9c49c4fac2b8b70c34c4e70f90b13fd9e393814ab"
+    },
+    {
+      "file": "Textures/c_Springfield_face_d.png",
+      "runtime": "textures/c_Springfield_face_d.png",
+      "sha256": "1ec6ed2add0fabce7b03825b80f5e445469a1d90ec9f1e34c16b72f0faa301f7",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "Textures/c_Springfield_eye_d.png",
+      "runtime": "textures/c_Springfield_eye_d.png",
+      "sha256": "212418661904a4f793e125418cf55233d87a4e2e902fb5b82d47d1dc8cc13c79",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "file": "Textures/c_Springfield_eyeblend.png",
+      "runtime": "textures/c_Springfield_eyeblend.png",
+      "sha256": "624395742fe6d6da5feba8aa293a1f5a90597f5b575c742937c0439602106f2b",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "file": "Textures/body_d.png",
+      "runtime": "textures/body_d.png",
+      "sha256": "f0c8300379b083dd9ee7cacf065ab99d527e1b1f63efdbccafbf80746111fd52",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "normalmap/body_n.png",
+      "runtime": "textures/body_n.png",
+      "sha256": "be141d156c0131977011204c5d126244e30f02fcf43e441a22f6399e062212f5",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "Textures/body_zhijia01_da.png",
+      "runtime": "textures/body_zhijia01_da.png",
+      "sha256": "6b7dc811e7effdd035933e92474b647345efe75a0d237c531e0cc2f2d0dc6ea4",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "file": "Textures/c_SpringfieldSSR0103_slg_cloth1_d.png",
+      "runtime": "textures/c_SpringfieldSSR0103_slg_cloth1_d.png",
+      "sha256": "297f42dbb444e7a376d6e79111e377216699a3e72606b3e2eed4e820ddff2573",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "file": "Textures/c_SpringfieldSSR0103_slg_P1_head2_da.png",
+      "runtime": "textures/c_SpringfieldSSR0103_slg_P1_head2_da.png",
+      "sha256": "ccdede5f326d439fec1797d6f09fa425f25c602aa6959587d3dc449c36a94170",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "file": "Textures/c_SpringfieldSSR0103_slg_P3_cloth1_da.png",
+      "runtime": "textures/c_SpringfieldSSR0103_slg_P3_cloth1_da.png",
+      "sha256": "89c990512e787d56ede48027da7669a70b229e3f960547c87446ff127478c896",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "normalmap/c_SpringfieldSSR0103_slg_P3_cloth1_n.png",
+      "runtime": "textures/c_SpringfieldSSR0103_slg_P3_cloth1_n.png",
+      "sha256": "6cd22b7323bec5732649a670d999d8468a0f3cf4e6c2adc74ce6f1fef6a86807",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "Textures/c_SpringfieldSSR0103_slg_P3_body1_da.png",
+      "runtime": "textures/c_SpringfieldSSR0103_slg_P3_body1_da.png",
+      "sha256": "2e66a6197f81fe930912bad59fc1c49ed2737a3ae306413dd7df237dcbc93cab",
+      "size": [
+        512,
+        1024
+      ]
+    },
+    {
+      "file": "normalmap/c_SpringfieldSSR0103_slg_P3_body1_n.png",
+      "runtime": "textures/c_SpringfieldSSR0103_slg_P3_body1_n.png",
+      "sha256": "4aa9c55059bf256bd0a7459f23a040def95d862263f33b9702cc004742bfd5e6",
+      "size": [
+        512,
+        1024
+      ]
+    },
+    {
+      "file": "Textures/c_SpringfieldSSR0103_slg_P3_cloth3_d.png",
+      "runtime": "textures/c_SpringfieldSSR0103_slg_P3_cloth3_d.png",
+      "sha256": "231f8f42379caf0ae474d725355ff5e511673e172d99d3220c3b85300e3f149e",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "file": "normalmap/c_SpringfieldSSR0103_slg_P3_cloth3_n.png",
+      "runtime": "textures/c_SpringfieldSSR0103_slg_P3_cloth3_n.png",
+      "sha256": "6fdc0499adcbf2f558a9e2b4a8e22eaf38cbc0f9f94cb9200d11d2fb7709df30",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "file": "Textures/c_SpringfieldSSR0103_slg_P3_cloth4_d.png",
+      "runtime": "textures/c_SpringfieldSSR0103_slg_P3_cloth4_d.png",
+      "sha256": "246bd75174c25ec31e086e9f6562578054e83d415813244d625b60011adaa1b2",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "file": "Textures/Gold_OLink_da.png",
+      "runtime": "textures/Gold_OLink_da.png",
+      "sha256": "3c3494e3d0cf46be93a2bc22c55f981a1e12a4ed7d1d18dbb184ffc2719d7aa3",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "file": "normalmap/Gold_OLink_n.png",
+      "runtime": "textures/Gold_OLink_n.png",
+      "sha256": "c8e1415e642c8b45bb87d89d9ae02b35df51d4dc5e96fe62af0ea7c5667ba175",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "file": "Textures/c_SpringfieldSSR0103_slg_P3_head2_d.png",
+      "runtime": "textures/c_SpringfieldSSR0103_slg_P3_head2_d.png",
+      "sha256": "aac2780af1503ed65342a37a35cf79c152955d8affd0bdab2df0927f3c6c6b3b",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "file": "normalmap/c_SpringfieldSSR0103_slg_P3_head2_n.png",
+      "runtime": "textures/c_SpringfieldSSR0103_slg_P3_head2_n.png",
+      "sha256": "ae0996937c81d20e86121c00d3a683d37676fdbf1e7490ed14867964a0413261",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "file": "Textures/c_SpringfieldSSR0103_slg_hair_d.png",
+      "runtime": "textures/c_SpringfieldSSR0103_slg_hair_d.png",
+      "sha256": "667812ae9b2d6d80ab8cee04cccb8d0a5355c6c8c5ab5233df25bab0c1116ca9",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "Textures/c_SpringfieldSSR0103_slg_P3_Hua_da.png",
+      "runtime": "textures/c_SpringfieldSSR0103_slg_P3_Hua_da.png",
+      "sha256": "c619f9b5d98bdf651e4184df03f6d8f8602102855737cc7e5d8178b22271bdec",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "normalmap/c_SpringfieldSSR0103_slg_P3_Hua_n.png",
+      "runtime": "textures/c_SpringfieldSSR0103_slg_P3_Hua_n.png",
+      "sha256": "8c18297813a058334cf007f328d80ea0870ec63147dcb2a8c87772497f8295eb",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "Textures/c_SpringfieldSSR0103_slg_P3_body4_da.png",
+      "runtime": "textures/c_SpringfieldSSR0103_slg_P3_body4_da.png",
+      "sha256": "b1f88d3b9dde491032f7784f4fc044bbbd619e481bb8384926db9a06f37a0a41",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "file": "normalmap/c_SpringfieldSSR0103_slg_P3_body4_n.png",
+      "runtime": "textures/c_SpringfieldSSR0103_slg_P3_body4_n.png",
+      "sha256": "a20bc4ce2c21289ced79df1f9efab10f36698983af9b0e60094ae406792c129e",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "file": "Textures/extra.png",
+      "runtime": "textures/extra.png",
+      "sha256": "998c8acc5b1596e76331a7e3805356ba345fd8884b0a7085c1eb29bcc01d56ba",
+      "size": [
+        2048,
+        2048
+      ]
+    }
+  ]
+}

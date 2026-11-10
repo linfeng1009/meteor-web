@@ -541,3 +541,24 @@ test('infinite rage survives weapon changes and respawns, then disabling restore
   assert.ok(events.some(event => event.text?.includes('怒气不足'))); assert.equal(hero.rage, 40);
   game._placeFighter(hero, { position: v(0, .015, 0) }); assert.equal(hero.rage, 0);
 });
+
+test('Raiden sword skin preserves native melee damage and reuses its cached template after weapon changes', async () => {
+  const { game, hero, target } = await fixture('sword');
+  const template = game.raidenSwordTemplate; assert.ok(template && hero.raidenSword);
+  const sourceModel = hero.weaponModel, damages = [];
+  for (const style of ['original', 'raiden']) {
+    game._placeFighter(hero, { position: v(0, .015, 0) });
+    game._placeFighter(target, { position: v(0, .015, 1.1) }); target.maxHp = target.hp = 10000;
+    game.setSwordStyle(style); game.action('attack');
+    const serial = hero.combat.serial;
+    for (let i = 0; i < 120; i++) tick(game);
+    damages.push(target.maxHp - target.hp);
+    assert.equal(hero.weaponModel, sourceModel); assert.equal(hero.combat.serial >= serial, true);
+    assert.equal(hero.raidenSword.visible, style === 'raiden');
+  }
+  assert.ok(damages[0] > 0); assert.equal(damages[0], damages[1]);
+  await game.setWeapon('spear'); assert.equal(hero.raidenSword, null);
+  await game.setWeapon('sword'); assert.equal(game.raidenSwordTemplate, template);
+  assert.equal(hero.raidenSword.children[0].geometry, template.children[0].geometry);
+  assert.equal(hero.raidenSword.visible, true);
+});

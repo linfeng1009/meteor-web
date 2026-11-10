@@ -77,7 +77,7 @@ test('four appearances reuse one live skeleton and keep distinct cached surfaces
       const result = await actor.setAppearance(appearance);
       assert.equal(result.available, true); assert.equal(result.complete, true); assert.equal(result.appearance, appearance);
       if (meshes.has(appearance)) assert.equal(actor.mesh, meshes.get(appearance)); else meshes.set(appearance, actor.mesh);
-      assert.equal(actor.mesh.skeleton, skeleton); assert.deepEqual(actor.mesh.bindMatrix.toArray(), bind); assert.deepEqual(matrices(actor), joints); assert.equal(actor.frame, frame);
+      assert.deepEqual(actor.mesh.skeleton.bones.slice(0, skeleton.bones.length), skeleton.bones); assert.deepEqual(actor.mesh.bindMatrix.toArray(), bind); assert.deepEqual(matrices(actor), joints); assert.equal(actor.frame, frame);
       assert.equal(actor.getAttachment('d_wpnR'), hand); assert.equal(weapon.parent, hand); assert.deepEqual(weapon.matrixWorld.toArray(), weaponMatrix);
       assert.equal(actor.nativeSpace.children.filter(child => child.isSkinnedMesh).length, 1);
     }

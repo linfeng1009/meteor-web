@@ -43,7 +43,7 @@ def main():
             'macOS：双击「启动游戏.command」，保留终端窗口。\n'
             '其他系统：在解压目录运行 npm start，打开 http://localhost:4173/ 。\n\n'
             'dist 包含游戏运行文件、人物转换网格、贴图、原骨架与动作、地图和声音。\n'
-            'YS-胡桃、YS-影和 RE0-爱蜜莉雅的 JSON 网格及 PNG 贴图已包含。\n'
+            'YS-胡桃、YS-影、RE0-爱蜜莉雅、豆包与春田的转换网格及原贴图已包含。\n'
             '运行不需要原始 PMX、Blender、Downloads 目录或 npm 安装依赖。\n'
             '不能直接双击 index.html 启动；请使用上述 HTTP 服务。\n'
         ).encode(),
@@ -89,7 +89,7 @@ def main():
                     if required not in included:
                         raise FileNotFoundError(f'{filename} imports missing packaged module {required}')
             characters = []
-            for family in ['hutao', 'raiden', 'emilia']:
+            for family in ['hutao', 'raiden', 'emilia', 'doubao', 'springfield']:
                 base = f'dist/assets/enhanced/{family}'
                 manifest = json.loads(read(f'{base}/manifest.json'))
                 if manifest.get('appearance') != family:
@@ -105,8 +105,8 @@ def main():
                 })
                 for texture in textures:
                     data = read(posixpath.normpath(f'{mesh_directory}/{texture}'))
-                    if not data.startswith(b'\x89PNG\r\n\x1a\n'):
-                        raise ValueError(f'{family}: invalid packaged PNG {texture}')
+                    if not (data.startswith(b'\x89PNG\r\n\x1a\n') or data.startswith(b'\xff\xd8\xff')):
+                        raise ValueError(f'{family}: invalid packaged PNG/JPEG {texture}')
                 characters.append({'id': family, 'label': manifest['label'], 'mesh': mesh_path, 'textures': len(textures)})
         temp_path.replace(target)
     finally:

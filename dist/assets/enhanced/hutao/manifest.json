@@ -26,15 +26,19 @@
       2048,
       2048
     ],
-    "omittedTriangles": 3340
+    "omittedTriangles": 3340,
+    "secondaryBones": 58
   },
   "retarget": {
     "method": "Japanese PMX bone semantics and source joint positions map limbs to p0 BNC; continuous native-height torso weights avoid short PMX joint spacing shear. Original AMB drives 30 bones.",
     "provisional": true,
     "sourceSkeletonMissing": false,
-    "hairPhysics": false,
+    "hairPhysics": true,
     "clothPhysics": false,
-    "fingerArticulation": "PMX fingers follow native hands; no full MMD finger/morph/IK simulation"
+    "fingerArticulation": "PMX fingers follow native hands; no full MMD finger/morph/IK simulation",
+    "hairBinding": "independent recovered hair chains with restrained inertia, strong damping and body colliders",
+    "hairPhysicsProfile": "web-spring-bone-v2-restrained",
+    "originalMmdPhysics": false
   },
   "provenance": {
     "source": "User-provided complete 胡桃喵1.0.pmx; source files read-only; no third-party plugin executed.",
@@ -45,10 +49,11 @@
     "license": "Embedded model instructions: noncommercial, no redistribution or extraction of parts for other models. Conversion retained locally.",
     "limits": [
       "First-pass native p0 animation retarget",
-      "No MMD/Genshin hair, cloth or rigid-body physics",
       "No MMD facial morph or finger simulation",
-      "MMD additive sphere-map pass represented by normal Web material specular, not a duplicate mesh"
-    ]
+      "MMD additive sphere-map pass represented by normal Web material specular, not a duplicate mesh",
+      "Web hair springs and approximate body colliders; original MMD rigid-body solver, cloth physics and hair self-collision are not reproduced."
+    ],
+    "hairPhysics": "Recovered source PMX bone positions/hierarchy; smooth proximity weights reconstructed from existing native mesh. Web spring parameters, not source MMD rigid bodies."
   },
   "omittedRenderPasses": [
     {

@@ -1,0 +1,58 @@
+TAP version 13
+# Subtest: Springfield archive and editable actions do not depend on the original download directory
+ok 1 - Springfield archive and editable actions do not depend on the original download directory
+  ---
+  duration_ms: 69.263709
+  type: 'test'
+  ...
+# Subtest: Springfield keeps the complete default P3 surfaces, original textures, normals and author credits
+ok 2 - Springfield keeps the complete default P3 surfaces, original textures, normals and author credits
+  ---
+  duration_ms: 182.614834
+  type: 'test'
+  ...
+# Subtest: Springfield face stays rigid while authored hair retains separate head-rooted chains
+ok 3 - Springfield face stays rigid while authored hair retains separate head-rooted chains
+  ---
+  duration_ms: 17.399167
+  type: 'test'
+  ...
+# Subtest: all seven appearance variants retain native joints, cached meshes and weapon anchors
+ok 4 - all seven appearance variants retain native joints, cached meshes and weapon anchors
+  ---
+  duration_ms: 603.965958
+  type: 'test'
+  ...
+# Subtest: Springfield run, jump, guard and attack samples preserve native transforms, face and skirt seams
+ok 5 - Springfield run, jump, guard and attack samples preserve native transforms, face and skirt seams
+  ---
+  duration_ms: 571.590541
+  type: 'test'
+  ...
+# Subtest: Springfield long hair settles, obeys segment limits and retains a disabled setting after switches
+ok 6 - Springfield long hair settles, obeys segment limits and retains a disabled setting after switches
+  ---
+  duration_ms: 292.747042
+  type: 'test'
+  ...
+# Subtest: Springfield game adoption preserves mission identity, air motion, HP and command timeline
+ok 7 - Springfield game adoption preserves mission identity, air motion, HP and command timeline
+  ---
+  duration_ms: 42.48275
+  type: 'test'
+  ...
+# Subtest: missing Springfield assets retain the previous appearance and incompatible bodies remain original
+ok 8 - missing Springfield assets retain the previous appearance and incompatible bodies remain original
+  ---
+  duration_ms: 374.134917
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2445.071333

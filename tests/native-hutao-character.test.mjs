@@ -17,7 +17,7 @@ const withFetch = async callback => { const before = globalThis.fetch; globalThi
 const matrices = character => [...character.bones, ...character.dummies].map(node => node.matrixWorld.toArray());
 
 test('appearance registry separates native, Blender HD and HuTao bundles without adding a fake native character', () => {
-  assert.deepEqual(Object.keys(NATIVE_APPEARANCES), ['original', 'hd', 'hutao', 'raiden', 'emilia']);
+  assert.deepEqual(Object.keys(NATIVE_APPEARANCES), ['original', 'hd', 'hutao', 'raiden', 'emilia', 'doubao', 'springfield']);
   assert.equal(NATIVE_APPEARANCES.hd.characterId, 0); assert.equal(NATIVE_APPEARANCES.hutao.characterId, 0);
   assert.notEqual(NATIVE_APPEARANCES.hd.assetPath, NATIVE_APPEARANCES.hutao.assetPath);
   assert.equal(Object.isFrozen(NATIVE_APPEARANCES), true); assert.equal(Object.isFrozen(NATIVE_APPEARANCES.hutao), true);
@@ -91,7 +91,7 @@ test('HuTao, HD and original hot switching retain distinct meshes on one live na
     assert.equal(actor.appearance, 'hd'); assert.notEqual(hd, hutao); assert.notEqual(hd, native);
     const restored = await actor.setAppearance('hutao');
     assert.equal(restored.available, true); assert.equal(restored.complete, true); assert.equal(actor.mesh, hutao, 'each variant keeps its own cache entry');
-    assert.equal(actor.skeleton, skeleton); assert.equal(actor.mesh.skeleton, skeleton); assert.deepEqual(actor.mesh.bindMatrix.toArray(), bind);
+    assert.equal(actor.skeleton, skeleton); assert.deepEqual(actor.mesh.skeleton.bones.slice(0, skeleton.bones.length), skeleton.bones); assert.deepEqual(actor.mesh.bindMatrix.toArray(), bind);
     assert.deepEqual(matrices(actor), joints); assert.equal(actor.frame, frame);
     assert.equal(actor.getAttachment('d_wpnR'), hand); assert.equal(weapon.parent, hand); assert.deepEqual(weapon.matrixWorld.toArray(), weaponMatrix);
     await actor.setAppearance('original'); assert.equal(actor.mesh, native); assert.equal(actor.nativeSpace.children.filter(child => child.isSkinnedMesh).length, 1);

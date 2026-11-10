@@ -1,0 +1,73 @@
+{
+  "schema": 1,
+  "id": "raiden",
+  "label": "雷电影佩刀",
+  "sourceName": "katana",
+  "mesh": "mesh.json",
+  "sourceFiles": [
+    {
+      "file": "武器.pmx",
+      "bytes": 71256,
+      "sha256": "be1f6bfb4e86d1bca78ff691212040227f57c4956e6389bb3312b17eca9f0996"
+    },
+    {
+      "file": "tex/刀.png",
+      "bytes": 1457042,
+      "sha256": "24d02c29aad7d349c4536670a9d45fcfb49c34866ea64fa0faf316566fa5995c"
+    },
+    {
+      "file": "tex/刀AL.png",
+      "bytes": 41302,
+      "sha256": "282f1f59011a72a20c3b8bb2cf252e34d4e51d94607801c96e6ce3015b3e1064"
+    },
+    {
+      "file": "sph/katana.bmp",
+      "bytes": 196662,
+      "sha256": "65f132057678b9f9c364cb7acb301b7cd11ac7a9c867eb22f2eab5bcee744ad5"
+    },
+    {
+      "file": "readme【一定要看】.txt",
+      "bytes": 636,
+      "sha256": "78b25e862eb859b14db9cc20b14c09972c0a9f02c541e9a9f6dc18793b717b60"
+    }
+  ],
+  "credits": {
+    "modelProvidedBy": "miHoYo",
+    "modelAdaptedBy": "观海（观海子）",
+    "instructions": "Original readme retained in work/raiden-sword/原包使用说明.txt; local conversion only."
+  },
+  "stats": {
+    "sourceVertices": 1566,
+    "sourceTriangles": 1850,
+    "triangles": 1808,
+    "mergedOverlayTriangles": 42,
+    "textureSizes": [
+      [
+        2048,
+        2048
+      ],
+      [
+        2048,
+        2048
+      ]
+    ]
+  },
+  "attachment": {
+    "localAxis": "positive Z blade; rotate X=PI/2 when attached to d_wpnR",
+    "sourceGrip": [
+      -0.14782299090855233,
+      0,
+      1.6249239444732666
+    ],
+    "scale": 1.0194925076527248,
+    "tip": 20.03,
+    "tail": -3.2240421413263616
+  },
+  "presentation": {
+    "originalColorTexture": true,
+    "originalUVs": true,
+    "mergedAL1": "Alpha-premultiplied emission on the same 42 base faces; no coplanar overlay mesh.",
+    "sphereMap": "MMD additive sphere pass is represented by restrained PBR reflection; not reused as a normal map.",
+    "combat": "Display only; original W0_0 keeps native damage, reach and effect sockets."
+  }
+}

@@ -1,5 +1,8 @@
 import * as THREE from './vendor/three.module.js';
 import { parsePos } from './native-combat.js';
+import { createHairSprings, validateHairRig } from './hair-springs.js';
+import {createProportionalRig,validateProportionalRig} from './proportional-rig.js';
+import {configureSourceMaterial} from './character-materials.js';
 
 // Original SKC skin + BNC rest skeleton + BANIM frame data. No procedural body.
 // All input assets are read-only copies extracted by scripts/extract-character-assets.py.
@@ -11,7 +14,9 @@ export const NATIVE_APPEARANCES=Object.freeze({
   hd:Object.freeze({id:'hd',label:'孟星魂 · 高清试制',characterId:0,assetPath:'./assets/enhanced/p0/'}),
   hutao:Object.freeze({id:'hutao',label:'YS-胡桃 · 模型适配',characterId:0,assetPath:'./assets/enhanced/hutao/'}),
   raiden:Object.freeze({id:'raiden',label:'YS-影 · 模型适配',characterId:0,assetPath:'./assets/enhanced/raiden/'}),
-  emilia:Object.freeze({id:'emilia',label:'RE0-爱蜜莉雅 · 模型适配',characterId:0,assetPath:'./assets/enhanced/emilia/'})
+  emilia:Object.freeze({id:'emilia',label:'RE0-爱蜜莉雅 · 模型适配',characterId:0,assetPath:'./assets/enhanced/emilia/'}),
+  doubao:Object.freeze({id:'doubao',label:'豆包 · 模型适配',characterId:0,assetPath:'./assets/enhanced/doubao/'}),
+  springfield:Object.freeze({id:'springfield',label:'春田 · 泳装P3',characterId:0,assetPath:'./assets/enhanced/springfield/'})
 });
 export const NATIVE_POSES=Object.freeze({idle:0,swordReady:6,spearReady:7,bladeReady:8,guard:16,spearGuard:17,bladeGuard:18,walk:140,run:144,jump:151,fall:152,hit:90,death:117,attack:262,attack2:263,attack3:264,spearAttack:279,bladeAttack:295});
 export const NATIVE_CHARACTERS=Object.freeze([{"id":0,"name":"孟星魂","portrait":"./assets/original/characters/portraits/p0.jpg"},{"id":1,"name":"冷燕","portrait":"./assets/original/characters/portraits/p1.jpg"},{"id":2,"name":"铁胡子","portrait":"./assets/original/characters/portraits/p2.jpg"},{"id":3,"name":"破空","portrait":"./assets/original/characters/portraits/p3.jpg"},{"id":4,"name":"夜猫子","portrait":"./assets/original/characters/portraits/p4.jpg"},{"id":5,"name":"冯浩","portrait":"./assets/original/characters/portraits/p5.jpg"},{"id":6,"name":"孙剑","portrait":"./assets/original/characters/portraits/p6.jpg"},{"id":7,"name":"萧安","portrait":"./assets/original/characters/portraits/p7.jpg"},{"id":8,"name":"子与","portrait":"./assets/original/characters/portraits/p8.jpg"},{"id":9,"name":"王强","portrait":"./assets/original/characters/portraits/p9.jpg"},{"id":10,"name":"无名","portrait":"./assets/original/characters/portraits/p10.jpg"},{"id":11,"name":"叶翔","portrait":"./assets/original/characters/portraits/p11.jpg"},{"id":12,"name":"小何","portrait":"./assets/original/characters/portraits/p12.jpg"},{"id":13,"name":"凤凰","portrait":"./assets/original/characters/portraits/p13.jpg"},{"id":14,"name":"石群","portrait":"./assets/original/characters/portraits/p14.jpg"},{"id":15,"name":"屠城","portrait":"./assets/original/characters/portraits/p15.jpg"},{"id":16,"name":"范璇","portrait":"./assets/original/characters/portraits/p16.jpg"},{"id":17,"name":"高寄萍","portrait":"./assets/original/characters/portraits/p17.jpg"},{"id":18,"name":"孙玉伯","portrait":"./assets/original/characters/portraits/p18.jpg"},{"id":19,"name":"律香川","portrait":"./assets/original/characters/portraits/p19.jpg"}]);
@@ -93,9 +98,11 @@ function applyQuaternion(target,wxyz){target.set(wxyz[1],wxyz[2],wxyz[3],wxyz[0]
 // The Blender export uses the same native Z-up coordinates, bone indices and
 // UV convention as SKC. Never replace BNC, AMB, POS or the attachment hierarchy.
 export function validateEnhancedSkin(skin,boneCount=30){
+  validateProportionalRig(skin?.bodyRig,boneCount);
+  const totalBones=boneCount+validateHairRig(skin?.secondaryMotion,boneCount);
   const finite=values=>Array.isArray(values)&&values.every(Number.isFinite),nv=skin?.positions?.length/3;
   if(!Number.isInteger(nv)||nv<3||!finite(skin.positions)||!finite(skin.uvs)||skin.uvs.length!==nv*2||!finite(skin.skinIndices)||skin.skinIndices.length!==nv*4||!finite(skin.skinWeights)||skin.skinWeights.length!==nv*4||!Array.isArray(skin.materials)||!skin.materials.length||!Array.isArray(skin.faces)||!skin.faces.length)throw new Error('Invalid enhanced character geometry');
-  if(skin.skinIndices.some(i=>!Number.isInteger(i)||i<0||i>=boneCount)||skin.skinWeights.some(w=>w<0))throw new Error('Enhanced character uses an incompatible skeleton');
+  if(skin.skinIndices.some(i=>!Number.isInteger(i)||i<0||i>=totalBones)||skin.skinWeights.some(w=>w<0))throw new Error('Enhanced character uses an incompatible skeleton');
   for(let i=0;i<nv;i++){const sum=skin.skinWeights.slice(i*4,i*4+4).reduce((a,b)=>a+b,0);if(Math.abs(sum-1)>.01)throw new Error('Invalid enhanced character skin weights');}
   if(skin.faces.some(f=>!Number.isInteger(f.material)||f.material<0||f.material>=skin.materials.length||!Array.isArray(f.indices)||f.indices.length!==3||f.indices.some(i=>!Number.isInteger(i)||i<0||i>=nv)))throw new Error('Invalid enhanced character faces');
   if(skin.normals!==undefined&&(!finite(skin.normals)||skin.normals.length!==nv*3))throw new Error('Invalid enhanced character normals');
@@ -128,7 +135,10 @@ function createSkinVisual(skin,path,{enhanced=false,loadTextures=true}={}){
     // opaque; alpha blending would sort overlapping eyes, hair and face badly.
     const alphaTest=Number.isFinite(s.alphaTest)?clamp(s.alphaTest,0,1):(s.alpha ? .35 : 0);
     const transparent=typeof s.transparent==='boolean'?s.transparent:opacity<.99;
-    return new THREE.MeshStandardMaterial({name:s.name??'',color:enhanced?(s.color??0xffffff):0xffffff,roughness:enhanced?(s.roughness??.78):.85,metalness:enhanced?(s.metalness??0):0,side:s.twoSide?THREE.DoubleSide:THREE.FrontSide,transparent,opacity,alphaTest,depthWrite:s.depthWrite??true});
+    const Material=enhanced&&(s.hairSurface||s.skinSurface)?THREE.MeshPhysicalMaterial:THREE.MeshStandardMaterial;
+    const material=new Material({name:s.name??'',color:enhanced?(s.color??0xffffff):0xffffff,roughness:enhanced?(s.roughness??.78):.85,metalness:enhanced?(s.metalness??0):0,side:s.twoSide?THREE.DoubleSide:THREE.FrontSide,transparent,opacity,alphaTest,depthWrite:s.depthWrite??true});
+    if(enhanced)configureSourceMaterial(material,s);
+    return material;
   });
   if(enhanced)materials.forEach((material,i)=>{const strength=skin.materials[i].normalScale;if(Number.isFinite(strength))material.normalScale.setScalar(strength);else if(Array.isArray(strength)&&strength.length===2&&strength.every(Number.isFinite))material.normalScale.fromArray(strength);});
   const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(skin.positions,3));geometry.setAttribute('uv',new THREE.Float32BufferAttribute(skin.uvs,2));geometry.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(skin.skinIndices,4));geometry.setAttribute('skinWeight',new THREE.Float32BufferAttribute(skin.skinWeights,4));
@@ -138,10 +148,10 @@ function createSkinVisual(skin,path,{enhanced=false,loadTextures=true}={}){
   const dispose=()=>{geometry.dispose();materials.forEach(m=>m.dispose());mesh.removeFromParent();};
   const ready=loadTextures?Promise.all(materials.map(async(material,i)=>{
     const s=skin.materials[i],textureName=s.texture;
-    if(textureName&&textureName!=='null'){material.map=await nativeTexture(new URL(enhanced?textureName:`textures/${webTextureName(textureName)}`,path));material.needsUpdate=true;}
+    if(textureName&&textureName!=='null'){material.map=await nativeTexture(new URL(enhanced?textureName:`textures/${webTextureName(textureName)}`,path));if(enhanced&&Number.isFinite(s.textureAnisotropy))material.map.anisotropy=clamp(s.textureAnisotropy,1,16);material.needsUpdate=true;}
     if(enhanced)for(const [key,name] of [['normalMap',s.normal],['roughnessMap',s.roughnessMap]])if(name){material[key]=await nativeTexture(new URL(name,path),false);material.needsUpdate=true;}
   })):Promise.resolve();
-  return {mesh,ready,dispose};
+  return {mesh,ready,secondaryMotion:null,proportionalRig:null,dispose(){this.secondaryMotion?.dispose();this.proportionalRig?.dispose();dispose();}};
 }
 
 export function createNativeCharacter(data,options={}){
@@ -160,6 +170,36 @@ export function createNativeCharacter(data,options={}){
   nativeSpace.updateMatrixWorld(true);const skeleton=new THREE.Skeleton(boneNodes);mesh.bind(skeleton);mesh.normalizeSkinWeights();
   const bindMatrix=mesh.bindMatrix.clone(),visuals=new Map([['original',originalVisual]]),pendingVisuals=new Map();
   let disposed=false,appearanceRequest=0,appearance='original',appearanceState={requested:'original',appearance:'original',available:true,complete:true,previewOnly:false,reason:null,label:`原版${characterName}`};
+  let secondaryMotionEnabled=options.secondaryMotion!==false;
+  const visualAttachments=new Map(),visualSockets=new Map();
+  const socketMatrix=new THREE.Matrix4(),socketTarget=new THREE.Matrix4(),socketOffset=new THREE.Vector3(),socketPosition=new THREE.Vector3();
+  function syncDisplayRig(){visuals.get(appearance)?.proportionalRig?.sync();}
+  function getVisualAttachmentMatrix(name,target=new THREE.Matrix4()){
+    const host=resolve(name);if(!host)return null;
+    target.copy(host.matrixWorld);
+    const rig=visuals.get(appearance)?.proportionalRig;
+    if(rig){
+      let parent=host;while(parent&&!boneNodes.includes(parent))parent=parent.parent;
+      const index=boneNodes.indexOf(parent);
+      if(index>=0){socketOffset.setFromMatrixPosition(rig.bones[index].matrixWorld).sub(socketPosition.setFromMatrixPosition(parent.matrixWorld));target.setPosition(socketPosition.setFromMatrixPosition(host.matrixWorld).add(socketOffset));}
+    }
+    return target;
+  }
+  function syncVisualAttachments(){
+    const rig=visuals.get(appearance)?.proportionalRig;
+    for(const [model,entry]of visualAttachments){
+      if(!model.parent){visualAttachments.delete(model);continue;}
+      if(dummyNodes.includes(model.parent))entry.name=model.parent.name;
+      const host=resolve(entry.name);if(!host)continue;
+      if(!rig){if(model.parent!==host)host.add(model);continue;}
+      let socket=visualSockets.get(entry.name);
+      if(!socket){socket=new THREE.Group();socket.name='source-display_'+entry.name;socket.matrixAutoUpdate=false;host.add(socket);visualSockets.set(entry.name,socket);}
+      getVisualAttachmentMatrix(entry.name,socketTarget);
+      socket.matrix.copy(socketMatrix.copy(host.matrixWorld).invert().multiply(socketTarget));socket.matrixWorldNeedsUpdate=true;
+      if(model.parent!==socket)socket.add(model);socket.updateMatrixWorld(true);
+    }
+  }
+  function registerVisualAttachment(model,name){visualAttachments.set(model,{name});syncVisualAttachments();return model;}
   nativeSpace.rotation.x=-Math.PI/2;nativeSpace.scale.setScalar(scale);
   const animationState={pose:null,time:0,rate:1,loop:false,finished:false,external:false};
   const qa=new THREE.Quaternion(),qb=new THREE.Quaternion(),positionA=new THREE.Vector3(),positionB=new THREE.Vector3();
@@ -201,7 +241,7 @@ export function createNativeCharacter(data,options={}){
       readQ(v,x+12,qa);readQ(v,y+12,qb);dummyNodes[i].quaternion.copy(qa).slerp(qb,t);
     }
     group.updateMatrixWorld(true);skeleton.update();api.source=Number(source);api.frame=f;
-    for(const listener of poseListeners)listener({source:api.source,frame:f});return api;
+    syncDisplayRig();for(const listener of poseListeners)listener({source:api.source,frame:f});syncVisualAttachments();return api;
   }
   const transformNodes=[...boneNodes,...dummyNodes],blendMatrix=new THREE.Matrix4(),nativeInverse=new THREE.Matrix4();
   let blendCache=null,poseSnapshotSerial=0;
@@ -243,7 +283,7 @@ export function createNativeCharacter(data,options={}){
       node.updateMatrixWorld(true);
     }
     group.updateMatrixWorld(true);skeleton.update();api.source=Number(to.source);api.frame=to.frame;
-    for(const listener of poseListeners)listener({source:api.source,frame:api.frame,blend:{from,to,weight:alpha}});return api;
+    syncDisplayRig();for(const listener of poseListeners)listener({source:api.source,frame:api.frame,blend:{from,to,weight:alpha}});syncVisualAttachments();return api;
   }
   function playPose(poseId,{loop,rate=1,restart=false}={}){
     const pose=data.poses[typeof poseId==='string'&&!/^\d+$/.test(poseId)?NATIVE_POSES[poseId]:Number(poseId)];if(!pose)return false;
@@ -251,17 +291,23 @@ export function createNativeCharacter(data,options={}){
     Object.assign(animationState,{pose,time:0,rate,loop:loop??pose.loopStart!==null,finished:false,external:false});setPoseFrame(pose.source,pose.start,{managed:true});return true;
   }
   function update(dt,state){
-    if(state&&typeof state==='object'&&state.source!==undefined&&state.frame!==undefined){setPoseFrame(state.source,state.frame,state);animationState.external=true;return;}
+    if(state&&typeof state==='object'&&state.source!==undefined&&state.frame!==undefined){setPoseFrame(state.source,state.frame,state);animationState.external=true;updateSecondaryMotion(dt);return;}
     if(state!==undefined){const next=typeof state==='string'?state:state.pose??state.state;if(next!==undefined){const poseId=typeof next==='number'?next:(NATIVE_POSES[next]??(/^\d+$/.test(String(next))?Number(next):NATIVE_POSES.idle));if(String(next)!==stateName||animationState.pose?.id!==poseId||animationState.external){stateName=String(next);playPose(poseId,{loop:typeof state==='object'?state.loop:undefined,rate:typeof state==='object'?state.rate??1:1,restart:animationState.external});}}}
-    if(!animationState.pose||animationState.external)return;
+    if(!animationState.pose||animationState.external){updateSecondaryMotion(dt);return;}
     const pose=animationState.pose,a=data.animations[pose.source];animationState.time+=Math.max(0,dt)*animationState.rate;
     let frame=pose.start+animationState.time*a.fps;
     if(frame>pose.end){if(animationState.loop){const begin=pose.loopStart??pose.start,end=pose.loopEnd??pose.end;frame=begin+(frame-begin)%Math.max(1,end-begin+1);}else{frame=pose.end;animationState.finished=true;}}
     setPoseFrame(pose.source,frame,{managed:true});
+    updateSecondaryMotion(dt);
   }
+  function updateSecondaryMotion(dt,settings={}){syncDisplayRig();visuals.get(appearance)?.secondaryMotion?.update(dt,settings);syncVisualAttachments();}
+  function resetSecondaryMotion(){visuals.get(appearance)?.secondaryMotion?.reset();}
+  function setSecondaryMotionEnabled(enabled){secondaryMotionEnabled=!!enabled;const visual=visuals.get(appearance);visual?.secondaryMotion?.setEnabled(secondaryMotionEnabled&&!visual.proportionalRig?.restPose);}
   function applyVisual(key){
     const next=visuals.get(key).mesh;if(next!==mesh){mesh.removeFromParent();mesh=next;nativeSpace.add(mesh);group.updateMatrixWorld(true);skeleton.update();}
     appearance=key;group.userData.appearance=key;group.userData.sourceFormat=key!=='original'?'Blender JSON+BNC+AMB+POS':'SKC+BNC+AMB+POS';group.name=key==='original'?`原版${characterName}`:(visuals.get(key).manifest.label??NATIVE_APPEARANCES[key].label);
+    syncDisplayRig();syncVisualAttachments();
+    const visual=visuals.get(key);visual.secondaryMotion?.setEnabled(secondaryMotionEnabled&&!visual.proportionalRig?.restPose);
   }
   async function setAppearance(requested='original',{allowIncomplete=false}={}){
     if(!Object.hasOwn(NATIVE_APPEARANCES,requested))throw new Error('Unknown character appearance');
@@ -286,7 +332,12 @@ export function createNativeCharacter(data,options={}){
         const visual=createSkinVisual(asset.skin,asset.path,{enhanced:true,loadTextures});visual.mesh.name=`p${data.id}.blender-${requested}`;visual.manifest=asset.manifest;
         // Reuse the original binding transform as well as the live skeleton.
         // Binding from the actor's current animated pose would deform the mesh.
-        visual.mesh.bind(skeleton,bindMatrix);visual.mesh.normalizeSkinWeights();
+        try{
+          if(asset.skin.bodyRig)visual.proportionalRig=createProportionalRig({rig:asset.skin.bodyRig,nativeBones:boneNodes,nativeSpace});
+          const displayBones=visual.proportionalRig?.bones||boneNodes,displaySkeleton=visual.proportionalRig?.skeleton||skeleton;
+          if(asset.skin.secondaryMotion)visual.secondaryMotion=createHairSprings({rig:asset.skin.secondaryMotion,nativeBones:displayBones,nativeSkeleton:displaySkeleton,root:group});
+          visual.mesh.bind(visual.secondaryMotion?.skeleton||displaySkeleton,bindMatrix);visual.mesh.normalizeSkinWeights();
+        }catch(error){visual.dispose();throw error;}
         try{await visual.ready;}catch(error){visual.dispose();throw error;}
         if(disposed){visual.dispose();return null;}visuals.set(requested,visual);return visual;
       })().finally(()=>pendingVisuals.delete(requested)));
@@ -300,7 +351,7 @@ export function createNativeCharacter(data,options={}){
     }
     return {...appearanceState};
   }
-  const api={group,get mesh(){return mesh;},skeleton,bones:boneNodes,dummies:dummyNodes,nativeSpace,poses:data.poses,combatPoses:data.combatPoses,animations:data.animations,source:1,frame:1,onPoseUpdate(listener){poseListeners.add(listener);return()=>poseListeners.delete(listener);},update,playPose,setPoseFrame,setPoseBlend,capturePose,sampleRoot,sampleSceneMotion,setAppearance,get appearance(){return appearance;},get appearanceStatus(){return {...appearanceState};},getAttachment:name=>byName.get(name)||resolve(name),get finished(){return animationState.finished;},get currentPose(){return animationState.pose?.id??null;},getAttachmentPosition(name,target=new THREE.Vector3()){return resolve(name)?.getWorldPosition(target)||null;},dispose(){if(disposed)return;disposed=true;++appearanceRequest;blendCache=null;poseListeners.clear();for(const visual of visuals.values())visual.dispose();visuals.clear();skeleton.dispose();group.removeFromParent();}};
+  const api={group,get mesh(){return mesh;},skeleton,bones:boneNodes,dummies:dummyNodes,nativeSpace,poses:data.poses,combatPoses:data.combatPoses,animations:data.animations,source:1,frame:1,onPoseUpdate(listener){poseListeners.add(listener);return()=>poseListeners.delete(listener);},update,updateSecondaryMotion,resetSecondaryMotion,setSecondaryMotionEnabled,get secondaryMotionStatus(){return visuals.get(appearance)?.secondaryMotion?.status||{available:false,enabled:false};},getSecondaryMotionSnapshot(){return visuals.get(appearance)?.secondaryMotion?.snapshot()||[];},playPose,setPoseFrame,setPoseBlend,capturePose,sampleRoot,sampleSceneMotion,setAppearance,get appearance(){return appearance;},get appearanceStatus(){return {...appearanceState};},getAttachment:name=>byName.get(name)||resolve(name),getVisualAttachmentMatrix,registerVisualAttachment,setSourceRestPose(value){const visual=visuals.get(appearance),rig=visual?.proportionalRig;if(!rig)return false;rig.setRestPose(value);visual.secondaryMotion?.setEnabled(!value&&secondaryMotionEnabled);syncVisualAttachments();return true;},get sourceRestAvailable(){return !!visuals.get(appearance)?.proportionalRig;},get sourceRestPose(){return visuals.get(appearance)?.proportionalRig?.restPose||false;},get finished(){return animationState.finished;},get currentPose(){return animationState.pose?.id??null;},getAttachmentPosition(name,target=new THREE.Vector3()){return resolve(name)?.getWorldPosition(target)||null;},dispose(){if(disposed)return;disposed=true;++appearanceRequest;blendCache=null;poseListeners.clear();for(const visual of visuals.values())visual.dispose();visuals.clear();visualAttachments.clear();visualSockets.clear();skeleton.dispose();group.removeFromParent();}};
   api.ready=originalVisual.ready.then(async()=>{if(options.appearance&&options.appearance!=='original'&&appearanceRequest===0)await setAppearance(options.appearance);});
   playPose(0,{loop:true});return api;
 }

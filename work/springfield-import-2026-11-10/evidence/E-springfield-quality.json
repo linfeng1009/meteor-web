@@ -1,0 +1,73 @@
+{
+  "case": "springfield-import-2026-11-10",
+  "evidence": {
+    "E-001": {
+      "source_ref": [
+        "source-copy.json",
+        "source-audit.json",
+        "原始配布Readme.txt"
+      ],
+      "finding_ids": [
+        "F-001",
+        "F-005"
+      ]
+    },
+    "E-002": {
+      "source_ref": [
+        "build-evidence.json",
+        "blend-validation.json"
+      ],
+      "finding_ids": [
+        "F-001",
+        "F-002",
+        "F-003",
+        "F-005"
+      ]
+    },
+    "E-003": {
+      "source_ref": [
+        "quality-tests.tap",
+        "quality-motion-summary.json",
+        "quality-full-tests.tap"
+      ],
+      "finding_ids": [
+        "F-001",
+        "F-002",
+        "F-004"
+      ]
+    },
+    "E-004": {
+      "source_ref": [
+        "packed-map-audit.json",
+        "../../dist/character-materials.js",
+        "../../dist/proportional-rig.js"
+      ],
+      "finding_ids": [
+        "F-002",
+        "F-003"
+      ]
+    },
+    "E-005": {
+      "source_ref": [
+        "browser-validation.json",
+        "source-proportions-preview.png",
+        "quality-face-preview.png",
+        "quality-run-preview.png",
+        "quality-jump-preview.png",
+        "quality-attack-preview.png",
+        "quality-game-preview.png",
+        "quality-game-jump-preview.png"
+      ],
+      "finding_ids": [
+        "F-002",
+        "F-003",
+        "F-004",
+        "F-005"
+      ]
+    }
+  },
+  "hash_index": "../validation.json",
+  "path_id": "P-001",
+  "path_type": "callflow",
+  "source_refs_relative_to": "case_root"
+}

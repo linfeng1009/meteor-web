@@ -51,13 +51,16 @@ export function bindQiankunGrip(actor, data, manifest) {
   const closedPosition = new THREE.Vector3(), closedRotation = new THREE.Quaternion(), unit = new THREE.Vector3();
   seated.decompose(closedPosition, closedRotation, unit);
   const local = new THREE.Matrix4(), loaderUndo = new THREE.Matrix4().makeRotationX(Math.PI / 2);
+  const displayLeft = new THREE.Matrix4(), displayRight = new THREE.Matrix4();
   const position = new THREE.Vector3(), rotation = new THREE.Quaternion(), scale = new THREE.Vector3();
   // Both parts share the sheath's palm while closing. At weight zero the
   // inverse/compose reconstructs the unchanged right-palm grip exactly.
   left.add(blade); left.add(sheath); blade.matrixAutoUpdate = false;
   const update = pose => {
     const weight = qiankunSheathWeight(data, pose, { mode: actor.combat.weaponMode, rootPoseId: actor.combat.currentMove?.poseId });
-    local.copy(left.matrixWorld).invert().multiply(right.matrixWorld).decompose(position, rotation, scale);
+    actor.character.getVisualAttachmentMatrix?.('d_wpnLP',displayLeft) || displayLeft.copy(left.matrixWorld);
+    actor.character.getVisualAttachmentMatrix?.('d_wpnRP',displayRight) || displayRight.copy(right.matrixWorld);
+    local.copy(displayLeft).invert().multiply(displayRight).decompose(position, rotation, scale);
     position.lerp(closedPosition, weight); rotation.slerp(closedRotation, weight);
     blade.matrix.compose(position, rotation, scale).multiply(loaderUndo);
     blade.matrixWorldNeedsUpdate = true; blade.updateMatrixWorld(true);

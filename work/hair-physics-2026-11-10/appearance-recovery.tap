@@ -1,0 +1,190 @@
+TAP version 13
+# Subtest: Emilia has a separate p0 bundle; a missing resource preserves the live Raiden surface
+ok 1 - Emilia has a separate p0 bundle; a missing resource preserves the live Raiden surface
+  ---
+  duration_ms: 110.783125
+  type: 'test'
+  ...
+# Subtest: Emilia loads the supplied complete face, costume and mapped PNG textures rather than a placeholder
+ok 2 - Emilia loads the supplied complete face, costume and mapped PNG textures rather than a placeholder
+  ---
+  duration_ms: 22.51725
+  type: 'test'
+  ...
+# Subtest: all five appearances keep independent cached meshes on one live skeleton and weapon attachment
+ok 3 - all five appearances keep independent cached meshes on one live skeleton and weapon attachment
+  ---
+  duration_ms: 105.436167
+  type: 'test'
+  ...
+# Subtest: Emilia retains native joints and finite skin bounds across 45 running, airborne, guard and attack samples
+ok 4 - Emilia retains native joints and finite skin bounds across 45 running, airborne, guard and attack samples
+  ---
+  duration_ms: 115.974667
+  type: 'test'
+  ...
+# Subtest: game adoption preserves mission identity, resources, airborne motion and the active manual command
+ok 5 - game adoption preserves mission identity, resources, airborne motion and the active manual command
+  ---
+  duration_ms: 15.648417
+  type: 'test'
+  ...
+# Subtest: a missing HD bundle reports an explicit original fallback and leaves the original model usable
+ok 6 - a missing HD bundle reports an explicit original fallback and leaves the original model usable
+  ---
+  duration_ms: 32.780125
+  type: 'test'
+  ...
+# Subtest: Blender skin is a separate denser native-coordinate asset with original bone compatibility
+ok 7 - Blender skin is a separate denser native-coordinate asset with original bone compatibility
+  ---
+  duration_ms: 55.58275
+  type: 'test'
+  ...
+# Subtest: hot appearance switching preserves the live skeleton, original pose, world transform and weapon attachment
+ok 8 - hot appearance switching preserves the live skeleton, original pose, world transform and weapon attachment
+  ---
+  duration_ms: 26.668792
+  type: 'test'
+  ...
+# Subtest: HD playback keeps real jump, run, attack and dart attachment matrices identical to the native skin
+ok 9 - HD playback keeps real jump, run, attack and dart attachment matrices identical to the native skin
+  ---
+  duration_ms: 473.0505
+  type: 'test'
+  ...
+# Subtest: the game appearance API leaves HP, fighter identity, combat state, velocity and weapon untouched
+ok 10 - the game appearance API leaves HP, fighter identity, combat state, velocity and weapon untouched
+  ---
+  duration_ms: 15.15875
+  type: 'test'
+  ...
+# Subtest: rapid HD/original selection keeps the latest appearance and disposal cancels pending adoption
+ok 11 - rapid HD/original selection keeps the latest appearance and disposal cancels pending adoption
+  ---
+  duration_ms: 1.203792
+  type: 'test'
+  ...
+# Subtest: other nineteen native characters explicitly keep their original appearance
+ok 12 - other nineteen native characters explicitly keep their original appearance
+  ---
+  duration_ms: 519.540916
+  type: 'test'
+  ...
+# Subtest: invalid replacement meshes cannot introduce foreign bones, invalid weights or nonfinite positions
+ok 13 - invalid replacement meshes cannot introduce foreign bones, invalid weights or nonfinite positions
+  ---
+  duration_ms: 1.9035
+  type: 'test'
+  ...
+# Subtest: color maps and PBR data maps use different color spaces and cached maps survive an actor disposal
+ok 14 - color maps and PBR data maps use different color spaces and cached maps survive an actor disposal
+  ---
+  duration_ms: 25.463292
+  type: 'test'
+  ...
+# Subtest: appearance registry separates native, Blender HD and HuTao bundles without adding a fake native character
+ok 15 - appearance registry separates native, Blender HD and HuTao bundles without adding a fake native character
+  ---
+  duration_ms: 1.271625
+  type: 'test'
+  ...
+# Subtest: an absent HuTao bundle explicitly falls back to the original mesh and keeps its pose usable
+ok 16 - an absent HuTao bundle explicitly falls back to the original mesh and keeps its pose usable
+  ---
+  duration_ms: 35.307917
+  type: 'test'
+  ...
+# Subtest: explicit workshop permission is required on every incomplete adoption, including a cached preview
+ok 17 - explicit workshop permission is required on every incomplete adoption, including a cached preview
+  ---
+  duration_ms: 65.779667
+  type: 'test'
+  ...
+# Subtest: the complete PMX HuTao mesh has real face geometry, separate textures and normalized native bone weights
+ok 18 - the complete PMX HuTao mesh has real face geometry, separate textures and normalized native bone weights
+  ---
+  duration_ms: 47.411958
+  type: 'test'
+  ...
+# Subtest: HuTao, HD and original hot switching retain distinct meshes on one live native skeleton
+ok 19 - HuTao, HD and original hot switching retain distinct meshes on one live native skeleton
+  ---
+  duration_ms: 65.069958
+  type: 'test'
+  ...
+# Subtest: PMX skin remains bounded across native running, jumping, guarding, attacks and death poses
+ok 20 - PMX skin remains bounded across native running, jumping, guarding, attacks and death poses
+  ---
+  duration_ms: 128.734083
+  type: 'test'
+  ...
+# Subtest: the game refuses an incomplete MOD and retains its current HD appearance and mission state
+ok 21 - the game refuses an incomplete MOD and retains its current HD appearance and mission state
+  ---
+  duration_ms: 56.269417
+  type: 'test'
+  ...
+# Subtest: the game adopts complete HuTao without resetting mission identity, HP, weapon, jump or live pose
+ok 22 - the game adopts complete HuTao without resetting mission identity, HP, weapon, jump or live pose
+  ---
+  duration_ms: 13.431958
+  type: 'test'
+  ...
+# Subtest: PMX cutout cards preserve depth-writing opaque materials and their supplied alpha threshold
+ok 23 - PMX cutout cards preserve depth-writing opaque materials and their supplied alpha threshold
+  ---
+  duration_ms: 1.134417
+  type: 'test'
+  ...
+# Subtest: a HuTao request for another original character preserves that character instead of loading a P20 substitute
+ok 24 - a HuTao request for another original character preserves that character instead of loading a P20 substitute
+  ---
+  duration_ms: 55.267833
+  type: 'test'
+  ...
+# Subtest: Raiden has a separate p0 appearance and a missing bundle retains the live HuTao mesh
+ok 25 - Raiden has a separate p0 appearance and a missing bundle retains the live HuTao mesh
+  ---
+  duration_ms: 106.596167
+  type: 'test'
+  ...
+# Subtest: an incomplete Raiden bundle cannot be adopted or bypass the gate with a cached workshop preview
+ok 26 - an incomplete Raiden bundle cannot be adopted or bypass the gate with a cached workshop preview
+  ---
+  duration_ms: 54.208917
+  type: 'test'
+  ...
+# Subtest: the complete dress Raiden uses real mapped geometry and supplied texture files
+ok 27 - the complete dress Raiden uses real mapped geometry and supplied texture files
+  ---
+  duration_ms: 40.842
+  type: 'test'
+  ...
+# Subtest: four appearances reuse one live skeleton and keep distinct cached surfaces and weapon attachments
+ok 28 - four appearances reuse one live skeleton and keep distinct cached surfaces and weapon attachments
+  ---
+  duration_ms: 69.834209
+  type: 'test'
+  ...
+# Subtest: Raiden remains finite and preserves original joints across 45 native motion samples
+ok 29 - Raiden remains finite and preserves original joints across 45 native motion samples
+  ---
+  duration_ms: 154.17725
+  type: 'test'
+  ...
+# Subtest: game adoption changes only appearance while keeping mission, HP, rage, weapon, airborne state and pose
+ok 30 - game adoption changes only appearance while keeping mission, HP, rage, weapon, airborne state and pose
+  ---
+  duration_ms: 16.541625
+  type: 'test'
+  ...
+1..30
+# tests 30
+# suites 0
+# pass 30
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3083.592958

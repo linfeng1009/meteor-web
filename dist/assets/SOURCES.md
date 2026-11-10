@@ -71,6 +71,12 @@
 
 `enhanced/maps/qiyun/` 的场景模型由本项目的 `scripts/blender/build_qiyun_courtyard.py` 在本机 Blender 中程序建模，包含石板庭院、山门、亭台、树木、植被、岩壁和远山。石材颜色贴图通过内置 image_gen 生成，最终提示词保存在 `work/qiyun-courtyard/stone-texture-prompt.txt`。运行模型按材质合批，并独立制作地面、台阶和建筑碰撞。天空、雾、水流与风由 `dist/qiyun-courtyard.js` 实现。可编辑 Blender 工程、GLB、预览和验收记录保存在 `work/qiyun-courtyard/`。
 
+## 雷电影佩刀本地外观（2026-11-10）
+
+`enhanced/weapons/raiden-sword/` 来自用户提供的「【模之屋】雷电将军」包中独立的 `武器.pmx`，原包署名模型提供 miHoYo、模型改造观海（观海子）。保留原弯刃几何、UV 与 2048×2048 颜色贴图；源 1,566 顶点、1,850 三角，42 个重合发光面合并至同一表面，运行 1,808 三角。原发光图按透明度合成后低强度使用，MMD sphere 通道改为克制的 PBR 反射，非完整 MMD 着色复现。
+
+原包说明要求非商业、不可二次配布，完整说明及源文件哈希保存在本地 `work/raiden-sword/`。本次为本机显示适配，未上传。握持挂点与长度对齐原长剑，攻击范围、伤害与特效端点仍使用原版 W0_0。导入脚本为 `scripts/import-raiden-sword.py`，可编辑 Blender 工程与预览一并保留在工作目录。
+
 ## 怒气技能视觉层（2026-11-06）
 
 2026-11-10 修正：乾坤刀末击的SLASH01–06及SLASH_L01–06均沿用原EF键和`LIGHTa00.bmp`转换贴图，按可绘制节点末键延长视觉播放，防止POS动画先结束而漏掉刀光。普通挥砍和怒招拖尾读取原POS Drag时间窗/颜色/时长与原武器DES端点，使用Web柔边光带绘制。亮度、拖尾采样/渐隐、完成后的挂点快照属于显示适配；本轮未新增或替换原纹理，也未改变攻击碰撞、伤害和怒气规则。原粒子发射、DONUT及完整材质通道仍未完全恢复。

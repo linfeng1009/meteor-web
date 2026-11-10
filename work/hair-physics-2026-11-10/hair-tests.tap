@@ -1,0 +1,58 @@
+TAP version 13
+# Subtest: hutao: hair rig keeps original geometry and every non-hair binding
+ok 1 - hutao: hair rig keeps original geometry and every non-hair binding
+  ---
+  duration_ms: 53.107584
+  type: 'test'
+  ...
+# Subtest: hutao: continuous motion stays restrained and preserves native joints and weapon
+ok 2 - hutao: continuous motion stays restrained and preserves native joints and weapon
+  ---
+  duration_ms: 230.916333
+  type: 'test'
+  ...
+# Subtest: raiden: hair rig keeps original geometry and every non-hair binding
+ok 3 - raiden: hair rig keeps original geometry and every non-hair binding
+  ---
+  duration_ms: 65.354292
+  type: 'test'
+  ...
+# Subtest: raiden: continuous motion stays restrained and preserves native joints and weapon
+ok 4 - raiden: continuous motion stays restrained and preserves native joints and weapon
+  ---
+  duration_ms: 157.217959
+  type: 'test'
+  ...
+# Subtest: emilia: hair rig keeps original geometry and every non-hair binding
+ok 5 - emilia: hair rig keeps original geometry and every non-hair binding
+  ---
+  duration_ms: 26.793
+  type: 'test'
+  ...
+# Subtest: emilia: continuous motion stays restrained and preserves native joints and weapon
+ok 6 - emilia: continuous motion stays restrained and preserves native joints and weapon
+  ---
+  duration_ms: 93.348084
+  type: 'test'
+  ...
+# Subtest: hair physics handles frame rates, pauses, teleports, toggles and cached appearances
+ok 7 - hair physics handles frame rates, pauses, teleports, toggles and cached appearances
+  ---
+  duration_ms: 171.157792
+  type: 'test'
+  ...
+# Subtest: hair rig rejects invalid constraints and forward parent references
+ok 8 - hair rig rejects invalid constraints and forward parent references
+  ---
+  duration_ms: 13.282459
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1011.629916

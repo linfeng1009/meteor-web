@@ -1,0 +1,118 @@
+TAP version 13
+# Subtest: lost response retries the identical batch without executing an attack twice
+ok 1 - lost response retries the identical batch without executing an attack twice
+  ---
+  duration_ms: 3.31125
+  type: 'test'
+  ...
+# Subtest: request failure preserves press and release ordering while new input waits
+ok 2 - request failure preserves press and release ordering while new input waits
+  ---
+  duration_ms: 0.418875
+  type: 'test'
+  ...
+# Subtest: large bursts drain in ordered batches without dropping attacks or held-key releases
+ok 3 - large bursts drain in ordered batches without dropping attacks or held-key releases
+  ---
+  duration_ms: 0.690542
+  type: 'test'
+  ...
+# Subtest: host response loss and acknowledgement response loss never drop or replay applied operations
+ok 4 - host response loss and acknowledgement response loss never drop or replay applied operations
+  ---
+  duration_ms: 0.989583
+  type: 'test'
+  ...
+# Subtest: host retries an acknowledgement which never reached the server without applying duplicates
+ok 5 - host retries an acknowledgement which never reached the server without applying duplicates
+  ---
+  duration_ms: 0.274042
+  type: 'test'
+  ...
+# Subtest: host-local menu clear does not accumulate unsent guest operations
+ok 6 - host-local menu clear does not accumulate unsent guest operations
+  ---
+  duration_ms: 0.238958
+  type: 'test'
+  ...
+# Subtest: consumer errors stop the session instead of blindly retrying partially applied actions
+ok 7 - consumer errors stop the session instead of blindly retrying partially applied actions
+  ---
+  duration_ms: 0.319833
+  type: 'test'
+  ...
+# Subtest: leaving during an in-flight response prevents room, frame and input callbacks
+ok 8 - leaving during an in-flight response prevents room, frame and input callbacks
+  ---
+  duration_ms: 0.127916
+  type: 'test'
+  ...
+# Subtest: late old-round responses cannot replace new-round state or replay old inputs
+ok 9 - late old-round responses cannot replace new-round state or replay old inputs
+  ---
+  duration_ms: 0.645084
+  type: 'test'
+  ...
+# Subtest: queue overload is explicit and bounded; a partial receipt acknowledgement is never treated as success
+ok 10 - queue overload is explicit and bounded; a partial receipt acknowledgement is never treated as success
+  ---
+  duration_ms: 0.555625
+  type: 'test'
+  ...
+# Subtest: real HTTP clients recover dropped guest and host responses and clear acknowledged input
+ok 11 - real HTTP clients recover dropped guest and host responses and clear acknowledged input
+  ---
+  duration_ms: 61.720666
+  type: 'test'
+  ...
+# Subtest: room needs two prepared players and only the host may start; both clients must finish loading
+ok 12 - room needs two prepared players and only the host may start; both clients must finish loading
+  ---
+  duration_ms: 1.615292
+  type: 'test'
+  ...
+# Subtest: guest submits ordered inputs but cannot publish combat state or impersonate another player
+ok 13 - guest submits ordered inputs but cannot publish combat state or impersonate another player
+  ---
+  duration_ms: 1.668333
+  type: 'test'
+  ...
+# Subtest: full rooms reject joins; leaving resets readiness, host leave closes room, stale host expires
+ok 14 - full rooms reject joins; leaving resets readiness, host leave closes room, stale host expires
+  ---
+  duration_ms: 0.282875
+  type: 'test'
+  ...
+# Subtest: HTTP integration shares authoritative frame between two independent room identities
+ok 15 - HTTP integration shares authoritative frame between two independent room identities
+  ---
+  duration_ms: 63.847584
+  type: 'test'
+  ...
+# Subtest: relay retains delivery until host confirmation, accepts repeat confirmation, and rejects guest or future acknowledgements
+ok 16 - relay retains delivery until host confirmation, accepts repeat confirmation, and rejects guest or future acknowledgements
+  ---
+  duration_ms: 0.434958
+  type: 'test'
+  ...
+# Subtest: malformed batches are atomic and queue saturation never silently evicts accepted operations
+ok 17 - malformed batches are atomic and queue saturation never silently evicts accepted operations
+  ---
+  duration_ms: 0.38225
+  type: 'test'
+  ...
+# Subtest: old-round writes and acknowledgements cannot affect the next match
+ok 18 - old-round writes and acknowledgements cannot affect the next match
+  ---
+  duration_ms: 0.1475
+  type: 'test'
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 413.696459

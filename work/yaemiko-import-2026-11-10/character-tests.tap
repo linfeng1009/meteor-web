@@ -1,0 +1,58 @@
+TAP version 13
+# Subtest: Yae Miko archive, editable actions and rebuild inputs are independent of Downloads
+ok 1 - Yae Miko archive, editable actions and rebuild inputs are independent of Downloads
+  ---
+  duration_ms: 125.329667
+  type: 'test'
+  ...
+# Subtest: Yae Miko keeps all original surfaces, 2K textures, transparent hair highlights and author credits
+ok 2 - Yae Miko keeps all original surfaces, 2K textures, transparent hair highlights and author credits
+  ---
+  duration_ms: 58.4835
+  type: 'test'
+  ...
+# Subtest: Yae Miko preserves every source vertex, normal and UV under one uniform transform
+ok 3 - Yae Miko preserves every source vertex, normal and UV under one uniform transform
+  ---
+  duration_ms: 48.70025
+  type: 'test'
+  ...
+# Subtest: Yae Miko source-pose inspection and cached appearance changes retain source shape and native gameplay anchors
+ok 4 - Yae Miko source-pose inspection and cached appearance changes retain source shape and native gameplay anchors
+  ---
+  duration_ms: 400.5085
+  type: 'test'
+  ...
+# Subtest: Yae Miko run, jump, guard, attacks and blending keep the face coherent and limb lengths fixed
+ok 5 - Yae Miko run, jump, guard, attacks and blending keep the face coherent and limb lengths fixed
+  ---
+  duration_ms: 188.525708
+  type: 'test'
+  ...
+# Subtest: Yae Miko hair is restrained, settles and honors the disabled preference after switches
+ok 6 - Yae Miko hair is restrained, settles and honors the disabled preference after switches
+  ---
+  duration_ms: 161.811792
+  type: 'test'
+  ...
+# Subtest: Yae Miko game adoption preserves story identity, HP, air motion and the current command
+ok 7 - Yae Miko game adoption preserves story identity, HP, air motion and the current command
+  ---
+  duration_ms: 11.742958
+  type: 'test'
+  ...
+# Subtest: missing Yae Miko assets preserve the previous appearance and reject incompatible native bodies
+ok 8 - missing Yae Miko assets preserve the previous appearance and reject incompatible native bodies
+  ---
+  duration_ms: 162.33225
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1568.063583

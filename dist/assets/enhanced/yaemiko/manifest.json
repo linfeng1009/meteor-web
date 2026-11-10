@@ -1,0 +1,108 @@
+{
+  "schema": 1,
+  "characterId": 0,
+  "appearance": "yaemiko",
+  "label": "八重神子 · 模型适配",
+  "mesh": "mesh.json",
+  "complete": true,
+  "completeness": {
+    "bodyGeometry": true,
+    "headHairGeometry": true,
+    "eyes": true,
+    "faceGeometry": true,
+    "sourcePmxSkeleton": true,
+    "originalSourceGameSkeleton": false
+  },
+  "stats": {
+    "sourceVertices": 25219,
+    "sourceTriangles": 29140,
+    "vertices": 25219,
+    "triangles": 29140,
+    "sourceBones": 456,
+    "bones": 30,
+    "dummies": 6,
+    "secondaryBones": 48,
+    "materials": 25,
+    "textures": 5,
+    "omittedTriangles": 0
+  },
+  "retarget": {
+    "method": "Original mesh proportions preserved by a single uniform transform; independent source-length display skeleton follows original AMB/POS rotations; display weapon sockets follow the new hands.",
+    "provisional": true,
+    "sourceSkeletonMissing": false,
+    "hairPhysics": true,
+    "hairPhysicsProfile": "web-spring-bone-v2-restrained",
+    "originalMmdPhysics": false,
+    "clothPhysics": false,
+    "fingerArticulation": "Thumb and index chains of the native rig drive source finger groups; other fingers fold into those chains."
+  },
+  "provenance": {
+    "sourceArchive": "assets/source/yaemiko",
+    "sourceModel": "Yae Miko",
+    "modelAuthor": "miHoYo",
+    "rigAuthor": "观海（BiliBili：观海子）",
+    "credit": "模型提供：miHoYo；模型改造：观海（BiliBili：观海子）。",
+    "license": "Original distribution readme retained verbatim. It forbids redistribution, part extraction and commercial use; this is a user-requested local adaptation, not a rights grant or published distribution.",
+    "limits": [
+      "Original source proportions preserved; action retarget remains approximate.",
+      "Source PMX has no verified real-world centimetre calibration; no physical height is claimed.",
+      "Source hair skeleton and weights retained but MMD rigid bodies are not executed.",
+      "Skirt folds follow their source parent body region; sleeves and attached tassels follow the arm; no cloth solver.",
+      "No expression morph or independent per-finger solver.",
+      "Original toon ramp and sphere-map lighting are not reproduced; original base colour, transparent hair highlight passes, alpha cutout and roughness are used."
+    ]
+  },
+  "omittedRenderPasses": [],
+  "sourceFiles": [
+    {
+      "file": "八重神子.pmx",
+      "bytes": 1676310,
+      "sha256": "77d7fdb8f36abdfd01cc6a1fb7c38645ef40885a556987e9181844f3552f3423"
+    },
+    {
+      "file": "tex/颜.png",
+      "runtime": "textures/颜.png",
+      "sha256": "6747aed630e27a4f96da9ce429585f222208fd4d2f3623ba6449fa3a5dba5a55",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "tex/体.png",
+      "runtime": "textures/体.png",
+      "sha256": "a12e9dd032ab5719ba8abf7400b866109bda24e596cb5eebc239262f845a2ed4",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "tex/髪.png",
+      "runtime": "textures/髪.png",
+      "sha256": "a4e9ffb555dd66f87b2c56217628bb800b09efb82284f960cf3109b8c534c125",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "tex/spa_h.png",
+      "runtime": "textures/spa_h.png",
+      "sha256": "ffc87bcf24f4149ed8b3f607afa36a5e813f7a190e936ed43afdf52c26fb5239",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "tex/肌.png",
+      "runtime": "textures/肌.png",
+      "sha256": "acb24b8fc56217b99bad28e9038f4bbe54454c4e9c0d8ada0d3e114dea1c70d3",
+      "size": [
+        2048,
+        2048
+      ]
+    }
+  ]
+}

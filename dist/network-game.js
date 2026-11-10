@@ -1,7 +1,7 @@
 // Listen-host simulation adapter: guests submit inputs, never HP/damage.
 // Uses the same native POS/ACT/RES combat, movement and collision paths.
 const continuous=['forward','back','left','right','guard','crouch'];
-const fields=['hero','enemies','keys','directionBuffer','recoveryAttack','traversalTap','locked','cameraAngle','mouseLook','onEvent'];
+import {createPlayerControl,clearPlayerCommands} from './player-control.js';
 // Presentation only: never advance combat, collisions, damage or movement rules.
 export class NetworkReplicaMotion{
   constructor(){this.samples=new Map();}
@@ -44,8 +44,9 @@ export class NetworkGame{
     Object.assign(this,{game,client,room,active:false,sequence:0,lastFrame:0,actors:new Map([[game.hero.networkId,game.hero],[game.enemies[0].networkId,game.enemies[0]]])});
     this.scores=new Map(room.players.map(p=>[p.id,{kills:0,deaths:0}]));
     this.presentation=new NetworkReplicaMotion();
-    this.remote={keys:new Set(),directionBuffer:[],recoveryAttack:null,traversalTap:null,locked:null,cameraAngle:Math.PI};
-    this.original={};for(const key of ['action','pause','_updateFighter','_updatePresentation','_separateCharacters','_hud','_kill'])this.original[key]=game[key];
+    this.remote=createPlayerControl({cameraAngle:Math.PI,lookLocked:true});
+    this.peer=game.enemies[0];this.previousControl=this.peer.playerControl;this.peer.playerControl=this.remote;
+    this.original={};for(const key of ['action','pause','_updateFighter','_updatePresentation','_separateCharacters','_kill'])this.original[key]=game[key];
     const session=this;
     game.action=function(name,down=true){
       if(!session.active)return;if(name==='switch'||/^weapon/.test(name)||name==='pickup')return;
@@ -53,25 +54,20 @@ export class NetworkGame{
       return session.original.action.call(game,name,down);
     };
     game.pause=function(value=true){client.send('clear',false);if(client.host)session.original.action.call(game,'guard',false);session.original.pause.call(game,session.active?false:value);if(value){game.keyboard?.reset();game.mouseLook?.release();game.keys.clear();}};
-    game._updateFighter=function(f,dt){if(!session.active||!client.host)return;if(f===game.hero)return session.original._updateFighter.call(game,f,dt);session.context(f,()=>session.original._updateFighter.call(game,f,dt));};
+    game._updateFighter=function(f,dt){if(session.active&&client.host)return session.original._updateFighter.call(game,f,dt);};
+    game._separateCharacters=function(dt){if(session.active&&client.host)return session.original._separateCharacters.call(game,dt);};
     game._updatePresentation=function(dt){if(session.active&&!client.host)for(const actor of session.actors.values())session.presentation.update(actor,dt);session.original._updatePresentation.call(game,dt);};
-    game._separateCharacters=function(dt){if(client.host&&session.active){const actors=[game.hero,...game.enemies],flags=actors.map(f=>f.hero);try{for(const f of actors)f.hero=false;session.original._separateCharacters.call(game,dt);}finally{actors.forEach((f,i)=>f.hero=flags[i]);}}};
-    game._hud=function(){if(!session.inRemote)session.original._hud.call(game);};
     game._kill=function(target,options){const wasDead=target.dead;session.original._kill.call(game,target,options);if(!wasDead&&target.dead){session.scores.get(target.networkId).deaths++;if(options?.awardKill!==false){const rival=[...session.scores.keys()].find(id=>id!==target.networkId);session.scores.get(rival).kills++;}}const score=session.scores.get(client.playerId);game.kills=score.kills;game.deaths=score.deaths;};
   }
-  context(actor,fn){
-    const g=this.game,saved=Object.fromEntries(fields.map(k=>[k,g[k]])),spawns=g.currentMap.spawns,wasHero=actor.hero;
-    this.inRemote=true;Object.assign(g,this.remote,{hero:actor,enemies:[saved.hero],mouseLook:{locked:true},onEvent:()=>{}});actor.hero=true;
-    g.currentMap.spawns=[spawns[actor.spawnIndex]||spawns[1],...spawns];
-    try{return fn();}finally{for(const key of ['directionBuffer','recoveryAttack','traversalTap','locked','cameraAngle'])this.remote[key]=g[key];actor.hero=wasHero;g.currentMap.spawns=spawns;Object.assign(g,saved);this.inRemote=false;}
-  }
   play(){this.active=true;this.original.pause.call(this.game,false);}
-  inputs(batch){if(!this.client.host||!this.active)return;const actor=this.game.enemies[0];for(const input of batch){if(input.playerId!==actor.networkId)continue;this.context(actor,()=>{
-    if(input.action==='clear'){for(const key of [...this.game.keys])this.original.action.call(this.game,key,false);this.game.traversalTap=null;this.game.directionBuffer=[];this.game.recoveryAttack=null;actor.guard=false;return;}
-    this.game.cameraAngle=input.angle;
-    if(input.action==='look'){const held=new Set(input.held||[]);for(const key of continuous){if(this.game.keys.has(key)&&!held.has(key))this.original.action.call(this.game,key,false);else if(!this.game.keys.has(key)&&held.has(key))this.original.action.call(this.game,key,true);}return;}
-    this.original.action.call(this.game,input.action,input.active);
-  });}}
+  inputs(batch){if(!this.client.host||!this.active)return;const actor=this.peer,control=this.remote;
+    for(const input of batch){if(input.playerId!==actor.networkId)continue;
+      if(input.action==='clear'){control.keys.clear();clearPlayerCommands(control);actor.guard=false;continue;}
+      control.cameraAngle=input.angle;
+      if(input.action==='look'){const held=new Set(input.held||[]);for(const key of continuous){if(control.keys.has(key)&&!held.has(key))this.game._actionFighter(actor,control,key,false);else if(!control.keys.has(key)&&held.has(key))this.game._actionFighter(actor,control,key,true);}continue;}
+      this.game._actionFighter(actor,control,input.action,input.active);
+    }
+  }
   snapshot(){if(!this.active||!this.client.host)return null;const g=this.game;return {sequence:++this.sequence,time:g.matchElapsed,players:[g.hero,...g.enemies].map(f=>({id:f.networkId,position:f.root.position.toArray(),angle:f.root.rotation.y,hp:f.hp,maxHp:f.maxHp,rage:f.rage,dead:f.dead,grounded:f.grounded,guard:f.guard,pose:f.combat.timeline?.pose.id||0,source:f.character.source??0,frame:f.character.frame??0,serial:f.combat.serial,effectTime:f.combat._effectElapsed||0,context:f.combat.currentMove?{name:f.combat.currentMove.name||'',rage:f.combat.currentMove.rage||0,poseId:f.combat.currentMove.poseId,command:f.combat.currentMove.command||''}:null,...this.scores.get(f.networkId)}))};}
   apply(frame){if(this.client.host||!this.active||frame.sequence<=this.lastFrame)return;this.lastFrame=frame.sequence;const g=this.game,duration=frame.time-this.presentationTime;this.presentationTime=frame.time;g.matchElapsed=frame.time;
     for(const state of frame.players){const f=this.actors.get(state.id);if(!f||!f.combat.data.poses.has(state.pose))continue;
@@ -84,5 +80,5 @@ export class NetworkGame{
       if(f===g.hero){g.kills=state.kills;g.deaths=state.deaths;}
     }if(g.locked?.dead)g.locked=null;g._hud();
   }
-  dispose(){this.active=false;for(const [key,value] of Object.entries(this.original))this.game[key]=value;this.original.pause.call(this.game,true);}
+  dispose(){this.active=false;this.remote.keys.clear();clearPlayerCommands(this.remote);if(this.peer.playerControl===this.remote){if(this.previousControl)this.peer.playerControl=this.previousControl;else delete this.peer.playerControl;}for(const [key,value] of Object.entries(this.original))this.game[key]=value;this.original.pause.call(this.game,true);}
 }

@@ -1,5 +1,6 @@
 import { traversalTap, NATIVE_ROLL_POSES } from './native-traversal.js';
 import { FixedStepClock } from './fixed-step.js';
+import { bindLocalPlayerControl, clearPlayerCommands } from './player-control.js';
 import { createMouseLook, turnMouseCamera } from './mouse-look.js';
 import { bindKeyboard, defaultBindings } from './keybindings.js';
 import * as THREE from './vendor/three.module.js';
@@ -65,6 +66,7 @@ export class MeteorGame {
     this.raycaster = new THREE.Raycaster(); this.collisionMaterial = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
     this.mapCache = new Map(); this.mapData = new Map(); this.pendingMaps = new Set(); this.weaponCache = new Map(); this.soundCache = new Map(); this.effects = []; this._listeners = []; this.mapRequest = 0; this.characterRequest = 0; this.sessionRequest = 0; this.directionBuffer = [];
     this.kills = 0; this.deaths = 0; this.totalDamage = 0; this.contactHits = 0; this.time = 0; this.matchElapsed = 0;
+    bindLocalPlayerControl(this);
     // Adapter constants are explicit and provisional until recovered from Meteor.exe.
     this.hostPhysics = { speed: 100 * SCALE, gravity: 34, jumpVelocity: 12, radius: .4, step: .55, projectile: NATIVE_DART_PROFILE };
     this.impactFeedback = new NativeImpactFeedback(this.scene);
@@ -310,7 +312,7 @@ export class MeteorGame {
     if (ground) f.root.position.y = ground.point.y + .015;
     f.maxHp = f.scriptConfig?.HP ?? f.scriptConfig?.PlayerHP ?? this.currentMap.metadata.level?.integers.PlayerHP ?? 1000; f.hpSourceVerified = true;
     f.velocity.set(0, 0, 0); f.vy = 0; f.grounded = true; f.guard = false; f.dead = false; f.environmentDeath = null; f.hitstop = 0; f.scriptCrouched = false; f.scriptItems = []; f.root.visible = true; f.hp = f.maxHp; f.rage = f.hero && this.infiniteRage ? 100 : 0; f.contacts = 0; f.previousPosition?.copy(f.root.position);
-    if (f.hero) { this.directionBuffer = []; this.recoveryAttack = null; this.traversalTap=null; }
+    clearPlayerCommands(this._controlFor(f));
     f.awarenessTarget = null; f.npcCombat?.reset();
     f.heldPose = null; f.attackHits.clear(); f.combat.play(f.combat.stance ?? NATIVE_WEAPONS[f.weapon].stance, { loop: true, force: true });
   }
@@ -457,8 +459,8 @@ export class MeteorGame {
     }
     if (p.y < this.currentMap.bounds.min.y - 20 || Math.abs(p.x) > 3000 || Math.abs(p.z) > 3000) { if (this.mode === 'story') { f.hp = 0; this._kill(f); } else this._placeFighter(f, this.currentMap.spawns[f.hero ? 0 : (f.spawnIndex || 1) % this.currentMap.spawns.length]); }
   }
-  _moveDirection() {
-    const x = Number(this.keys.has('right')) - Number(this.keys.has('left')), z = Number(this.keys.has('forward')) - Number(this.keys.has('back')), a = this.cameraAngle;
+  _moveDirection(control = this) {
+    const x = Number(control.keys.has('right')) - Number(control.keys.has('left')), z = Number(control.keys.has('forward')) - Number(control.keys.has('back')), a = control.cameraAngle;
     return v3(Math.cos(a) * x - Math.sin(a) * z, 0, -Math.sin(a) * x - Math.cos(a) * z).normalize();
   }
   _face(f, target, dt = 1) {
@@ -627,47 +629,53 @@ export class MeteorGame {
     }
     actor.combat.play(NATIVE_LOCOMOTION.jumpStart, { force: true }); actor.heldPose = 'jump'; return true;
   }
-  _beginRoll(direction, poseId) {
-    const actor=this.hero;
-    if(!this.running||this.paused||!actor||actor.dead||!actor.grounded||actor.scriptInputBlocked||actor.combat.busy||!this.keys.has('crouch')||poseId!==NATIVE_ROLL_POSES[direction])return false;
+  _controlFor(actor) { return actor?.playerControl || (actor?.hero ? this.localControl || this : null); }
+  _beginRoll(direction, poseId, actor = this.hero, control = this._controlFor(actor)) {
+    if(!this.running||this.paused||!actor||actor.dead||!actor.grounded||actor.scriptInputBlocked||actor.combat.busy||!control?.keys.has('crouch')||poseId!==NATIVE_ROLL_POSES[direction])return false;
     if(!actor.combat.data.poses.get(poseId)?.valid)return false;
     if(!actor.combat.play(poseId,{motion:true,context:{kind:'roll',direction,poseId,name:({forward:'向前翻滚',back:'向后翻滚',left:'向左翻滚',right:'向右翻滚'})[direction]}}))return false;
-    actor.root.rotation.y=this.cameraAngle+Math.PI;actor.velocity.set(0,0,0);actor.guard=false;actor.heldPose=null;this.directionBuffer=[];this.recoveryAttack=null;
+    actor.root.rotation.y=control.cameraAngle+Math.PI;actor.velocity.set(0,0,0);actor.guard=false;actor.heldPose=null;clearPlayerCommands(control);
     return true;
   }
-  action(name, active = true) {
+  _actionFighter(actor, control, name, active = true) {
+    if(!actor || !control)return;
     if (name === 'guard') {
-      const held = active && this.running && !this.paused;
-      if (held) this.keys.add('guard'); else this.keys.delete('guard');
-      if (this.hero) this.hero.guard = held && !this.hero.scriptInputBlocked && (!this.hero.combat.busy || this.hero.combat.reactionPhase === 'guard');
+      const held = active && this.running && !this.paused && !actor.dead;
+      if (held) control.keys.add('guard'); else control.keys.delete('guard');
+      actor.guard = held && !actor.scriptInputBlocked && (!actor.combat.busy || actor.combat.reactionPhase === 'guard');
       return;
     }
-    if (active && this.hero?.scriptInputBlocked) return;
-    if (name === 'crouch') { if(!active)this.traversalTap=null; if (active && this.running && !this.paused) this.keys.add('crouch'); else this.keys.delete('crouch'); return; }
+    if (active && actor.scriptInputBlocked) return;
+    if (name === 'crouch') { if(!active)control.traversalTap=null; if (active && this.running && !this.paused) control.keys.add('crouch'); else control.keys.delete('crouch'); return; }
     if (['forward','back','left','right'].includes(name)) {
-      if(active&&this.running&&!this.paused&&this.hero&&!this.hero.dead){
-        if(!this.keys.has(name)){
-          const tap=traversalTap(this.traversalTap,{direction:name,time:this.elapsed,crouched:this.keys.has('crouch'),allowed:this.hero.grounded&&!this.hero.combat.busy&&!this.hero.guard});this.traversalTap=tap.tap;
-          const rolled=tap.poseId&&this._beginRoll(name,tap.poseId);
-          if(!rolled)this.directionBuffer=recordNativeDirection(this.directionBuffer||[],{forward:'up',back:'down',left:'left',right:'right'}[name],this.elapsed,!this.hero.grounded);
+      if(active&&this.running&&!this.paused&&!actor.dead){
+        if(!control.keys.has(name)){
+          const tap=traversalTap(control.traversalTap,{direction:name,time:this.elapsed,crouched:control.keys.has('crouch'),allowed:actor.grounded&&!actor.combat.busy&&!actor.guard});control.traversalTap=tap.tap;
+          const rolled=tap.poseId&&this._beginRoll(name,tap.poseId,actor,control);
+          if(!rolled)control.directionBuffer=recordNativeDirection(control.directionBuffer||[],{forward:'up',back:'down',left:'left',right:'right'}[name],this.elapsed,!actor.grounded);
         }
-        this.keys.add(name);
-      }else this.keys.delete(name);
+        control.keys.add(name);
+      }else control.keys.delete(name);
       return;
     }
-    if (!active || !this.running || this.paused || !this.hero || this.hero.dead) return;
-    this._unlockAudio();
+    if (!active || !this.running || this.paused || actor.dead) return;
+    if(actor===this.hero)this._unlockAudio();
     if (name === 'attack') {
-      if (this.hero.combat.reacting) this.recoveryAttack = { actor: this.hero, weaponId: this.hero.weaponId,
-        expires: this.elapsed + NATIVE_RECOVERY_INPUT_WINDOW, time: this.elapsed, air: !this.hero.grounded,
-        buffer: [...this.directionBuffer], held: [...this.keys] };
-      else { this.recoveryAttack = null; this._beginAttack(this.hero); }
+      if (actor.combat.reacting) control.recoveryAttack = { actor, weaponId: actor.weaponId,
+        expires: this.elapsed + NATIVE_RECOVERY_INPUT_WINDOW, time: this.elapsed, air: !actor.grounded,
+        buffer: [...control.directionBuffer], held: [...control.keys] };
+      else { control.recoveryAttack = null; this._beginAttack(actor); }
     }
-    else if (name === 'jump' && this.hero.grounded && !this.hero.combat.busy) {
-      this.directionBuffer = []; this._beginJump(this.hero);
+    else if (name === 'jump' && actor.grounded && !actor.combat.busy) {
+      control.directionBuffer = []; this._beginJump(actor);
     }
-    else if (name === 'lock') { this.locked = this.locked ? null : this._nearest(); this.cameraManualUntil = 0; this._hud(); }
-    else if (name === 'switch') this.switchWeapon();
+    else if (name === 'lock') { control.locked = control.locked ? null : this._nearest(Infinity,actor); if(actor===this.hero){this.cameraManualUntil = 0;this._hud();} }
+  }
+  action(name, active = true) {
+    if(['guard','crouch','forward','back','left','right','attack','jump','lock'].includes(name))return this._actionFighter(this.hero,this._controlFor(this.hero),name,active);
+    if (!active || !this.running || this.paused || !this.hero || this.hero.dead || this.hero.scriptInputBlocked) return;
+    this._unlockAudio();
+    if (name === 'switch') this.switchWeapon();
     else if (name === 'pickup' && this.mode === 'story') {
       const result = this.items?.tryPickup(this.hero);
       if (result?.reason === 'full-rage') this._emit('怒气已满，道具留在原处','info');
@@ -679,12 +687,13 @@ export class MeteorGame {
     else if (['weapon1', 'weapon2', 'weapon3', 'weapon4', 'weapon5'].includes(name)) this.setWeapon(['sword', 'blade', 'spear', 'dagger', 'dart'][Number(name.slice(-1)) - 1]);
   }
   _beginAttack(f, savedInput = null) {
-    if (f.dead || f.disposed || f.scriptRemoved || f.scriptCrouched || f.combat.reacting || f.hero && f.scriptInputBlocked) return false;
+    const control=this._controlFor(f);
+    if (f.dead || f.disposed || f.scriptRemoved || f.scriptCrouched || f.combat.reacting || control && f.scriptInputBlocked) return false;
     // Free attacks retain the player's chosen facing. An unlocked opponent
     // behind the player must not turn an intended gate/front attack around.
-    const target = f.hero ? this.locked : f.scriptControl?.attackTarget || this.hero;
-    const move = f.hero ? selectNativeMove(NATIVE_MOVE_CATALOG, { weapon: f.weapon, weaponMode: f.combat.weaponMode, includeOtherModes: true, air: !f.grounded, buffer: savedInput?.buffer ?? this.directionBuffer,
-      held: (savedInput?.held ?? [...this.keys]).map(key => ({ forward: 'up', back: 'down', left: 'left', right: 'right' }[key])).filter(Boolean),
+    const target = control ? control.locked : f.scriptControl?.attackTarget || this.hero;
+    const move = control ? selectNativeMove(NATIVE_MOVE_CATALOG, { weapon: f.weapon, weaponMode: f.combat.weaponMode, includeOtherModes: true, air: !f.grounded, buffer: savedInput?.buffer ?? control.directionBuffer,
+      held: (savedInput?.held ?? [...control.keys]).map(key => ({ forward: 'up', back: 'down', left: 'left', right: 'right' }[key])).filter(Boolean),
       time: savedInput?.time ?? this.elapsed, poseId: f.combat.timeline?.pose.id, movePoseId: f.combat.currentMove?.poseId, busy: f.combat.busy }) : savedInput?.npcMove ?? null;
     if (f.hero && this.infiniteRage) f.rage = 100;
     if (move?.weaponMode && move.weaponMode !== f.combat.weaponMode) {
@@ -709,11 +718,11 @@ export class MeteorGame {
     });
     if (accepted) {
       f.guard = false; f.heldPose = 'attack';
-      if (f.hero) { this.directionBuffer = []; this.recoveryAttack = null; }
+      if (control) { control.directionBuffer = []; control.recoveryAttack = null; }
     }
     return accepted;
   }
-  _nearest(range = Infinity) { let best = null; for (const f of this.enemies) { const d = flatDistance(f.root.position, this.hero.root.position); if (!f.dead && !f.disposed && !f.scriptRemoved && f.team !== this.hero.team && d < range) { range = d; best = f; } } return best; }
+  _nearest(range = Infinity, actor = this.hero) { let best = null; for (const f of [this.hero,...this.enemies]) { if(!f||f===actor)continue; const d = flatDistance(f.root.position, actor.root.position); if (!f.dead && !f.disposed && !f.scriptRemoved && f.team !== actor.team && d < range) { range = d; best = f; } } return best; }
   _npcCombatAction(f, target, due, { requested = false, allowed = true, reach = 0 } = {}) {
     if (!target || !allowed || target.dead || target.disposed || target.scriptRemoved || !this.hasScriptLineOfSight(f, target)) return;
     if (requested) {
@@ -734,6 +743,7 @@ export class MeteorGame {
   }
   _updateFighter(f, dt) {
     if (f.disposed || f.scriptRemoved) return;
+    const control=this._controlFor(f);
     if (f.hero && this.infiniteRage) f.rage = 100;
     if (f.weapon === 'wheel' && f.weaponModel) f.weaponModel.visible = !this.wheels?.hasOwner(f);
     (f.previousPosition ||= v3()).copy(f.root.position);
@@ -741,23 +751,23 @@ export class MeteorGame {
     // 004affd0 handles periodic-stat death without an attacker/kill award.
     if (!f.dead && f.hp <= 0) this._kill(f, { awardKill: false });
     if (f.dead) { const state = f.combat.update(dt); if (state) f.character.setPoseFrame(state.source, state.frame); f.respawn -= dt; if (f.respawn <= 0) this._placeFighter(f, this.currentMap.spawns[f.hero ? 0 : f.spawnIndex % this.currentMap.spawns.length]); return; }
-    const npcDue = !f.hero && f.npcCombat?.advance(dt, f.scriptConfig, {
+    const npcDue = !control && f.npcCombat?.advance(dt, f.scriptConfig, {
       hasTarget: !!(f.scriptControl?.attackTarget || f.awarenessTarget), paused: !!f.scriptControl?.paused });
     // Only the two contacting actors pause; mission time, projectiles and
     // other fighters keep running. These short durations are Web feedback.
     if (f.hitstop > 0) { const pause = Math.min(dt, f.hitstop); f.hitstop -= pause; dt -= pause; if (dt <= 1e-7) return; }
     let direction = v3(), speed = this.hostPhysics.speed * nativeMovementScale(f);
-    if (f.hero && this.recoveryAttack) {
-      const input = this.recoveryAttack;
-      if (input.actor !== f || input.weaponId !== f.weaponId || this.elapsed > input.expires || input.air !== !f.grounded || f.scriptInputBlocked) this.recoveryAttack = null;
-      else if (!f.combat.reacting) { this.recoveryAttack = null; this._beginAttack(f, input); }
+    if (control && control.recoveryAttack) {
+      const input = control.recoveryAttack;
+      if (input.actor !== f || input.weaponId !== f.weaponId || this.elapsed > input.expires || input.air !== !f.grounded || f.scriptInputBlocked) control.recoveryAttack = null;
+      else if (!f.combat.reacting) { control.recoveryAttack = null; this._beginAttack(f, input); }
     }
-    if (f.hero) f.guard = this.keys.has('guard') && !f.scriptInputBlocked && (!f.combat.busy || f.combat.reactionPhase === 'guard');
+    if (control) f.guard = control.keys.has('guard') && !f.scriptInputBlocked && (!f.combat.busy || f.combat.reactionPhase === 'guard');
     if (f.combat.reacting || f.scriptCrouched || f.combat.busy && f.combat.currentMove?.kind==='roll') {
       if (f.combat.reactionPhase !== 'guard') f.guard = false;
-    } else if (f.hero) {
+    } else if (control) {
       if (f.scriptInputBlocked) f.guard = false;
-      direction = f.scriptInputBlocked ? v3() : this._moveDirection(); if (this.locked && !this.locked.dead) this._face(f, this.locked.root.position, dt); else if (!f.combat.busy && this.mouseLook?.locked) this._face(f, f.root.position.clone().add(v3(-Math.sin(this.cameraAngle),0,-Math.cos(this.cameraAngle))),dt); else if (direction.lengthSq() > 0 && !f.combat.busy) this._face(f, f.root.position.clone().add(direction), dt);
+      direction = f.scriptInputBlocked ? v3() : this._moveDirection(control); if (control.locked && !control.locked.dead) this._face(f, control.locked.root.position, dt); else if (!f.combat.busy && (control.lookLocked || control.mouseLook?.locked)) this._face(f, f.root.position.clone().add(v3(-Math.sin(control.cameraAngle),0,-Math.cos(control.cameraAngle))),dt); else if (direction.lengthSq() > 0 && !f.combat.busy) this._face(f, f.root.position.clone().add(direction), dt);
     } else if (f.scriptControlled) {
       const control = f.scriptControl;
       f.guard = !!(control?.guard || !control?.paused && f.npcCombat?.guard) && !f.combat.busy; speed *= Number(control?.speedScale ?? 1) * .68;
@@ -799,14 +809,14 @@ export class MeteorGame {
       let pose = f.guard ? NATIVE_WEAPONS[f.weapon].guard : !f.grounded ? NATIVE_LOCOMOTION.jumpAir : f.velocity.lengthSq() > .2 ? NATIVE_LOCOMOTION.run : f.combat.stance ?? NATIVE_WEAPONS[f.weapon].stance;
       const startingJump = f.heldPose === 'jump' && f.combat.timeline?.pose.id === NATIVE_LOCOMOTION.jumpStart && !f.combat.timeline.finished;
       if (startingJump) pose = NATIVE_LOCOMOTION.jumpStart;
-      const crouching = (f.scriptCrouched || f.hero && this.keys.has('crouch')) && f.grounded; if (crouching) pose = 10;
+      const crouching = (f.scriptCrouched || control && control.keys.has('crouch')) && f.grounded; if (crouching) pose = 10;
       if (f.heldPose !== pose && !startingJump) { f.combat.play(pose, { loop: true, force: true }); f.heldPose = pose; }
     }
     const state = f.combat.update(dt, { grounded: f.grounded, projectileReady: !this.wheels?.hasOwner(f) }); if (!state) return;
     // A held defense is sampled continuously, including the exact frame a
     // hit/attack recovery ends. It must not depend on OS key-repeat or a new
     // touch press while several opponents are attacking.
-    if (f.hero && !f.combat.busy && !f.scriptInputBlocked && this.keys.has('guard')) f.guard = true;
+    if (control && !f.combat.busy && !f.scriptInputBlocked && control.keys.has('guard')) f.guard = true;
     const motion = v3();
     for (const segment of state.segments || [state]) if (segment.authoredMotionScale != null) {
       const a = f.root.rotation.y, scale = segment.authoredMotionScale;
@@ -849,7 +859,7 @@ export class MeteorGame {
   }
   _resolveContacts(attacker, state) {
     if (!this.running) return;
-    const targets = attacker.hero ? this.enemies : this.mode === 'story' ? [this.hero, ...this.enemies].filter(f => f !== attacker && f.team !== attacker.team) : [this.hero];
+    const targets = attacker.playerControl ? [this.hero,...this.enemies].filter(f=>f!==attacker&&f.team!==attacker.team) : attacker.hero ? this.enemies : this.mode === 'story' ? [this.hero, ...this.enemies].filter(f => f !== attacker && f.team !== attacker.team) : [this.hero];
     for (const attack of state.attacks) this._resolveSceneContacts(attacker, state, attack);
     for (const attack of state.attacks) {
       const points = [];
@@ -919,7 +929,7 @@ export class MeteorGame {
       const blend = target.combat.poseBlend;
       if (blend && target.character?.setPoseBlend) target.character.setPoseBlend(blend.from, blend.to, blend.weight);
       else target.character?.setPoseFrame(timeline.pose.source, timeline.frame);
-      if (target.hero) this.directionBuffer = [];
+      const control=this._controlFor(target);if(control)control.directionBuffer=[];
     }
     const feedback = this.impactFeedback?.emit({ point: contact, direction: target.root.position.clone().sub(attacker.root.position), guarded, knockdown, local: !!(attacker.hero || target.hero) });
     if (attacker.hero && this.swordStyle === 'butterfly') this.butterflyVfx?.burst(contact, { guarded, knockdown, camera: this.camera });
@@ -960,9 +970,9 @@ export class MeteorGame {
   }
   _kill(target, { awardKill = true } = {}) {
     if (target.dead) return; target.dead = true; target.guard = false; target.hitstop = 0; target.respawn = this.mode === 'story' ? Infinity : 3; target.combat.play(NATIVE_LOCOMOTION.dead, { force: true });
-    if (target.hero) this.directionBuffer = [];
+    clearPlayerCommands(this._controlFor(target));
     if (target.hero) this.deaths++; else if (awardKill) this.kills++;
-    if (this.locked === target) this.locked = null;
+    for(const actor of [this.hero,...this.enemies]){const control=this._controlFor(actor);if(control?.locked===target)control.locked=null;}
   }
   _separateCharacters(dt) {
     const fighters = [this.hero, ...this.enemies].filter(f => !f.dead && !f.disposed && !f.scriptRemoved), diameter = this.hostPhysics.radius * 2 + .25;
@@ -971,7 +981,8 @@ export class MeteorGame {
       let dx = b.root.position.x - a.root.position.x, dz = b.root.position.z - a.root.position.z, distance = Math.hypot(dx, dz);
       if (distance >= diameter) continue;
       if (distance < .001) { const angle = j * 2.4; dx = Math.sin(angle); dz = Math.cos(angle); distance = 1; } else { dx /= distance; dz /= distance; }
-      const correction = Math.min(diameter - Math.min(distance, diameter), dt * 5), aWeight = a.hero ? .08 : b.hero ? .92 : .5, bWeight = 1 - aWeight;
+      const bothPlayers=!!this._controlFor(a)&&!!this._controlFor(b);
+      const correction = Math.min(diameter - Math.min(distance, diameter), dt * 5), aWeight = bothPlayers ? .5 : a.hero ? .08 : b.hero ? .92 : .5, bWeight = 1 - aWeight;
       for (const [f, amount] of [[a, -correction * aWeight], [b, correction * bWeight]]) {
         if (!this._horizontalBlocked(f.root.position, dx * amount, 0)) f.root.position.x += dx * amount;
         if (!this._horizontalBlocked(f.root.position, 0, dz * amount)) f.root.position.z += dz * amount;

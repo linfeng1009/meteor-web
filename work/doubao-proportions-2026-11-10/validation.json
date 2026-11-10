@@ -1,0 +1,212 @@
+{
+  "date": "2026-11-10",
+  "status": "passed",
+  "fixApplied": true,
+  "source": {
+    "archive": "assets/source/doubao",
+    "downloadsRequired": false,
+    "vertices": 107855,
+    "triangles": 180698,
+    "textureSize": [
+      4096,
+      4096
+    ],
+    "sourceTextureSha256": "9352e39bc145ddd9227049d020b36c400d159746d9fdf0568f03abadc489baa6"
+  },
+  "oldProportions": {
+    "heightChangePct": 0.47455563157947633,
+    "shoulderSpanChangePct": 37.37886248283966,
+    "headLinearChangePct": -9.251900592092642
+  },
+  "currentProportions": {
+    "type": "source-proportions",
+    "uniformSourceScale": 3.1655497755575737,
+    "restHeight": 39.400001525878906,
+    "maxMeasuredJointMetricChangePct": 7.39974014729583e-05,
+    "sourceRestMaxError": 2.714641655580566e-07
+  },
+  "fullSuite": {
+    "tests": 415,
+    "passed": 415,
+    "failed": 0,
+    "durationMs": 178816.552167,
+    "scope": "Snapshot of tests/*.test.mjs at command launch",
+    "log": "full-tests.tap"
+  },
+  "targeted": {
+    "tests": 20,
+    "passed": 20,
+    "failed": 0,
+    "doubao": 9,
+    "springfield": 11
+  },
+  "syntaxModules": 36,
+  "motion": {
+    "samples": 45,
+    "allFinite": true,
+    "nativeJointsUnchanged": true,
+    "maxObservedEdgeGrowth": 0.11310230002539835
+  },
+  "blender": {
+    "version": "5.4.0 Alpha",
+    "bodyBones": 30,
+    "hairBones": 9,
+    "images": [
+      {
+        "name": "color.jpg",
+        "packed": true,
+        "resolution": [
+          4096,
+          4096
+        ],
+        "packedSha256": "9352e39bc145ddd9227049d020b36c400d159746d9fdf0568f03abadc489baa6"
+      }
+    ],
+    "actions": [
+      {
+        "name": "144 · 原比例跑步",
+        "pose": 144,
+        "frames": [
+          1.0,
+          36.0
+        ]
+      },
+      {
+        "name": "151 · 原比例跳跃局部姿势",
+        "pose": 151,
+        "frames": [
+          1.0,
+          15.0
+        ]
+      },
+      {
+        "name": "262 · 原比例持剑攻击",
+        "pose": 262,
+        "frames": [
+          1.0,
+          27.0
+        ]
+      },
+      {
+        "name": "6 · 原比例持剑待机",
+        "pose": 6,
+        "frames": [
+          1.0,
+          49.0
+        ]
+      }
+    ],
+    "linkedLibraries": 0,
+    "restMatrixError": 6.705522537231445e-06,
+    "poseMatrixError": 7.62939453125e-06,
+    "blend": "work/doubao-import-2026-11-10/豆包-完整人物-流星动作适配.blend"
+  },
+  "browser": {
+    "date": "2026-11-10",
+    "workshop": {
+      "url": "http://localhost:4173/character-compare.html?appearance=doubao",
+      "verified": [
+        "原模型姿态",
+        "全身和脸部",
+        "跑步播放及暂停",
+        "20%跳跃",
+        "20%出招"
+      ],
+      "logs": []
+    },
+    "game": {
+      "map": "炼铁狱",
+      "appearance": "豆包",
+      "verified": [
+        "人物选择",
+        "实际演武",
+        "L跳跃",
+        "J空中A"
+      ],
+      "errorOrWarnCount": 0,
+      "previousSelectionRestored": "孟星魂 · 原版人物",
+      "temporaryTabClosed": true
+    }
+  },
+  "package": {
+    "archive": "artifacts/meteor-web-v0.7.6.zip",
+    "version": "0.7.6",
+    "bytes": 166181750,
+    "sha256": "d2ceb25c15c67bbc05299604cb6e39cb91f7899279db9bfa52d40bdc9832593d",
+    "verifiedFiles": 4153,
+    "characters": [
+      {
+        "id": "hutao",
+        "label": "YS-胡桃 · 完整模型适配",
+        "mesh": "dist/assets/enhanced/hutao/mesh.json",
+        "textures": 5
+      },
+      {
+        "id": "raiden",
+        "label": "YS-影 · 礼服 · 完整模型适配",
+        "mesh": "dist/assets/enhanced/raiden/mesh.json",
+        "textures": 7
+      },
+      {
+        "id": "emilia",
+        "label": "RE0-爱蜜莉雅 · 完整模型适配",
+        "mesh": "dist/assets/enhanced/emilia/mesh.json",
+        "textures": 4
+      },
+      {
+        "id": "doubao",
+        "label": "豆包 · 模型适配",
+        "mesh": "dist/assets/enhanced/doubao/mesh.json",
+        "textures": 1
+      },
+      {
+        "id": "springfield",
+        "label": "春田 · 泳装P3",
+        "mesh": "dist/assets/enhanced/springfield/mesh.json",
+        "textures": 33
+      }
+    ],
+    "originalPmxRequired": false
+  },
+  "packageMatchesCurrentRuntime": true,
+  "scope": "Local adaptation only; no upload/publication",
+  "limitations": [
+    "No real-world centimeter height calibration.",
+    "Cloth, facial morphs and independent fingers remain simplified; raised-leg motions can intersect the dress.",
+    "Original MMD physics is not executed."
+  ],
+  "hashes": {
+    "work/doubao-proportions-2026-11-10/full-tests.tap": "4cce43e9825321e6018c7ec0377c6d9b101ed149174a91dd7bf273dbf1602573",
+    "work/doubao-proportions-2026-11-10/character-tests.tap": "72c6ba365581394620069c78c7703d7face2be3fb1cf24ddd7856f6912488d52",
+    "work/doubao-proportions-2026-11-10/syntax.log": "374cf1bf17ddeb9d5b0d86c8208234b62b0060693897c0948b7a4fb5f96b034a",
+    "work/doubao-proportions-2026-11-10/motion-summary.json": "090da05ac406f4c600cef12b2da81813ed0aaaf8cb40bb4065d3d33d95898272",
+    "work/doubao-proportions-2026-11-10/proportions.json": "395ea03b254b178b11a853bec7c24f845a4146dc013c304682f6f99cd5e25263",
+    "work/doubao-proportions-2026-11-10/before/proportions.json": "587a0e8b8d2dab535910ae778c45495f6406c7dfd929d3c3b3cc6b644f730f34",
+    "work/doubao-proportions-2026-11-10/before/mesh.json": "545a8db656fe3666776ff3a0f8e93af1de7c688f4ec1e2be737d956c87c4f5e2",
+    "work/doubao-proportions-2026-11-10/before/manifest.json": "8fd0271f2cac4a186d5e7cbc27b38df9a69eb346e2f48c6811dc700a4942f129",
+    "work/doubao-proportions-2026-11-10/source-vs-current.png": "b97fc40e4e9deb162dd2fe99b392a745432ade57cc33cce4fb25f0274542c2d2",
+    "work/doubao-proportions-2026-11-10/source-pose-preview.png": "2b40fa0546d5b72cf51caf502b7ba1397d7d6477df09ec78f5a2ace37d64a12b",
+    "work/doubao-proportions-2026-11-10/face-preview.png": "92bb036b661e4f0ced4e3a92e4b023c1dd4bf7d04556814dcb2e6b3da70fd9bb",
+    "work/doubao-proportions-2026-11-10/run-preview.png": "f5843312366578c512a7c4b7926038c16cc9534b0f870be7c841a4bcc1725d00",
+    "work/doubao-proportions-2026-11-10/jump-preview.png": "f8055bdf817e74cd90f007dc81e8b67c7af9dc2224a2bac0ac38f5417cb6ae45",
+    "work/doubao-proportions-2026-11-10/attack-preview.png": "0e97e0a049e7474157686fe4009c094d4b6981385d5493683697ccc8086c7582",
+    "work/doubao-proportions-2026-11-10/game-preview.png": "ada1832dda93356f09ccff8dbe65de5ac5e22e087a69eedbf773019c0bdcd4b3",
+    "work/doubao-proportions-2026-11-10/game-air-attack-preview.png": "44769e3d7273c7d6ad224479b9ab16ad725e13747cfd0af17f8091bbca426e38",
+    "work/doubao-proportions-2026-11-10/browser-validation.json": "a83aa2edaad58395a3479b4d9175b9ae40420795abb88fa4e1b2412a6fa5b4fd",
+    "work/doubao-proportions-2026-11-10/report.md": "9edf900ef0f7ac87433e0dc5e0faba48d1211536b3d2d6331ac9819eafca57b8",
+    "work/doubao-proportions-2026-11-10/README.md": "a20af837a6afc154c8d06f864091f842c7aabcebb351ca57e617c6b18f6b4106",
+    "scripts/blender/build_doubao.py": "5ce3d1b0c44f0d5babda8bbbb1d0f78208eb1fc194eabbb9887587c6d54ad638",
+    "scripts/blender/proportional_authoring.py": "ed0afdb6af43ff92d63e77163dadf42d3317017708c129375f491979fec17daf",
+    "scripts/blender/audit_doubao_proportions.py": "0eb10642739533d23fc80ec6170a21fa2358cc1eb50c8edcfccf1099cc902236",
+    "scripts/probe-doubao.mjs": "e4d349317ba229d6bd6c4d54f58435371d456cb52bd68eb690bf9e15606c2d37",
+    "tests/native-doubao-character.test.mjs": "c06fc52cc6f66edf8e4d2db9440fe7fe8d78001bca14e52e6fc98d4291c20c9f",
+    "tests/native-springfield-character.test.mjs": "a221013007b37f80d90e77f3e54ee3e8444d347532f410daebcb3af53eb3c85d",
+    "tests/helpers/source-pmx-vertices.mjs": "1d4bb074d64f600f0ecb625b83b7392a8422664b8b30d887a4d7ccba78de8963",
+    "dist/assets/enhanced/doubao/mesh.json": "2bb77c72399f374bb55d7846ef003207d23f0981cc5d179d91c1874d20759d1f",
+    "dist/assets/enhanced/doubao/manifest.json": "2a2b8e063896ba728d82dcfee6e03fb3759d386c14e7ccd8575313481e813371",
+    "dist/assets/enhanced/doubao/textures/color.jpg": "9352e39bc145ddd9227049d020b36c400d159746d9fdf0568f03abadc489baa6",
+    "work/doubao-import-2026-11-10/build-evidence.json": "d50ddb28d864a649c66d56720c2d470c87ea8a780482d978c1073ab9be18b83c",
+    "work/doubao-import-2026-11-10/blend-validation.json": "1308f00233797bb452b02b09d868be99665e0de2920bdc219421e921db51a3cc",
+    "work/doubao-import-2026-11-10/豆包-完整人物-流星动作适配.blend": "c0598cd84cf26e6d6308f137929c75a9c7ab2294660bf18ef3943f6462ae8b4e"
+  }
+}

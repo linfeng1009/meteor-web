@@ -1,0 +1,108 @@
+{
+  "schema": 1,
+  "characterId": 0,
+  "appearance": "ganyu",
+  "label": "甘雨 · 模型适配",
+  "mesh": "mesh.json",
+  "complete": true,
+  "completeness": {
+    "bodyGeometry": true,
+    "headHairGeometry": true,
+    "eyes": true,
+    "faceGeometry": true,
+    "sourcePmxSkeleton": true,
+    "originalSourceGameSkeleton": false
+  },
+  "stats": {
+    "sourceVertices": 16589,
+    "sourceTriangles": 21111,
+    "vertices": 16589,
+    "triangles": 21111,
+    "sourceBones": 275,
+    "bones": 30,
+    "dummies": 6,
+    "secondaryBones": 29,
+    "materials": 19,
+    "textures": 5,
+    "omittedTriangles": 0
+  },
+  "retarget": {
+    "method": "Original mesh proportions preserved by a single uniform transform; independent source-length display skeleton follows original AMB/POS rotations; display weapon sockets follow the new hands.",
+    "provisional": true,
+    "sourceSkeletonMissing": false,
+    "hairPhysics": true,
+    "hairPhysicsProfile": "web-spring-bone-v2-restrained",
+    "originalMmdPhysics": false,
+    "clothPhysics": false,
+    "fingerArticulation": "Thumb and index chains of the native rig drive the source finger groups; other fingers fold into those two chains."
+  },
+  "provenance": {
+    "sourceArchive": "assets/source/ganyu",
+    "sourceModel": "Ganyu",
+    "modelAuthor": "miHoYo",
+    "rigAuthor": "观海（BiliBili：观海子）",
+    "credit": "模型提供：miHoYo；模型改造：观海（BiliBili：观海子）。",
+    "license": "Original distribution readme retained verbatim. It forbids redistribution, part extraction and commercial use, and states MMD use; this is a user-requested local adaptation, not a rights grant or published distribution.",
+    "limits": [
+      "Original source proportions preserved; action retarget remains approximate.",
+      "Source PMX has no verified real-world centimetre calibration; no physical height is claimed.",
+      "Source hair skeleton and weights retained but MMD rigid bodies are not executed.",
+      "Skirt, tassel and waist cloth are rigid on the pelvis; no cloth solver.",
+      "No expression morph or independent per-finger solver.",
+      "Original toon ramp and sphere maps are not reproduced; base colour, alpha cutout and roughness are used."
+    ]
+  },
+  "omittedRenderPasses": [],
+  "sourceFiles": [
+    {
+      "file": "甘雨.pmx",
+      "bytes": 1205362,
+      "sha256": "ce2e4513ad77efb6e89f8fc50f53b5eaecfe3ac0d8f9076c1bd88baf9610754e"
+    },
+    {
+      "file": "tex/面.png",
+      "runtime": "textures/面.png",
+      "sha256": "22eeac44faaf48dce791a4515af69e67391005bfd1d1b343099d6fc1485d6bf4",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "tex/发.png",
+      "runtime": "textures/发.png",
+      "sha256": "3ab58ab3fec2bfc4797388b1d1ae5ce884ac0c51f172abd70ad3e949fac673e7",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "tex/服.png",
+      "runtime": "textures/服.png",
+      "sha256": "8c22c5d399392496bff918bc44f4c14b64158b8df76a87d5eba76271e68fd045",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "tex/肌.png",
+      "runtime": "textures/肌.png",
+      "sha256": "adf9584c6b3292fd29064c60f1e30ff968a63cf9744298332812546086f02d0d",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "tex/表情.png",
+      "runtime": "textures/表情.png",
+      "sha256": "778bcba8a6b724b7697d21571ee2d60578a028e9bb7f790e4c8ba7ed191d6f9d",
+      "size": [
+        4096,
+        4096
+      ]
+    }
+  ]
+}

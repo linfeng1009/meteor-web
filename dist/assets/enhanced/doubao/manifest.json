@@ -31,7 +31,7 @@
     ]
   },
   "retarget": {
-    "method": "Source PMX joint positions and influences retargeted to native p0 BNC rest; native AMB/POS drives the original body and weapon attachments.",
+    "method": "Source mesh keeps one uniform transform and original proportions; source-length display joints follow original AMB/POS rotations; visible weapons follow source hands.",
     "provisional": true,
     "sourceSkeletonMissing": false,
     "hairPhysics": true,
@@ -49,7 +49,7 @@
     "license": "版权归属《豆包》；建模原作者：sdn1111；绑定：鹿铃。允许规范使用、二次修改优化和规范转载；使用或发布时注明原作者和版权方。",
     "sourceNotes": "Source author notes possible rig bugs and no cloth physics.",
     "limits": [
-      "Native p0 body proportions require approximate limb/torso retargeting.",
+      "Source proportions preserved; native action rotation transfer and clothing weights remain approximate.",
       "Restrained Web hair springs are not original MMD rigid-body simulation.",
       "No facial morph, cloth physics or individual finger animation.",
       "Full source triangle count retained; more geometry than other imported appearances."

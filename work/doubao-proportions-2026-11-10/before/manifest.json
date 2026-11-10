@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "characterId": 0,
+  "appearance": "doubao",
+  "label": "豆包 · 模型适配",
+  "mesh": "mesh.json",
+  "complete": true,
+  "completeness": {
+    "bodyGeometry": true,
+    "headHairGeometry": true,
+    "faceGeometry": true,
+    "eyes": true,
+    "sourcePmxSkeleton": true,
+    "originalSourceGameSkeleton": false
+  },
+  "stats": {
+    "sourceVertices": 107855,
+    "sourceTriangles": 180698,
+    "vertices": 107855,
+    "triangles": 180698,
+    "sourceBones": 124,
+    "bones": 30,
+    "dummies": 6,
+    "secondaryBones": 9,
+    "textures": 1,
+    "textureResolutions": [
+      [
+        4096,
+        4096
+      ]
+    ]
+  },
+  "retarget": {
+    "method": "Source PMX joint positions and influences retargeted to native p0 BNC rest; native AMB/POS drives the original body and weapon attachments.",
+    "provisional": true,
+    "sourceSkeletonMissing": false,
+    "hairPhysics": true,
+    "hairPhysicsProfile": "web-spring-bone-v2-restrained",
+    "originalMmdPhysics": false,
+    "clothPhysics": false,
+    "fingerArticulation": "Source fingers follow native hands; no independent facial morph or full finger solver."
+  },
+  "provenance": {
+    "sourceArchive": "assets/source/doubao",
+    "source": "Project-owned archived Doubao PMX and original 4K JPEG atlas.",
+    "copyright": "豆包",
+    "modelAuthor": "sdn1111",
+    "rigAuthor": "鹿铃",
+    "license": "版权归属《豆包》；建模原作者：sdn1111；绑定：鹿铃。允许规范使用、二次修改优化和规范转载；使用或发布时注明原作者和版权方。",
+    "sourceNotes": "Source author notes possible rig bugs and no cloth physics.",
+    "limits": [
+      "Native p0 body proportions require approximate limb/torso retargeting.",
+      "Restrained Web hair springs are not original MMD rigid-body simulation.",
+      "No facial morph, cloth physics or individual finger animation.",
+      "Full source triangle count retained; more geometry than other imported appearances."
+    ]
+  },
+  "sourceFiles": [
+    {
+      "file": "豆包模型.pmx",
+      "bytes": 6522837,
+      "sha256": "0db01afc8a5febad16748855ec7184ae0ae3b45eb2dc4afcc37dd6e90d0fd843"
+    },
+    {
+      "file": "tex/Color.jpg",
+      "bytes": 843110,
+      "sha256": "9352e39bc145ddd9227049d020b36c400d159746d9fdf0568f03abadc489baa6"
+    }
+  ]
+}

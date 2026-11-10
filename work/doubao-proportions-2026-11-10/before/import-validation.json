@@ -1,0 +1,157 @@
+{
+  "date": "2026-11-10",
+  "appearance": "doubao",
+  "tests": {
+    "tests": 396,
+    "pass": 396,
+    "fail": 0,
+    "cancelled": 0
+  },
+  "testDurationMs": 127513.620375,
+  "targetedTests": 7,
+  "syntaxModules": 33,
+  "archive": {
+    "path": "assets/source/doubao",
+    "files": 9,
+    "bytes": 110009311,
+    "hashesVerified": true
+  },
+  "runtimeSourceDirectoryRequired": false,
+  "rebuildDownloadsRequired": false,
+  "blender": {
+    "blender": "5.4.0 Alpha",
+    "blend": "work/doubao-import-2026-11-10/豆包-完整人物-流星动作适配.blend",
+    "blendSha256": "2506b5c26ae9842f1d84029cea47ad36b86323605254fb4d7164bcfbc3d51d1b",
+    "vertices": 107855,
+    "triangles": 180698,
+    "bodyBones": 30,
+    "hairBones": 9,
+    "images": [
+      {
+        "name": "color.jpg",
+        "packed": true,
+        "resolution": [
+          4096,
+          4096
+        ],
+        "packedSha256": "9352e39bc145ddd9227049d020b36c400d159746d9fdf0568f03abadc489baa6"
+      }
+    ],
+    "actions": [
+      {
+        "name": "144 · 原版跑步",
+        "pose": 144,
+        "frames": [
+          1.0,
+          36.0
+        ]
+      },
+      {
+        "name": "151 · 原版跳跃局部姿势",
+        "pose": 151,
+        "frames": [
+          1.0,
+          15.0
+        ]
+      },
+      {
+        "name": "262 · 原版持剑攻击",
+        "pose": 262,
+        "frames": [
+          1.0,
+          27.0
+        ]
+      },
+      {
+        "name": "6 · 原版持剑待机",
+        "pose": 6,
+        "frames": [
+          1.0,
+          49.0
+        ]
+      }
+    ],
+    "maxWeightError": 4.7161549332486175e-08,
+    "linkedLibraries": 0,
+    "externalDownloadsRequired": false
+  },
+  "motion": {
+    "samples": 45,
+    "allFinite": true,
+    "nativeJointsUnchanged": true,
+    "maxObservedEdgeGrowth": 0.1306880061172875
+  },
+  "package": {
+    "archive": "artifacts/meteor-web-v0.7.6.zip",
+    "version": "0.7.6",
+    "bytes": 142438656,
+    "sha256": "62311c5d6858455746343944b356c6ce30016bf43fb46725eab25143253b535e",
+    "verifiedFiles": 4100,
+    "characters": [
+      {
+        "id": "hutao",
+        "label": "YS-胡桃 · 完整模型适配",
+        "mesh": "dist/assets/enhanced/hutao/mesh.json",
+        "textures": 5
+      },
+      {
+        "id": "raiden",
+        "label": "YS-影 · 礼服 · 完整模型适配",
+        "mesh": "dist/assets/enhanced/raiden/mesh.json",
+        "textures": 7
+      },
+      {
+        "id": "emilia",
+        "label": "RE0-爱蜜莉雅 · 完整模型适配",
+        "mesh": "dist/assets/enhanced/emilia/mesh.json",
+        "textures": 4
+      },
+      {
+        "id": "doubao",
+        "label": "豆包 · 模型适配",
+        "mesh": "dist/assets/enhanced/doubao/mesh.json",
+        "textures": 1
+      }
+    ],
+    "originalPmxRequired": false
+  },
+  "browser": {
+    "workshop": true,
+    "face": true,
+    "run": true,
+    "jump": true,
+    "gameCharacterSelection": true,
+    "arenaEntry": true,
+    "airAttack": true,
+    "consoleErrors": 0,
+    "consoleWarnings": 0
+  },
+  "hashes": {
+    "source-copy.json": "73d21e6ffdd0d55cf1e947e9df95fb7e971516e51a740bb160f39cc9daa0cd23",
+    "source-audit.json": "1fa72d25d61899880229cc7dc3a678f1e5aa3e4e0f8786e9b3640cffbb47d345",
+    "build-evidence.json": "75f6a4a93121666944f8c0b24c61670c479f18e94cffe36c44610ef19148fb22",
+    "blend-validation.json": "998c6ef1f0f2a0c724a7ecd62b1f2d0aa2c1df5563b5be8305c4689ce8ad96f0",
+    "motion-probe.json": "cf4cb42c389a706f3bf4db0a77bfae3dc462209d6d1a922c0781955b55052b85",
+    "doubao-tests.tap": "8d598d43e3d085f909c7f3ef209f544b2e118a5e972964d918b70af26299bad4",
+    "full-tests.tap": "3bdacab3df2720603cc818ee08bd294a3ab6cd3e3bd62183a0514d77585eac8e",
+    "workshop-preview.png": "a107213a618f4b43023800678166678b604db0834afde7b76cf4b0e440a8341c",
+    "face-preview.png": "0ef5d2000e0fd6f12d94f0f5ff70796dd3fc12c2978e52021d5a90472ec27288",
+    "game-preview.png": "6e14ff7632ef4d18bcbe05cfe163fe1f771a87660b1d91ba60c88196f034960f",
+    "character-selection.png": "c7f5d62b9d515e5e2f523184ab93d69ca47d3ab56864477fc0e73f112e2f17f2",
+    "package.log": "4bd41dbd11dcbabd0c2a30013860ed66758271326adbe19dbee2ccc991c053d6"
+  },
+  "sourceHashes": {
+    "scripts/blender/build_doubao.py": "d81ff42c5cdc484d358a741a1a4ffd763f073eface43e3198cfb502372000861",
+    "scripts/blender/native_character_authoring.py": "a81d411832f8a56068d0dd3f1505e9fbb72e2e01eaea8f6a749f5e4b220bdb07",
+    "scripts/blender/check_doubao_build.py": "844ea61e320b889d87ed31776f84fadde8fa5d1c8c8fd388fb009792795d651a",
+    "scripts/probe-doubao.mjs": "179253eff9a4bcd8480ed3d6fd1cab2192bc7963ad435bd9b4ef3bcae2edc14e",
+    "dist/assets/enhanced/doubao/manifest.json": "8fd0271f2cac4a186d5e7cbc27b38df9a69eb346e2f48c6811dc700a4942f129",
+    "dist/assets/enhanced/doubao/mesh.json": "545a8db656fe3666776ff3a0f8e93af1de7c688f4ec1e2be737d956c87c4f5e2",
+    "dist/assets/enhanced/doubao/textures/color.jpg": "9352e39bc145ddd9227049d020b36c400d159746d9fdf0568f03abadc489baa6",
+    "dist/native-character.js": "7318a868a22a6a9818bef9f2ab1dce6530d55330e67e73fbeae45b5f0540f02c",
+    "dist/character-appearances.js": "b8bc33cb10cd95ac1c0adb4380d21c187bd94cfc8d94b3343d6d047c38ba09e8",
+    "dist/app.js": "06aa697e78686a61caf2e7fc291e1f029f7d18ab5bba8989c6bcd0fde7380c49",
+    "tests/native-doubao-character.test.mjs": "b38008ecd789779dbbba19bf615c4fb1873aba1e856206f42e0df2b8a2b7340b",
+    "scripts/package-game.py": "bcc33f8061f8de9c78194eaea256c07be57717e5c7b89b023d0b54be31cf7026"
+  }
+}

@@ -6,8 +6,13 @@ export class NetworkClient{
   async command(action,data={}){const result=await this.api(`/api/rooms/${this.code}/${action}`,data,true);if(result.room){this.room=result.room;this.onRoom(this.room);}return result;}
   send(action,active=true){if(this.closed||this.room?.phase!=='playing')return;if(['forward','back','left','right','guard','crouch'].includes(action)){if(active)this.held.add(action);else this.held.delete(action);}if(action==='clear')this.held.clear();this.queue.push({action,active:!!active,sequence:++this.sequence,angle:this.getAngle()});if(this.queue.length>63){this.queue=[{action:'clear',active:false,sequence:++this.sequence,angle:this.getAngle()}];}}
   async sync(){if(this.busy||this.closed||!this.code)return;this.busy=true;try{
-    const data={};if(this.room.phase==='playing'){if(this.host){const frame=this.getFrame();if(frame)data.frame=frame;}else{data.input=this.queue.splice(0);data.input.push({action:'look',active:false,sequence:++this.sequence,angle:this.getAngle(),held:[...this.held]});}}
-    const result=await this.command('sync',data);this.failures=0;if(result.input?.length)this.onInput(result.input);if(result.frame)this.onFrame(result.frame);
+    const data={};if(this.room.phase==='playing'){if(this.host){const frame=this.getFrame();if(frame)data.frame=frame;}else{
+      // Keep the exact batch until acknowledged. The server deduplicates its
+      // sequence numbers if it accepted a request whose response was lost.
+      if(!this.pendingInput){this.pendingInput=this.queue.splice(0);this.pendingInput.push({action:'look',active:false,sequence:++this.sequence,angle:this.getAngle(),held:[...this.held]});}
+      data.input=this.pendingInput;
+    }}
+    const result=await this.command('sync',data);this.pendingInput=null;this.failures=0;if(result.input?.length)this.onInput(result.input);if(result.frame)this.onFrame(result.frame);
   }catch(e){if(++this.failures>=3){this.closed=true;clearInterval(this.timer);this.onError(e.message);}}finally{this.busy=false;}}
   async leave(){this.closed=true;clearInterval(this.timer);try{if(this.code)await this.command('leave');}finally{this.queue=[];}}
 }

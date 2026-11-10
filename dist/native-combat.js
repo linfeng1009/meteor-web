@@ -305,7 +305,7 @@ export class NativeCombatController {
   constructor(data, { weapon = 'sword', fps = 30, sampleRoot = null, scale = .08 } = {}) {
     this.data = data; this.weapon = weapon; this.fps = fps; this.sampleRoot = sampleRoot; this.scale = scale;
     this.timeline = null; this.queued = null; this.serial = 0; this.combo = 0;
-    this._queuedRequest = null; this._activeMove = null; this._attackChain = false; this._inputPose = null;
+    this._queuedRequest = null; this._activeMove = null; this._attackChain = false; this._motionChain = false; this._inputPose = null;
     this._reaction = null;
     this._effectElapsed = 0;
     this.weaponMode = 'blade';
@@ -315,7 +315,7 @@ export class NativeCombatController {
     if (!NATIVE_WEAPONS[name]) throw new Error(`Unknown native weapon ${name}`);
     this.weapon = name; this.timeline = null; this.queued = null; this.combo = 0;
     this.weaponMode = 'blade';
-    this._queuedRequest = null; this._activeMove = null; this._attackChain = false; this._inputPose = null;
+    this._queuedRequest = null; this._activeMove = null; this._attackChain = false; this._motionChain = false; this._inputPose = null;
     this._reaction = null;
     this._transition = null;
   }
@@ -347,7 +347,7 @@ export class NativeCombatController {
       this._reaction = null;
       this._activeMove = request.context ?? null;
       this._attackChain = request.attack || this._hasAttack(request.id);
-      this._inputPose = this._attackChain ? request.id : null;
+      this._inputPose = this._attackChain ? request.id : null; this._motionChain = request.motion === true;
       if (NATIVE_WEAPONS[this.weapon].modes?.[request.context?.changesMode]) this.weaponMode = request.context.changesMode;
     }
     const index = NATIVE_WEAPONS[this.weapon].basic.indexOf(request.id); this.combo = index >= 0 ? index + 1 : 0;
@@ -363,10 +363,10 @@ export class NativeCombatController {
     if (from && duration > 0) this._transition = { from, to: { source: this.timeline.pose.source, frame: this.timeline.frame, poseId: request.id }, duration, elapsed: 0 };
     return true;
   }
-  play(id, { loop = false, force = false, context = null, canStart = null, onStart = null, attack = false } = {}) {
+  play(id, { loop = false, force = false, context = null, canStart = null, onStart = null, attack = false, motion = false } = {}) {
     const pose = this.data.poses.get(id); if (!pose?.valid) return false;
     if (!force && this.reacting) return false;
-    const request = { id, loop, context, canStart, onStart, attack };
+    const request = { id, loop, context, canStart, onStart, attack, motion };
     if (!force && this.busy) {
       const current = this.timeline.pose;
       // Air recovery poses retain the input pose's ACT links (e.g. 260 ->
@@ -455,7 +455,7 @@ export class NativeCombatController {
       if (this._queuedRequest && this._queuedRequest.transitionFrame > timeline.frame) stopAtFrame = this._queuedRequest.transitionFrame;
       const step = timedReaction && this._reaction.remainingDuration > 1e-7 ? Math.min(remaining, this._reaction.remainingDuration) : remaining;
       state = { ...timeline.advance(step, { stopAtFrame }), serial: this.serial, combo: this.combo, pose, context: this._activeMove,
-        authoredMotionScale: this._reaction ? ['hit', 'guard'].includes(this._reaction.phase) ? this._reaction.motionScale : 1 : this._attackChain ? 1 : null };
+        authoredMotionScale: this._reaction ? ['hit', 'guard'].includes(this._reaction.phase) ? this._reaction.motionScale : 1 : (this._attackChain || this._motionChain) ? 1 : null };
       remaining -= state.consumed;
       if (timedReaction) this._reaction.remainingDuration = Math.max(0, this._reaction.remainingDuration - state.consumed);
       this._stampEffectTime(state); segments.push(state);
@@ -483,7 +483,7 @@ export class NativeCombatController {
   get stance() { const profile = NATIVE_WEAPONS[this.weapon]; return profile.modes?.[this.weaponMode]?.stance ?? profile.stance; }
   get reacting() { return !!this._reaction && !!this.timeline && !this.timeline.finished; }
   get reactionPhase() { return this.reacting ? this._reaction.phase : null; }
-  get busy() { return !!this.timeline && !this.timeline.finished && (this._attackChain || !!this._reaction); }
+  get busy() { return !!this.timeline && !this.timeline.finished && (this._attackChain || this._motionChain || !!this._reaction); }
   get currentMove() { return this._activeMove; }
   get queuedMove() { return this._queuedRequest?.context ?? null; }
   get poseBlend() { const blend = this._transition; return blend ? { from: blend.from, to: blend.to, weight: Math.min(1, blend.elapsed / blend.duration), duration: blend.duration } : null; }

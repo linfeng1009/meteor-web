@@ -30,7 +30,9 @@ function effectGeometry(node) {
 }
 
 export async function loadNativeRageVfx(scene) {
-  const manifest = await loadNativeEffectManifest(), textures = new Map(), loader = new THREE.TextureLoader();
+  const base=await loadNativeEffectManifest();
+  const itemEffects=await fetch(new URL('./assets/original/item-vfx.json',import.meta.url)).then(r=>r.ok?r.json():{effects:{}}).catch(()=>({effects:{}}));
+  const manifest={...base,effects:{...base.effects,...itemEffects.effects}}, textures = new Map(), loader = new THREE.TextureLoader();
   try {
     await Promise.all(Object.entries(manifest.textures).filter(([, record]) => record.url).map(async ([name, record]) => {
       // Loading failures keep that visual hidden rather than drawing an opaque
@@ -79,6 +81,13 @@ export class NativeRageVfx {
       else character.setPoseFrame?.(state.source ?? state.pose?.source, state.frame);
     }
     return result;
+  }
+  playItem(actor,id='getitem'){
+    if(this.disposed||!actor||actor.dead||actor.disposed||!this.manifest.effects[id])return null;
+    const live=this.actors.get(actor),effect=this._create(actor,{serial:-1},id);
+    if(live&&this.active.includes(live))this.actors.set(actor,live);else this.actors.delete(actor);
+    effect.live=false;effect.time=0;effect.tail=Math.max(RAGE_VFX_ADAPTER.tail,effect.visualEnd);effect.updatedAt=this.time;
+    return effect;
   }
   _sampleSegment(actor, state, fps, at) {
     const current = this.actors.get(actor), context = state.context;

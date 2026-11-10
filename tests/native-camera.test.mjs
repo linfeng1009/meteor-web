@@ -24,9 +24,9 @@ test('lock-on turns the camera behind the player to keep the actual enemy in vie
   assert.deepEqual(hero.root.position.toArray(), playerPosition.toArray());
 });
 
-test('manual camera override holds the user angle temporarily and then smoothly follows the lock again', () => {
+test('combat lock ignores a previous manual override and stops camera tracking while paused', () => {
   const { game } = fixture(); game.cameraAngle = .7; game.cameraManualUntil = 12;
-  game._tickCamera(.1); assert.equal(game.cameraAngle, .7);
+  game._tickCamera(.1); assert.notEqual(game.cameraAngle, .7);
   game.elapsed = 13; game._tickCamera(.1); assert.notEqual(game.cameraAngle, .7);
   game.paused = true; const angle = game.cameraAngle; game._tickCamera(.1); assert.equal(game.cameraAngle, angle);
 });

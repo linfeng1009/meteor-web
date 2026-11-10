@@ -5,6 +5,10 @@ import * as THREE from '../dist/vendor/three.module.js';
 import { MeteorGame } from '../dist/engine.js';
 import { loadNativeCombat, NativeCombatController, NativePoseTimeline, createNativeDamageResolver, nativeReactionParameters, nativeHitAngle, nativeHitSelection, nativeGuardPose, NATIVE_GUARD_REACTIONS, NATIVE_DEFAULT_BLEND_TIME } from '../dist/native-combat.js';
 import { NativeImpactFeedback } from '../dist/native-impact-feedback.js';
+import { NetworkGame } from '../dist/network-game.js';
+import {bindLocalPlayerControl} from '../dist/player-control.js';
+import {NetworkClient} from '../dist/network-client.js';
+import {NetworkRooms} from '../network-server.mjs';
 
 // Real POS, RES, SKC/BNC/AMB and native weapons on a plain CPU test floor.
 // Textures, browser rendering/audio and NPC retaliation are intentionally absent;
@@ -108,6 +112,132 @@ function tick(game, dt = 1 / 60) {
   game._updateFighter(game.hero, dt); for (const actor of game.enemies) game._updateFighter(actor, dt);
   game.projectiles.update(dt);
 }
+
+test('listen-host remote inputs use native movement and hit the actual host, then replicas use the same HP snapshot',async()=>{
+  const {game,hero,target}=await fixture();await game._equip(target,'sword');target.scriptControlled=false;target.networkId='guest';hero.networkId='host';target.root.rotation.y=Math.PI;
+  const room={players:[{id:'host'},{id:'guest'}]},client={host:true,playerId:'host',send(){}};
+  const session=new NetworkGame(game,client,room);session.play();
+  try{
+    game.pause(true);assert.equal(game.paused,false,'network menu must not stop the shared simulation');game.pause(false);
+    session.inputs([{playerId:'guest',action:'attack',active:true,angle:0}]);assert.equal(target.combat.timeline.pose.id,262);
+    for(let i=0;i<90;i++)tick(game);assert.ok(hero.hp<hero.maxHp,'remote sword must damage host through the original contact path');
+    const frame=session.snapshot();assert.equal(frame.players.find(p=>p.id==='host').hp,hero.hp);assert.equal(frame.players.find(p=>p.id==='guest').id,'guest');
+    const before=target.root.position.x;session.inputs([{playerId:'guest',action:'right',active:true,angle:0}]);for(let i=0;i<30;i++)tick(game);assert.ok(target.root.position.x>before+1);
+    session.inputs([{playerId:'guest',action:'clear',active:false,angle:0}]);assert.equal(session.remote.keys.size,0);
+    assert.equal(game.hero,hero);assert.equal(game.enemies[0],target,'temporary actor context must restore host references');
+    target.spawnIndex=1;game.currentMap.spawns.push({position:v(0,.015,6)});target.hp=1;hit(game,hero,target,262);assert.equal(target.dead,true);assert.equal(session.scores.get('host').kills,1);
+    for(let i=0;i<200;i++)tick(game);assert.equal(target.dead,false);assert.ok(target.root.position.z>5,'remote respawns at its own source spawn rather than the host spawn');
+    const replica=await fixture();replica.hero.networkId='guest';replica.target.networkId='host';const guestSession=new NetworkGame(replica.game,{host:false,playerId:'guest',send(){}},room);guestSession.play();
+    try{guestSession.apply(session.snapshot());assert.equal(replica.hero.hp,target.hp);assert.equal(replica.target.hp,hero.hp);assert.deepEqual(replica.hero.root.position.toArray(),target.root.position.toArray());const position=replica.hero.root.position.clone();tick(replica.game);assert.deepEqual(replica.hero.root.position.toArray(),position.toArray(),'guest must not independently simulate authoritative movement');replica.target.root.position.copy(replica.hero.root.position).add(v(.1,0,0));replica.game._separateCharacters(.1);assert.deepEqual(replica.hero.root.position.toArray(),position.toArray(),'guest must not independently separate authoritative bodies');}
+    finally{guestSession.dispose();}
+    game._placeFighter(hero,{position:v(0,.015,0)});game._placeFighter(target,{position:v(.1,.015,0)});game._separateCharacters(.1);
+    assert.ok(Math.abs(Math.abs(hero.root.position.x)-Math.abs(target.root.position.x-.1))<1e-8,'body separation must not give the host the old player-vs-NPC weight advantage');
+  }finally{session.dispose();}
+});
+
+test('reliable transport applies the real remote sword attack once despite lost delivery and acknowledgement',async()=>{
+  const {game,hero,target}=await fixture(),rooms=new NetworkRooms(),a=rooms.create('房主'),b=rooms.join(a.room.code,'客人');
+  const request=(player,op,data={})=>rooms.request(a.room.code,player.token,op,{round:1,...data});
+  request(a,'ready',{ready:true});request(b,'ready',{ready:true});request(a,'start');request(a,'loaded');request(b,'loaded');
+  hero.networkId=a.playerId;target.networkId=b.playerId;await game._equip(target,'sword');target.root.rotation.y=Math.PI;
+  let session,attackCalls=0;const host=new NetworkClient({onInput:batch=>{attackCalls+=batch.filter(x=>x.action==='attack').length;session.inputs(batch);},getFrame:()=>session.snapshot()}),guest=new NetworkClient();
+  for(const [client,player] of [[host,a],[guest,b]]){Object.assign(client,{room:request(player,'sync').room,code:a.room.code,playerId:player.playerId});client.api=async(path,data)=>request(player,'sync',data);}
+  session=new NetworkGame(game,host,host.room);session.play();const api=host.api;let calls=0;
+  host.api=async(path,data)=>{calls++;if(calls===3)throw Error('确认未送达');const result=await api(path,data);if(calls===1)throw Error('投递响应丢失');return result;};
+  try{
+    guest.send('attack');await guest.sync();await host.sync();assert.equal(attackCalls,0);await host.sync();assert.equal(attackCalls,1);
+    for(let i=0;i<90;i++)tick(game);const hp=hero.hp;assert.ok(hp<hero.maxHp,'delivered remote input must really damage the host');
+    await host.sync();await host.sync();await host.sync();assert.equal(attackCalls,1);assert.equal(hero.hp,hp);assert.equal(rooms.rooms.get(a.room.code).players[1].input.length,0);
+  }finally{session.dispose();}
+});
+
+test('two players keep movement, keys and camera independent without swapping game references',async()=>{
+  const {game,hero,target}=await fixture();bindLocalPlayerControl(game);target.networkId='guest';hero.networkId='host';target.root.position.z=10;
+  const session=new NetworkGame(game,{host:true,playerId:'host',send(){}},{players:[{id:'host'},{id:'guest'}]});session.play();
+  const peers=game.enemies,spawns=game.currentMap.spawns,events=game.onEvent;
+  // Reject even a temporary swap, including one restored in a finally block.
+  for(const [object,key] of [[game,'hero'],[game,'enemies'],[game,'onEvent'],[game.currentMap,'spawns']]){
+    const value=object[key];Object.defineProperty(object,key,{configurable:true,get:()=>value,set(){throw Error('global reference swap: '+key);}});
+  }
+  try{
+    game.cameraAngle=0;game.action('right');
+    session.inputs([{playerId:'guest',action:'right',active:true,angle:Math.PI}]);
+    const beforeHost=hero.root.position.x,beforeGuest=target.root.position.x;
+    for(let i=0;i<30;i++)tick(game);
+    assert.ok(hero.root.position.x>beforeHost+1);assert.ok(target.root.position.x<beforeGuest-1);
+    assert.equal(game.cameraAngle,0);assert.equal(session.remote.cameraAngle,Math.PI);assert.notEqual(game.localControl.keys,session.remote.keys);
+    session.inputs([{playerId:'guest',action:'clear',active:false,angle:0}]);assert.equal(session.remote.keys.size,0);assert.ok(game.keys.has('right'));
+    game.action('right',false);game.action('guard');session.inputs([{playerId:'guest',action:'guard',active:true,angle:Math.PI}]);
+    game.action('guard',false);assert.equal(hero.guard,false);assert.equal(target.guard,true);assert.ok(session.remote.keys.has('guard'));
+    assert.equal(game.hero,hero);assert.equal(game.enemies,peers);assert.equal(game.currentMap.spawns,spawns);assert.equal(game.onEvent,events);
+  }finally{session.dispose();for(const [object,key,value] of [[game,'hero',hero],[game,'enemies',peers],[game,'onEvent',events],[game.currentMap,'spawns',spawns]])Object.defineProperty(object,key,{value,writable:true,configurable:true});}
+  assert.equal(target.playerControl,undefined);assert.equal(game._controlFor(target),null,'leaving removes remote player control');
+});
+
+test('remote crouch double tap rolls using its own angle and does not consume local direction history',async()=>{
+  const {game,hero,target}=await fixture();bindLocalPlayerControl(game);target.networkId='guest';hero.networkId='host';
+  const session=new NetworkGame(game,{host:true,playerId:'host',send(){}},{players:[{id:'host'},{id:'guest'}]});session.play();
+  try{
+    game.action('left');game.action('left',false);const localBuffer=game.directionBuffer;
+    session.inputs([{playerId:'guest',action:'crouch',active:true,angle:1},{playerId:'guest',action:'forward',active:true,angle:1},{playerId:'guest',action:'forward',active:false,angle:1}]);
+    game.elapsed+=.1;session.inputs([{playerId:'guest',action:'forward',active:true,angle:1}]);
+    assert.equal(target.combat.timeline.pose.id,176);assert.equal(target.root.rotation.y,1+Math.PI);assert.equal(hero.combat.busy,false);
+    assert.equal(game.directionBuffer,localBuffer);assert.ok(localBuffer.length>0);assert.equal(session.remote.directionBuffer.length,0);
+  }finally{session.dispose();}
+});
+
+test('hits, death and respawn clear only the affected player commands and release locks',async()=>{
+  const {game,hero,target}=await fixture();bindLocalPlayerControl(game);target.networkId='guest';hero.networkId='host';target.spawnIndex=1;game.currentMap.spawns.push({position:v(0,.015,6)});
+  const session=new NetworkGame(game,{host:true,playerId:'host',send(){}},{players:[{id:'host'},{id:'guest'}]});session.play();
+  try{
+    game.action('left');game.action('left',false);const local=game.directionBuffer;
+    session.inputs([{playerId:'guest',action:'back',active:true,angle:Math.PI},{playerId:'guest',action:'back',active:false,angle:Math.PI}]);assert.ok(session.remote.directionBuffer.length);
+    hit(game,hero,target,262);assert.equal(session.remote.directionBuffer.length,0);assert.equal(game.directionBuffer,local);
+    session.inputs([{playerId:'guest',action:'attack',active:true,angle:Math.PI}]);assert.equal(session.remote.recoveryAttack.actor,target);assert.equal(game.recoveryAttack,null);
+    session.remote.locked=hero;game.locked=target;target.hp=1;hit(game,hero,target,262);
+    assert.equal(target.dead,true);assert.equal(game.locked,null);assert.equal(session.remote.recoveryAttack,null);assert.equal(game.directionBuffer,local);
+    for(let i=0;i<200;i++)tick(game);assert.equal(target.dead,false);assert.ok(target.root.position.z>5);assert.equal(session.remote.traversalTap,null);
+    session.remote.locked=hero;const remoteHistory=[{direction:'down',time:game.elapsed,air:false}];session.remote.directionBuffer=remoteHistory;
+    hero.hp=1;hit(game,target,hero,262);assert.equal(session.remote.locked,null,'local death must release remote combat lock too');assert.equal(game.directionBuffer.length,0);assert.equal(session.remote.directionBuffer,remoteHistory,'a remote hit must not clear the attacker command history');
+  }finally{session.dispose();}
+});
+
+test('fixed world replay preserves sword hits, death, respawn and movement across render rates and stalls',async()=>{
+  const results=[];
+  for(const deltas of [Array(180).fill(1/30),Array(360).fill(1/60),Array(864).fill(1/144),Array(60).fill(.1)]){
+    const {game,hero,target}=await fixture();game.updateAccum=0;target.hp=1;
+    let tickIndex=0;const frames=[],step=game._stepWorld.bind(game);
+    game._stepWorld=dt=>{
+      if(tickIndex===0)game.action('attack');
+      if(tickIndex===210)game.action('right');
+      if(tickIndex===240){game.action('right',false);game.action('jump');}
+      if(tickIndex===300)game.action('guard');
+      if(tickIndex===330)game.action('guard',false);
+      step(dt);tickIndex++;
+      frames.push([hero.root.position.toArray(),hero.hp,hero.rage,hero.combat.timeline.pose.id,hero.character.frame,hero.grounded,hero.guard,target.hp,target.dead,target.root.position.toArray(),game.kills,game.matchElapsed]);
+    };
+    for(const delta of deltas)game._advanceWorld(delta);
+    assert.equal(tickIndex,360);assert.ok(frames.some(f=>f[8]),'actual sword hit must kill the wounded target');
+    assert.equal(target.dead,false,'the original respawn path must run during fixed ticks');
+    assert.equal(game.kills,1);assert.ok(frames.some(f=>!f[5]),'jump input must reach airborne state');assert.ok(hero.root.position.x>1,'movement must run');
+    results.push(frames);
+  }
+  for(const frames of results.slice(1))assert.deepEqual(frames,results[0]);
+});
+
+test('fixed world replay preserves all sword combo contacts at 30/60/144Hz and 100ms stalls',async()=>{
+  const results=[];
+  for(const deltas of [Array(90).fill(1/30),Array(180).fill(1/60),Array(432).fill(1/144),Array(30).fill(.1)]){
+    const {game,hero,target,events}=await fixture();game.updateAccum=0;let index=0;const step=game._stepWorld.bind(game),states=[];
+    game._stepWorld=dt=>{
+      if(index%6===0&&game.contactHits<3)game.action('attack');
+      step(dt);index++;states.push([hero.combat.timeline.pose.id,hero.character.frame,target.hp,target.rage,target.combat.timeline.pose.id,target.root.position.toArray()]);
+    };
+    for(const dt of deltas)game._advanceWorld(dt);
+    assert.deepEqual(events.filter(e=>e.type==='hit').map(e=>e.poseId),[262,263,264]);results.push(states);
+  }
+  for(const states of results.slice(1))assert.deepEqual(states,results[0]);
+});
 
 test('real hit events, original animation and impact sound all use the selected front/back/side source pose', async () => {
   for (const [offset, expected] of [[v(0, 0, 1.1), 93], [v(1.1, 0, 0), 94], [v(-1.1, 0, 0), 91], [v(0, 0, -1.1), 92]]) {

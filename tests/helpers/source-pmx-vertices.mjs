@@ -12,4 +12,3 @@ export function sourcePmxVertices(bytes){
   }
   return vertices;
 }
-

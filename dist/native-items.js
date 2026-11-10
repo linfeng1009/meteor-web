@@ -1,5 +1,5 @@
-// A bounded original-item adapter. Item identity and healing come from the
-// preserved Meteor.res type-2 record, never from the rendered mesh's name.
+// A bounded original-item adapter. Identity and effects come from preserved
+// Meteor.res type-2 records, never from the rendered mesh's display name.
 import { nativeEffectiveStat } from './native-combat.js';
 
 export const NATIVE_ITEM_PICKUP_PROFILE = Object.freeze({
@@ -7,8 +7,8 @@ export const NATIVE_ITEM_PICKUP_PROFILE = Object.freeze({
   provenance: Object.freeze({
     effect: 'Meteor.res type2/id1 Item01 肉包: stat2 mode0 value300, valueOffset53204; 004d4d30 clamps current HP to 0..effective maxHP.',
     interaction: 'Browser adapter: explicit pickup input, horizontal radius1.8 world units, vertical tolerance2; exact EXE pickup trigger/range remains unverified.',
-    fullHp: 'Browser adapter: keep the item when HP is full; original full-HP consumption and item respawn timing remain unverified.',
-    scope: 'Only the original Item01 meatbun immediate HP effect; no timed buffs, weapon pickup, respawn, or other item effects.'
+    fullHp: 'Browser adapter: keep positive immediate HP/rage items when that resource is full; original full-HP consumption and item respawn timing remain unverified.',
+    scope: 'Verified world RES records1/2/3/4/5/8/16/17/18/27/28/29/30/31. Unsupported effects and weapons remain unconsumed; no automatic respawn.'
   })
 });
 
@@ -38,6 +38,18 @@ export const NATIVE_SCRIPT_ITEM_PROVENANCE = Object.freeze({
 });
 
 const scriptItemSpecs = new Map([
+  [2, { statKey:1,value:500,lifetime:6000,rate:10,effectType:-1,period:0,kind:'modifier' }],
+  [3, { statKey:4,value:20,lifetime:900,rate:10,effectType:-1,period:0,kind:'modifier' }],
+  [5, { statKey:5,mode:1,value:150,lifetime:600,rate:10,effectType:-1,period:0,kind:'modifier' }],
+  [8, { statKey:6,value:100,lifetime:0,rate:0,effectType:0,period:0,kind:'immediate' }],
+  [16, { statKey:2,value:500,lifetime:0,rate:0,effectType:0,period:0,kind:'immediate' }],
+  [17, { statKey:2,value:100,lifetime:0,rate:0,effectType:0,period:0,kind:'immediate' }],
+  [18, { statKey:2,value:-10,lifetime:300,rate:10,effectType:1,period:5,kind:'periodic' }],
+  [27, { statKey:1,value:6999,lifetime:600,rate:10,effectType:-1,period:0,kind:'modifier' }],
+  [28, { statKey:6,value:25,lifetime:0,rate:0,effectType:0,period:0,kind:'immediate' }],
+  [29, { statKey:4,value:100,lifetime:99999,rate:10,effectType:-1,period:0,kind:'modifier' }],
+  [30, { statKey:3,value:125,lifetime:99999,rate:10,effectType:-1,period:0,kind:'modifier' }],
+  [31, { statKey:5,mode:1,value:150,lifetime:99999,rate:10,effectType:-1,period:0,kind:'modifier' }],
   [4, { statKey: 3, value: 25, lifetime: 600, rate: 10, effectType: -1, period: 0, kind: 'modifier' }],
   [11, { statKey: 2, value: -10, lifetime: 150, rate: 10, effectType: 1, period: 3, kind: 'periodic' }],
   [12, { statKey: 2, value: -10, lifetime: 600, rate: 10, effectType: 1, period: 2, kind: 'periodic' }],
@@ -168,12 +180,25 @@ export function nativeMeatbunEffect(record) {
   return { itemId: record.id, name: record.name, model: normalizedModel(record.model), heal: effect.value, recordOffset: record.offset, valueOffset: effect.valueOffset };
 }
 
+const worldItemIds=new Set([2,3,4,5,8,16,17,18,27,28,29,30,31]);
+export function nativeWorldItemEffect(record){
+  const bun=nativeMeatbunEffect(record);
+  if(bun)return {...bun,record,kind:'immediate',statKey:2,value:bun.heal,duration:0,description:`气血 +${bun.heal}`};
+  if(!worldItemIds.has(record?.id)||!/^item\d+$/i.test(normalizedModel(record.model)))return null;
+  const effect=nativeScriptItemEffect(record);if(!effect)return null;
+  const heal=effect.kind==='immediate'&&effect.statKey===2&&effect.value>0?effect.value:0;
+  const stat={1:'气血上限',2:'气血',3:'攻击',4:'防御',5:'移速',6:'怒气'}[effect.statKey];
+  const value=effect.statKey===5?`${effect.value}%`:`${effect.value>0?'+':''}${effect.value}`;
+  const description=effect.period?`每${effect.period}秒${stat} ${value} · ${effect.duration}秒`:`${stat} ${value}${effect.duration?` · ${effect.duration}秒`:''}`;
+  return {...effect,itemId:record.id,model:normalizedModel(record.model),heal,recordOffset:record.offset,valueOffset:record.effects[0].valueOffset,description};
+}
+
 export class NativeItemSystem {
   constructor({ itemRecords, getInstances = () => [], canReach = () => true, onPickup = () => {}, profile = NATIVE_ITEM_PICKUP_PROFILE } = {}) {
     this.getInstances = getInstances; this.canReach = canReach; this.onPickup = onPickup; this.profile = profile;
     this.itemsByModel = new Map(); this.consumed = new WeakSet(); this.disposed = false;
     for (const record of records(itemRecords)) {
-      const effect = nativeMeatbunEffect(record); if (effect) this.itemsByModel.set(effect.model, effect);
+      const effect = nativeWorldItemEffect(record); if (effect) this.itemsByModel.set(effect.model, effect);
     }
   }
   peek(actor) {
@@ -184,24 +209,33 @@ export class NativeItemSystem {
       const effect = this.itemsByModel.get(normalizedModel(instance.source?.properties?.model)); if (!effect) continue;
       const point = instance.root.position, distance = Math.hypot(point.x - origin.x, point.z - origin.z);
       if (distance > this.profile.radius || Math.abs(point.y - origin.y) > this.profile.verticalTolerance) continue;
-      candidates.push({ ...effect, instance, objectName: instance.name, distance, full: actor.hp >= actor.maxHp, provenance: this.profile.provenance });
+      const fullHp=effect.heal>0&&actor.hp>=actor.maxHp;
+      const fullRage=effect.kind==='immediate'&&effect.statKey===6&&(actor.rage||0)>=nativeRageMaximum(actor);
+      candidates.push({ ...effect, instance, objectName: instance.name, distance, full:fullHp||fullRage,fullReason:fullRage?'full-rage':'full-hp', provenance: this.profile.provenance });
     }
     candidates.sort((a, b) => a.distance - b.distance || a.objectName.localeCompare(b.objectName));
-    return candidates.find(candidate => this.canReach(actor, candidate.instance)) || null;
+    const reachable=candidates.filter(candidate=>this.canReach(actor,candidate.instance));
+    return reachable.find(candidate=>!candidate.full)||reachable[0]||null;
   }
   tryPickup(actor) {
     const candidate = this.peek(actor);
     if (!candidate) return { ok: false, reason: 'no-item', healed: 0 };
-    if (candidate.full) return { ok: false, reason: 'full-hp', healed: 0, candidate };
+    if (candidate.full) return { ok: false, reason: candidate.fullReason, healed: 0, candidate };
     // Native stat2/current HP is clamped by stat1/max HP (004d4d30).
-    const before = actor.hp, after = Math.max(0, Math.min(actor.maxHp, before + candidate.heal));
+    const before=actor.hp,rageBefore=actor.rage||0;
+    let applied;
+    if(candidate.itemId===1){actor.hp=Math.max(0,Math.min(actor.maxHp,before+candidate.heal));applied={refreshed:false};}
+    else applied=useNativeScriptItem(actor,candidate.record);
+    if(!applied)return {ok:false,reason:'unsupported-effect',healed:0};
+    const after=actor.hp;
     const instance = candidate.instance;
-    this.consumed.add(instance); actor.hp = after;
+    this.consumed.add(instance);
     instance.attributes ||= {}; instance.attributes.active = 0; instance.attributes.interactive = 0; instance.attributes.collision = 0;
     if (instance.setActive) instance.setActive(false); else instance.root.visible = false;
     instance.setCollision?.(false);
     const result = { ok: true, reason: 'picked-up', itemId: candidate.itemId, name: candidate.name, objectName: candidate.objectName,
-      healed: after - before, hpBefore: before, hpAfter: after, maxHp: actor.maxHp, effectValue: candidate.heal,
+      healed: after - before, hpBefore: before, hpAfter: after, maxHp: actor.maxHp, effectValue: candidate.value,
+      description:candidate.description,kind:candidate.kind,statKey:candidate.statKey,duration:candidate.duration,refreshed:applied.refreshed,rageGained:(actor.rage||0)-rageBefore,actor,
       recordOffset: candidate.recordOffset, valueOffset: candidate.valueOffset, instance, provenance: this.profile.provenance };
     this.onPickup(result); return result;
   }

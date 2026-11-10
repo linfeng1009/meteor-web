@@ -28,6 +28,20 @@ function state(id, time, context = { rage: 60 }, serial = 1) {
   const pose = data.poses.get(id); return { pose, context, serial, frame: pose.start + time * 30 };
 }
 
+test('pickup uses preserved GetItem shapes and textures without replacing a live skill effect',async()=>{
+  const extra=JSON.parse(await readFile(new URL('../dist/assets/original/item-vfx.json',import.meta.url),'utf8'));
+  const bytes=await readFile(new URL('../dist/assets/original/sounds/definitions/getitem.ef',import.meta.url));
+  assert.equal(createHash('sha256').update(bytes).digest('hex'),extra.effects.getitem.sha256);assert.equal(extra.effects.getitem.nodes.length,bytes.readUInt32LE(11));
+  const f=fixture();try{
+    f.vfx.manifest={...manifest,effects:{...manifest.effects,...extra.effects}};
+    f.vfx.sample(f.actor,state(293,.1));const live=f.vfx.actors.get(f.actor),pickup=f.vfx.playItem(f.actor);
+    assert.equal(f.vfx.actors.get(f.actor),live);assert.ok(pickup.nodes.filter(x=>x.mesh).length===2,'render the original plane/cylinder, not fabricated particles');
+    let visible=false;for(let i=0;i<30;i++){f.vfx.update(1/60);visible ||= pickup.nodes.some(n=>n.mesh?.visible);}assert.equal(visible,true);
+    for(let i=0;i<180;i++)f.vfx.update(1/60);assert.equal(f.vfx.active.includes(pickup),false);
+    f.vfx.playItem(f.actor);f.vfx.clearActor(f.actor);assert.equal(f.vfx.active.length,0);
+  }finally{f.vfx.dispose();}
+});
+
 test('all enabled rage moves and automatic pose links have source-backed effect definitions and PNG textures', async () => {
   const checked = new Set();
   for (const move of NATIVE_MOVE_CATALOG.filter(move => move.rage > 0 && !move.pending)) {

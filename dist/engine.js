@@ -1,4 +1,4 @@
-import { traversalTap, NATIVE_ROLL_POSES } from './native-traversal.js';
+import { traversalTap, NATIVE_ROLL_POSES, nativeDashPose } from './native-traversal.js';
 import { FixedStepClock } from './fixed-step.js';
 import { bindLocalPlayerControl, clearPlayerCommands } from './player-control.js';
 import { createMouseLook, turnMouseCamera } from './mouse-look.js';
@@ -638,6 +638,12 @@ export class MeteorGame {
     actor.root.rotation.y=control.cameraAngle+Math.PI;actor.velocity.set(0,0,0);actor.guard=false;actor.heldPose=null;clearPlayerCommands(control);
     return true;
   }
+  _beginDash(direction,poseId,actor=this.hero,control=this._controlFor(actor)) {
+    if(!this.running||this.paused||!actor||actor.dead||!actor.grounded||actor.scriptInputBlocked||actor.guard||actor.combat.busy||!control||control.keys.has('crouch')||poseId!==nativeDashPose(actor.weapon,direction))return false;
+    if(!actor.combat.play(poseId,{motion:true,context:{kind:'dash',direction,poseId,name:'闪避'}}))return false;
+    actor.root.rotation.y=control.cameraAngle+Math.PI;actor.velocity.set(0,0,0);actor.guard=false;actor.heldPose=null;control.recoveryAttack=null;
+    return true;
+  }
   _actionFighter(actor, control, name, active = true) {
     if(!actor || !control)return;
     if (name === 'guard') {
@@ -651,9 +657,9 @@ export class MeteorGame {
     if (['forward','back','left','right'].includes(name)) {
       if(active&&this.running&&!this.paused&&!actor.dead){
         if(!control.keys.has(name)){
-          const tap=traversalTap(control.traversalTap,{direction:name,time:this.elapsed,crouched:control.keys.has('crouch'),allowed:actor.grounded&&!actor.combat.busy&&!actor.guard});control.traversalTap=tap.tap;
-          const rolled=tap.poseId&&this._beginRoll(name,tap.poseId,actor,control);
-          if(!rolled)control.directionBuffer=recordNativeDirection(control.directionBuffer||[],{forward:'up',back:'down',left:'left',right:'right'}[name],this.elapsed,!actor.grounded);
+          const crouched=control.keys.has('crouch'),tap=traversalTap(control.traversalTap,{direction:name,time:this.elapsed,crouched,weapon:actor.weapon,allowed:actor.grounded&&!actor.combat.busy&&!actor.guard});control.traversalTap=tap.tap;
+          const moved=tap.poseId&&(crouched?this._beginRoll(name,tap.poseId,actor,control):this._beginDash(name,tap.poseId,actor,control));
+          if(!moved||!crouched)control.directionBuffer=recordNativeDirection(control.directionBuffer||[],{forward:'up',back:'down',left:'left',right:'right'}[name],this.elapsed,!actor.grounded);
         }
         control.keys.add(name);
       }else control.keys.delete(name);
@@ -703,7 +709,7 @@ export class MeteorGame {
     }
     if (move?.pending) { if (f.hero) this._emit(move.pending, 'info'); return false; }
     if (move && (f.rage || 0) < move.rage) { if (f.hero) this._emit(`怒气不足 · 需要 ${move.rage} 点`, 'info'); return false; }
-    if (target && !f.combat.busy && !savedInput?.npcMove) this._face(f, target.root.position);
+    if (target && (!f.combat.busy || f.combat.currentMove?.kind==='dash') && !savedInput?.npcMove) this._face(f, target.root.position);
     const accepted = f.combat.attack({ air: !f.grounded, poseId: move?.poseId ?? null, context: move,
       // Input posture is checked when the command is accepted. An ACT-legal
       // queued continuation stays attached to that active predecessor if it
@@ -764,7 +770,7 @@ export class MeteorGame {
       else if (!f.combat.reacting) { control.recoveryAttack = null; this._beginAttack(f, input); }
     }
     if (control) f.guard = control.keys.has('guard') && !f.scriptInputBlocked && (!f.combat.busy || f.combat.reactionPhase === 'guard');
-    if (f.combat.reacting || f.scriptCrouched || f.combat.busy && f.combat.currentMove?.kind==='roll') {
+    if (f.combat.reacting || f.scriptCrouched || f.combat.busy && ['roll','dash'].includes(f.combat.currentMove?.kind)) {
       if (f.combat.reactionPhase !== 'guard') f.guard = false;
     } else if (control) {
       if (f.scriptInputBlocked) f.guard = false;
@@ -838,7 +844,7 @@ export class MeteorGame {
       }
       // Source parameter18 is a deferred self item, independent of landing a
       // hit. Commit once on casting completion; interruption discards the cast.
-      if (!segment.blend && segment.finished && segment.context?.kind !== 'roll' && segment.context?.poseId === segment.pose.id && f.selfItemSerial !== segment.serial) {
+      if (!segment.blend && segment.finished && !['roll','dash'].includes(segment.context?.kind) && segment.context?.poseId === segment.pose.id && f.selfItemSerial !== segment.serial) {
         f.selfItemSerial = segment.serial;
         const item = useNativeSelfItem(f, this.combatData.moveRecords.get(segment.pose.id), this.combatData.itemRecords);
         if (item) this.onEvent?.({ type: 'self-item', actorId: f.scriptId ?? f.id, poseId: segment.pose.id, itemId: item.id, name: item.name, duration: item.duration, refreshed: item.refreshed });

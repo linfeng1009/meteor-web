@@ -376,7 +376,8 @@ test('every listed ready command has a public-input route from the ground or a n
     const beforePose = hero.combat.timeline.pose.id;
     const blockedBy = execute(game, move);
     if (move.pending) {
-      pending++; assert.equal(hero.combat.timeline.pose.id, beforePose, `${move.id}: blocked special cannot silently become a basic attack`);
+      pending++; if(hero.combat.timeline.pose.id!==beforePose)assert.equal(hero.combat.currentMove?.kind,'dash',`${move.id}: directional input may start a standing dash, never a fallback attack`);
+      assert.equal(hero.combat._attackChain,false,`${move.id}: blocked special cannot silently become a basic attack`);
       assert.equal(hero.rage, 100); assert.ok(events.some(event => event.text === (blockedBy?.pending || move.pending)));
     } else {
       ready++; assert.equal(hero.combat.currentMove?.poseId, move.poseId, `${move.id}: public direction inputs selected wrong source pose`);
@@ -433,7 +434,7 @@ test('the requested spear left-right-up-A body attack and airborne A kick remove
 
 test('native thrusts move the collision root using d_base, retaining the actual authored distance rather than pelvis sway', async () => {
   for (const dt of [1 / 60, 1 / 10]) {
-    const { game, hero } = await fixture('sword'); game.enemies = []; game.locked = null;
+    const { game, hero } = await fixture('sword'); game.enemies = []; game.locked = null; game.cameraAngle=Math.PI; // Match the actor's +Z forward facing before the double tap.
     const pose = hero.character.combatPoses.get(277), a = hero.character.sampleSceneMotion(pose.source, pose.start), b = hero.character.sampleSceneMotion(pose.source, pose.end);
     const start = hero.root.position.clone(); command(game, ['down', 'up', 'up']);
     for (let seconds = 0; seconds < 6; seconds += dt) tick(game, dt);
@@ -447,7 +448,7 @@ test('native thrusts move the collision root using d_base, retaining the actual 
 
 test('authored thrust movement stops at the ordinary collision wall at both render rates', async () => {
   for (const dt of [1 / 60, 1 / 10]) {
-    const { game, hero } = await fixture('sword'); game.enemies = []; game.locked = null;
+    const { game, hero } = await fixture('sword'); game.enemies = []; game.locked = null; game.cameraAngle=Math.PI;
     const wall = new THREE.Mesh(new THREE.BoxGeometry(10, 4, .2), new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }));
     wall.position.set(0, 2, 3); wall.updateMatrixWorld(true); game.currentMap.colliders.push(wall);
     try {

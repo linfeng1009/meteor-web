@@ -193,6 +193,19 @@ test('reliable focus-release clear reaches the host after a lost response and re
   }finally{session.dispose();}
 });
 
+test('standing double tap preserves the sword down-up-up attack and works through remote player controls',async()=>{
+  const {game,hero,target}=await fixture();hero.networkId='host';target.networkId='guest';await game._equip(target,'sword');
+  const session=new NetworkGame(game,{host:true,playerId:'host',send(){}},{players:[{id:'host'},{id:'guest'}]});session.play();
+  try{
+    game.action('back');game.action('back',false);game.elapsed+=.1;game.action('forward');game.action('forward',false);game.elapsed+=.1;game.action('forward');game.action('forward',false);
+    assert.equal(hero.combat.timeline.pose.id,165);game.action('attack');assert.equal(hero.combat.currentMove.poseId,277);assert.equal(hero.combat.currentMove.name,'忌冬雨');assert.equal(hero.rage,0);
+    const localBuffer=game.directionBuffer;
+    session.inputs([{playerId:'guest',action:'right',active:true,angle:Math.PI},{playerId:'guest',action:'right',active:false,angle:Math.PI}]);game.elapsed+=.1;
+    session.inputs([{playerId:'guest',action:'right',active:true,angle:Math.PI}]);assert.equal(target.combat.timeline.pose.id,168);assert.equal(target.combat.currentMove.kind,'dash');assert.equal(game.directionBuffer,localBuffer);
+    session.inputs([{playerId:'guest',action:'clear',active:false,angle:0}]);assert.equal(session.remote.keys.size,0);assert.equal(target.combat.currentMove.kind,'dash','release does not invent a forced motion cancel');
+  }finally{session.dispose();}
+});
+
 test('two players keep movement, keys and camera independent without swapping game references',async()=>{
   const {game,hero,target}=await fixture();bindLocalPlayerControl(game);target.networkId='guest';hero.networkId='host';target.root.position.z=10;
   const session=new NetworkGame(game,{host:true,playerId:'host',send(){}},{players:[{id:'host'},{id:'guest'}]});session.play();

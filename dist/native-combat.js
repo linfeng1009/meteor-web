@@ -367,6 +367,9 @@ export class NativeCombatController {
     const pose = this.data.poses.get(id); if (!pose?.valid) return false;
     if (!force && this.reacting) return false;
     const request = { id, loop, context, canStart, onStart, attack, motion };
+    // 004cbf10 enters controller state6;004cff40 explicitly accepts attacks
+    // from state6. This is a locomotion interrupt, not an invented ACT link.
+    if(!force&&attack&&this._motionChain&&this._activeMove?.kind==='dash')return this._start(request);
     if (!force && this.busy) {
       const current = this.timeline.pose;
       // Air recovery poses retain the input pose's ACT links (e.g. 260 ->

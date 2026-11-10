@@ -29,6 +29,7 @@ async function fixture(positions = [v(3.5, 0, 0), v(-3.5, 0, 0), v(0, 0, -3.5)])
     weapon: 'spear', actorSerial: 0, enemies: [], keys: new Set(), directionBuffer: [], cameraAngle: 0,
     running: true, paused: false, mode: 'training', elapsed: 0, matchElapsed: 0, kills: 0, deaths: 0, totalDamage: 0, contactHits: 0,
     onEvent: event => events.push({ ...event, time: game.elapsed }), onUpdate() {}, _nameplate() {}, _unlockAudio() {}, _soundDefinition() {}, _hud() {} });
+  game.cameraAngle=Math.PI; // These fixtures face +Z toward their forward targets.
   game.damageResolver = createNativeDamageResolver(data); game._initializeProjectiles(); game._initializeEffectContacts(manifest); game.impactFeedback = new NativeImpactFeedback(game.scene);
   game.hero = await game._createFighter(0, '孟星魂', true); game.scene.add(game.hero.root);
   game._placeFighter(game.hero, { position: v(0, .015, 0) }); await game._equip(game.hero, 'spear'); game.hero.team = game.hero.teamMask = 1;
@@ -434,14 +435,14 @@ test('金钟罩 and 嗜血 finish on a miss, change real damage, refresh without
 test('interruption and insufficient rage cannot grant self buffs, and wrong-mode qiankun input never becomes plain A', async () => {
   const { game, events } = await fixture([]), actor = game.hero;
   await game._equip(actor, 'knuckle'); actor.rage = 99; manual(game, ['back', 'back', 'forward']);
-  assert.equal(actor.combat.busy, false); assert.equal(actor.rage, 99); assert.equal(actor.scriptItems.length, 0);
+  assert.equal(actor.combat._attackChain, false); assert.equal(actor.combat.currentMove?.kind,'dash'); assert.equal(actor.rage, 99); assert.equal(actor.scriptItems.length, 0);
   actor.rage = 100; manual(game, ['back', 'back', 'forward']);
   actor.combat.react(103); settle(game); assert.equal(actor.scriptItems.length, 0);
   await game._equip(actor, 'qiankun'); actor.rage = 100;
   manual(game, ['back', 'back', 'forward']);
-  assert.equal(actor.combat.busy, false); assert.equal(actor.rage, 100);
+  assert.equal(actor.combat._attackChain, false); assert.equal(actor.combat.currentMove?.kind,'dash'); assert.equal(actor.rage, 100);
   assert.ok(events.some(e => /死斗需要拔刀式.*↓↓A/.test(e.text)));
-  manual(game, ['back', 'forward']); assert.equal(actor.combat.busy, false);
+  manual(game, ['back', 'forward']); assert.equal(actor.combat._attackChain, false); assert.equal(actor.combat.currentMove?.kind,'dash');
   assert.ok(events.some(e => /勾魂锁需要持枪式.*←A/.test(e.text)));
 });
 

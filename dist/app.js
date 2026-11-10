@@ -166,7 +166,7 @@ function openModal(kind){
   if(!modal.open)modal.showModal();
 }
 function closeModal(){disposeKeySettings?.();disposeKeySettings=null;if(modal.open)modal.close();if(ended){returnLobby();return;}if(running&&paused){paused=false;game?.pause(false);}modalKind='';priorFocus?.focus?.();if(running&&!paused&&!matchMedia('(pointer:coarse)').matches)game?.requestMouseLock();}
-async function startMatch(mode='training',missionId=currentMissionId){
+async function startMatch(mode='training',missionId=currentMissionId,isCurrent=()=>true){
   if(loadingMatch||characterSelectionBusy)return;
   if(typeof mode!=='string')mode='training';if(mode!=='network'&&networkLobby?.client)await networkLobby.leave(false);currentMode=mode==='network'?'network':mode==='story'?'story':'training';const mission=currentMode==='story'?getNativeMission(missionId):null;if(currentMode==='story'){if(!mission){toast('这段原版任务尚未开放');return;}currentMissionId=mission.id;prefs.mission=mission.id;prefs.map=mission.mapId;prefs.character=0;save();updateSelection();}
 
@@ -174,9 +174,9 @@ async function startMatch(mode='training',missionId=currentMissionId){
   if(modal.open)modal.close();ended=false;paused=false;running=true;lastCombo=0;lastHp=mission?.playerHp??1000;clearDialogue();clearCombatFeedback();matchLoading(true);$('#load-status').textContent=mission?'正在载入'+mission.name+'与原版任务脚本…':'正在载入'+maps[prefs.map].name+'…';
   $('#lobby').classList.add('hidden');$('#game-hud').classList.remove('hidden');document.body.classList.add('playing');
   $('#hud-map').textContent=currentMode==='network'?'四方阵 · 双人对战':maps[prefs.map].name+(currentMode==='story'?' · 单机任务':' · 演武');$('#battle-hint-text').textContent='原版招式演武 · 按 '+keyHint('attack')+' 出招';$('#combo-feedback').textContent='';
-  try{if(currentMode==='network')await game.setCharacterAppearance('original');game.setInfiniteRage(currentMode==='network'?false:prefs.infiniteRage);await game.start({map:currentMode==='network'?'sifang':prefs.map,weapon:currentMode==='network'?'sword':prefs.weapon,difficulty:prefs.difficulty,character:currentMode==='network'?0:prefs.character,mode:currentMode});game.setMuted(prefs.muted);game.setQuality(prefs.quality);syncMusic();announce(currentMode==='network'?'联机战场载入中':mission?mission.name+' · 单机任务':'演武 · 开始',2200);$('#world').setAttribute('tabindex','-1');$('#world').focus();}
-  catch(e){console.error(e);returnLobby();toast('战场加载失败，请刷新重试');}
-  matchLoading(false);
+  try{if(currentMode==='network')await game.setCharacterAppearance('original');if(!isCurrent())return;game.setInfiniteRage(currentMode==='network'?false:prefs.infiniteRage);await game.start({map:currentMode==='network'?'sifang':prefs.map,weapon:currentMode==='network'?'sword':prefs.weapon,difficulty:prefs.difficulty,character:currentMode==='network'?0:prefs.character,mode:currentMode});if(!isCurrent())return;game.setMuted(prefs.muted);game.setQuality(prefs.quality);syncMusic();announce(currentMode==='network'?'联机战场载入中':mission?mission.name+' · 单机任务':'演武 · 开始',2200);$('#world').setAttribute('tabindex','-1');$('#world').focus();}
+  catch(e){if(isCurrent()){console.error(e);returnLobby();toast('战场加载失败，请刷新重试');}}
+  finally{matchLoading(false);}
 }
 function returnLobby(){if(networkLobby?.session){networkLobby.leave();return;}if(modal.open)modal.close();running=false;paused=false;ended=false;clearDialogue();clearCombatFeedback();game?.pause(false);game?.menu(prefs.map).then(()=>{if(!running)game.setWeapon(prefs.weapon);}).catch(error=>{console.error(error);toast('返回战场失败，请刷新重试');});syncMusic();$('#lobby').classList.remove('hidden');$('#game-hud').classList.add('hidden');document.body.classList.remove('playing');$$('.nav-link').forEach(el=>el.classList.toggle('active',el.dataset.panel==='home'));$('#start-game').focus();}
 function updateHUD(s){if(!running)return;
@@ -239,7 +239,7 @@ $('#difficulty-toggle').addEventListener('click',()=>{prefs.difficulty=prefs.dif
 $('#fullscreen').addEventListener('click',async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else if(document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();else toast('当前浏览器不支持全屏，可使用浏览器全屏模式');}catch{toast('当前浏览器暂不允许全屏');}});
 $('#pickup-hint').addEventListener('click',()=>{game?.action('pickup');$('#world').focus();});
 $$('[data-action]').filter(button=>button.id!=='pickup-hint').forEach(button=>{button.addEventListener('pointerdown',e=>{e.preventDefault();if(!running||paused)return;button.setPointerCapture(e.pointerId);game.action(button.dataset.action,true);});for(const type of ['pointerup','pointercancel','lostpointercapture'])button.addEventListener(type,e=>{e.preventDefault();game?.action(button.dataset.action,false);});});
-networkLobby=new NetworkLobby({getGame:()=>game,onStart:()=>startMatch('network'),onNotice:text=>toast(text),onStop:text=>{returnLobby();toast(text);}});
+networkLobby=new NetworkLobby({getGame:()=>game,onStart:isCurrent=>startMatch('network',undefined,isCurrent),onNotice:text=>toast(text),onStop:text=>{returnLobby();toast(text);}});
 updateSelection();
 try{
   const {MeteorGame}=await import('./engine.js');game=new MeteorGame($('#world'),{onUpdate:updateHUD,onEvent:handleEvent,onEnd:handleEnd});game.setKeyBindings(keyBindings);window.__game=game;await game.ready;game.setSwordStyle(prefs.swordStyle);game.setSpearStyle(prefs.spearStyle);game.setInfiniteRage(prefs.infiniteRage);game.setMuted(prefs.muted);game.setQuality(prefs.quality);game.setWeapon(prefs.weapon);await game.setCharacter?.(prefs.character);await game.menu(prefs.map);await applyCharacterAppearance(prefs.characterAppearance,false);

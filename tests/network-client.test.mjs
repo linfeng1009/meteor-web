@@ -105,3 +105,20 @@ test('real HTTP clients recover dropped guest and host responses and clear ackno
     assert.equal(f.rooms.rooms.get(f.client.code).players[1].input.length,0);
   }finally{await new Promise(resolve=>server.close(resolve));}
 });
+test('leaving before create completes releases the late room without callbacks or a polling timer',async()=>{
+  const rooms=new NetworkRooms();let finish,callbacks=0,leaves=0;
+  const created=rooms.create('迟到房主'),client=new NetworkClient({onRoom:()=>callbacks++});
+  client.api=async(path)=>{if(path.endsWith('/create'))return new Promise(resolve=>finish=resolve);leaves++;return rooms.request(created.room.code,created.token,'leave');};
+  const connecting=client.connect('create',{});await client.leave();finish(created);assert.equal(await connecting,null);
+  assert.equal(client.closed,true);assert.equal(callbacks,0);assert.equal(client.timer,undefined);assert.equal(leaves,1);assert.equal(rooms.rooms.size,0);
+});
+test('invalid protocol releases the newly created room instead of leaking membership',async()=>{
+  let leaves=0;const client=new NetworkClient();client.api=async path=>path.endsWith('/create')?{token:'test',playerId:'host',room:{code:'ABCDEF',round:0,protocol:1}}:(leaves++,{left:true});
+  await assert.rejects(client.connect('create',{}),/协议/);assert.equal(leaves,1);assert.equal(client.closed,true);assert.equal(client.timer,undefined);
+});
+test('normal HTTP connect starts polling and leave stops it and removes the room',async()=>{
+  const rooms=new NetworkRooms(),server=createNetworkServer({rooms}),client=new NetworkClient();await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+  const base=`http://127.0.0.1:${server.address().port}`;client.api=(path,data,auth)=>NetworkClient.prototype.api.call(client,base+path,data,auth);
+  try{await client.connect('create',{name:'正常连接'});assert.equal(client.room.phase,'waiting');assert.ok(client.timer);assert.equal(rooms.rooms.size,1);await client.leave();assert.equal(client.closed,true);assert.equal(rooms.rooms.size,0);}
+  finally{await client.leave().catch(()=>{});await new Promise(resolve=>server.close(resolve));}
+});

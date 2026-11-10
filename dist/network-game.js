@@ -28,17 +28,23 @@ export class NetworkReplicaMotion{
   }
 }
 export class NetworkGame{
-  static async create(game,client,room){
+  static async create(game,client,room,{isCurrent=()=>true}={}){
+    const valid=()=>isCurrent()&&!client.closed&&!game.disposed;
+    if(!valid())return null;
     game.pause(true);
     for(const f of game.enemies){game._disposeNameplate(f);f.character.dispose();f.root.removeFromParent();}
-    game.enemies=[];await game._equip(game.hero,'sword');game.setInfiniteRage(false);
+    game.enemies=[];await game._equip(game.hero,'sword');if(!valid())return null;game.setInfiniteRage(false);
     const self=room.players.find(p=>p.id===client.playerId),other=room.players.find(p=>p.id!==client.playerId);
     game.hero.name=self.name;game.hero.networkId=self.id;game.hero.team=game.hero.teamMask=client.host?1:2;
-    const peer=await game._createFighter(0,other.name);peer.networkId=other.id;peer.team=peer.teamMask=client.host?2:1;
-    peer.spawnIndex=client.host?1:0;game.scene.add(peer.root);game.enemies.push(peer);await game._equip(peer,'sword');
-    game._placeFighter(game.hero,game.currentMap.spawns[client.host?0:1]);game._placeFighter(peer,game.currentMap.spawns[client.host?1:0]);
-    game._disposeNameplate(peer);game._nameplate(peer);
-    return new NetworkGame(game,client,room);
+    const peer=await game._createFighter(0,other.name);let retained=false;
+    try{
+      if(!valid())return null;peer.networkId=other.id;peer.team=peer.teamMask=client.host?2:1;
+      peer.spawnIndex=client.host?1:0;game.scene.add(peer.root);game.enemies.push(peer);await game._equip(peer,'sword');
+      if(!valid())return null;
+      game._placeFighter(game.hero,game.currentMap.spawns[client.host?0:1]);game._placeFighter(peer,game.currentMap.spawns[client.host?1:0]);
+      game._disposeNameplate(peer);game._nameplate(peer);
+      const session=new NetworkGame(game,client,room);retained=true;return session;
+    }finally{if(!retained){game.enemies=game.enemies.filter(actor=>actor!==peer);game._disposeNameplate(peer);peer.disposed=true;peer.character.dispose();peer.root.removeFromParent();}}
   }
   constructor(game,client,room){
     Object.assign(this,{game,client,room,active:false,sequence:0,lastFrame:0,actors:new Map([[game.hero.networkId,game.hero],[game.enemies[0].networkId,game.enemies[0]]])});

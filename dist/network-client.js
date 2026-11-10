@@ -7,7 +7,16 @@ export class NetworkClient{
   setRoom(room){if(room.protocol!==2||!Number.isSafeInteger(room.round))throw Error('联机协议已更新，请重启服务并刷新双方页面。');if(this.room?.code===room.code&&room.round<this.room.round)return;if(this.room?.round!==room.round)this.resetInput();this.room=room;this.onRoom(room);}
   fail(message){if(this.closed)return;this.closed=true;clearInterval(this.timer);this.resetInput();this.onError(message);}
   async api(path,data={},auth=false){const response=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json',...(auth?{Authorization:'Bearer '+this.token}:{})},body:JSON.stringify(data),signal:AbortSignal.timeout(6000)});if(!response.headers.get('Content-Type')?.includes('application/json'))throw Error('当前服务未启用联机，请重启开发服务后刷新。');const result=await response.json();if(!response.ok)throw Error(result.error||'联机请求失败');return result;}
-  async connect(kind,data){const result=await this.api('/api/rooms/'+kind,data);if(result.room.protocol!==2)throw Error('联机协议已更新，请重启服务并刷新双方页面。');Object.assign(this,{token:result.token,playerId:result.playerId,code:result.room.code});this.setRoom(result.room);this.timer=setInterval(()=>this.sync(),70);return result;}
+  async connect(kind,data){
+    const result=await this.api('/api/rooms/'+kind,data);
+    Object.assign(this,{token:result.token,playerId:result.playerId,code:result.room.code});
+    // A room may be created after the user has already left the connecting UI.
+    // Release that server identity without callbacks or a resurrected timer.
+    if(this.closed){try{await this.command('leave');}catch{}return null;}
+    try{this.setRoom(result.room);}catch(error){await this.leave().catch(()=>{});throw error;}
+    if(this.closed)return null;
+    this.timer=setInterval(()=>this.sync(),70);return result;
+  }
   get host(){return this.room?.hostId===this.playerId;}
   async command(action,data={}){const result=await this.api(`/api/rooms/${this.code}/${action}`,data,true);if(!this.closed&&result.room)this.setRoom(result.room);return result;}
   send(action,active=true){

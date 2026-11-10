@@ -559,7 +559,8 @@ export class MeteorGame {
   }
   requestMouseLock() { return this.mouseLook?.request(); }
   setKeyBindings(bindings) { this.keyboard?.setBindings(bindings);this.mouseLook?.setBindings(bindings); }
-  pause(value = true) { if(value)this.mouseLook?.release(); this.keyboard?.reset(); if(this.paused !== !!value)this._resetWorldClock(); this.paused = !!value; this.projectiles?.pause(this.paused); this.muskets?.pause(this.paused); this.wheels?.pause(this.paused); this.keys.clear(); this.traversalTap=null; this.pointer = null; this.directionBuffer = []; this.recoveryAttack = null; if (this.hero) this.hero.guard = false; if (this.master) this.master.gain.value = this.paused || this.muted ? 0 : .25; this._hud(); }
+  releaseInput({releaseMouse=true}={}) { this.keyboard?.reset(); if(releaseMouse)this.mouseLook?.release(); this.keys.clear(); clearPlayerCommands(this.localControl||this); this.pointer=null; if(this.hero)this.hero.guard=false; }
+  pause(value = true) { this.releaseInput({releaseMouse:!!value}); if(this.paused !== !!value)this._resetWorldClock(); this.paused = !!value; this.projectiles?.pause(this.paused); this.muskets?.pause(this.paused); this.wheels?.pause(this.paused); if (this.master) this.master.gain.value = this.paused || this.muted ? 0 : .25; this._hud(); }
   async setCharacter(id = 0) {
     const request = ++this.characterRequest; await this.ready; id = Number(id); if (id === this.characterId || request !== this.characterRequest) return;
     const actor = await this._createFighter(id, NATIVE_CHARACTERS.find(c => c.id === id)?.name, true); if (this.disposed || request !== this.characterRequest) { actor.disposed = true; actor.character.dispose(); return; }
@@ -1106,7 +1107,7 @@ export class MeteorGame {
     this._listeners.push(() => this.keyboard.dispose());
     this.mouseLook = createMouseLook(this.canvas, { active: () => this.running && !this.paused && !document.querySelector('dialog[open]'), move: (dx, dy) => turnMouseCamera(this, dx, dy), action: (name, down) => this.action(name, down), onUnlock: () => this.onEvent({ type: 'pointer-unlock' }), onError: () => this.onEvent({ type: 'pointer-error', text: '鼠标锁定未成功，请点击游戏画面重试；也可继续使用键盘操作。' }) });
     this._listeners.push(() => this.mouseLook.dispose());
-    bind(window, 'blur', () => { this.mouseLook.release(); this.keys.clear(); this.traversalTap=null; this.directionBuffer = []; this.recoveryAttack = null; this.pointer = null; if (this.hero) this.hero.guard = false; });
+    bind(window, 'blur', () => this.releaseInput());
     bind(this.canvas, 'contextmenu', e => e.preventDefault());
     bind(this.canvas, 'pointerdown', e => { this._unlockAudio(); if(this.mouseLook.pointerDown(e))return; this.pointer = { x: e.clientX, y: e.clientY, startX: e.clientX, startY: e.clientY, button: e.button, moved: false }; this.canvas.setPointerCapture?.(e.pointerId); if (e.button === 2) this.action('jump'); });
     bind(this.canvas, 'pointermove', e => { if(this.mouseLook.locked || this.locked&&!this.locked.dead&&!this.locked.disposed)return; const p = this.pointer; if (!p) return; if (Math.hypot(e.clientX - p.startX, e.clientY - p.startY) > 5) p.moved = true; if (p.moved && this.running && !this.paused) { this.cameraManualUntil = this.elapsed + 2; this.cameraAngle -= (e.clientX - p.x) * .005; this.cameraPitch = clamp(this.cameraPitch + (e.clientY - p.y) * .003, .15, .95); } p.x = e.clientX; p.y = e.clientY; });

@@ -151,6 +151,48 @@ test('reliable transport applies the real remote sword attack once despite lost 
   }finally{session.dispose();}
 });
 
+test('guest lock toggles only on key down; focus loss clears input and menus reject new actions without stopping the world',async()=>{
+  const {game,hero,target}=await fixture();hero.networkId='guest';target.networkId='host';const sent=[];
+  const client={host:false,playerId:'guest',send:(action,active)=>sent.push({action,active})},room={players:[{id:'host'},{id:'guest'}]};
+  const session=new NetworkGame(game,client,room);session.play();game.locked=null;sent.length=0;
+  try{
+    game.action('lock',true);assert.equal(game.locked,target);game.action('lock',false);assert.equal(game.locked,target,'key release must not undo the local lock');
+    game.action('lock',true);game.action('lock',false);assert.equal(game.locked,null);
+    game.action('forward');game.directionBuffer=[{direction:'up'}];game.recoveryAttack={actor:hero};game.traversalTap={direction:'forward'};hero.guard=true;
+    game.releaseInput();assert.equal(sent.at(-1).action,'clear');assert.equal(game.keys.size,0);assert.equal(game.directionBuffer.length,0);assert.equal(game.recoveryAttack,null);assert.equal(game.traversalTap,null);assert.equal(hero.guard,false);
+    const count=sent.length;for(const action of ['attack','jump','forward','guard','lock'])game.action(action,true);assert.equal(sent.length,count);assert.equal(game.locked,null);
+    game.pause(true);assert.equal(game.paused,false,'menu must not freeze network world');game.pause(false);const resumed=sent.length;
+    game.action('forward');assert.equal(sent.length,resumed+1);assert.equal(sent.at(-1).action,'forward');
+  }finally{session.dispose();}
+});
+
+test('host input suspension releases held defense and movement while remote input remains active',async()=>{
+  const {game,hero,target}=await fixture();bindLocalPlayerControl(game);target.networkId='guest';hero.networkId='host';target.root.position.z=10;
+  const session=new NetworkGame(game,{host:true,playerId:'host',send(){}},{players:[{id:'host'},{id:'guest'}]});session.play();
+  try{
+    game.action('guard');game.action('right');session.inputs([{playerId:'guest',action:'forward',active:true,angle:Math.PI}]);
+    game.pause(true);assert.equal(hero.guard,false);assert.equal(game.keys.size,0);assert.ok(session.remote.keys.has('forward'));
+    const serial=hero.combat.serial;game.action('attack');game.action('guard');game.action('right');assert.equal(hero.combat.serial,serial);assert.equal(hero.guard,false);assert.equal(game.keys.size,0);
+    const z=target.root.position.z;for(let i=0;i<20;i++)tick(game);assert.ok(target.root.position.z>z+.5,'remote keeps moving while host menu is open');
+    game.pause(false);game.action('guard');assert.equal(hero.guard,true);
+  }finally{session.dispose();}
+});
+
+test('reliable focus-release clear reaches the host after a lost response and removes held controls',async()=>{
+  const {game,hero,target}=await fixture(),rooms=new NetworkRooms(),a=rooms.create('房主'),b=rooms.join(a.room.code,'客人');
+  const request=(player,op,data={})=>rooms.request(a.room.code,player.token,op,{round:1,...data});
+  request(a,'ready',{ready:true});request(b,'ready',{ready:true});request(a,'start');request(a,'loaded');request(b,'loaded');
+  hero.networkId=a.playerId;target.networkId=b.playerId;let session;const host=new NetworkClient({onInput:batch=>session.inputs(batch)}),guest=new NetworkClient();
+  for(const [client,player] of [[host,a],[guest,b]]){Object.assign(client,{room:request(player,'sync').room,code:a.room.code,playerId:player.playerId});client.api=async(path,data)=>request(player,'sync',data);}
+  session=new NetworkGame(game,host,host.room);session.play();
+  try{
+    guest.send('forward');guest.send('guard');await guest.sync();await host.sync();assert.ok(session.remote.keys.has('forward'));assert.ok(session.remote.keys.has('guard'));
+    const api=guest.api;let dropped=false;guest.api=async(path,data)=>{const result=await api(path,data);if(!dropped){dropped=true;throw Error('释放响应丢失');}return result;};
+    guest.send('clear',false);await guest.sync();await guest.sync();await host.sync();assert.equal(session.remote.keys.size,0);assert.equal(target.guard,false);assert.equal(guest.held.size,0);
+    await host.sync();assert.equal(session.remote.keys.size,0,'acknowledgement retry must not restore old held controls');
+  }finally{session.dispose();}
+});
+
 test('two players keep movement, keys and camera independent without swapping game references',async()=>{
   const {game,hero,target}=await fixture();bindLocalPlayerControl(game);target.networkId='guest';hero.networkId='host';target.root.position.z=10;
   const session=new NetworkGame(game,{host:true,playerId:'host',send(){}},{players:[{id:'host'},{id:'guest'}]});session.play();

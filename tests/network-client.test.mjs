@@ -122,3 +122,19 @@ test('normal HTTP connect starts polling and leave stops it and removes the room
   try{await client.connect('create',{name:'正常连接'});assert.equal(client.room.phase,'waiting');assert.ok(client.timer);assert.equal(rooms.rooms.size,1);await client.leave();assert.equal(client.closed,true);assert.equal(rooms.rooms.size,0);}
   finally{await client.leave().catch(()=>{});await new Promise(resolve=>server.close(resolve));}
 });
+test('late ready and loaded command responses cannot roll back newer same-round room state',async()=>{
+  const f=fixture(),client=f.client,base=client.room;let finish,updates=0;client.onRoom=()=>updates++;
+  client.room={...base,phase:'loading',revision:10};client.api=()=>new Promise(resolve=>finish=resolve);
+  const command=client.command('loaded');client.setRoom({...base,phase:'playing',revision:11});
+  finish({room:{...base,phase:'loading',revision:10}});await command;
+  assert.equal(client.room.phase,'playing');assert.equal(client.room.revision,11);assert.equal(updates,1);
+  client.setRoom({...base,phase:'waiting',revision:12});assert.equal(client.room.phase,'waiting','newer waiting state after a peer leaves is valid');
+  assert.equal(client.setRoom({...base,phase:'playing',revision:11}),false);assert.equal(client.room.phase,'waiting');
+});
+test('stale polling responses cannot revive peer state or apply old combat input after leaving',async()=>{
+  const f=fixture();let finish,inputs=0,frames=0;const host=hostClient(f,()=>inputs++);host.onFrame=()=>frames++;
+  const base=host.room;host.api=()=>new Promise(resolve=>finish=resolve);const syncing=host.sync();
+  host.setRoom({...base,phase:'waiting',revision:base.revision+1,players:[base.players[0]]});
+  finish({room:base,input:[{action:'attack',sequence:1,playerId:f.guest.playerId}],frame:{sequence:1}});await syncing;
+  assert.equal(host.room.phase,'waiting');assert.equal(host.room.players.length,1);assert.equal(inputs,0);assert.equal(frames,0);assert.equal(host.closed,false);
+});

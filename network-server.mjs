@@ -9,18 +9,18 @@ const finite=n=>typeof n==='number'&&Number.isFinite(n);
 const fail=(message,status=400)=>{throw Object.assign(Error(message),{status});};
 export class NetworkRooms{
   constructor({now=()=>Date.now()}={}){this.rooms=new Map();this.now=now;}
-  public(room){return {code:room.code,round:room.round||0,protocol:2,phase:room.phase,hostId:room.hostId,map:'sifang',mode:'duel',players:room.players.map(p=>({id:p.id,name:p.name,ready:p.ready,loaded:p.loaded}))};}
-  sweep(){for(const [code,r] of this.rooms){if(this.now()-r.players[0].seen>20000)this.rooms.delete(code);else if(r.players.length===2&&this.now()-r.players[1].seen>20000){r.players.pop();r.phase='waiting';r.frame=null;r.players[0].ready=false;r.players[0].loaded=false;}}}
+  public(room){return {code:room.code,revision:room.revision||0,round:room.round||0,protocol:2,phase:room.phase,hostId:room.hostId,map:'sifang',mode:'duel',players:room.players.map(p=>({id:p.id,name:p.name,ready:p.ready,loaded:p.loaded}))};}
+  sweep(){for(const [code,r] of this.rooms){if(this.now()-r.players[0].seen>20000)this.rooms.delete(code);else if(r.players.length===2&&this.now()-r.players[1].seen>20000){r.players.pop();r.phase='waiting';r.frame=null;r.players[0].ready=false;r.players[0].loaded=false;r.revision=(r.revision||0)+1;}}}
   player(name){return {id:token().slice(0,12),token:token(),name:String(name||'江湖来客').trim().slice(0,16)||'江湖来客',seen:this.now(),ready:false,loaded:false,input:[],lastSequence:0,deliveredSequence:0,ackSequence:0};}
   create(name){this.sweep();if(this.rooms.size>=32)fail('房间数量已达上限');const p=this.player(name);let code;do{code=randomBytes(3).toString('hex').toUpperCase();}while(this.rooms.has(code));const r={code,hostId:p.id,phase:'waiting',players:[p],frame:null,frameSequence:0};this.rooms.set(code,r);return {room:this.public(r),playerId:p.id,token:p.token};}
-  join(code,name){this.sweep();const r=this.rooms.get(code);if(!r)fail('房间不存在或房主已离开',404);if(r.phase!=='waiting'||r.players.length>=2)fail('房间已满或已经开局',409);const p=this.player(name);r.players.push(p);r.players[0].ready=false;return {room:this.public(r),playerId:p.id,token:p.token};}
+  join(code,name){this.sweep();const r=this.rooms.get(code);if(!r)fail('房间不存在或房主已离开',404);if(r.phase!=='waiting'||r.players.length>=2)fail('房间已满或已经开局',409);const p=this.player(name);r.players.push(p);r.players[0].ready=false;r.revision=(r.revision||0)+1;return {room:this.public(r),playerId:p.id,token:p.token};}
   request(code,credential,operation,data={}){
     this.sweep();const r=this.rooms.get(code);if(!r)fail('房间已关闭',404);const p=r.players.find(p=>p.token===credential);if(!p)fail('房间身份无效',403);p.seen=this.now();
     const host=p.id===r.hostId;
     if(operation==='ready'){if(r.phase!=='waiting')fail('对战已开始');p.ready=data.ready===true;}
     else if(operation==='start'){if(!host)fail('只有房主可以开局',403);if(r.players.length!==2||!r.players.every(p=>p.ready))fail('需要两名玩家均准备');r.round=(r.round||0)+1;r.phase='loading';r.frame=null;r.frameSequence=0;for(const x of r.players){x.loaded=false;x.input=[];x.lastSequence=0;x.deliveredSequence=0;x.ackSequence=0;}}
     else if(operation==='loaded'){if(r.phase!=='loading')fail('当前不在载入阶段');p.loaded=true;if(r.players.every(p=>p.loaded))r.phase='playing';}
-    else if(operation==='leave'){if(host)this.rooms.delete(code);else{r.players=r.players.filter(x=>x!==p);r.phase='waiting';r.frame=null;r.players[0].ready=false;r.players[0].loaded=false;}return {left:true};}
+    else if(operation==='leave'){if(host)this.rooms.delete(code);else{r.players=r.players.filter(x=>x!==p);r.phase='waiting';r.frame=null;r.players[0].ready=false;r.players[0].loaded=false;r.revision=(r.revision||0)+1;}return {left:true};}
     else if(operation==='sync'){
       if((data.input!==undefined||data.frame!==undefined||data.inputAck!==undefined)&&data.round!==(r.round||0))fail('对局已变化，请重新进入房间',409);
       if(r.phase!=='playing')return {room:this.public(r),input:[],acceptedSequence:p.lastSequence,frame:null};
@@ -51,6 +51,7 @@ export class NetworkRooms{
       if(additions.length){p.input.push(...additions);p.lastSequence=additions.at(-1).sequence;}
       for(const [peer,sequence] of acknowledgements){peer.ackSequence=Math.max(peer.ackSequence,sequence);peer.input=peer.input.filter(x=>x.sequence>peer.ackSequence);}
     }else fail('未知房间操作',404);
+    if(operation!=='sync')r.revision=(r.revision||0)+1;
     const input=host&&operation==='sync'&&r.phase==='playing'?r.players.filter(x=>x!==p).flatMap(x=>{
       const q=x.input.map(input=>({...input,held:input.held?[...input.held]:undefined}));
       if(q.length)x.deliveredSequence=Math.max(x.deliveredSequence,q.at(-1).sequence);

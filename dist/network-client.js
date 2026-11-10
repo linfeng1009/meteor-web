@@ -4,7 +4,11 @@ export class NetworkClient{
     Object.assign(this,{onRoom,onInput,onFrame,onError,getFrame,getAngle});this.resetInput();this.failures=0;this.closed=false;
   }
   resetInput(){this.queue=[];this.held=new Set();this.pendingInput=null;this.sequence=0;this.processed=new Map();}
-  setRoom(room){if(room.protocol!==2||!Number.isSafeInteger(room.round))throw Error('联机协议已更新，请重启服务并刷新双方页面。');if(this.room?.code===room.code&&room.round<this.room.round)return;if(this.room?.round!==room.round)this.resetInput();this.room=room;this.onRoom(room);}
+  setRoom(room){
+    if(room.protocol!==2||!Number.isSafeInteger(room.round)||!Number.isSafeInteger(room.revision??0)||(room.revision??0)<0)throw Error('联机协议已更新，请重启服务并刷新双方页面。');
+    if(this.room?.code===room.code&&(room.round<this.room.round||room.round===this.room.round&&(room.revision??0)<(this.room.revision??0)))return false;
+    if(this.room?.round!==room.round)this.resetInput();this.room=room;this.onRoom(room);return true;
+  }
   fail(message){if(this.closed)return;this.closed=true;clearInterval(this.timer);this.resetInput();this.onError(message);}
   async api(path,data={},auth=false){const response=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json',...(auth?{Authorization:'Bearer '+this.token}:{})},body:JSON.stringify(data),signal:AbortSignal.timeout(6000)});if(!response.headers.get('Content-Type')?.includes('application/json'))throw Error('当前服务未启用联机，请重启开发服务后刷新。');const result=await response.json();if(!response.ok)throw Error(result.error||'联机请求失败');return result;}
   async connect(kind,data){
@@ -44,7 +48,7 @@ export class NetworkClient{
       catch(error){if(!this.closed&&this.code===code&&this.room.round===round&&++this.failures>=3)this.fail(error.message);return;}
       // Discard responses belonging to a room or round which is no longer active.
       if(this.closed||this.code!==code||this.room.round!==round)return;
-      this.failures=0;this.setRoom(result.room);
+      this.failures=0;if(!this.setRoom(result.room))return;
       if(this.closed||result.room.phase!=='playing'||result.room.round!==round)return;
       if(!host&&playing){
         const last=this.pendingInput?.at(-1)?.sequence||0;

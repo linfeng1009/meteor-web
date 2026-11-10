@@ -138,3 +138,10 @@ test('stale polling responses cannot revive peer state or apply old combat input
   finish({room:base,input:[{action:'attack',sequence:1,playerId:f.guest.playerId}],frame:{sequence:1}});await syncing;
   assert.equal(host.room.phase,'waiting');assert.equal(host.room.players.length,1);assert.equal(inputs,0);assert.equal(frames,0);assert.equal(host.closed,false);
 });
+test('input retries preserve capture timestamps rather than the later resend clock',async()=>{
+  const f=fixture(),api=f.client.api;let time=100,drop=true;f.client.now=()=>time;
+  f.client.api=async(path,data)=>{const result=await api(path,data);if(drop){drop=false;throw Error('响应丢失');}return result;};
+  f.client.send('forward');time=100.03;f.client.send('forward',false);time=100.12;f.client.send('forward');
+  await f.client.sync();time=105;await f.client.sync();
+  const batch=f.request(f.host,'sync').input;assert.deepEqual(batch.map(x=>x.time),[100,100.03,100.12,100.12]);
+});

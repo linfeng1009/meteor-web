@@ -69,6 +69,9 @@ export class NetworkGame{
   play(){this.active=true;this.inputSuspended=false;this.original.pause.call(this.game,false);}
   inputs(batch){if(!this.client.host||!this.active)return;const actor=this.peer,control=this.remote;
     for(const input of batch){if(input.playerId!==actor.networkId)continue;
+      // Client clock is used only for command intervals. World time, movement,
+      // recovery expiration and damage continue on the host's fixed ticks.
+      control.inputTime=Number.isFinite(input.time)?input.time:this.game.elapsed;
       if(input.action==='clear'){control.keys.clear();clearPlayerCommands(control);actor.guard=false;continue;}
       control.cameraAngle=input.angle;
       if(input.action==='look'){const held=new Set(input.held||[]);for(const key of continuous){if(control.keys.has(key)&&!held.has(key))this.game._actionFighter(actor,control,key,false);else if(!control.keys.has(key)&&held.has(key))this.game._actionFighter(actor,control,key,true);}continue;}

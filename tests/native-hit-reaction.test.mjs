@@ -206,6 +206,23 @@ test('standing double tap preserves the sword down-up-up attack and works throug
   }finally{session.dispose();}
 });
 
+test('one delivered batch preserves rapid remote dash/roll/command timing without advancing host time',async()=>{
+  const {game,hero,target}=await fixture();hero.networkId='host';target.networkId='guest';await game._equip(target,'sword');
+  const session=new NetworkGame(game,{host:true,playerId:'host',send(){}},{players:[{id:'host'},{id:'guest'}]});session.play();
+  const send=(action,active,time)=>({playerId:'guest',action,active,time,angle:Math.PI});
+  try{
+    const elapsed=game.elapsed,position=target.root.position.clone();
+    session.inputs([send('forward',true,100),send('forward',false,100.03),send('forward',true,100.12)]);
+    assert.equal(target.combat.timeline.pose.id,165);assert.equal(game.elapsed,elapsed);assert.deepEqual(target.root.position.toArray(),position.toArray(),'recognizing input must not simulate client elapsed movement');
+    target.combat.play(6,{force:true});session.inputs([send('clear',false,101),send('crouch',true,101.01),send('right',true,101.02),send('right',false,101.03),send('right',true,101.15)]);
+    assert.equal(target.combat.timeline.pose.id,177);
+    target.combat.play(6,{force:true});session.inputs([send('clear',false,102),send('back',true,102.01),send('back',false,102.02),send('forward',true,102.08),send('forward',false,102.09),send('forward',true,102.16),send('forward',false,102.17),send('attack',true,102.2)]);
+    assert.equal(target.combat.currentMove.poseId,277);assert.equal(game.elapsed,elapsed);assert.equal(hero.combat.busy,false);
+    target.combat.react(90);session.inputs([send('attack',true,103)]);assert.equal(session.remote.recoveryAttack.time,103);assert.ok(session.remote.recoveryAttack.expires<=elapsed+.301,'recovery expiration must use the host clock');
+    game.elapsed+=.4;game._updateFighter(target,1/60);assert.equal(session.remote.recoveryAttack,null,'expired recovery cannot wait for the unrelated client clock');
+  }finally{session.dispose();}
+});
+
 test('two players keep movement, keys and camera independent without swapping game references',async()=>{
   const {game,hero,target}=await fixture();bindLocalPlayerControl(game);target.networkId='guest';hero.networkId='host';target.root.position.z=10;
   const session=new NetworkGame(game,{host:true,playerId:'host',send(){}},{players:[{id:'host'},{id:'guest'}]});session.play();

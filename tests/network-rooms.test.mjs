@@ -72,3 +72,12 @@ test('guest timeout publishes a newer waiting-state revision while host remains 
   now=10000;rooms.request(host.room.code,host.token,'sync');now=20001;
   const state=rooms.request(host.room.code,host.token,'sync').room;assert.ok(state.revision>guest.room.revision);assert.equal(state.players.length,1);
 });
+test('operation timestamps preserve short intervals, reject invalid/backward batches atomically and tolerate retries',()=>{
+  const {a,b,call,rooms}=playing(),input=(sequence,time)=>({action:'forward',active:true,angle:0,sequence,time});
+  for(const time of [NaN,Infinity,-1,1e9+1])assert.throws(()=>call(b,'sync',{input:[input(1,time)]}),/时间/);
+  assert.throws(()=>call(b,'sync',{input:[input(1,10),input(2,9)]}),/时间/);
+  assert.equal(rooms.rooms.get(a.room.code).players[1].lastSequence,0);assert.equal(call(a,'sync').input.length,0);
+  const batch=[input(1,10),{...input(2,10.03),active:false},input(3,10.12)];call(b,'sync',{input:batch});call(b,'sync',{input:batch});
+  assert.deepEqual(call(a,'sync').input.map(x=>x.time),[10,10.03,10.12]);
+  assert.throws(()=>call(b,'sync',{input:[input(4,10.1)]}),/时间/);assert.equal(rooms.rooms.get(a.room.code).players[1].lastSequence,3);
+});

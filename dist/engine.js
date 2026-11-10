@@ -646,6 +646,7 @@ export class MeteorGame {
   }
   _actionFighter(actor, control, name, active = true) {
     if(!actor || !control)return;
+    const inputTime=control.inputTime??this.elapsed;
     if (name === 'guard') {
       const held = active && this.running && !this.paused && !actor.dead;
       if (held) control.keys.add('guard'); else control.keys.delete('guard');
@@ -657,9 +658,9 @@ export class MeteorGame {
     if (['forward','back','left','right'].includes(name)) {
       if(active&&this.running&&!this.paused&&!actor.dead){
         if(!control.keys.has(name)){
-          const crouched=control.keys.has('crouch'),tap=traversalTap(control.traversalTap,{direction:name,time:this.elapsed,crouched,weapon:actor.weapon,allowed:actor.grounded&&!actor.combat.busy&&!actor.guard});control.traversalTap=tap.tap;
+          const crouched=control.keys.has('crouch'),tap=traversalTap(control.traversalTap,{direction:name,time:inputTime,crouched,weapon:actor.weapon,allowed:actor.grounded&&!actor.combat.busy&&!actor.guard});control.traversalTap=tap.tap;
           const moved=tap.poseId&&(crouched?this._beginRoll(name,tap.poseId,actor,control):this._beginDash(name,tap.poseId,actor,control));
-          if(!moved||!crouched)control.directionBuffer=recordNativeDirection(control.directionBuffer||[],{forward:'up',back:'down',left:'left',right:'right'}[name],this.elapsed,!actor.grounded);
+          if(!moved||!crouched)control.directionBuffer=recordNativeDirection(control.directionBuffer||[],{forward:'up',back:'down',left:'left',right:'right'}[name],inputTime,!actor.grounded);
         }
         control.keys.add(name);
       }else control.keys.delete(name);
@@ -669,7 +670,7 @@ export class MeteorGame {
     if(actor===this.hero)this._unlockAudio();
     if (name === 'attack') {
       if (actor.combat.reacting) control.recoveryAttack = { actor, weaponId: actor.weaponId,
-        expires: this.elapsed + NATIVE_RECOVERY_INPUT_WINDOW, time: this.elapsed, air: !actor.grounded,
+        expires: this.elapsed + NATIVE_RECOVERY_INPUT_WINDOW, time: inputTime, air: !actor.grounded,
         buffer: [...control.directionBuffer], held: [...control.keys] };
       else { control.recoveryAttack = null; this._beginAttack(actor); }
     }
@@ -701,7 +702,7 @@ export class MeteorGame {
     const target = control ? control.locked : f.scriptControl?.attackTarget || this.hero;
     const move = control ? selectNativeMove(NATIVE_MOVE_CATALOG, { weapon: f.weapon, weaponMode: f.combat.weaponMode, includeOtherModes: true, air: !f.grounded, buffer: savedInput?.buffer ?? control.directionBuffer,
       held: (savedInput?.held ?? [...control.keys]).map(key => ({ forward: 'up', back: 'down', left: 'left', right: 'right' }[key])).filter(Boolean),
-      time: savedInput?.time ?? this.elapsed, poseId: f.combat.timeline?.pose.id, movePoseId: f.combat.currentMove?.poseId, busy: f.combat.busy }) : savedInput?.npcMove ?? null;
+      time: savedInput?.time ?? control?.inputTime ?? this.elapsed, poseId: f.combat.timeline?.pose.id, movePoseId: f.combat.currentMove?.poseId, busy: f.combat.busy }) : savedInput?.npcMove ?? null;
     if (f.hero && this.infiniteRage) f.rage = 100;
     if (move?.weaponMode && move.weaponMode !== f.combat.weaponMode) {
       if (f.hero) this._emit(`${move.name}需要${QIANKUN_MODE_NAMES[move.weaponMode]} · 先用${move.weaponMode === 'sheath' ? '↓↓A' : move.weaponMode === 'spear' ? '←A' : '→A'}切换形态并完成收招`, 'info');

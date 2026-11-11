@@ -123,7 +123,8 @@ export class MeteorGame {
     for (const attack of state.attacks) {
       const key = `release:${state.serial}:${attack.index}`; if (f.attackHits.has(key)) continue; f.attackHits.add(key);
       const origin = f.character.getAttachment('d_wpnR').getWorldPosition(v3());
-      const target = f.hero ? this.locked || this._nearest(8) : f.scriptControl?.attackTarget || this.hero;
+      const control=this._controlFor(f);
+      const target = control ? control.locked || this._nearest(8,f) : f.scriptControl?.attackTarget || this.hero;
       const direction = target && !target.dead ? target.root.position.clone().add(v3(0, 1.35, 0)).sub(origin).normalize() : v3(Math.sin(f.root.rotation.y), 0, Math.cos(f.root.rotation.y));
       const visual = f.weaponModel.clone(true); visual.rotation.set(0, 0, 0); visual.position.set(0, 0, 0); visual.scale.setScalar(SCALE);
       // A hand attachment is native Z-up and had an inverse-X rotation; a free
@@ -164,7 +165,8 @@ export class MeteorGame {
     for (const attack of state.attacks) {
       const key = `release:${state.serial}:${attack.index}`; if (f.attackHits.has(key) || this.wheels?.hasOwner(f)) continue;
       const origin = f.character.getAttachment('d_wpnR').getWorldPosition(v3());
-      const target = f.hero ? this.locked || this._nearest(24) : f.scriptControl?.attackTarget;
+      const control=this._controlFor(f);
+      const target = control ? control.locked || this._nearest(24,f) : f.scriptControl?.attackTarget;
       const direction = target && !target.dead ? target.root.position.clone().add(v3(0, 1.35, 0)).sub(origin).normalize() : v3(Math.sin(f.root.rotation.y), 0, Math.cos(f.root.rotation.y));
       const visual = f.weaponModel.clone(true); visual.visible = true; visual.rotation.set(0,0,0); visual.position.set(0,0,0); visual.scale.setScalar(SCALE);
       visual.position.sub(new THREE.Box3().setFromObject(visual).getCenter(v3()));
@@ -556,7 +558,7 @@ export class MeteorGame {
       this.onEvent({ type: 'environment-death', text: f.hero ? '坠入险地' : `${f.name}坠入险地`, actorId: f.scriptId ?? f.id, objectName: hazard.name, provenance: hazard.provenance });
       return;
     }
-    if (p.y < this.currentMap.bounds.min.y - 20 || Math.abs(p.x) > 3000 || Math.abs(p.z) > 3000) { if (this.mode === 'story') { f.hp = 0; this._kill(f); } else this._placeFighter(f, this.currentMap.spawns[f.hero ? 0 : (f.spawnIndex || 1) % this.currentMap.spawns.length]); }
+    if (p.y < this.currentMap.bounds.min.y - 20 || Math.abs(p.x) > 3000 || Math.abs(p.z) > 3000) { if (this.mode === 'story'||this.networkCombat) { f.hp = 0; this._kill(f,{awardKill:false}); } else this._placeFighter(f, this.currentMap.spawns[f.hero ? 0 : (f.spawnIndex || 1) % this.currentMap.spawns.length]); }
   }
   _moveDirection(control = this) {
     const x = Number(control.keys.has('right')) - Number(control.keys.has('left')), z = Number(control.keys.has('forward')) - Number(control.keys.has('back')), a = control.cameraAngle;
@@ -907,7 +909,7 @@ export class MeteorGame {
     updateNativeScriptItems(f, dt, result => this.onEvent?.({ type: 'item-tick', actorId: f.scriptId ?? f.id, ...result }), { time: this.elapsed });
     // 004affd0 handles periodic-stat death without an attacker/kill award.
     if (!f.dead && f.hp <= 0) this._kill(f, { awardKill: false });
-    if (f.dead) { const state = f.combat.update(dt); if (state) f.character.setPoseFrame(state.source, state.frame); f.respawn -= dt; if (f.respawn <= 0) this._placeFighter(f, this.currentMap.spawns[f.hero ? 0 : f.spawnIndex % this.currentMap.spawns.length]); return; }
+    if (f.dead) { const state = f.combat.update(dt); if (state) f.character.setPoseFrame(state.source, state.frame); f.respawn -= dt; if (f.respawn <= 0) this._placeFighter(f, this.currentMap.spawns[(f.spawnIndex||0)%this.currentMap.spawns.length]); return; }
     const npcDue = !control && f.npcCombat?.advance(dt, f.scriptConfig, {
       hasTarget: !!(f.scriptControl?.attackTarget || f.awarenessTarget), paused: !!f.scriptControl?.paused });
     // Only the two contacting actors pause; mission time, projectiles and
@@ -1059,7 +1061,7 @@ export class MeteorGame {
   }
   _resolveContacts(attacker, state) {
     if (!this.running) return;
-    const targets = attacker.playerControl ? [this.hero,...this.enemies].filter(f=>f!==attacker&&f.team!==attacker.team) : attacker.hero ? this.enemies : this.mode === 'story' ? [this.hero, ...this.enemies].filter(f => f !== attacker && f.team !== attacker.team) : [this.hero];
+    const targets = attacker.playerControl ? [this.hero,...this.enemies].filter(f=>f!==attacker&&f.team!==attacker.team) : attacker.hero ? this.enemies.filter(f=>!this.networkCombat||f.team!==attacker.team) : this.mode === 'story' ? [this.hero, ...this.enemies].filter(f => f !== attacker && f.team !== attacker.team) : [this.hero];
     for (const attack of state.attacks) this._resolveSceneContacts(attacker, state, attack);
     for (const attack of state.attacks) {
       const points = [];
@@ -1084,7 +1086,7 @@ export class MeteorGame {
     }
   }
   _applyNativeHit(attacker, target, state, attack, contact, extra = {}) {
-    if (!this.running || target.dead || target.disposed || target.scriptRemoved) return false;
+    if (!this.running || target.dead || target.disposed || target.scriptRemoved || this.networkCombat&&target.team===attacker.team) return false;
     target.contacts = (target.contacts || 0) + 1; if (attacker.hero) this.contactHits++;
     const raw = { targetValue: attack.targetvalue, targetMove: attack.targetmove, defenseValue: attack.defensevalue, defenseMove: attack.defensemove, attackType: attack.attacktype, targetPose: attack.targetpose, moveRecord: this.combatData.moveRecords.get(state.poseId), weaponRecord: attacker.weaponRecord || this.combatData.weaponRecords.get(NATIVE_WEAPONS[attacker.weapon]?.model) };
     // Original POS parser rule 0x30 stores AttackType at record+0x30;
@@ -1113,7 +1115,7 @@ export class MeteorGame {
         this.onEvent?.({ type: 'attack-item', actorId: target.scriptId ?? target.id, attackerId: attacker.scriptId ?? attacker.id,
           poseId: state.poseId, itemId: attackItem.id, name: attackItem.name, refreshed: attackItem.refreshed });
       }
-      if (target.hp <= 0) this._kill(target);
+      if (target.hp <= 0) this._kill(target,{attacker});
       this._emit(guarded ? '格挡' : String(Math.round(damage)), 'hit', damage, contact, { poseId: state.poseId, raw, guarded, guardBypassed, knockdown: knockdown && !target.dead, attackerHero: !!attacker.hero, targetHero: !!target.hero, targetName: target.name, ...extra });
     } else { const name = raw.moveRecord?.name || state.pose.label || '兵刃交锋'; this._emit(attacker.hero ? `${name} · 命中` : `${name} · 对手命中`, 'hit', undefined, contact, { poseId: state.poseId, raw, guarded, guardBypassed, damagePending: true, ...extra }); }
     target.musketAim=false;

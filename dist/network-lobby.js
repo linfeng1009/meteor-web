@@ -1,24 +1,34 @@
+import {NETWORK_MODES} from './network-rules.js';
 import {NetworkClient} from './network-client.js';
 import {NetworkGame} from './network-game.js';
 export class NetworkLobby{
-  constructor({getGame,onStart,onStop,onNotice,createClient=options=>new NetworkClient(options),createSession=(...args)=>NetworkGame.create(...args)}){Object.assign(this,{getGame,onStart,onStop,onNotice,createClient,createSession});}
+  constructor({getGame,onStart,onStop,onNotice,onResult=()=>{},createClient=options=>new NetworkClient(options),createSession=(...args)=>NetworkGame.create(...args)}){Object.assign(this,{getGame,onStart,onStop,onNotice,onResult,createClient,createSession});}
   mount(root){this.root=root;this.render();}
   render(){
     const root=this.root;if(!root?.isConnected)return;root.replaceChildren();
-    const note=document.createElement('p');note.className='modal-note';note.textContent='局域网双人长剑对战 · 四方阵。双方准备后由房主开局；房主计算命中、气血与重生。房主需保持游戏窗口运行。';root.append(note);
+    const note=document.createElement('p');note.className='modal-note';note.textContent='局域网2～4人 · 四方阵。盟主自由混战、无限重生；死斗分红蓝两队，全灭对方获胜。所有玩家准备后由房主开局。房主需保持游戏窗口运行。';root.append(note);
     const button=(text,fn)=>{const b=document.createElement('button');b.type='button';b.className='secondary-button';b.textContent=text;b.addEventListener('click',async()=>{b.disabled=true;try{await fn();}catch(e){this.onNotice(e.message);}finally{b.disabled=false;}});root.append(b);return b;};
     if(this.connecting&&!this.client?.room){const status=document.createElement('p');status.textContent='正在连接房间…';root.append(status);button('取消连接',()=>this.leave());return;}
     if(!this.client){
       const name=document.createElement('input');name.placeholder='玩家名字';name.maxLength=16;name.setAttribute('aria-label','联机玩家名字');name.value='江湖来客';name.className='setting-select';root.append(name);
-      button('创建房间',()=>this.connect('create',{name:name.value}));
+      const select=(label,options)=>{const box=document.createElement('label');box.textContent=label+' ';const field=document.createElement('select');field.className='setting-select';field.setAttribute('aria-label',label);for(const [value,text] of options){const option=document.createElement('option');option.value=value;option.textContent=text;field.append(option);}box.append(field);root.append(box);return field;};
+      const mode=select('模式',Object.entries(NETWORK_MODES)),capacity=select('人数上限',[[4,'4人'],[3,'3人'],[2,'2人']]),score=select('盟主击杀上限',[[10,'10杀'],[5,'5杀'],[20,'20杀']]),time=select('时限',[[600,'10分钟'],[300,'5分钟'],[900,'15分钟']]);
+      mode.addEventListener('change',()=>{score.parentElement.hidden=mode.value==='deathmatch';});
+      button('创建房间',()=>this.connect('create',{name:name.value,mode:mode.value,maxPlayers:Number(capacity.value),scoreLimit:Number(score.value),timeLimit:Number(time.value)}));
       const code=document.createElement('input');code.placeholder='六位房间号';code.maxLength=6;code.setAttribute('aria-label','房间号');code.className='setting-select';root.append(code);button('加入房间',()=>this.connect('join',{name:name.value,code:code.value.trim().toUpperCase()}));return;
     }
-    const room=this.client.room,title=document.createElement('h3');title.textContent='房间号：'+room.code;root.append(title);
-    for(const p of room.players){const row=document.createElement('p');row.textContent=`${p.name}${p.id===room.hostId?'（房主）':''}${p.id===this.client.playerId?'（你）':''} · ${p.ready?'已准备':'未准备'}${room.phase==='loading'?(p.loaded?' · 载入完成':' · 载入中'):''}`;root.append(row);}
+    const room=this.client.room,title=document.createElement('h3');title.textContent=`房间号：${room.code} · ${NETWORK_MODES[room.mode]||'盟主'} · ${room.players.length}/${room.maxPlayers||4}人`;root.append(title);const rules=document.createElement('p');rules.textContent=room.mode==='deathmatch'?`红蓝两队 · 队友免伤 · 阵亡后本局不复活 · ${room.timeLimit/60}分钟超时平局`:`自由混战 · ${room.scoreLimit}杀或${room.timeLimit/60}分钟结算`;root.append(rules);
+    for(const p of room.players){const row=document.createElement('p');row.textContent=`${p.name}${p.id===room.hostId?'（房主）':''}${p.id===this.client.playerId?'（你）':''}${room.mode==='deathmatch'?(p.team===1?' · 红队':' · 蓝队'):''} · ${p.ready?'已准备':'未准备'}${room.phase==='loading'?(p.loaded?' · 载入完成':' · 载入中'):''}`;root.append(row);}
     if(room.phase==='waiting'){
       const self=room.players.find(p=>p.id===this.client.playerId);
+      if(room.mode==='deathmatch')button(self.team===1?'切换到蓝队':'切换到红队',()=>this.client.command('team',{team:self.team===1?2:1}));
       button(self.ready?'取消准备':'准备',()=>this.client.command('ready',{ready:!self.ready}));
-      if(this.client.host)button('开始对战',()=>this.client.command('start')).disabled=room.players.length!==2||!room.players.every(p=>p.ready);
+      if(this.client.host)button('开始对战',()=>this.client.command('start')).disabled=room.players.length<2||!room.players.every(p=>p.ready)||room.mode==='deathmatch'&&new Set(room.players.map(p=>p.team)).size<2;
+    }
+    if(room.phase==='finished'){
+      const result=document.createElement('h3'),ids=room.result?.winnerIds||[];result.textContent=ids.length?(room.mode==='deathmatch'?(room.result.winnerTeam===1?'红队获胜':'蓝队获胜'):(ids.length>1?'并列第一：':'获胜：')+room.players.filter(p=>ids.includes(p.id)).map(p=>p.name).join('、')):'平局';root.append(result);
+      for(const score of [...(room.scores||[])].sort((a,b)=>b.kills-a.kills)){const row=document.createElement('p');row.textContent=`${room.players.find(p=>p.id===score.id)?.name||'已离场玩家'} · ${score.kills}击杀 / ${score.deaths}死亡`;root.append(row);}
+      if(this.client.host)button('再来一局',()=>this.client.command('rematch'));
     }
     button('退出房间',()=>this.leave());
   }
@@ -36,6 +46,7 @@ export class NetworkLobby{
   }
   async roomChanged(room,client=this.client){
     if(!client||client!==this.client||client.closed)return;
+    this.session?.reconcile?.(room);
     const signature=JSON.stringify(room);if(signature!==this.signature){this.signature=signature;this.render();}
     if(room.phase==='loading'&&!this.session&&!this.loading){
       const task=this.loading={},generation=this.generation;let game;
@@ -50,8 +61,9 @@ export class NetworkLobby{
       catch(e){if(current()){this.leave(false);this.onStop('战场载入失败：'+e.message);}}
       finally{if(this.loading===task)this.loading=null;}
     }
-    if(room.phase==='playing'&&this.session&&!this.session.active){this.session.play();this.onNotice('双方已入场，长剑对战开始');}
-    if(room.phase==='waiting'&&this.session){this.session.dispose();this.session=null;this.onStop('对方已离开，本局结束。');}
+    if(room.phase==='playing'&&this.session&&!this.session.active){this.session.play();this.onNotice(`${NETWORK_MODES[room.mode]||'盟主'}开始`);}
+    if(room.phase==='finished'&&this.session){this.session.finish?.(room.result);if(this.resultRound!==room.round){this.resultRound=room.round;this.onResult(room);}}
+    if(room.phase==='waiting'&&this.session){this.session.dispose();this.session=null;this.onNotice('已回到房间，请准备下一局');this.render();}
   }
-  async leave(notify=true){this.generation=(this.generation||0)+1;this.connecting=false;const client=this.client;this.client=null;this.session?.dispose();this.session=null;this.signature='';this.render();if(notify)this.onStop('已退出联机房间');try{await client?.leave();}catch{}}
+  async leave(notify=true){this.generation=(this.generation||0)+1;this.connecting=false;this.resultRound=null;const client=this.client;this.client=null;this.session?.dispose();this.session=null;this.signature='';this.render();if(notify)this.onStop('已退出联机房间');try{await client?.leave();}catch{}}
 }

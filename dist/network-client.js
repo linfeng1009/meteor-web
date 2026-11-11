@@ -1,3 +1,4 @@
+import {NETWORK_PROTOCOL} from './network-rules.js';
 const continuous=['forward','back','left','right','guard','crouch'];
 export class NetworkClient{
   constructor({onRoom=()=>{},onInput=()=>{},onFrame=()=>{},onError=()=>{},getFrame=()=>null,getAngle=()=>0,getPitch=()=>0,now=()=>performance.now()/1000}={}){
@@ -5,9 +6,9 @@ export class NetworkClient{
   }
   resetInput(){this.queue=[];this.held=new Set();this.pendingInput=null;this.sequence=0;this.processed=new Map();}
   setRoom(room){
-    if(room.protocol!==3||!Number.isSafeInteger(room.round)||!Number.isSafeInteger(room.revision??0)||(room.revision??0)<0)throw Error('联机协议已更新，请重启服务并刷新双方页面。');
+    if(room.protocol!==NETWORK_PROTOCOL||!Number.isSafeInteger(room.round)||!Number.isSafeInteger(room.revision??0)||(room.revision??0)<0)throw Error('联机协议已更新，请重启服务并刷新所有玩家页面。');
     if(this.room?.code===room.code&&(room.round<this.room.round||room.round===this.room.round&&(room.revision??0)<(this.room.revision??0)))return false;
-    if(this.room?.round!==room.round)this.resetInput();this.room=room;this.onRoom(room);return true;
+    if(this.room?.round!==room.round)this.resetInput();this.room=room;for(const id of this.processed.keys())if(!room.players.some(p=>p.id===id))this.processed.delete(id);this.onRoom(room);return true;
   }
   fail(message){if(this.closed)return;this.closed=true;clearInterval(this.timer);this.resetInput();this.onError(message);}
   async api(path,data={},auth=false){const response=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json',...(auth?{Authorization:'Bearer '+this.token}:{})},body:JSON.stringify(data),signal:AbortSignal.timeout(6000)});if(!response.headers.get('Content-Type')?.includes('application/json'))throw Error('当前服务未启用联机，请重启开发服务后刷新。');const result=await response.json();if(!response.ok)throw Error(result.error||'联机请求失败');return result;}
@@ -49,7 +50,7 @@ export class NetworkClient{
       // Discard responses belonging to a room or round which is no longer active.
       if(this.closed||this.code!==code||this.room.round!==round)return;
       this.failures=0;if(!this.setRoom(result.room))return;
-      if(this.closed||result.room.phase!=='playing'||result.room.round!==round)return;
+      if(this.closed||result.room.round!==round)return;if(result.room.phase==='finished'){if(result.frame)this.onFrame(result.frame);return;}if(result.room.phase!=='playing')return;
       if(!host&&playing){
         const last=this.pendingInput?.at(-1)?.sequence||0;
         if(!Number.isSafeInteger(result.acceptedSequence)||result.acceptedSequence<last)throw Error('服务未确认完整操作批次，本局已停止。');

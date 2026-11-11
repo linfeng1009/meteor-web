@@ -1,7 +1,7 @@
 <!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>游戏帧率验证</title>
 <style>html{overflow-y:scroll}body{margin:0;background:#101718;color:#ddd;font:14px sans-serif}canvas{width:100%;height:70vh;display:block}button,select{padding:8px}pre{white-space:pre-wrap}#controls{padding:10px;display:flex;gap:8px;flex-wrap:wrap}#result{padding:10px}#frame-meter{bottom:10px!important;left:auto!important;right:10px}#scene{position:relative;background:radial-gradient(ellipse,#29403b,#101718)}#scene-status{position:absolute;inset:0;display:grid;place-content:center;text-align:center;padding:24px;background:#101718cc;font-size:18px}#scene-status[hidden]{display:none}h1{font-size:20px;margin:12px}#help{margin:12px;line-height:1.6}</style>
 <h1>鼠标与帧率实测</h1><p id="help">场景会自动载入。选择人物、地图后开始测试；鼠标实测开始后点击“锁定鼠标进行实测”，再持续移动鼠标。</p>
-<div id="controls"><button id="run">运行静止、转向、移动出招三项测试</button><button id="manual">运行鼠标实测（点击画面后移动鼠标）</button><button id="lock" disabled>锁定鼠标进行实测</button>
+<div id="controls"><button id="manual">真实鼠标实测（请点这里）</button><button id="lock" disabled>锁定鼠标进行实测</button><button id="run">自动对照三项测试（无需移动鼠标）</button>
 <label>战场 <select id="map"><option value="sifang">四方阵</option><option value="sn14">炎硫岛</option></select></label>
 <label>人物 <select id="appearance"><option value="original">原版孟星魂</option><option value="springfield">春田</option><option value="yaemiko">八重神子</option></select></label>
 <label><input id="adaptive" type="checkbox">启用自动渲染倍率</label></div>

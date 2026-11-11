@@ -19,9 +19,9 @@ test('finite trial distinguishes consistent 30/60/144Hz and rejects missing/inva
 });
 
 test('manual trial requires lock events and actual turn; hidden, resized and stalled traces require review',()=>{
-  const base={mode:'manual',hidden:false,resized:false,maxMs:20,lockedEvents:40,angleChange:1.2};
+  const base={mode:'manual',hidden:false,resized:false,maxMs:20,lockedEvents:40,angleChange:1.2,angleTravel:1.2,displacement:0};
   assert.equal(assessFrameTrial(base).validForComparison,true);
-  for(const change of [{lockedEvents:0},{angleChange:0},{hidden:true},{resized:true},{maxMs:1000}])assert.equal(assessFrameTrial({...base,...change}).validForComparison,false);
+  for(const change of [{lockedEvents:0},{angleChange:0,angleTravel:0},{hidden:true},{resized:true},{maxMs:1000},{angleChange:null},{displacement:NaN},{angleTravel:Infinity},{invalidState:true}])assert.equal(assessFrameTrial({...base,...change}).validForComparison,false);
   assert.equal(assessFrameTrial({...base,mode:'orbit',lockedEvents:0}).validForComparison,true);
   assert.equal(assessFrameTrial({...base,maxMs:300}).validForComparison,true,'real short stalls must remain measurable, not be filtered away');
   assert.equal(assessFrameTrial({...base,angleChange:0,angleTravel:2.4}).validForComparison,true,'back-and-forth mouse turns must not fail because net rotation is zero');

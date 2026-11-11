@@ -66,3 +66,14 @@ test('direct mouse camera retains real wall occlusion and resumes free look afte
   game._tickCamera(1/144);assert.ok(game.camera.position.z>0&&game.camera.position.z<.5);
   assert.equal(game.hero.root.visible,false);assert.deepEqual(game.hero.root.position.toArray(),[0,0,0]);
 });
+
+test('automated orbit requests direct rendering without inventing an incomplete drag pointer',()=>{
+  const game=Object.create(MeteorGame.prototype);
+  Object.assign(game,{hero:{root:new THREE.Group()},currentMap:{},running:true,paused:false,locked:null,pointer:null,
+    camera:new THREE.PerspectiveCamera(),cameraTarget:new THREE.Vector3(0,1.65,0),cameraAngle:Math.PI/2,cameraPitch:.4,cameraDistance:8,
+    _safeCameraPosition:(target,desired)=>desired.clone()});
+  game.camera.position.set(0,5,8);game._tickCamera(1/60,{directLook:true});
+  assert.ok(Math.abs(game.camera.position.x-8)<1e-8);assert.ok(Math.abs(game.camera.position.z)<1e-8);
+  assert.equal(game.pointer,null,'a render request must not impersonate native pointerdown coordinates');
+  for(const point of [game.camera.position,game.hero.root.position])assert.ok(point.toArray().every(Number.isFinite));
+});

@@ -24,13 +24,13 @@ async function trial(mode,settings){
   await game.start({map:settings.map,weapon:'sword',mode:'training'});
   lockButton.disabled=mode!=='manual';
   const cameraTick=game._tickCamera.bind(game),sample=game.frameMeter.sample.bind(game.frameMeter);
-  let start=null,previous=null,hidden=false,resized=false,events=0,lockedEvents=0,pixels=0,lastAttack=-1;
+  let start=null,previous=null,hidden=false,resized=false,invalidState=false,events=0,lockedEvents=0,pixels=0,lastAttack=-1;
   const initialSize=[canvas.clientWidth,canvas.clientHeight,canvas.width,canvas.height].join(',');
   const frames=[],phases=[],initialAngle=game.cameraAngle,initialPosition=game.hero.root.position.clone();
   let lastAngle=initialAngle,angleTravel=0,turnFrames=0;
   const motion=event=>{events++;pixels+=Math.abs(event.movementX||0)+Math.abs(event.movementY||0);if(document.pointerLockElement===canvas)lockedEvents++;};
   document.addEventListener('mousemove',motion);
-  if(mode==='manual')canvas.focus();else game.pointer={moved:mode!=='idle'};
+  if(mode==='manual')canvas.focus();
   return new Promise(resolve=>{
     game._tickCamera=dt=>{
       if(mode==='orbit'||mode==='combat')turnMouseCamera(game,dt*180,0);
@@ -39,7 +39,8 @@ async function trial(mode,settings){
         const interval=Math.floor(game.matchElapsed*2);
         if(interval!==lastAttack){game.action('attack',false);game.action('attack',true);lastAttack=interval;}
       }
-      cameraTick(dt);
+      cameraTick(dt,{directLook:mode==='orbit'||mode==='combat'});
+      invalidState ||= ![game.cameraAngle,game.cameraPitch,...game.camera.position.toArray(),...game.hero.root.position.toArray()].every(Number.isFinite);
       const turn=Math.abs(game.cameraAngle-lastAngle);angleTravel+=turn;if(turn>1e-6)turnFrames++;lastAngle=game.cameraAngle;
     };
     game.frameMeter.sample=(at,timing)=>{
@@ -53,7 +54,7 @@ async function trial(mode,settings){
         document.removeEventListener('mousemove',motion);game.releaseInput();game.pause(true);
         lockButton.disabled=true;
         const report={mode,...settings,...summarizeFrameTrial(frames,phases),viewport:[innerWidth,innerHeight],canvas:[canvas.clientWidth,canvas.clientHeight],drawingBuffer:[canvas.width,canvas.height],dpr:game.renderer.getPixelRatio(),drawCalls:game.renderer.info.render.calls,triangles:game.renderer.info.render.triangles,hidden,events,lockedEvents,mousePixels:pixels,angleChange:game.cameraAngle-initialAngle,displacement:game.hero.root.position.distanceTo(initialPosition),runningAtEnd:game.running};
-        Object.assign(report,{resized,angleTravel,turnFrames,pointerLockSupported:typeof canvas.requestPointerLock==='function',pointerErrors:[...pointerErrors]});
+        Object.assign(report,{resized,invalidState,angleTravel,turnFrames,pointerLockSupported:typeof canvas.requestPointerLock==='function',pointerErrors:[...pointerErrors]});
         Object.assign(report,assessFrameTrial(report));
         report.possibleThrottling=report.fps<5&&report.cpuMs<100;
         resolve(report);
@@ -74,6 +75,7 @@ async function run(modes){
       result.textContent=JSON.stringify(reports,null,2)+`\n正在运行 ${mode}，预热3秒+采集${mode==='manual'?30:10}秒…`;
       reports.push(await trial(mode,settings));
       document.querySelector('#summary').textContent=reports.map(r=>`${r.mode}: ${r.fps.toFixed(2)} FPS / P95 ${r.p95Ms.toFixed(1)} ms / >25ms ${r.over25Ms} 帧 / ${r.validForComparison?'采样有效':r.reviewReasons.join('；')}`).join('\n');
+      if(reports.at(-1).invalidState)break;
     }
     result.textContent=JSON.stringify(reports,null,2);
   }catch(error){result.textContent=error.stack;game?.dispose();}

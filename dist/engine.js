@@ -1029,7 +1029,7 @@ export class MeteorGame {
       .some(hit => hit.distance > .05 && hit.distance < distance - .1 && hit.object.userData.nativeSceneInstance !== item);
     this.raycaster.far = Infinity; return !blocked;
   }
-  _tickCamera(dt) {
+  _tickCamera(dt, { directLook: directLookRequested = false } = {}) {
     if (!this.hero || !this.currentMap) return;
     const p = this.hero.root.position, eye = p.clone().add(v3(0, 1.65, 0)), target = eye.clone(); let desired;
     // Carry the camera rig with physical ascent/descent before smoothing its
@@ -1058,7 +1058,7 @@ export class MeteorGame {
     }
     this.cameraTarget.lerp(target, 1 - Math.exp(-dt * 8));
     const hasLiveLock = this.locked && !this.locked.dead && !this.locked.disposed;
-    const directLook = this.running && !this.paused && !hasLiveLock && (this.mouseLook?.locked || this.pointer?.moved);
+    const directLook = this.running && !this.paused && !hasLiveLock && (directLookRequested || this.mouseLook?.locked || this.pointer?.moved);
     if (directLook) {
       // Follow translation smoothly, but apply the sampled mouse orbit in this
       // render frame. Position lerp here added ~100ms of angular chase/drag.

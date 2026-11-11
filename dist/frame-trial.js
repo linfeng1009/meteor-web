@@ -13,6 +13,7 @@ export function assessFrameTrial(report) {
   const reasons=[];
   if(report.hidden)reasons.push('页面曾隐藏');
   if(report.resized)reasons.push('采样期间画面尺寸变化');
+  if(report.invalidState||![report.angleChange,report.angleTravel,report.displacement].every(Number.isFinite))reasons.push('视角或角色位移包含无效数值，请刷新后重测');
   // Keep every long frame in the numeric result. A one-second cadence needs
   // review for browser/window throttling rather than silently discarding it.
   if(report.maxMs>=500)reasons.push('存在超过500ms停顿，需排查窗口限速或真实卡顿');

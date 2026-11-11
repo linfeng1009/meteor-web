@@ -21,6 +21,104 @@ const data = { id: 0, skin: parseNativeSkin(skin), skeleton: parseNativeBones(bo
 const combatData = { poses: parsePos(poses), actions: parseAct(decodeNativeText(act)) };
 const v = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z);
 
+function wallFixture(side='front',height=2){
+  const state=fixture(),{game,hero,colliders}=state;
+  const wall=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshBasicMaterial({side:THREE.DoubleSide}));
+  if(side==='front')wall.position.z=-.5;
+  else{wall.rotation.y=Math.PI/2;wall.position.x=side==='right'?.5:-.5;}
+  wall.position.y=height;wall.updateMatrixWorld(true);colliders.push(wall);
+  hero.root.position.y=height;hero.root.rotation.y=Math.PI;hero.grounded=false;hero.vy=0;game.cameraAngle=0;game.mouseLook={locked:true};game.action('forward');
+  return {...state,wall};
+}
+
+test('three native wall families enter, animate, kick away and follow their real POS air links',()=>{
+  for(const [side,entry,exit,air] of [['front',161,157,158],['right',162,159,156],['left',163,160,154]]){
+    const state=wallFixture(side);try{
+      const {game,hero}=state;game._updateFighter(hero,1/60);
+      assert.equal(hero.wallRun?.side,side);assert.equal(hero.combat.timeline.pose.id,entry);
+      const before=hero.character.bones[15].quaternion.toArray();
+      for(let i=0;i<12;i++)game._updateFighter(hero,1/60);
+      assert.notDeepEqual(hero.character.bones[15].quaternion.toArray(),before,'use original animated bones');
+      const start=hero.root.position.clone();game.action('jump');
+      assert.equal(hero.wallRun,null);assert.equal(hero.combat.timeline.pose.id,exit);assert.equal(hero.nativeJump.pose.id,exit);
+      const seen=new Set();let escaped;
+      for(let i=0;i<100;i++){game._updateFighter(hero,1/60);if(i===14)escaped=hero.root.position.clone();seen.add(hero.combat.timeline.pose.id);assert.ok(hero.root.position.toArray().every(Number.isFinite));}
+      assert.ok(seen.has(air));assert.ok(seen.has(180));assert.equal(hero.grounded,true);assert.equal(hero.wallEntries,0);
+      if(side==='front')assert.ok(escaped.z>start.z+.5);
+      else assert.ok((escaped.x-start.x)*(side==='right'?-1:1)>.5);
+    }finally{state.dispose();}
+  }
+});
+
+test('wall contact expires, cannot recharge in midair and resets only on landing',()=>{
+  const state=wallFixture('front',30);try{
+    const {game,hero}=state;for(let i=0;i<50;i++)game._updateFighter(hero,1/60);
+    assert.equal(hero.wallRun,null);assert.equal(hero.wallEntries,1);assert.ok(hero.root.position.y<=32.6);assert.equal(hero.grounded,false);
+    assert.equal(game._beginWallJump(hero),false);assert.equal(game._beginJump(hero),false);
+    for(let i=0;i<180;i++)game._updateFighter(hero,1/60);
+    assert.equal(hero.grounded,true);assert.equal(hero.wallEntries,0);
+  }finally{state.dispose();}
+});
+
+test('wall traversal releases on lost geometry, direction release, hits and input blocking',()=>{
+  for(const stop of ['geometry','release','hit','blocked','dead']){
+    const state=wallFixture();try{
+      const {game,hero,wall}=state;game._updateFighter(hero,1/60);assert.ok(hero.wallRun);
+      if(stop==='geometry'){wall.position.z=-4;wall.updateMatrixWorld(true);}
+      if(stop==='release')game.action('forward',false);
+      if(stop==='hit')hero.combat.react(90);
+      if(stop==='blocked')hero.scriptInputBlocked=true;
+      if(stop==='dead')hero.dead=true;
+      game._updateFighter(hero,1/60);
+      // Dead actors no longer update movement; kill itself clears the state.
+      if(stop!=='dead'){assert.equal(hero.wallRun,null,stop);assert.equal(game._beginWallJump(hero),false);}
+      else assert.equal(game._beginWallJump(hero),false);
+    }finally{state.dispose();}
+  }
+});
+
+test('short ledges and floor surfaces cannot count as a wall, and a roof stops climbing',()=>{
+  const state=wallFixture();try{
+    const {game,hero,wall}=state;wall.scale.y=.004;wall.position.y=2.85;wall.updateMatrixWorld(true);
+    game._updateFighter(hero,1/60);assert.equal(hero.wallRun,undefined);
+    wall.scale.y=1;wall.position.y=2;wall.updateMatrixWorld(true);
+    const roof=new THREE.Mesh(new THREE.PlaneGeometry(10,10),new THREE.MeshBasicMaterial({side:THREE.DoubleSide}));
+    roof.rotation.x=Math.PI/2;roof.position.y=4.4;roof.updateMatrixWorld(true);state.colliders.push(roof);
+    for(let i=0;i<15;i++){game._updateFighter(hero,1/60);assert.ok(hero.root.position.y+2.2<=4.4+.001);}
+    assert.equal(hero.wallRun,null);
+  }finally{state.dispose();}
+});
+
+test('remote wall traversal uses its own input, including the wall jump action',()=>{
+  const state=wallFixture('left');try{
+    const {game,hero}=state;hero.hero=false;hero.playerControl={keys:new Set(['forward']),lookLocked:true,cameraAngle:0,directionBuffer:[]};game.keys.clear();
+    game._updateFighter(hero,1/60);assert.equal(hero.wallRun?.side,'left');
+    game._actionFighter(hero,hero.playerControl,'jump',true);assert.equal(hero.combat.timeline.pose.id,160);assert.equal(hero.wallRun,null);
+  }finally{state.dispose();}
+});
+
+test('wall exit impulse cannot pass through an opposite wall and yields to a hit',()=>{
+  const state=wallFixture();try{
+    const {game,hero}=state;game._updateFighter(hero,1/60);assert.equal(game._beginWallJump(hero),true);
+    const opposite=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshBasicMaterial({side:THREE.DoubleSide}));opposite.position.z=1;opposite.updateMatrixWorld(true);state.colliders.push(opposite);
+    for(let i=0;i<12;i++){game._updateFighter(hero,1/60);assert.ok(hero.root.position.z<.61,'the normal collision radius stops the kick');}
+    assert.ok(hero.wallKick);hero.combat.react(90);game._updateFighter(hero,1/60);assert.equal(hero.wallKick,null);
+  }finally{state.dispose();}
+});
+
+test('wall contact rechecks live prop colliders and pause, guard and script gates',()=>{
+  const state=wallFixture('right');try{
+    const {game,hero,wall}=state;state.colliders.pop();let present=true;
+    game.currentMap.props={getCollidersNear:()=>present?[wall]:[]};
+    game.paused=true;game._updateWallTraversal(hero,v(0,0,-1),1/60);assert.equal(hero.wallRun,undefined);game.paused=false;
+    hero.guard=true;game._updateWallTraversal(hero,v(0,0,-1),1/60);assert.equal(hero.wallRun,undefined);hero.guard=false;
+    hero.scriptInputBlocked=true;game._updateWallTraversal(hero,v(0,0,-1),1/60);assert.equal(hero.wallRun,undefined);hero.scriptInputBlocked=false;
+    game._updateFighter(hero,1/60);assert.equal(hero.wallRun?.side,'right');
+    present=false;game._updateFighter(hero,1/60);assert.equal(hero.wallRun,null);assert.equal(game._beginWallJump(hero),false);
+    state.colliders.push(wall);
+  }finally{state.dispose();}
+});
+
 function fixture({ locked = false, wall = false } = {}) {
   const game = Object.create(MeteorGame.prototype), character = createNativeCharacter(data, { inPlace: true, loadTextures: false });
   const floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.MeshBasicMaterial({ side: THREE.DoubleSide })); floor.rotation.x = -Math.PI / 2; floor.updateMatrixWorld(true);

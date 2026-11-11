@@ -1,3 +1,4 @@
+import {nativeStrideSpeed} from '../dist/native-movement-profile.js';
 import test, { after } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -5,6 +6,7 @@ import * as THREE from '../dist/vendor/three.module.js';
 import { MeteorGame } from '../dist/engine.js';
 import { loadNativeCombat, NativeCombatController, NativePoseTimeline, createNativeDamageResolver, nativeReactionParameters, nativeHitAngle, nativeHitSelection, nativeGuardPose, NATIVE_GUARD_REACTIONS, NATIVE_DEFAULT_BLEND_TIME } from '../dist/native-combat.js';
 import { NativeImpactFeedback } from '../dist/native-impact-feedback.js';
+import { NativeBloodFeedback } from '../dist/native-blood-feedback.js';
 import { NetworkGame } from '../dist/network-game.js';
 import {bindLocalPlayerControl} from '../dist/player-control.js';
 import {NetworkClient} from '../dist/network-client.js';
@@ -72,7 +74,7 @@ test('front guard follows the original CRT53-bit draw distribution, including th
 });
 after(() => {
   for (const { game, floor } of fixtures) {
-    game.projectiles?.dispose(); game.impactFeedback?.dispose(); for (const actor of [game.hero, ...game.enemies]) actor.character.dispose();
+    game.projectiles?.dispose(); game.impactFeedback?.dispose(); game.bloodFeedback?.dispose(); for (const actor of [game.hero, ...game.enemies]) actor.character.dispose();
     for (const promise of game.weaponCache.values()) promise.then(model => model.traverse(node => {
       node.geometry?.dispose(); for (const material of Array.isArray(node.material) ? node.material : [node.material]) material?.dispose();
     }));
@@ -113,6 +115,20 @@ function tick(game, dt = 1 / 60) {
   game.projectiles.update(dt);
 }
 
+test('real native HP loss emits blood and a guard emits only sparks, including host event and replica deduplication',async()=>{
+  const {game,hero,target}=await fixture();game.bloodFeedback=new NativeBloodFeedback(game.scene);game.impactFeedback=new NativeImpactFeedback(game.scene);
+  hero.networkId='host';target.networkId='guest';const before=target.hp;hit(game,hero,target,262);
+  assert.ok(target.hp<before);assert.ok(game.bloodFeedback.mesh.visible);assert.equal(game.combatFeedbackEvents.at(-1).blood,true);assert.deepEqual(game.combatFeedbackEvents.at(-1).bloodStyle,{kind:'slash',level:0});
+  assert.equal(game.combatFeedbackEvents.at(-1).attackerId,'host');assert.equal(game.combatFeedbackEvents.at(-1).targetId,'guest');
+  game.bloodFeedback.clear();target.guard=true;hit(game,hero,target,262);assert.equal(game.bloodFeedback.mesh.visible,false);assert.equal(game.combatFeedbackEvents.at(-1).guarded,true);assert.equal(game.combatFeedbackEvents.at(-1).blood,false);
+  const events=game._combatFeedbackSnapshot(),played=[];
+  const session=new NetworkGame(game,{host:false,playerId:'guest',send(){}},{players:[{id:'host'},{id:'guest'}]});session.active=true;
+  const original=game._playCombatFeedback;game._playCombatFeedback=(event,local)=>played.push({id:event.id,local});
+  const frame={sequence:1,time:game.matchElapsed,players:[],impacts:events};session.apply(frame);session.apply(frame);session.apply({...frame,sequence:2});assert.equal(played.length,events.length);assert.ok(played.every(e=>e.local));
+  session.apply({...frame,sequence:3,time:5,impacts:[{...events[0],id:100,time:0}]});assert.equal(played.length,events.length,'expired feedback cannot replay after a stall');
+  game._playCombatFeedback=original;session.dispose();
+});
+
 test('listen-host remote inputs use native movement and hit the actual host, then replicas use the same HP snapshot',async()=>{
   const {game,hero,target}=await fixture();await game._equip(target,'sword');target.scriptControlled=false;target.networkId='guest';hero.networkId='host';target.root.rotation.y=Math.PI;
   const room={players:[{id:'host'},{id:'guest'}]},client={host:true,playerId:'host',send(){}};
@@ -122,7 +138,7 @@ test('listen-host remote inputs use native movement and hit the actual host, the
     session.inputs([{playerId:'guest',action:'attack',active:true,angle:0}]);assert.equal(target.combat.timeline.pose.id,262);
     for(let i=0;i<90;i++)tick(game);assert.ok(hero.hp<hero.maxHp,'remote sword must damage host through the original contact path');
     const frame=session.snapshot();assert.equal(frame.players.find(p=>p.id==='host').hp,hero.hp);assert.equal(frame.players.find(p=>p.id==='guest').id,'guest');
-    const before=target.root.position.x;session.inputs([{playerId:'guest',action:'right',active:true,angle:0}]);for(let i=0;i<30;i++)tick(game);assert.ok(target.root.position.x>before+1);
+    const before=target.root.position.x;session.inputs([{playerId:'guest',action:'right',active:true,angle:0}]);for(let i=0;i<30;i++)tick(game);assert.ok(Math.abs(target.root.position.x-before-nativeStrideSpeed(0,141)/2)<.03);
     session.inputs([{playerId:'guest',action:'clear',active:false,angle:0}]);assert.equal(session.remote.keys.size,0);
     assert.equal(game.hero,hero);assert.equal(game.enemies[0],target,'temporary actor context must restore host references');
     target.spawnIndex=1;game.currentMap.spawns.push({position:v(0,.015,6)});target.hp=1;hit(game,hero,target,262);assert.equal(target.dead,true);assert.equal(session.scores.get('host').kills,1);
@@ -236,7 +252,7 @@ test('two players keep movement, keys and camera independent without swapping ga
     session.inputs([{playerId:'guest',action:'right',active:true,angle:Math.PI}]);
     const beforeHost=hero.root.position.x,beforeGuest=target.root.position.x;
     for(let i=0;i<30;i++)tick(game);
-    assert.ok(hero.root.position.x>beforeHost+1);assert.ok(target.root.position.x<beforeGuest-1);
+    assert.ok(Math.abs(hero.root.position.x-beforeHost-nativeStrideSpeed(0,141)/2)<.03);assert.ok(Math.abs(target.root.position.x-beforeGuest+nativeStrideSpeed(0,141)/2)<.03);
     assert.equal(game.cameraAngle,0);assert.equal(session.remote.cameraAngle,Math.PI);assert.notEqual(game.localControl.keys,session.remote.keys);
     session.inputs([{playerId:'guest',action:'clear',active:false,angle:0}]);assert.equal(session.remote.keys.size,0);assert.ok(game.keys.has('right'));
     game.action('right',false);game.action('guard');session.inputs([{playerId:'guest',action:'guard',active:true,angle:Math.PI}]);
@@ -563,4 +579,23 @@ test('misses produce no contact freeze, guarded impact keeps HP and death interr
   game._updateFighter(target, .01);
   assert.ok(target.combat.timeline.frame > deathFrame, 'death must advance immediately rather than waiting for an obsolete contact freeze');
   assert.equal(target.combat.timeline.pose.id, 117);
+});
+
+
+test('musket ready input does not fire, manual pitch/yaw can miss nearby opponents and centered aim deals source damage',async()=>{
+ const {game,hero,target,events}=await fixture();await game._equip(hero,'musket');hero.root.rotation.y=Math.PI;target.root.position.set(2,.015,-8);game.locked=null;
+ game.action('attack');for(let i=0;i<70;i++)tick(game);assert.equal(hero.musketAim,true);assert.equal(target.hp,10000);assert.equal(events.filter(e=>e.musketId).length,0);
+ game.action('attack');for(let i=0;i<80;i++)tick(game);assert.equal(target.hp,10000,'no attraction to a nearby off-reticle opponent');
+ game.cameraAngle=Math.atan2(-2,8);game.aimPitch=0;game.directionBuffer=[];game.action('attack');for(let i=0;i<4;i++)tick(game);
+ assert.equal(target.hp,9963);assert.equal(events.filter(e=>e.musketId).length,1);
+});
+
+test('remote musket uses its own pitch and publishes authoritative aim state without overwriting local mouse look',async()=>{
+ const {game,hero,target}=await fixture();bindLocalPlayerControl(game);await game._equip(target,'musket');target.networkId='guest';hero.networkId='host';target.root.position.z=8;
+ const session=new NetworkGame(game,{host:true,playerId:'host',send(){}},{players:[{id:'host'},{id:'guest'}]});session.play();
+ try{session.inputs([{playerId:'guest',action:'attack',active:true,angle:0,pitch:.4}]);assert.equal(target.musketAim,true);assert.equal(hero.musketAim,false);
+ session.inputs([{playerId:'guest',action:'look',active:false,angle:.2,pitch:.35,held:[]}]);assert.equal(session.remote.aimPitch,.35);
+ const remote=session.snapshot().players.find(p=>p.id==='guest');assert.equal(remote.musketAim,true);assert.equal(remote.aimPitch,.35);assert.equal(game.localControl.aimPitch,0);
+ session.inputs([{playerId:'guest',action:'clear',active:false,angle:0,pitch:0}]);assert.equal(target.musketAim,false);
+ }finally{session.dispose();}
 });

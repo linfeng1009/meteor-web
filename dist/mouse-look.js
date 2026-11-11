@@ -1,5 +1,6 @@
 import { bindingMap, defaultBindings } from './keybindings.js';
 export function turnMouseCamera(game, dx, dy) {
+  if(game.hero?.musketAim){if(!Number.isFinite(dx)||!Number.isFinite(dy))return false;game.cameraAngle-=dx*.003;const c=game.localControl||game;c.aimPitch=Math.max(-1.2,Math.min(1.2,(c.aimPitch||0)-dy*.003));return true;}
   if(game.locked&&!game.locked.dead&&!game.locked.disposed)return false;
   if(!Number.isFinite(dx)||!Number.isFinite(dy))return false;
   game.cameraManualUntil=game.elapsed+2;

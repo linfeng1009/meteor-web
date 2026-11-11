@@ -1,11 +1,11 @@
 const continuous=['forward','back','left','right','guard','crouch'];
 export class NetworkClient{
-  constructor({onRoom=()=>{},onInput=()=>{},onFrame=()=>{},onError=()=>{},getFrame=()=>null,getAngle=()=>0,now=()=>performance.now()/1000}={}){
-    Object.assign(this,{onRoom,onInput,onFrame,onError,getFrame,getAngle,now});this.resetInput();this.failures=0;this.closed=false;
+  constructor({onRoom=()=>{},onInput=()=>{},onFrame=()=>{},onError=()=>{},getFrame=()=>null,getAngle=()=>0,getPitch=()=>0,now=()=>performance.now()/1000}={}){
+    Object.assign(this,{onRoom,onInput,onFrame,onError,getFrame,getAngle,getPitch,now});this.resetInput();this.failures=0;this.closed=false;
   }
   resetInput(){this.queue=[];this.held=new Set();this.pendingInput=null;this.sequence=0;this.processed=new Map();}
   setRoom(room){
-    if(room.protocol!==2||!Number.isSafeInteger(room.round)||!Number.isSafeInteger(room.revision??0)||(room.revision??0)<0)throw Error('联机协议已更新，请重启服务并刷新双方页面。');
+    if(room.protocol!==3||!Number.isSafeInteger(room.round)||!Number.isSafeInteger(room.revision??0)||(room.revision??0)<0)throw Error('联机协议已更新，请重启服务并刷新双方页面。');
     if(this.room?.code===room.code&&(room.round<this.room.round||room.round===this.room.round&&(room.revision??0)<(this.room.revision??0)))return false;
     if(this.room?.round!==room.round)this.resetInput();this.room=room;this.onRoom(room);return true;
   }
@@ -28,7 +28,7 @@ export class NetworkClient{
     // Never silently discard queued attacks. Close explicitly on overload.
     if(this.queue.length+(this.pendingInput?.length||0)>=256){this.fail('联机操作积压过多，本局已断开，请重新加入。');return;}
     if(continuous.includes(action)){if(active)this.held.add(action);else this.held.delete(action);}if(action==='clear')this.held.clear();
-    this.queue.push({action,active:!!active,sequence:++this.sequence,angle:this.getAngle(),time:this.now()});
+    this.queue.push({action,active:!!active,sequence:++this.sequence,angle:this.getAngle(),pitch:this.getPitch(),time:this.now()});
   }
   async sync(){
     if(this.busy||this.closed||!this.code)return;this.busy=true;
@@ -39,7 +39,7 @@ export class NetworkClient{
         if(host){data.inputAck=Object.fromEntries(this.processed);const frame=this.getFrame();if(frame)data.frame=frame;}
         else{
           // A later look sequence must never jump ahead of queued operations.
-          if(!this.pendingInput){this.pendingInput=this.queue.splice(0,63);if(!this.queue.length)this.pendingInput.push({action:'look',active:false,sequence:++this.sequence,angle:this.getAngle(),time:this.now(),held:[...this.held]});}
+          if(!this.pendingInput){this.pendingInput=this.queue.splice(0,63);if(!this.queue.length)this.pendingInput.push({action:'look',active:false,sequence:++this.sequence,angle:this.getAngle(),pitch:this.getPitch(),time:this.now(),held:[...this.held]});}
           data.input=this.pendingInput;
         }
       }

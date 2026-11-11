@@ -256,7 +256,7 @@ export class NativePoseTimeline {
     this.frameTable = frameTable;
   }
   speedAt(frame = this.frame) {
-    return Math.max(.01, this.frameTable?.get(this.pose.source)?.speed[Math.floor(frame)] ?? phaseAt(this.pose, frame)?.speed ?? 1);
+    return (this.playbackRate??1)*Math.max(.01, this.frameTable?.get(this.pose.source)?.speed[Math.floor(frame)] ?? phaseAt(this.pose, frame)?.speed ?? 1);
   }
   isBlendFrame(frame = this.frame) { return this.frameTable?.get(this.pose.source)?.blend[Math.floor(frame)] === 1 || !this.frameTable && phaseAt(this.pose, frame)?.type !== 'action'; }
   advance(dt, { stopAtFrame = Infinity } = {}) {

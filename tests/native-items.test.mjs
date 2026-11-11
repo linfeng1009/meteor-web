@@ -113,7 +113,7 @@ test('engine pickup reach ignores its own collider, rejects an intervening wall 
   } finally { own.geometry.dispose(); blocker.geometry.dispose(); material.dispose(); }
 });
 
-test('engine-initialized pickup respects paused/story gates, emits actual HP recovery, and publishes a serializable HUD', async () => {
+test('engine-initialized pickup respects pause and works in training as well as story, with serializable HUD', async () => {
   const priorFetch = globalThis.fetch, dist = new URL('../dist/', import.meta.url);
   globalThis.fetch = async input => { try { return new Response(await readFile(new URL(input instanceof Request ? input.url : input, dist)), { status: 200 }); } catch { return new Response('', { status: 404 }); } };
   const hero = actor(1400), meatbun = item('D_itSt22'), events = [], updates = [], game = Object.create(MeteorGame.prototype);
@@ -131,7 +131,7 @@ test('engine-initialized pickup respects paused/story gates, emits actual HP rec
     const nearby = updates.at(-1).pickup; assert.equal(nearby.name, '肉包'); assert.equal(nearby.heal, 300); assert.equal(nearby.objectName, 'D_itSt22');
     assert.equal('instance' in nearby, false); assert.doesNotThrow(() => JSON.stringify(updates.at(-1)));
     game.paused = true; game.action('pickup'); assert.equal(hero.hp, 1400); assert.equal(meatbun.attributes.active, 1);
-    game.paused = false; game.mode = 'training'; game.action('pickup'); assert.equal(hero.hp, 1400);
+    game.paused = false; game.mode = 'training'; game.action('pickup'); assert.equal(hero.hp, 1500);
     game.mode = 'story'; game.action('pickup'); assert.equal(hero.hp, 1500); assert.equal(meatbun.attributes.active, 0);
     assert.equal(events.filter(event => event.type === 'pickup').length, 1); assert.match(events.find(event => event.type === 'pickup').text, /气血 \+100$/);
     assert.equal(updates.at(-1).pickup, null); assert.equal(updates.at(-1).hp, 1500); assert.doesNotThrow(() => JSON.stringify(updates.at(-1)));

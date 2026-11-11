@@ -1,3 +1,4 @@
+import {nativeStrideSpeed} from '../dist/native-movement-profile.js';
 import test, { after } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -323,6 +324,8 @@ test('visual and attack graphs agree on the source base-anchored cylinder and th
 });
 
 function manual(game, keys) {
+  if(game.hero.weapon==='musket'&&game.hero.musketAim&&game.hero.combat.timeline?.pose.id===212&&!game.hero.combat.timeline.finished)for(let i=0;i<70;i++)tick(game);
+  if(game.hero.weapon==='musket'&&!game.hero.musketAim){game.action('attack');for(let i=0;i<70;i++)tick(game);game.directionBuffer=[];}
   for (const key of keys) { game.action(key); game.action(key, false); game.elapsed += .06; }
   game.action('attack'); game.action('attack', false);
 }
@@ -450,7 +453,7 @@ test('source wheel slow scales actual walking, expires, and rage loss uses the o
   const { game } = await fixture([]), actor = game.hero;
   useNativeScriptItem(actor, data.itemRecords.get(13)); assert.equal(nativeMovementScale(actor), .3);
   game.action('forward'); for (let n = 0; n < 120; n++) tick(game); game.action('forward', false);
-  assert.ok(actor.velocity.length() > 2.39 && actor.velocity.length() < 2.41);
+  assert.ok(Math.abs(actor.velocity.length()-nativeStrideSpeed(actor.character.nativeCharacterId??0,144)*.3)<1e-5);
   updateNativeScriptItems(actor, 60); assert.equal(nativeMovementScale(actor), 1);
   actor.rage = 3; useNativeScriptItem(actor, data.itemRecords.get(37)); assert.equal(actor.rage, 0);
   actor.rage = 100; useNativeScriptItem(actor, data.itemRecords.get(37)); assert.equal(actor.rage, 95);

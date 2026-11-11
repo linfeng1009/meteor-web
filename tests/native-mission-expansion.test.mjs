@@ -147,8 +147,10 @@ test('sn15 real guard damage triggers the conditional friendly ally, source嗜�
   const { game, host, events } = await mission('sn15'); waitIntro(game);
   const guard = host.findActor('左护法'); near(game, guard); game.locked = null;
   // Contact-only incoming-damage fixture. Only the original left guard acts;
+  // Keep contact range between recoveries as movement/weapon speeds change;
   // no player HP, result or source trigger/global is assigned.
   for (let frame = 0; frame < 6000 && game.running && !host.levelVm.getGlobal('trg8'); frame++) {
+    if(!game.hero.combat.busy)game.hero.root.position.copy(guard.root.position).add(v(0,0,-1.1));
     tick(game, 1 / 30, { enemies:false }); game._updateFighter(guard, 1 / 30);
   }
   assert.ok(game.hero.hp > 0 && game.hero.hp < 2500/3); await host.flushPending(); host.update(.1);

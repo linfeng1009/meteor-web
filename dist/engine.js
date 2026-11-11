@@ -1,3 +1,4 @@
+import {nativeStrideSpeed} from './native-movement-profile.js';
 import { traversalTap, NATIVE_ROLL_POSES, nativeDashPose, NATIVE_CROUCH_POSES, NATIVE_GROUND_MOVE_POSES, NATIVE_JUMP_POSES, nativeTraversalDirection } from './native-traversal.js';
 import { FixedStepClock } from './fixed-step.js';
 import { NATIVE_WALL_POSES, WALL_TRAVERSAL_ADAPTER as WALL } from './native-wall-traversal.js';
@@ -21,8 +22,9 @@ import { createNativeEnvironment } from './native-environment.js';
 import { NativeWeather } from './native-weather.js';
 import { NativeItemSystem, useNativeScriptItem, useNativeAttackItem, useNativeSelfItem, nativeMovementScale, nativeRageMaximum, updateNativeScriptItems, clearNativeScriptItems } from './native-items.js';
 import { QIANKUN_MODE_NAMES } from './native-weapon-menu.js';
-import { NativeProjectileSystem, NATIVE_DART_PROFILE, NativeMusketSystem, NATIVE_MUSKET_PROFILE, NativeWheelSystem, NATIVE_WHEEL_PROFILE } from './native-projectiles.js';
+import { sweepActorCapsule, NativeProjectileSystem, NATIVE_DART_PROFILE, NativeMusketSystem, NATIVE_MUSKET_PROFILE, NativeWheelSystem, NATIVE_WHEEL_PROFILE } from './native-projectiles.js';
 import { NativeImpactFeedback } from './native-impact-feedback.js';
+import { NativeBloodFeedback, bloodStyleForHit } from './native-blood-feedback.js';
 import { loadNativeRageVfx } from './native-rage-vfx.js';
 import { loadNativeEffectManifest } from './native-effect-transforms.js';
 import { NativeEffectContacts } from './native-effect-contacts.js';
@@ -77,6 +79,7 @@ export class MeteorGame {
     // Adapter constants are explicit and provisional until recovered from Meteor.exe.
     this.hostPhysics = { speed: 100 * SCALE, gravity: 34, jumpVelocity: 12, radius: .4, step: .55, projectile: NATIVE_DART_PROFILE };
     this.impactFeedback = new NativeImpactFeedback(this.scene);
+    this.bloodFeedback = new NativeBloodFeedback(this.scene);
     this._initializeProjectiles();
     this._bind(); this.resize(); this._frame = this._frame.bind(this); this.raf = requestAnimationFrame(this._frame);
     this.ready = this._initialize();
@@ -135,8 +138,18 @@ export class MeteorGame {
   _fireNativeMusket(f, state) {
     if (!NATIVE_MUSKET_PROFILE.poseIds.includes(state.poseId) || !f.weaponModel || !this.running) return;
     const origin = f.character.getAttachment('d_wpnR').getWorldPosition(v3());
-    const target = f.hero ? this.locked || this._nearest(32) : f.scriptControl?.attackTarget;
-    const direction = target && !target.dead ? target.root.position.clone().add(v3(0, 1.35, 0)).sub(origin).normalize() : v3(Math.sin(f.root.rotation.y), 0, Math.cos(f.root.rotation.y));
+    const control=this._controlFor(f),target=control?null:f.scriptControl?.attackTarget;
+    let direction=target&&!target.dead?target.root.position.clone().add(v3(0,1.35,0)).sub(origin).normalize():v3(Math.sin(f.root.rotation.y),0,Math.cos(f.root.rotation.y));
+    if(control&&f.musketAim){
+      direction=v3(-Math.sin(control.cameraAngle)*Math.cos(control.aimPitch||0),Math.sin(control.aimPitch||0),-Math.cos(control.cameraAngle)*Math.cos(control.aimPitch||0));
+      // Reticle determines the world aim point; the muzzle-to-point ray still
+      // checks nearby walls, so aiming around cover cannot shoot through it.
+      const eye=f.root.position.clone().add(v3(0,1.65,0));this.raycaster.set(eye,direction);this.raycaster.far=80;
+      const hit=this.raycaster.intersectObjects(this.currentMap.colliders||[],false)[0];this.raycaster.far=Infinity;
+      let distance=hit?.distance??80;const end=eye.clone().addScaledVector(direction,80);
+      for(const actor of [this.hero,...(this.enemies||[])])if(actor&&actor!==f&&!actor.dead&&!actor.disposed&&!actor.scriptRemoved){const t=sweepActorCapsule(eye,end,actor,0,this.hostPhysics.radius);if(t!=null)distance=Math.min(distance,t*80);}
+      direction=eye.addScaledVector(direction,distance).sub(origin).normalize();
+    }
     const attacker = { id: f.id, hero: f.hero, scriptId: f.scriptId, root: f.root, name: f.name, weapon: f.weapon, weaponId: f.weaponId,
       weaponRecord: f.weaponRecord, nativeStats: { ...f.nativeStats }, activeItems: [...(f.activeItems || [])], team: f.team, teamMask: f.teamMask };
     // Explicit browser aim/range adapter until the original ballistic path is
@@ -188,10 +201,13 @@ export class MeteorGame {
     this.weaponItems = new Map(weaponManifest.items.map(item => [Number(item.itemId), item])); this.weaponModels = new Map(weaponManifest.models.map(model => [model.modelId.toLowerCase(), model]));
     if (!this.damageResolver) this.damageResolver = createNativeDamageResolver(combat);
     if (!this.sceneDamageResolver) this.sceneDamageResolver = createNativeSceneDamageResolver(combat);
-    this.items = new NativeItemSystem({ itemRecords: combat.itemRecords,
-      getInstances: () => this.currentMap?.props?.instances.values() || [],
+    this.droppedWeapons=new Map();this.lootSerial=0;
+    this.items = new NativeItemSystem({ itemRecords: combat.itemRecords,weaponItems:this.weaponItems,
+      getInstances: () => [...(this.currentMap?.props?.instances.values() || []),...(this.droppedWeapons?.values()||[])],
       canReach: (actor, item) => this._canReachItem(actor, item),
       onPickup: result => {
+        result.actor.pickupSerial=(result.actor.pickupSerial||0)+1;
+        if(this.droppedWeapons.has(result.objectName)){result.instance.root.removeFromParent();this.droppedWeapons.delete(result.objectName);this.items.visuals.delete(result.instance);}
         const callback = `${result.objectName}_OnPickUp`;
         if (this.missionHost?.sceneVm.hasFunction(callback)) this.missionHost.call(this.missionHost.sceneVm, callback, []);
         this._soundDefinition('getitem');this.rageVfx?.playItem(result.actor,'getitem');
@@ -209,7 +225,7 @@ export class MeteorGame {
   async _loadMap(name) {
     this.rageVfx?.clear(); this.effectContacts?.clear(); this.projectiles?.clear('map-change'); this.muskets?.clear(); this.wheels?.clear();
     this.clearNativeScene();
-    this.items?.reset();
+    this.items?.reset(); this._clearDroppedWeapons();
     name = MAP_IDS[name] || /^sn\d+$/.test(name) || name === QIYUN_MAP.id ? name : 'sifang'; const request = ++this.mapRequest, id = MAP_IDS[name] || name;
     const label = id === QIYUN_MAP.id ? QIYUN_MAP.name : this.manifest.maps.find(m => m.id === id)?.name || id; this._loadStatus(`正在读取${label}…`);
     if (!this.mapCache.has(id)) {
@@ -303,10 +319,11 @@ export class MeteorGame {
     if (!hero) { if (this.combatData.npcAi) f.npcCombat = new NativeNpcCombat(this.combatData.npcAi); this._nameplate(f); } return f;
   }
   _placeFighter(f, spawn) {
+    f.weapon2Id=f.scriptConfig?Number(f.scriptConfig.weapon2Id??f.weapon2Id)||0:0;
     this.rageVfx?.clearActor(f);
     this.effectContacts?.clearActor(f);
     clearNativeScriptItems(f);
-    f.nativeJump = null; f.jumpSequence = null; f.wallRun = null; f.wallKick = null; f.wallEntries = 0;
+    f.musketAim=false; f.nativeJump = null; f.jumpSequence = null; f.wallRun = null; f.wallKick = null; f.wallEntries = 0;
     const p = spawn?.position || this.currentMap.spawns[0].position; f.root.position.copy(p);
     // D_user DES quaternions use wxyz in the native Z-up coordinates.
     // Project their facing onto the walking plane instead of facing the player.
@@ -352,7 +369,7 @@ export class MeteorGame {
     if (!name) throw new Error(`Original weapon action family ${item.modelId} has not been ported`);
     f.weaponPoseUnsubscribe?.(); f.weaponPoseUnsubscribe = null;
     f.weapon = name; f.weaponId = Number(item.itemId); f.weaponName = item.name; f.weaponRecord = this.combatData.weaponRecords.get(item.modelId.toLowerCase());
-    f.combat.setWeapon(name); f.combat.play(NATIVE_WEAPONS[name].stance, { loop: true, force: true }); f.heldPose = NATIVE_WEAPONS[name].stance;
+    f.musketAim=false; f.combat.setWeapon(name); f.combat.play(NATIVE_WEAPONS[name].stance, { loop: true, force: true }); f.heldPose = NATIVE_WEAPONS[name].stance;
     if (f.hero) { this.directionBuffer = []; this.recoveryAttack = null; }
     if (f.butterflySword) { disposeButterflySword(f.butterflySword); if (f.hero) this.butterflyVfx?.bind(null); }
     f.raidenSword?.removeFromParent(); f.raidenSword = null;
@@ -493,7 +510,7 @@ export class MeteorGame {
   }
   _move(f, direction, speed, dt, motion = null) {
     if(f.combat.reacting)f.wallKick=null;
-    const desired = f.wallRun?f.wallRun.velocity:direction.clone().multiplyScalar(speed); f.velocity.lerp(desired, 1 - Math.exp(-dt * 14));
+    const desired = f.wallRun?f.wallRun.velocity:direction.clone().multiplyScalar(speed); if(this._controlFor(f))f.velocity.copy(desired);else f.velocity.lerp(desired,1-Math.exp(-dt*14));
     let dx = f.velocity.x * dt + (motion?.x || 0), dz = f.velocity.z * dt + (motion?.z || 0), p = f.root.position;
     // The short exit impulse must win over held forward input, or it cancels
     // itself against the same movement speed and the actor sticks to the wall.
@@ -525,7 +542,7 @@ export class MeteorGame {
       }
       if(p.y>beforeY&&this._ceilingBlocked(v3(p.x,beforeY,p.z),p.y-beforeY)){p.y=beforeY;f.vy=0;f.nativeJump=null;f.jumpSequence=null;if(f.wallRun)this._endWallTraversal(f);}
       const landing = this._ground(p.x, p.z, p.y + Math.max(.7, -f.vy * dt + .15));
-      if (landing && p.y <= landing.point.y + .04 && f.vy <= 0) { p.y = landing.point.y + .015; f.vy = 0; f.grounded = true; f.nativeJump = null; f.jumpSequence = null; f.wallRun=null;f.wallKick=null;f.wallEntries=0; }
+      if (landing && p.y <= landing.point.y + .04 && f.vy <= 0) { p.y = landing.point.y + .015; f.vy = 0; f.grounded = true; f.musketAim=false; f.nativeJump = null; f.jumpSequence = null; f.wallRun=null;f.wallKick=null;f.wallEntries=0; }
     }
     const hazard = this.currentMap.environment?.sweep(from, p);
     if (hazard && !f.dead) {
@@ -591,7 +608,7 @@ export class MeteorGame {
     }
     const request = ++this.sessionRequest;
     await this.ready; if (request !== this.sessionRequest || this.disposed) return;
-    this.projectiles?.clear('restart'); this.projectiles?.pause(false); this.muskets?.clear(); this.wheels?.clear(); this.muskets?.pause(false); this.wheels?.pause(false); this.impactFeedback?.clear(); this.rageVfx?.clear(); this.effectContacts?.clear(); this.items?.reset(); this.missionHost?.dispose(); this.missionHost = null; this.missionState = null; this.storyResult = null;
+    this.projectiles?.clear('restart'); this.projectiles?.pause(false); this.muskets?.clear(); this.wheels?.clear(); this.muskets?.pause(false); this.wheels?.pause(false); this.impactFeedback?.clear(); this.rageVfx?.clear(); this.effectContacts?.clear(); this.items?.reset(); this._clearDroppedWeapons(); this.missionHost?.dispose(); this.missionHost = null; this.missionState = null; this.storyResult = null;
     this.keyboard?.reset(); this.pointer = null; this.keys.clear(); this.traversalTap=null; this.directionBuffer = []; this.recoveryAttack = null; this.running = false; this.paused = false; this.mode = mode === 'story' ? 'story' : 'training';
     if (map !== this.map) await this._loadMap(map);
     if (request !== this.sessionRequest || this.disposed) return;
@@ -628,7 +645,7 @@ export class MeteorGame {
   async menu(map = this.map) {
     this.mouseLook?.release();
     this.keyboard?.reset();
-    ++this.sessionRequest; this.projectiles?.clear('menu'); this.projectiles?.pause(false); this.muskets?.clear(); this.wheels?.clear(); this.muskets?.pause(false); this.wheels?.pause(false); this.impactFeedback?.clear(); this.rageVfx?.clear(); this.effectContacts?.clear(); this.items?.reset(); this.missionHost?.dispose(); this.missionHost = null; this.missionState = null; this.mode = 'training';
+    ++this.sessionRequest; this.projectiles?.clear('menu'); this.projectiles?.pause(false); this.muskets?.clear(); this.wheels?.clear(); this.muskets?.pause(false); this.wheels?.pause(false); this.impactFeedback?.clear(); this.rageVfx?.clear(); this.effectContacts?.clear(); this.items?.reset(); this._clearDroppedWeapons(); this.missionHost?.dispose(); this.missionHost = null; this.missionState = null; this.mode = 'training';
     this.running = false; this.paused = false; this.keys.clear(); this.traversalTap=null; this.pointer = null; this.locked = null; this.directionBuffer = [];
     await this.ready; if (this.disposed) return;
     if (map !== this.map) await this._loadMap(map);
@@ -679,13 +696,54 @@ export class MeteorGame {
   }
   async setWeapon(name) { if (!NATIVE_WEAPONS[name] || this.mode === 'story' || this.running && this.hero?.combat.reacting) return; this.weapon = name; if (this.hero) await this._equip(this.hero, name); this._hud(); }
   async switchWeapon() {
-    if (this.hero?.combat.reacting || this.hero?.dead) return;
-    if (this.mode === 'story') {
-      if (this.hero.switchingWeapon) return; const next = this.hero.weapon2Id; if (!this.weaponItems.has(next)) return;
-      this.hero.switchingWeapon = true; const previous = this.hero.weaponId;
-      try { await this._equip(this.hero, next); this.hero.weapon2Id = previous; this.weapon = this.hero.weapon; this._hud(); } finally { this.hero.switchingWeapon = false; }
+    return this._switchInventoryWeapon(this.hero);
+  }
+  async _prepareWeapon(id){
+    const item=this.weaponItems.get(id);if(!item?.available)throw Error('兵器资源不可用');
+    for(const name of item.modelIds.map(id=>id.toLowerCase()))if(!this.weaponCache.has(name))this.weaponCache.set(name,this._readWeapon(name).catch(error=>{this.weaponCache.delete(name);throw error;}));
+    return Promise.all(item.modelIds.map(name=>this.weaponCache.get(name.toLowerCase())));
+  }
+  async _switchInventoryWeapon(actor){
+    if(!actor||!this.running||this.paused||actor.dead||actor.scriptInputBlocked||actor.combat.busy||actor.switchingWeapon)return;
+    const next=actor.weapon2Id;if(!this.weaponItems.has(next))return;
+    const session=this.sessionRequest,previous=actor.weaponId;actor.switchingWeapon=true;
+    try{await this._prepareWeapon(next);if(this.disposed||session!==this.sessionRequest||actor.disposed||actor.dead||actor.weapon2Id!==next||!this.running||this.paused||actor.scriptInputBlocked||actor.combat.busy)return;
+      await this._equip(actor,next);actor.weapon2Id=previous;if(actor===this.hero)this.weapon=actor.weapon;this._hud();
+    }catch(error){this._emit('兵器载入失败，保留原装备','info');console.warn(error);}finally{actor.switchingWeapon=false;}
+  }
+  _clearDroppedWeapons(){for(const drop of this.droppedWeapons?.values()||[])drop.root.removeFromParent();this.droppedWeapons?.clear();this.replicaLootDesired=new Map();this.combatFeedbackEvents=[];this.bloodFeedback?.clear();}
+  _lootSnapshot(){return {consumed:[...(this.items?.consumedNames||[])],drops:[...(this.droppedWeapons?.values()||[])].filter(drop=>drop.attributes.active).map(drop=>({name:drop.name,weaponId:drop.weaponId,position:drop.root.position.toArray()}))};}
+  _combatFeedbackSnapshot(){return (this.combatFeedbackEvents||[]).filter(event=>(this.matchElapsed||0)-event.time<=.6);}
+  _playCombatFeedback(event,local=false){
+    const point=v3(...event.point),direction=v3(...event.direction);
+    this.impactFeedback?.emit({point,direction,guarded:event.guarded,knockdown:event.knockdown,local});
+    this.bloodFeedback?.emit({point,direction,guarded:event.guarded,damage:event.blood?1:0,style:event.bloodStyle});
+    if(event.sound)this._soundDefinition(event.sound);
+  }
+  _applyLootState(state){
+    if(!state)return;this.droppedWeapons ||= new Map();const consumed=new Set(state.consumed);for(const instance of this.currentMap.props?.instances.values()||[])if(consumed.has(instance.name)){instance.setActive(false);instance.setCollision(false);}
+    this.replicaLootDesired=new Map(state.drops.map(drop=>[drop.name,drop]));
+    for(const [name,drop] of this.droppedWeapons)if(!this.replicaLootDesired.has(name)){drop.root.removeFromParent();this.droppedWeapons.delete(name);this.items?.visuals.delete(drop);}
+    this.pendingLootLoads ||= new Set();
+    for(const drop of state.drops){if(this.droppedWeapons.has(drop.name)||this.pendingLootLoads.has(drop.name))continue;this.pendingLootLoads.add(drop.name);const session=this.sessionRequest;
+      this._prepareWeapon(drop.weaponId).then(models=>{const latest=this.replicaLootDesired.get(drop.name);if(this.lootReplica&&!this.disposed&&session===this.sessionRequest&&latest?.weaponId===drop.weaponId)this._spawnDroppedWeapon(drop.weaponId,v3(...latest.position),drop.name,models);}).catch(()=>{}).finally(()=>this.pendingLootLoads.delete(drop.name));
     }
-    else { const first = ['sword', 'spear', 'blade', 'dagger', 'dart'], families = [...first, ...Object.keys(NATIVE_WEAPONS).filter(name => !first.includes(name))]; await this.setWeapon(families[(families.indexOf(this.weapon) + 1) % families.length]); }
+  }
+  _spawnDroppedWeapon(id,position,name,templates,owner=null){
+    const item=this.weaponItems.get(id);if(!item)return null;
+    const root=new THREE.Group(),model=new THREE.Group();root.name=name;root.position.copy(position);root.scale.setScalar(SCALE);root.add(model);
+    for(const template of templates)model.add(template.clone(true));this.scene.add(root);
+    const drop={name,root,model,source:{properties:{model:item.modelId}},attributes:{active:1,interactive:1,collision:0},dropOwner:owner,weaponId:id,
+      setActive(value){this.attributes.active=Number(value);root.visible=!!value;},setCollision(){}};
+    this.droppedWeapons.set(name,drop);return drop;
+  }
+  async dropWeapon(actor=this.hero){
+    if(!actor||!this.running||this.paused||actor.dead||actor.scriptInputBlocked||actor.combat.busy||actor.switchingWeapon||!this.weaponItems.has(actor.weapon2Id)||this.droppedWeapons.size>=64)return;
+    const id=actor.weapon2Id,session=this.sessionRequest;actor.switchingWeapon=true;
+    try{const templates=await this._prepareWeapon(id);if(this.disposed||session!==this.sessionRequest||actor.dead||actor.disposed||actor.weapon2Id!==id||!this.running||this.paused||actor.scriptInputBlocked||actor.combat.busy)return;
+      const position=actor.root.position.clone();const floor=this._ground(position.x,position.z,position.y+1);if(floor)position.y=floor.point.y+.12;
+      this._spawnDroppedWeapon(id,position,`web-drop-${++this.lootSerial}`,templates,actor);actor.weapon2Id=null;this._emit(`丢下${this.weaponItems.get(id).name}`,'info');this._hud();
+    }catch(error){this._emit('兵器载入失败，未丢弃装备','info');console.warn(error);}finally{actor.switchingWeapon=false;}
   }
   setInfiniteRage(enabled) {
     this.infiniteRage = enabled === true;
@@ -703,7 +761,7 @@ export class MeteorGame {
     if(!pose?.valid)return false;
     if(control&&!control.locked)actor.root.rotation.y=control.cameraAngle+Math.PI;
     actor.jumpSequence={...sequence,direction,facing:actor.root.rotation.y};actor.wallEntries=0;actor.wallRun=null;actor.wallKick=null;
-    actor.grounded = false; actor.vy = this.hostPhysics.jumpVelocity;
+    actor.musketAim=false; actor.grounded = false; actor.vy = this.hostPhysics.jumpVelocity;
     if (pose?.valid && actor.character.sampleSceneMotion) {
       // 004ce850 consumes d_base movement independently of the visible skin.
       // Preserve the authored takeoff instead of a fixed-height substitute.
@@ -730,10 +788,12 @@ export class MeteorGame {
   }
   _actionFighter(actor, control, name, active = true) {
     if(!actor || !control)return;
+    if(['switch','drop','pickup'].includes(name)){if(active){if(name==='switch')return this._switchInventoryWeapon(actor);if(name==='drop')return this.dropWeapon(actor);return this._tryPickupActor(actor);}return;}
     const inputTime=control.inputTime??this.elapsed;
     if (name === 'guard') {
       const held = active && this.running && !this.paused && !actor.dead;
       if (held) control.keys.add('guard'); else control.keys.delete('guard');
+      if(held)actor.musketAim=false;
       actor.guard = held && !actor.scriptInputBlocked && (!actor.combat.busy || actor.combat.reactionPhase === 'guard');
       return;
     }
@@ -742,7 +802,7 @@ export class MeteorGame {
     if (['forward','back','left','right'].includes(name)) {
       if(active&&this.running&&!this.paused&&!actor.dead){
         if(!control.keys.has(name)){
-          const crouched=control.keys.has('crouch'),tap=traversalTap(control.traversalTap,{direction:name,time:inputTime,crouched,weapon:actor.weapon,allowed:actor.grounded&&!actor.combat.busy&&!actor.guard});control.traversalTap=tap.tap;
+          const crouched=control.keys.has('crouch'),tap=traversalTap(control.traversalTap,{direction:name,time:inputTime,crouched,weapon:actor.weapon,allowed:actor.grounded&&!actor.combat.busy&&!actor.guard&&!actor.musketAim});control.traversalTap=tap.tap;
           const moved=tap.poseId&&(crouched?this._beginRoll(name,tap.poseId,actor,control):this._beginDash(name,tap.poseId,actor,control));
           if(!moved||!crouched)control.directionBuffer=recordNativeDirection(control.directionBuffer||[],{forward:'up',back:'down',left:'left',right:'right'}[name],inputTime,!actor.grounded);
         }
@@ -761,26 +821,28 @@ export class MeteorGame {
     else if (name === 'jump' && !actor.combat.busy) {
       control.directionBuffer = []; if(actor.grounded)this._beginJump(actor);else this._beginWallJump(actor);
     }
-    else if (name === 'lock') { control.locked = control.locked ? null : this._nearest(Infinity,actor); if(actor===this.hero){this.cameraManualUntil = 0;this._hud();} }
+    else if (name === 'lock' && !actor.musketAim) { control.locked = control.locked ? null : this._nearest(Infinity,actor); if(actor===this.hero){this.cameraManualUntil = 0;this._hud();} }
   }
   action(name, active = true) {
+    if(['switch','drop','pickup'].includes(name)){if(active){if(name==='switch')return this.switchWeapon();if(name==='drop')return this.dropWeapon();this._tryPickupActor(this.hero);this._hud();}return;}
     if(['guard','crouch','forward','back','left','right','attack','jump','lock'].includes(name))return this._actionFighter(this.hero,this._controlFor(this.hero),name,active);
     if (!active || !this.running || this.paused || !this.hero || this.hero.dead || this.hero.scriptInputBlocked) return;
     this._unlockAudio();
-    if (name === 'switch') this.switchWeapon();
-    else if (name === 'pickup' && this.mode === 'story') {
-      const result = this.items?.tryPickup(this.hero);
-      if (result?.reason === 'full-rage') this._emit('怒气已满，道具留在原处','info');
-      if (result?.reason === 'full-hp') this._emit('气血已满，肉包留在原处', 'info');
-      this._hud();
-    }
-    else if (name === 'fury' || name === 'dodge') this._emit('该动作的原版指令与条件正在逆向，当前不使用替代招式', 'info');
+    if (name === 'fury' || name === 'dodge') this._emit('该动作的原版指令与条件正在逆向，当前不使用替代招式', 'info');
     else if (/^pose:\d+$/.test(name)) this.hero.combat.play(Number(name.slice(5)));
-    else if (['weapon1', 'weapon2', 'weapon3', 'weapon4', 'weapon5'].includes(name)) this.setWeapon(['sword', 'blade', 'spear', 'dagger', 'dart'][Number(name.slice(-1)) - 1]);
+
   }
   _beginAttack(f, savedInput = null) {
     const control=this._controlFor(f);
     if (f.dead || f.disposed || f.scriptRemoved || f.scriptCrouched || f.combat.reacting || control && f.scriptInputBlocked) return false;
+    // Native musket state 004deca0: first ground attack enters ready pose212;
+    // crouch/aim blocks movement (004ded10). Subsequent attacks use POS/ACT.
+    if(control&&f.weapon==='musket'&&!f.musketAim){
+      if(!f.grounded||f.guard||control.keys.has('crouch')||f.combat.busy)return false;
+      f.musketAim=true;control.aimPitch=0;control.cameraAngle=f.root.rotation.y-Math.PI;control.locked=null;f.velocity.set(0,0,0);
+      f.root.rotation.y=control.cameraAngle+Math.PI;f.combat.play(212,{force:true});f.heldPose=212;control.directionBuffer=[];return true;
+    }
+    if(control&&f.musketAim&&f.combat.timeline?.pose.id===212&&!f.combat.timeline.finished)return false;
     // Free attacks retain the player's chosen facing. An unlocked opponent
     // behind the player must not turn an intended gate/front attack around.
     const target = control ? control.locked : f.scriptControl?.attackTarget || this.hero;
@@ -900,7 +962,10 @@ export class MeteorGame {
         this._npcCombatAction(f, target, npcDue, { reach: reach + .7 });
       }
     }
-    if (f.guard) speed *= .3;
+    if(f.musketAim&&(f.weapon!=='musket'||f.combat.reacting||!f.grounded||f.scriptInputBlocked))f.musketAim=false;
+    if(f.musketAim){direction.set(0,0,0);f.root.rotation.y=(control?.cameraAngle??f.root.rotation.y-Math.PI)+Math.PI;}
+    if(f.guard)speed*=control?0:.3;
+    if(f.musketAim)speed=0;
     if (f.combat.busy) speed = 0;
     this._updateWallTraversal(f,direction,dt);
     if (!f.combat.busy) {
@@ -919,18 +984,23 @@ export class MeteorGame {
         else f.combat.timeline.loop=pose===NATIVE_LOCOMOTION.fall;
         f.heldPose=pose;
       }else{
-        const moving=direction.lengthSq()>0||f.velocity.lengthSq()>.2;
+        const moving=direction.lengthSq()>0;
         const facingMove=control&&(control.lookLocked||control.mouseLook?.locked||control.locked&&!control.locked.dead&&!control.locked.disposed);
         const groundMove=facingMove?(NATIVE_GROUND_MOVE_POSES[nativeTraversalDirection(control.keys)]??(f.heldPose>=141&&f.heldPose<=143?f.heldPose:NATIVE_LOCOMOTION.run)):NATIVE_LOCOMOTION.run;
-        let pose=f.guard?NATIVE_WEAPONS[f.weapon].guard:moving?groundMove:f.combat.stance??NATIVE_WEAPONS[f.weapon].stance;
-        const crouching=(f.scriptCrouched||control&&control.keys.has('crouch'))&&f.grounded;
+        let pose=f.musketAim?212:f.guard?NATIVE_WEAPONS[f.weapon].guard:moving?groundMove:f.combat.stance??NATIVE_WEAPONS[f.weapon].stance;
+        const crouching=(f.scriptCrouched||control&&control.keys.has('crouch'))&&f.grounded&&!f.musketAim&&!f.guard;
         if(crouching){
-          const walking=direction.lengthSq()>0||f.velocity.lengthSq()>.2,requested=nativeTraversalDirection(control?.keys);
+          const walking=direction.lengthSq()>0,requested=nativeTraversalDirection(control?.keys);
           const movingPose=NATIVE_CROUCH_POSES[requested]??(f.heldPose>=145&&f.heldPose<=148?f.heldPose:NATIVE_CROUCH_POSES.forward);
           pose=walking?movingPose:NATIVE_CROUCH_POSES.idle;
         }
-        if(f.heldPose!==pose){f.combat.play(pose,{loop:true,force:true});f.heldPose=pose;}
+        if(f.heldPose!==pose){f.combat.play(pose,{loop:true,force:true});if(f.musketAim&&pose===212){f.combat.timeline.frame=f.combat.timeline.pose.end;f.combat.timeline.finished=true;}f.heldPose=pose;}
       }
+    }
+    const locomotion=f.combat.timeline?.pose.id;
+    if(f.grounded&&!f.combat.busy&&!f.guard&&!f.musketAim){
+      const stride=nativeStrideSpeed(f.character.nativeCharacterId??0,locomotion);
+      if(stride>0){const rate=speed/this.hostPhysics.speed;if(control)speed=nativeStrideSpeed(0,locomotion)*rate;f.combat.timeline.playbackRate=speed/stride;}
     }
     const state = f.combat.update(dt, { grounded: f.grounded, projectileReady: !this.wheels?.hasOwner(f) }); if (!state) return;
     // A held defense is sampled continuously, including the exact frame a
@@ -938,7 +1008,14 @@ export class MeteorGame {
     // touch press while several opponents are attacking.
     if (control && !f.combat.busy && !f.scriptInputBlocked && control.keys.has('guard')) f.guard = true;
     const motion = v3();
-    for (const segment of state.segments || [state]) if (segment.authoredMotionScale != null) {
+    for (const segment of state.segments || [state]) {
+      if(f.jumpSequence&&[f.jumpSequence.start,f.jumpSequence.air].includes(segment.poseId)&&f.character.sampleSceneMotion){
+        // Consume BOTH takeoff and linked air d_base tracks, at actual POS time.
+        // The former host stopped at takeoff, then injected an extra ballistic arc.
+        f.nativeJump=null;
+        for(const range of segment.frameIntervals||[]){const a=f.character.sampleSceneMotion(segment.source,range.from),b=f.character.sampleSceneMotion(segment.source,range.to);motion.y+=(b.z-a.z)*SCALE;}
+      }
+      if(segment.authoredMotionScale==null)continue;
       const a = f.root.rotation.y, scale = segment.authoredMotionScale;
       const localX = segment.rootDelta.x * scale, localZ = -segment.rootDelta.y * scale;
       motion.x += Math.cos(a) * localX + Math.sin(a) * localZ;
@@ -1019,9 +1096,9 @@ export class MeteorGame {
     Object.assign(raw, { selectedTargetPose: reactionPose, hitDirection: selection.direction, hitAngle: selection.angle });
     const knockdown = !guarded && [112, 113].includes(this.combatData.poses?.get(reactionPose)?.link);
     const damageContext = { attack, raw, attacker, target, weapon: attacker.weapon, guarded, poseId: state.poseId };
-    const damage = this.damageResolver?.(damageContext);
+    const damage = this.damageResolver?.(damageContext);let confirmedDamage=0;
     if (Number.isFinite(damage) && damage >= 0) {
-      const hpBefore = target.hp; target.hp = Math.max(0, target.hp - damage); if (attacker.hero) this.totalDamage += hpBefore - target.hp;
+      const hpBefore = target.hp; target.hp = Math.max(0, target.hp - damage);confirmedDamage=hpBefore-target.hp; if (attacker.hero) this.totalDamage += hpBefore - target.hp;
       const nativeResult = damageContext.nativeResult;
       if (nativeResult) target.rage = clamp((target.rage || 0) + (nativeResult.guarded ? nativeResult.victimRage : Math.floor(14 * (hpBefore - target.hp) / 100)), 0, nativeRageMaximum(target));
       // 004af630: guard returns before parameter16; a lethal hit takes the
@@ -1036,6 +1113,7 @@ export class MeteorGame {
       if (target.hp <= 0) this._kill(target);
       this._emit(guarded ? '格挡' : String(Math.round(damage)), 'hit', damage, contact, { poseId: state.poseId, raw, guarded, guardBypassed, knockdown: knockdown && !target.dead, attackerHero: !!attacker.hero, targetHero: !!target.hero, targetName: target.name, ...extra });
     } else { const name = raw.moveRecord?.name || state.pose.label || '兵刃交锋'; this._emit(attacker.hero ? `${name} · 命中` : `${name} · 对手命中`, 'hit', undefined, contact, { poseId: state.poseId, raw, guarded, guardBypassed, damagePending: true, ...extra }); }
+    target.musketAim=false;
     const displayedReaction = guarded ? nativeGuardPose(target.weapon, selection.direction) : reactionPose;
     if (!target.dead && displayedReaction != null && target.combat?.react(displayedReaction, {
       ...nativeReactionParameters(attack, { guarded }), guarded, fromPose: target.character?.capturePose?.()
@@ -1052,12 +1130,27 @@ export class MeteorGame {
       const control=this._controlFor(target);if(control)control.directionBuffer=[];
     }
     const feedback = this.impactFeedback?.emit({ point: contact, direction: target.root.position.clone().sub(attacker.root.position), guarded, knockdown, local: !!(attacker.hero || target.hero) });
+    const direction=target.root.position.clone().sub(attacker.root.position);
+    const prefix = { sword: 'W00', blade: 'W05', spear: 'W07', dagger: 'W01', dart: 'W03', musket: 'W02', wheel: 'W06', qiankun: 'W09', ninja: 'W11', dual: 'W08', hammer: 'W04', knuckle: 'W10' }[attacker.weapon];
+    let lift=0;
+    const reaction=this.combatData.poses?.get(reactionPose),sample=target.character?.sampleSceneMotion;
+    if(reaction?.valid&&sample){
+      const key=`${target.character.nativeCharacterId??0}:${reactionPose}`,cache=this.bloodLiftCache||=new Map();
+      if(!cache.has(key)){const origin=sample(reaction.source,reaction.start).z;let peak=0;for(let i=1;i<=8;i++){const z=sample(reaction.source,reaction.start+(reaction.end-reaction.start)*i/8).z-origin;if(Number.isFinite(z))peak=Math.max(peak,z);}cache.set(key,peak*.08);}
+      lift=cache.get(key)*Math.max(0,Number(attack.targetmove)||0);
+    }
+    const bloodStyle=bloodStyleForHit({damage,force:attack.targetmove,weapon:attacker.weapon,knockdown,lift,reactionPose});
+    this.bloodFeedback?.emit({point:contact,direction,guarded,damage:confirmedDamage,style:bloodStyle});
+    this.combatFeedbackSerial=(this.combatFeedbackSerial||0)+1;
+    const actors=[this.hero,...(this.enemies||[])];
+    (this.combatFeedbackEvents||=[]).push({id:this.combatFeedbackSerial,time:this.matchElapsed||0,point:contact.toArray(),direction:direction.normalize().toArray(),guarded,knockdown,blood:!guarded&&confirmedDamage>0,bloodStyle:!guarded&&confirmedDamage>0?bloodStyle:undefined,
+      attackerId:actors.find(actor=>actor?.root===attacker.root)?.networkId,targetId:target.networkId,sound:prefix&&Number.isInteger(reactionPose)?`${prefix}${guarded?'GD':'BL'}${String(reactionPose).padStart(3,'0')}`:null});
+    if(this.combatFeedbackEvents.length>32)this.combatFeedbackEvents.shift();
     if (attacker.hero && this.swordStyle === 'butterfly') this.butterflyVfx?.burst(contact, { guarded, knockdown, camera: this.camera });
     if (feedback) {
       if (attacker.combat && !attacker.dead) attacker.hitstop = Math.max(attacker.hitstop || 0, feedback.hitstop);
       if (!target.dead) target.hitstop = Math.max(target.hitstop || 0, feedback.hitstop);
     }
-    const prefix = { sword: 'W00', blade: 'W05', spear: 'W07', dagger: 'W01', dart: 'W03', musket: 'W02', wheel: 'W06', qiankun: 'W09', ninja: 'W11', dual: 'W08', hammer: 'W04', knuckle: 'W10' }[attacker.weapon];
     this._soundDefinition(`${prefix}${guarded ? 'GD' : 'BL'}${String(reactionPose).padStart(3, '0')}`); this._hud(); return true;
   }
   _resolveSceneContacts(attacker, state, attack) {
@@ -1089,8 +1182,10 @@ export class MeteorGame {
     }
   }
   _kill(target, { awardKill = true } = {}) {
+    if(!target.dead&&this.droppedWeapons?.size<64){const id=target.weaponId,item=this.weaponItems?.get(id),templates=item?.modelIds.map(id=>this.weaponCache.get(id.toLowerCase()));
+      if(templates?.every(Boolean)){const session=this.sessionRequest,position=target.root.position.clone();Promise.all(templates).then(models=>{if(!this.disposed&&session===this.sessionRequest&&this.droppedWeapons.size<64)this._spawnDroppedWeapon(id,position,`web-drop-${++this.lootSerial}`,models);}).catch(()=>{});}}
     target.wallRun=null;target.wallKick=null;
-    if (target.dead) return; target.dead = true; target.guard = false; target.hitstop = 0; target.respawn = this.mode === 'story' ? Infinity : 3; target.combat.play(NATIVE_LOCOMOTION.dead, { force: true });
+    if (target.dead) return; target.dead = true; target.guard = false; target.musketAim=false; target.hitstop = 0; target.respawn = this.mode === 'story' ? Infinity : 3; target.combat.play(NATIVE_LOCOMOTION.dead, { force: true });
     clearPlayerCommands(this._controlFor(target));
     if (target.hero) this.deaths++; else if (awardKill) this.kills++;
     for(const actor of [this.hero,...this.enemies]){const control=this._controlFor(actor);if(control?.locked===target)control.locked=null;}
@@ -1136,6 +1231,11 @@ export class MeteorGame {
   }
   _tickCamera(dt, { directLook: directLookRequested = false } = {}) {
     if (!this.hero || !this.currentMap) return;
+    if(this.hero.musketAim&&!this.hero.dead&&(this.running||this.paused)){
+      const control=this._controlFor(this.hero),eye=this.hero.root.position.clone().add(v3(0,1.65,0)),pitch=control?.aimPitch||0;
+      const direction=v3(-Math.sin(this.cameraAngle)*Math.cos(pitch),Math.sin(pitch),-Math.cos(this.cameraAngle)*Math.cos(pitch));
+      this.camera.position.copy(eye);this.cameraTarget.copy(eye).add(direction);this.camera.lookAt(this.cameraTarget);this.hero.root.visible=false;this.cameraFollowY=this.hero.root.position.y;return;
+    }
     const p = this.hero.root.position, eye = p.clone().add(v3(0, 1.65, 0)), target = eye.clone(); let desired;
     // Carry the camera rig with physical ascent/descent before smoothing its
     // framing. Two independent lerps otherwise lag a fast jump by several
@@ -1185,10 +1285,10 @@ export class MeteorGame {
       const right = v3(-view.z, 0, view.x);
       enemy = { name: target.name, hp: target.hp, maxHp: target.maxHp, reaction: target.combat?.reactionPhase ?? null, distance: delta.length(), bearing: Math.atan2(delta.dot(right), delta.dot(view)) };
     }
-    const item = this.running && this.mode === 'story' ? this.items?.peek(f) : null;
+    const item = this.running ? this.items?.peek(f) : null;
     const pickup = item ? { name: item.name, heal: item.heal, description:item.description, fullReason:item.fullReason, full: item.full, distance: item.distance, objectName: item.objectName } : null;
-    const statuses = (f.scriptItems || []).map(item => ({ id: item.id, name: item.name, statKey: item.statKey, remaining: item.remaining, value: item.value, period: item.period }));
-    this.onUpdate({ infiniteRage: !!this.infiniteRage, characterAppearance: f.character.appearanceStatus, pickup, statuses, inputBlocked: !!f.scriptInputBlocked, hp: f.hp, maxHp: f.maxHp, playerReaction: f.combat.reactionPhase, rage: f.rage, hits: this.contactHits, kills: this.kills, deaths: this.deaths, time: this.matchElapsed, enemy, combo: f.combat.attacking ? f.combat.combo : 0, moveName: f.combat.busy ? f.combat.currentMove?.name : null, moveCommand: f.combat.busy ? f.combat.currentMove?.command : null, queuedMoveName: f.combat.queuedMove?.name || null, locked: !!this.locked, position: { x: f.root.position.x, z: f.root.position.z }, enemies: this.enemies.filter(e => !e.dead && !e.scriptRemoved && e.team !== f.team && e.team !== 0).map(e => ({ x: e.root.position.x, z: e.root.position.z })), allies: this.enemies.filter(e => !e.dead && !e.scriptRemoved && e.team === f.team).map(e => ({ x: e.root.position.x, z: e.root.position.z })), weapon: f.weapon, weaponId: f.weaponId, weaponName: f.weaponName, weaponMode: f.combat.weaponMode, mission: this.missionState, paused: this.paused, mapBounds: b ? { minX: b.min.x, maxX: b.max.x, minZ: b.min.z, maxZ: b.max.z } : null, native: { pose: f.combat.timeline?.pose.id, source: f.character.source, frame: f.character.frame, contacts: this.contactHits, damagePending: !this.damageResolver, hpSourcePending: !f.hpSourceVerified, physicsPending: true, sceneDamagePending: this.mode === 'story' && !this.sceneDamageResolver, projectilePending: false, projectileSpecialsPending: true, projectilePhysics: NATIVE_DART_PROFILE.provenance.flight, projectiles: this.projectiles?.size || 0, missionVmPending: this.mode === 'story' ? !this.missionHost?.started : false } });
+    const statuses = (f.networkItemStatuses || f.scriptItems || []).map(item => ({ id: item.id, name: item.name, statKey: item.statKey, remaining: item.remaining, value: item.value, period: item.period }));
+    this.onUpdate({ musketAim:!!f.musketAim, infiniteRage: !!this.infiniteRage, characterAppearance: f.character.appearanceStatus, pickup, statuses, inputBlocked: !!f.scriptInputBlocked, hp: f.hp, maxHp: f.maxHp, playerReaction: f.combat.reactionPhase, rage: f.rage, hits: this.contactHits, kills: this.kills, deaths: this.deaths, time: this.matchElapsed, enemy, combo: f.combat.attacking ? f.combat.combo : 0, moveName: f.combat.busy ? f.combat.currentMove?.name : null, moveCommand: f.combat.busy ? f.combat.currentMove?.command : null, queuedMoveName: f.combat.queuedMove?.name || null, locked: !!this.locked, position: { x: f.root.position.x, z: f.root.position.z }, enemies: this.enemies.filter(e => !e.dead && !e.scriptRemoved && e.team !== f.team && e.team !== 0).map(e => ({ x: e.root.position.x, z: e.root.position.z })), allies: this.enemies.filter(e => !e.dead && !e.scriptRemoved && e.team === f.team).map(e => ({ x: e.root.position.x, z: e.root.position.z })), weapon: f.weapon, weaponId: f.weaponId, weaponName: f.weaponName, weapon2Name:this.weaponItems?.get(f.weapon2Id)?.name||null, weaponMode: f.combat.weaponMode, mission: this.missionState, paused: this.paused, mapBounds: b ? { minX: b.min.x, maxX: b.max.x, minZ: b.min.z, maxZ: b.max.z } : null, native: { pose: f.combat.timeline?.pose.id, source: f.character.source, frame: f.character.frame, contacts: this.contactHits, damagePending: !this.damageResolver, hpSourcePending: !f.hpSourceVerified, physicsPending: true, sceneDamagePending: this.mode === 'story' && !this.sceneDamageResolver, projectilePending: false, projectileSpecialsPending: true, projectilePhysics: NATIVE_DART_PROFILE.provenance.flight, projectiles: this.projectiles?.size || 0, missionVmPending: this.mode === 'story' ? !this.missionHost?.started : false } });
   }
   _emit(text, type = 'info', amount, point, extra = {}) { const p = point?.clone().project(this.camera); this.onEvent({ text, type, amount, x: p ? (p.x + 1) / 2 : undefined, y: p ? (1 - p.y) / 2 : undefined, ...extra }); }
   _resetWorldClock() { this.simulationClock?.reset(); this.clock?.getDelta(); this.frameMeter?.reset(); }
@@ -1203,21 +1303,28 @@ export class MeteorGame {
   }
   _stepWorld(dt) {
     this.elapsed += dt;
+    this.items?.prepareWorld?.();
     if (this.running) this.missionHost?.update(dt); this.currentMap.props?.update(dt); this.currentMap.update?.(dt);
     if (this.running) { this.matchElapsed += dt; this._updateFighter(this.hero, dt); for (const f of this.enemies) { if (!this.running) break; this._updateFighter(f, dt); } this._separateCharacters(dt); if (this.running) { this.projectiles?.update(dt); this.wheels?.update(dt); } }
     else { const state = this.hero.combat.update(dt); if (state) this.hero.character.setPoseFrame(state.source, state.frame); }
+    this._updateLoot();
     this.updateAccum += dt; if (this.updateAccum > .08) { this.updateAccum = 0; this._hud(); }
   }
   _updatePresentation(dt) {
+      this.items?.updateVisuals(this.elapsed);
       this.weather?.update(dt, this.hero?.root.position);
       // Run cosmetic springs once, after final body motion and separation.
       for (const actor of [this.hero,...this.enemies]) if(actor?.root.visible&&!actor.disposed)actor.character.updateSecondaryMotion?.(dt,{groundY:actor.grounded?actor.root.position.y:undefined});
       for (let i = this.effects.length - 1; i >= 0; i--) { const e = this.effects[i]; e.life -= dt; e.mesh.material.opacity = Math.max(0, e.life / .14); if (e.life <= 0) { e.mesh.removeFromParent(); e.mesh.geometry.dispose(); e.mesh.material.dispose(); this.effects.splice(i, 1); } }
-      this.impactFeedback?.update(dt);
-      this.rageVfx?.update(dt, this.camera);
+      const feedbackStep=this.paused?0:dt;
+      this.impactFeedback?.update(feedbackStep,this.camera);
+      this.bloodFeedback?.update(feedbackStep,this.camera,this.renderer?.domElement?.height||900);
+      this.rageVfx?.update(feedbackStep, this.camera);
       this.butterflyVfx?.update(dt, { attacking: !!this.hero?.combat?.attacking, camera: this.camera });
       if (this.hero?.phoenixSpear?.visible) this.hero.phoenixSpear.userData.update(this.elapsed);
   }
+  _tryPickupActor(actor){if(this.running&&!this.paused&&!this.lootReplica&&actor&&actor.grounded!==false&&!actor.dead&&!actor.combat.busy&&!actor.guard)return this.items?.tryPickup(actor);}
+  _updateLoot(){if(this.running&&!this.paused&&!this.lootReplica)for(const actor of [this.hero,...this.enemies])if(actor&&this._controlFor(actor)&&actor.grounded)this._tryPickupActor(actor);}
   _frame(timestamp) {
     if (this.disposed) return; this.raf = requestAnimationFrame(this._frame);
     const started = performance.now();
@@ -1287,7 +1394,7 @@ export class MeteorGame {
   dispose() {
     this.frameOverlay?.dispose();
     this.weather?.dispose();
-    this.rageVfx?.dispose(); this.effectContacts?.dispose(); this.projectiles?.dispose(); this.muskets?.dispose(); this.wheels?.dispose(); this.impactFeedback?.dispose(); this.items?.dispose(); this.missionHost?.dispose(); this.disposed = true; cancelAnimationFrame(this.raf); this._listeners.forEach(fn => fn()); this.hero?.character.dispose(); this.enemies.forEach(f => { this._disposeNameplate(f); f.character.dispose(); });
+    this.rageVfx?.dispose(); this.effectContacts?.dispose(); this.projectiles?.dispose(); this.muskets?.dispose(); this.wheels?.dispose(); this.impactFeedback?.dispose(); this.bloodFeedback?.dispose(); this.items?.dispose(); this._clearDroppedWeapons(); this.missionHost?.dispose(); this.disposed = true; cancelAnimationFrame(this.raf); this._listeners.forEach(fn => fn()); this.hero?.character.dispose(); this.enemies.forEach(f => { this._disposeNameplate(f); f.character.dispose(); });
     for (const data of this.mapData.values()) this._disposeMap(data); this.mapData.clear(); this.mapCache.clear();
     const geometries = new Set(), materials = new Set(), textures = new Set(); this.scene.traverse(o => { if (o.geometry) geometries.add(o.geometry); for (const m of o.material ? Array.isArray(o.material) ? o.material : [o.material] : []) { materials.add(m); if (m.map) textures.add(m.map); } });
     this.butterflyVfx?.dispose(); this.butterflyVfx = null;

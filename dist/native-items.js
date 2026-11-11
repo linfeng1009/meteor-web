@@ -6,9 +6,9 @@ export const NATIVE_ITEM_PICKUP_PROFILE = Object.freeze({
   radius: 1.8, verticalTolerance: 2,
   provenance: Object.freeze({
     effect: 'Meteor.res type2/id1 Item01 肉包: stat2 mode0 value300, valueOffset53204; 004d4d30 clamps current HP to 0..effective maxHP.',
-    interaction: 'Browser adapter: explicit pickup input, horizontal radius1.8 world units, vertical tolerance2; exact EXE pickup trigger/range remains unverified.',
+    interaction: 'Browser adapter: grounded automatic proximity pickup plus optional manual assist, horizontal radius1.8 world units, vertical tolerance2; exact EXE range/state gates remain unverified.',
     fullHp: 'Browser adapter: keep positive immediate HP/rage items when that resource is full; original full-HP consumption and item respawn timing remain unverified.',
-    scope: 'Verified world RES records1/2/3/4/5/8/16/17/18/27/28/29/30/31. Unsupported effects and weapons remain unconsumed; no automatic respawn.'
+    scope: 'Verified world RES records1/2/3/4/5/8/16/17/18/27/28/29/30/31 and available original weapon-manifest records. Unsupported effects remain unconsumed; no automatic respawn.'
   })
 });
 
@@ -81,12 +81,11 @@ export function nativeRageMaximum(actor) {
   return nativeEffectiveStat(7, actor.nativeStats?.[7] ?? 100, [actor.weaponRecord, ...(actor.activeItems || [])]);
 }
 
-// The host's walking speed is a Web physics value. Apply recovered percent
-// active item modifiers on a normalized basis, preserving native integer stat
-// arithmetic. Weapon speed is not reapplied to the host's existing base speed.
+// Apply original weapon and active-item stat5 modifiers once to the host's
+// unmodified stride baseline, preserving native additive integer arithmetic.
 export function nativeMovementScale(actor) {
   const basis = actor.nativeStats?.[5] ?? 100;
-  return basis > 0 ? nativeEffectiveStat(5, basis, actor.activeItems || []) / basis : 1;
+  return basis > 0 ? nativeEffectiveStat(5, basis, [actor.weaponRecord,...(actor.activeItems || [])]) / basis : 1;
 }
 
 function syncScriptMaxHp(actor) {
@@ -194,24 +193,28 @@ export function nativeWorldItemEffect(record){
 }
 
 export class NativeItemSystem {
-  constructor({ itemRecords, getInstances = () => [], canReach = () => true, onPickup = () => {}, profile = NATIVE_ITEM_PICKUP_PROFILE } = {}) {
+  constructor({ itemRecords, weaponItems = [], getInstances = () => [], canReach = () => true, onPickup = () => {}, profile = NATIVE_ITEM_PICKUP_PROFILE } = {}) {
     this.getInstances = getInstances; this.canReach = canReach; this.onPickup = onPickup; this.profile = profile;
     this.itemsByModel = new Map(); this.consumed = new WeakSet(); this.disposed = false;
+    this.consumedNames=new Set();this.visuals=new Map();
     for (const record of records(itemRecords)) {
       const effect = nativeWorldItemEffect(record); if (effect) this.itemsByModel.set(effect.model, effect);
     }
+    for(const item of records(weaponItems))if(item.available)this.itemsByModel.set(normalizedModel(item.modelId),{kind:'weapon',itemId:Number(item.itemId),name:item.name,description:'收为副兵器',record:item});
   }
   peek(actor) {
-    if (this.disposed || !actor?.root?.position || actor.dead || actor.disposed || actor.scriptRemoved || !Number.isFinite(actor.hp) || actor.hp <= 0 || !Number.isFinite(actor.maxHp) || actor.maxHp <= 0) return null;
+    if (this.disposed || !actor?.root?.position || actor.dead || actor.disposed || actor.scriptRemoved || actor.scriptInputBlocked || actor.switchingWeapon || !Number.isFinite(actor.hp) || actor.hp <= 0 || !Number.isFinite(actor.maxHp) || actor.maxHp <= 0) return null;
     const origin = actor.root.position, candidates = [];
     for (const instance of this.getInstances() || []) {
       if (!instance?.root?.position || this.consumed.has(instance) || disabled(instance.attributes?.active) || disabled(instance.attributes?.interactive)) continue;
       const effect = this.itemsByModel.get(normalizedModel(instance.source?.properties?.model)); if (!effect) continue;
       const point = instance.root.position, distance = Math.hypot(point.x - origin.x, point.z - origin.z);
+      if(instance.dropOwner===actor){if(distance<=this.profile.radius+.1)continue;instance.dropOwner=null;}
       if (distance > this.profile.radius || Math.abs(point.y - origin.y) > this.profile.verticalTolerance) continue;
       const fullHp=effect.heal>0&&actor.hp>=actor.maxHp;
       const fullRage=effect.kind==='immediate'&&effect.statKey===6&&(actor.rage||0)>=nativeRageMaximum(actor);
-      candidates.push({ ...effect, instance, objectName: instance.name, distance, full:fullHp||fullRage,fullReason:fullRage?'full-rage':'full-hp', provenance: this.profile.provenance });
+      const fullWeapons=effect.kind==='weapon'&&Number.isInteger(actor.weapon2Id)&&actor.weapon2Id>0;
+      candidates.push({ ...effect, instance, objectName: instance.name, distance, full:fullHp||fullRage||fullWeapons,fullReason:fullWeapons?'full-weapons':fullRage?'full-rage':'full-hp', provenance: this.profile.provenance });
     }
     candidates.sort((a, b) => a.distance - b.distance || a.objectName.localeCompare(b.objectName));
     const reachable=candidates.filter(candidate=>this.canReach(actor,candidate.instance));
@@ -224,12 +227,14 @@ export class NativeItemSystem {
     // Native stat2/current HP is clamped by stat1/max HP (004d4d30).
     const before=actor.hp,rageBefore=actor.rage||0;
     let applied;
-    if(candidate.itemId===1){actor.hp=Math.max(0,Math.min(actor.maxHp,before+candidate.heal));applied={refreshed:false};}
+    if(candidate.kind==='weapon'){actor.weapon2Id=candidate.itemId;applied={refreshed:false};}
+    else if(candidate.itemId===1){actor.hp=Math.max(0,Math.min(actor.maxHp,before+candidate.heal));applied={refreshed:false};}
     else applied=useNativeScriptItem(actor,candidate.record);
     if(!applied)return {ok:false,reason:'unsupported-effect',healed:0};
     const after=actor.hp;
     const instance = candidate.instance;
     this.consumed.add(instance);
+    if(!instance.weaponId)this.consumedNames.add(instance.name);
     instance.attributes ||= {}; instance.attributes.active = 0; instance.attributes.interactive = 0; instance.attributes.collision = 0;
     if (instance.setActive) instance.setActive(false); else instance.root.visible = false;
     instance.setCollision?.(false);
@@ -239,6 +244,16 @@ export class NativeItemSystem {
       recordOffset: candidate.recordOffset, valueOffset: candidate.valueOffset, instance, provenance: this.profile.provenance };
     this.onPickup(result); return result;
   }
-  reset() { this.consumed = new WeakSet(); }
+  prepareWorld(){for(const instance of this.getInstances()||[])if(this.itemsByModel.has(normalizedModel(instance.source?.properties?.model)))instance.setCollision?.(false);}
+  updateVisuals(time){
+    for(const instance of this.getInstances()||[]){
+      if(!this.itemsByModel.has(normalizedModel(instance.source?.properties?.model)))continue;
+      const model=instance.model;if(!model||instance.asset?.animation||disabled(instance.attributes?.active))continue;
+      if(!this.visuals.has(instance))this.visuals.set(instance,{model,position:model.position.clone(),quaternion:model.quaternion.clone()});
+      const base=this.visuals.get(instance);model.position.copy(base.position);model.position.y+=Math.sin(time*2)*.12/(instance.root.scale.y||1);
+      model.quaternion.copy(base.quaternion);model.rotateY(time);model.updateMatrixWorld(true);
+    }
+  }
+  reset() { this.consumed = new WeakSet();this.consumedNames.clear();for(const base of this.visuals.values()){base.model.position.copy(base.position);base.model.quaternion.copy(base.quaternion);}this.visuals.clear(); }
   dispose() { this.reset(); this.disposed = true; }
 }

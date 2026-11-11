@@ -18,7 +18,7 @@ export class NativeWeaponTrails {
       const ranges = (state.frameIntervals || []).filter(r => r.to >= drag.start && r.from < drag.end + 1);
       if (!ranges.length) continue;
       for (const model of models) {
-        if (!model.visible) continue;
+        if (!model.visible&&!(model===actor.weaponModel&&(actor.butterflySword?.visible||actor.raidenSword?.visible||actor.phoenixSpear?.visible))) continue;
         const sockets = this.manifest.weaponAttachments?.[model.name.toLowerCase()];
         const start = sockets?.d_wpnrs || sockets?.d_wpnls, end = sockets?.d_wpnre || sockets?.d_wpnle;
         if (!start || !end) continue;

@@ -26,7 +26,7 @@ export class NetworkLobby{
     if(this.connecting||this.client)return;this.connecting=true;const generation=this.generation=(this.generation||0)+1;
     const current=()=>this.client===client&&this.generation===generation;
     const stop=message=>{if(current()){this.leave(false);this.onStop(message);}};
-    const client=this.createClient({getAngle:()=>this.getGame()?.cameraAngle||0,getFrame:()=>current()?this.session?.snapshot():null,
+    const client=this.createClient({getAngle:()=>this.getGame()?.cameraAngle||0,getPitch:()=>this.getGame()?.localControl?.aimPitch||0,getFrame:()=>current()?this.session?.snapshot():null,
       onRoom:r=>{if(current())this.roomChanged(r,client).catch(error=>stop('联机状态错误：'+error.message));},
       onInput:inputs=>{if(!current())return;if(!this.session?.active)throw Error('战斗未就绪，无法应用操作');this.session.inputs(inputs);},
       onFrame:frame=>{if(current())this.session?.apply(frame);},onError:message=>stop('联机中断：'+message)});

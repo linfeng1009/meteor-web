@@ -50,12 +50,14 @@ export class NetworkGame{
     Object.assign(this,{game,client,room,active:false,sequence:0,lastFrame:0,actors:new Map([[game.hero.networkId,game.hero],[game.enemies[0].networkId,game.enemies[0]]])});
     this.scores=new Map(room.players.map(p=>[p.id,{kills:0,deaths:0}]));
     this.presentation=new NetworkReplicaMotion();
+    this.lastImpactId=0;game.combatFeedbackEvents=[];
+    this.previousLootReplica=game.lootReplica;game.lootReplica=!client.host;
     this.remote=createPlayerControl({cameraAngle:Math.PI,lookLocked:true});
     this.peer=game.enemies[0];this.previousControl=this.peer.playerControl;this.peer.playerControl=this.remote;
     this.original={};for(const key of ['action','pause','releaseInput','_updateFighter','_updatePresentation','_separateCharacters','_kill'])this.original[key]=game[key];
     const session=this;
     game.action=function(name,down=true){
-      if(!session.active||session.inputSuspended&&down)return;if(name==='switch'||/^weapon/.test(name)||name==='pickup')return;
+      if(!session.active||session.inputSuspended&&down)return;if(/^weapon/.test(name))return;
       if(!client.host){if(name==='lock'&&down){game.locked=game.locked?null:game.enemies[0];game.cameraManualUntil=0;}client.send(name,down);return;}
       return session.original.action.call(game,name,down);
     };
@@ -72,23 +74,36 @@ export class NetworkGame{
       // Client clock is used only for command intervals. World time, movement,
       // recovery expiration and damage continue on the host's fixed ticks.
       control.inputTime=Number.isFinite(input.time)?input.time:this.game.elapsed;
-      if(input.action==='clear'){control.keys.clear();clearPlayerCommands(control);actor.guard=false;continue;}
-      control.cameraAngle=input.angle;
+      if(input.action==='clear'){control.keys.clear();clearPlayerCommands(control);actor.guard=false;actor.musketAim=false;continue;}
+      control.cameraAngle=input.angle;control.aimPitch=input.pitch??0;
       if(input.action==='look'){const held=new Set(input.held||[]);for(const key of continuous){if(control.keys.has(key)&&!held.has(key))this.game._actionFighter(actor,control,key,false);else if(!control.keys.has(key)&&held.has(key))this.game._actionFighter(actor,control,key,true);}continue;}
       this.game._actionFighter(actor,control,input.action,input.active);
     }
   }
-  snapshot(){if(!this.active||!this.client.host)return null;const g=this.game;return {sequence:++this.sequence,time:g.matchElapsed,players:[g.hero,...g.enemies].map(f=>({id:f.networkId,position:f.root.position.toArray(),angle:f.root.rotation.y,hp:f.hp,maxHp:f.maxHp,rage:f.rage,dead:f.dead,grounded:f.grounded,guard:f.guard,pose:f.combat.timeline?.pose.id||0,source:f.character.source??0,frame:f.character.frame??0,serial:f.combat.serial,effectTime:f.combat._effectElapsed||0,context:f.combat.currentMove?{name:f.combat.currentMove.name||'',rage:f.combat.currentMove.rage||0,poseId:f.combat.currentMove.poseId,command:f.combat.currentMove.command||''}:null,...this.scores.get(f.networkId)}))};}
+  snapshot(){if(!this.active||!this.client.host)return null;const g=this.game;return {sequence:++this.sequence,time:g.matchElapsed,loot:g._lootSnapshot?.(),impacts:g._combatFeedbackSnapshot?.(),players:[g.hero,...g.enemies].map(f=>({id:f.networkId,weaponId:f.weaponId,weapon2Id:f.weapon2Id??null,pickupSerial:f.pickupSerial||0,statuses:(f.scriptItems||[]).map(item=>({id:item.id,name:item.name,statKey:item.statKey,remaining:item.remaining,value:item.value,period:item.period||0})),position:f.root.position.toArray(),angle:f.root.rotation.y,hp:f.hp,maxHp:f.maxHp,rage:f.rage,dead:f.dead,grounded:f.grounded,guard:f.guard,musketAim:!!f.musketAim,aimPitch:this.game._controlFor?.(f)?.aimPitch||0,pose:f.combat.timeline?.pose.id||0,source:f.character.source??0,frame:f.character.frame??0,serial:f.combat.serial,effectTime:f.combat._effectElapsed||0,context:f.combat.currentMove?{name:f.combat.currentMove.name||'',rage:f.combat.currentMove.rage||0,poseId:f.combat.currentMove.poseId,command:f.combat.currentMove.command||''}:null,...this.scores.get(f.networkId)}))};}
   apply(frame){if(this.client.host||!this.active||frame.sequence<=this.lastFrame)return;this.lastFrame=frame.sequence;const g=this.game,duration=frame.time-this.presentationTime;this.presentationTime=frame.time;g.matchElapsed=frame.time;
+    g._applyLootState?.(frame.loot);
     for(const state of frame.players){const f=this.actors.get(state.id);if(!f||!f.combat.data.poses.has(state.pose))continue;
+      const previousFrame=f.character.frame,previousSerial=f.networkSerial;
+      const enteringAim=!f.musketAim&&state.musketAim;f.musketAim=!!state.musketAim;if(f===g.hero&&enteringAim){(g.localControl||g).aimPitch=Number.isFinite(state.aimPitch)?state.aimPitch:0;g.cameraAngle=state.angle-Math.PI;}
       Object.assign(f,{hp:state.hp,maxHp:state.maxHp,rage:state.rage,dead:!!state.dead,grounded:!!state.grounded,guard:!!state.guard});
-      const serial=f.networkSerial!==state.serial||f.combat.timeline?.pose.id!==state.pose;
+      const weaponChanged=Number.isInteger(state.weaponId)&&g.weaponItems?.has(state.weaponId)&&f.weaponId!==state.weaponId;
+      if(weaponChanged)g._equip(f,state.weaponId).catch(()=>{});
+      if(state.weapon2Id!==undefined)f.weapon2Id=state.weapon2Id;
+      if(Array.isArray(state.statuses))f.networkItemStatuses=state.statuses.map(item=>({...item}));
+      if(Number.isInteger(state.pickupSerial)){if(f.pickupSerial!==undefined&&state.pickupSerial>f.pickupSerial){g._soundDefinition?.('getitem');g.rageVfx?.playItem(f,'getitem');}f.pickupSerial=state.pickupSerial;}
+      const serial=weaponChanged||f.networkSerial!==state.serial||f.combat.timeline?.pose.id!==state.pose;
       if(serial){f.combat.play(state.pose,{force:true,context:state.context,attack:f.combat.data.poses.get(state.pose).attacks.length>0});f.networkSerial=state.serial;}
       this.presentation.receive(f,state,duration,{poseChanged:serial});
       const pose=f.combat.timeline.pose,at=Math.max(pose.start,Math.min(pose.end,state.frame));
-      g.rageVfx?.sample(f,{pose,context:state.context,serial:state.serial,frame:at,source:state.source,effectTime:state.effectTime});
+      const from=previousSerial===state.serial&&previousFrame<=at?Math.max(pose.start,previousFrame):Math.max(pose.start,at-1),span=Math.min(.15,Math.max(1/60,Number.isFinite(duration)?duration:1/15));
+      g.rageVfx?.sample(f,{pose,context:state.context,serial:state.serial,frame:at,source:state.source,effectTime:state.effectTime,consumed:span,frameIntervals:[{from,to:at,timeFrom:0,timeTo:span}]});
+      if(serial&&state.context)g._soundDefinition?.(pose.raw?.fields.effectid);
       if(f===g.hero){g.kills=state.kills;g.deaths=state.deaths;}
-    }if(g.locked?.dead)g.locked=null;g._hud();
+    }
+    for(const event of frame.impacts||[]){if(event.id<=this.lastImpactId)continue;this.lastImpactId=event.id;if(frame.time-event.time>.4)continue;
+      g._playCombatFeedback?.(event,event.attackerId===this.client.playerId||event.targetId===this.client.playerId);}
+    if(g.locked?.dead)g.locked=null;g._hud();
   }
-  dispose(){this.active=false;this.remote.keys.clear();clearPlayerCommands(this.remote);if(this.peer.playerControl===this.remote){if(this.previousControl)this.peer.playerControl=this.previousControl;else delete this.peer.playerControl;}for(const [key,value] of Object.entries(this.original))this.game[key]=value;this.original.pause.call(this.game,true);}
+  dispose(){this.active=false;this.game.lootReplica=this.previousLootReplica;for(const actor of this.actors.values())delete actor.networkItemStatuses;this.game._clearDroppedWeapons?.();this.remote.keys.clear();clearPlayerCommands(this.remote);if(this.peer.playerControl===this.remote){if(this.previousControl)this.peer.playerControl=this.previousControl;else delete this.peer.playerControl;}for(const [key,value] of Object.entries(this.original))this.game[key]=value;this.original.pause.call(this.game,true);}
 }

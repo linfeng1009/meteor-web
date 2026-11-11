@@ -29,7 +29,7 @@ export const NATIVE_MUSKET_PROFILE = Object.freeze({
     damage: 'Original pose206/207/208 attack modifiers65/75/80; recovered EXE arithmetic gives37/45/49 rawHP against defense15 with default item3.',
     sound: 'Original Pos206/207/208.ef references W02FIR01/02/03.wav respectively.',
     collision: 'Web adapter: immediate segment versus actor vertical capsules and original map triangles; nearest contact wins, walls win ties. Range must be supplied by the host.',
-    pending: 'Native bullet/ray mode, range, spread, ammunition/aim state and full EF are unverified. Special215 and216→217 remain unsupported here.'
+    pending: 'Native bullet/ray mode, range, spread, ammunition and full EF are unverified. Aim entry uses native212 state; camera projection and ray convergence remain Web adapters. Special215 and216→217 remain unsupported here.'
   })
 });
 

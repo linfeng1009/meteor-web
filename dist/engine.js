@@ -25,6 +25,7 @@ import { QIANKUN_MODE_NAMES } from './native-weapon-menu.js';
 import { sweepActorCapsule, NativeProjectileSystem, NATIVE_DART_PROFILE, NativeMusketSystem, NATIVE_MUSKET_PROFILE, NativeWheelSystem, NATIVE_WHEEL_PROFILE } from './native-projectiles.js';
 import { NativeImpactFeedback } from './native-impact-feedback.js';
 import { NativeBloodFeedback, bloodStyleForHit } from './native-blood-feedback.js';
+import { loadNativePoisonFeedback } from './native-poison-feedback.js';
 import { loadNativeRageVfx } from './native-rage-vfx.js';
 import { loadNativeEffectManifest } from './native-effect-transforms.js';
 import { NativeEffectContacts } from './native-effect-contacts.js';
@@ -189,6 +190,8 @@ export class MeteorGame {
   }
   clearNativeScene() { this.weather?.clear(); }
   async _initialize() {
+    const poisonReady = loadNativePoisonFeedback(this.scene).then(vfx => { if(this.disposed)vfx.dispose();else this.poisonFeedback=vfx; }).catch(error => console.warn('中毒持续特效暂未能载入：',error));
+    const slowReady = loadNativePoisonFeedback(this.scene,'attrslow').then(vfx => { if(this.disposed)vfx.dispose();else this.slowFeedback=vfx; }).catch(error => console.warn('减速持续特效暂未能载入：',error));
     const effectContactsReady = loadNativeEffectManifest().then(manifest => {
       if (!this.disposed) this._initializeEffectContacts(manifest);
     }).catch(error => console.warn('原技能攻击范围暂未能载入：', error));
@@ -219,7 +222,7 @@ export class MeteorGame {
     const [hero] = await Promise.all([this._createFighter(0, '孟星魂', true), this._loadMap('sifang')]);
     this.hero = hero; this.scene.add(hero.root); this._placeFighter(hero, this.currentMap.spawns[0]); await this._equip(hero, this.weapon);
     this.cameraTarget.copy(hero.root.position).add(v3(0, 1.6, 0)); this._tickCamera(1);
-    await Promise.all([rageVfxReady, effectContactsReady]);
+    await Promise.all([rageVfxReady, effectContactsReady, poisonReady, slowReady]);
     this._loadStatus('原版地图、人物、兵器与动作数据已就绪'); this._hud(); return this;
   }
   async _loadMap(name) {
@@ -711,7 +714,7 @@ export class MeteorGame {
       await this._equip(actor,next);actor.weapon2Id=previous;if(actor===this.hero)this.weapon=actor.weapon;this._hud();
     }catch(error){this._emit('兵器载入失败，保留原装备','info');console.warn(error);}finally{actor.switchingWeapon=false;}
   }
-  _clearDroppedWeapons(){for(const drop of this.droppedWeapons?.values()||[])drop.root.removeFromParent();this.droppedWeapons?.clear();this.replicaLootDesired=new Map();this.combatFeedbackEvents=[];this.bloodFeedback?.clear();}
+  _clearDroppedWeapons(){for(const drop of this.droppedWeapons?.values()||[])drop.root.removeFromParent();this.droppedWeapons?.clear();this.replicaLootDesired=new Map();this.combatFeedbackEvents=[];this.bloodFeedback?.clear();this.poisonFeedback?.clear();this.slowFeedback?.clear();}
   _lootSnapshot(){return {consumed:[...(this.items?.consumedNames||[])],drops:[...(this.droppedWeapons?.values()||[])].filter(drop=>drop.attributes.active).map(drop=>({name:drop.name,weaponId:drop.weaponId,position:drop.root.position.toArray()}))};}
   _combatFeedbackSnapshot(){return (this.combatFeedbackEvents||[]).filter(event=>(this.matchElapsed||0)-event.time<=.6);}
   _playCombatFeedback(event,local=false){
@@ -1319,6 +1322,8 @@ export class MeteorGame {
       const feedbackStep=this.paused?0:dt;
       this.impactFeedback?.update(feedbackStep,this.camera);
       this.bloodFeedback?.update(feedbackStep,this.camera,this.renderer?.domElement?.height||900);
+      this.poisonFeedback?.update(feedbackStep,[this.hero,...this.enemies]);
+      this.slowFeedback?.update(feedbackStep,[this.hero,...this.enemies]);
       this.rageVfx?.update(feedbackStep, this.camera);
       this.butterflyVfx?.update(dt, { attacking: !!this.hero?.combat?.attacking, camera: this.camera });
       if (this.hero?.phoenixSpear?.visible) this.hero.phoenixSpear.userData.update(this.elapsed);
@@ -1394,7 +1399,7 @@ export class MeteorGame {
   dispose() {
     this.frameOverlay?.dispose();
     this.weather?.dispose();
-    this.rageVfx?.dispose(); this.effectContacts?.dispose(); this.projectiles?.dispose(); this.muskets?.dispose(); this.wheels?.dispose(); this.impactFeedback?.dispose(); this.bloodFeedback?.dispose(); this.items?.dispose(); this._clearDroppedWeapons(); this.missionHost?.dispose(); this.disposed = true; cancelAnimationFrame(this.raf); this._listeners.forEach(fn => fn()); this.hero?.character.dispose(); this.enemies.forEach(f => { this._disposeNameplate(f); f.character.dispose(); });
+    this.rageVfx?.dispose(); this.effectContacts?.dispose(); this.projectiles?.dispose(); this.muskets?.dispose(); this.wheels?.dispose(); this.impactFeedback?.dispose(); this.bloodFeedback?.dispose(); this.poisonFeedback?.dispose(); this.slowFeedback?.dispose(); this.items?.dispose(); this._clearDroppedWeapons(); this.missionHost?.dispose(); this.disposed = true; cancelAnimationFrame(this.raf); this._listeners.forEach(fn => fn()); this.hero?.character.dispose(); this.enemies.forEach(f => { this._disposeNameplate(f); f.character.dispose(); });
     for (const data of this.mapData.values()) this._disposeMap(data); this.mapData.clear(); this.mapCache.clear();
     const geometries = new Set(), materials = new Set(), textures = new Set(); this.scene.traverse(o => { if (o.geometry) geometries.add(o.geometry); for (const m of o.material ? Array.isArray(o.material) ? o.material : [o.material] : []) { materials.add(m); if (m.map) textures.add(m.map); } });
     this.butterflyVfx?.dispose(); this.butterflyVfx = null;

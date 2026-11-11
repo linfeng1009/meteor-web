@@ -28,6 +28,31 @@ function state(id, time, context = { rage: 60 }, serial = 1) {
   const pose = data.poses.get(id); return { pose, context, serial, frame: pose.start + time * 30 };
 }
 
+test('ordinary native EF definitions keep source hashes and render without a rage context',async()=>{
+  const extra=JSON.parse(await readFile(new URL('../dist/assets/original/combat-vfx.json',import.meta.url),'utf8'));
+  assert.ok(Object.keys(extra.effects).length>=66);
+  assert.ok(extra.effects.pos262.particleAdapter);
+  assert.ok(extra.effects.pos262.nodes.some(n=>n.type==='PARTICLE'));
+  for(const effect of Object.values(extra.effects)){const bytes=await readFile(new URL('../dist/assets/original/'+effect.source,import.meta.url));assert.equal(createHash('sha256').update(bytes).digest('hex'),effect.sha256);}
+  const f=fixture('musket');try{f.vfx.manifest={...manifest,effects:{...extra.effects,...manifest.effects}};
+    const before={hp:f.actor.hp,rage:f.actor.rage};let visible=false;
+    for(let i=0;i<30;i++){const effect=f.vfx.sample(f.actor,state(206,i/30,null));f.vfx.update(0);visible ||= effect?.nodes.some(n=>n.mesh?.visible);}
+    assert.equal(visible,true);
+    f.vfx.clear();const slash=f.vfx.sample(f.actor,state(262,.3,null,2));f.vfx.update(0);
+    assert.ok(slash.nodes.some(n=>n.mesh?.isPoints&&n.mesh.visible));
+    assert.ok(slash.nodes.filter(n=>n.mesh?.isPoints).every(n=>n.mesh.geometry.attributes.position.count===8));
+    assert.equal(f.actor.hp,before.hp);assert.equal(f.actor.rage,before.rage);
+  }finally{f.vfx.dispose();}
+});
+
+test('enhanced weapon skins keep their original POS blade trail instead of hiding it with the original mesh',()=>{
+  const f=fixture(),pose=data.poses.get(279),drag=pose.drags[0];try{
+    f.actor.weaponModel.visible=false;f.actor.butterflySword={visible:true};f.actor.character.setPoseFrame=(_,frame)=>{f.actor.weaponModel.rotation.z=(frame-drag.start)*.4;};
+    f.vfx.sample(f.actor,{pose,source:pose.source,frame:drag.start+2,serial:2,context:null,consumed:1/30,frameIntervals:[{from:drag.start,to:drag.start+2,timeFrom:0,timeTo:1/30}]});f.vfx.update(1/30);
+    assert.equal(f.vfx.trails.strips.length,1);assert.ok(f.vfx.trails.strips[0].mesh.geometry.drawRange.count>0);
+  }finally{f.vfx.dispose();}
+});
+
 test('pickup uses preserved GetItem shapes and textures without replacing a live skill effect',async()=>{
   const extra=JSON.parse(await readFile(new URL('../dist/assets/original/item-vfx.json',import.meta.url),'utf8'));
   const bytes=await readFile(new URL('../dist/assets/original/sounds/definitions/getitem.ef',import.meta.url));

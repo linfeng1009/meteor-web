@@ -23,6 +23,7 @@ import { NativeItemSystem, useNativeScriptItem, useNativeAttackItem, useNativeSe
 import { QIANKUN_MODE_NAMES } from './native-weapon-menu.js';
 import { NativeProjectileSystem, NATIVE_DART_PROFILE, NativeMusketSystem, NATIVE_MUSKET_PROFILE, NativeWheelSystem, NATIVE_WHEEL_PROFILE } from './native-projectiles.js';
 import { NativeImpactFeedback } from './native-impact-feedback.js';
+import { NativeBloodFeedback } from './native-blood-feedback.js';
 import { loadNativeRageVfx } from './native-rage-vfx.js';
 import { loadNativeEffectManifest } from './native-effect-transforms.js';
 import { NativeEffectContacts } from './native-effect-contacts.js';
@@ -77,6 +78,7 @@ export class MeteorGame {
     // Adapter constants are explicit and provisional until recovered from Meteor.exe.
     this.hostPhysics = { speed: 100 * SCALE, gravity: 34, jumpVelocity: 12, radius: .4, step: .55, projectile: NATIVE_DART_PROFILE };
     this.impactFeedback = new NativeImpactFeedback(this.scene);
+    this.bloodFeedback = new NativeBloodFeedback(this.scene);
     this._initializeProjectiles();
     this._bind(); this.resize(); this._frame = this._frame.bind(this); this.raf = requestAnimationFrame(this._frame);
     this.ready = this._initialize();
@@ -698,8 +700,15 @@ export class MeteorGame {
       await this._equip(actor,next);actor.weapon2Id=previous;if(actor===this.hero)this.weapon=actor.weapon;this._hud();
     }catch(error){this._emit('兵器载入失败，保留原装备','info');console.warn(error);}finally{actor.switchingWeapon=false;}
   }
-  _clearDroppedWeapons(){for(const drop of this.droppedWeapons?.values()||[])drop.root.removeFromParent();this.droppedWeapons?.clear();this.replicaLootDesired=new Map();}
+  _clearDroppedWeapons(){for(const drop of this.droppedWeapons?.values()||[])drop.root.removeFromParent();this.droppedWeapons?.clear();this.replicaLootDesired=new Map();this.combatFeedbackEvents=[];this.bloodFeedback?.clear();}
   _lootSnapshot(){return {consumed:[...(this.items?.consumedNames||[])],drops:[...(this.droppedWeapons?.values()||[])].filter(drop=>drop.attributes.active).map(drop=>({name:drop.name,weaponId:drop.weaponId,position:drop.root.position.toArray()}))};}
+  _combatFeedbackSnapshot(){return (this.combatFeedbackEvents||[]).filter(event=>(this.matchElapsed||0)-event.time<=.6);}
+  _playCombatFeedback(event,local=false){
+    const point=v3(...event.point),direction=v3(...event.direction);
+    this.impactFeedback?.emit({point,direction,guarded:event.guarded,knockdown:event.knockdown,local});
+    this.bloodFeedback?.emit({point,direction,guarded:event.guarded,damage:event.blood?1:0});
+    if(event.sound)this._soundDefinition(event.sound);
+  }
   _applyLootState(state){
     if(!state)return;this.droppedWeapons ||= new Map();const consumed=new Set(state.consumed);for(const instance of this.currentMap.props?.instances.values()||[])if(consumed.has(instance.name)){instance.setActive(false);instance.setCollision(false);}
     this.replicaLootDesired=new Map(state.drops.map(drop=>[drop.name,drop]));
@@ -1052,9 +1061,9 @@ export class MeteorGame {
     Object.assign(raw, { selectedTargetPose: reactionPose, hitDirection: selection.direction, hitAngle: selection.angle });
     const knockdown = !guarded && [112, 113].includes(this.combatData.poses?.get(reactionPose)?.link);
     const damageContext = { attack, raw, attacker, target, weapon: attacker.weapon, guarded, poseId: state.poseId };
-    const damage = this.damageResolver?.(damageContext);
+    const damage = this.damageResolver?.(damageContext);let confirmedDamage=0;
     if (Number.isFinite(damage) && damage >= 0) {
-      const hpBefore = target.hp; target.hp = Math.max(0, target.hp - damage); if (attacker.hero) this.totalDamage += hpBefore - target.hp;
+      const hpBefore = target.hp; target.hp = Math.max(0, target.hp - damage);confirmedDamage=hpBefore-target.hp; if (attacker.hero) this.totalDamage += hpBefore - target.hp;
       const nativeResult = damageContext.nativeResult;
       if (nativeResult) target.rage = clamp((target.rage || 0) + (nativeResult.guarded ? nativeResult.victimRage : Math.floor(14 * (hpBefore - target.hp) / 100)), 0, nativeRageMaximum(target));
       // 004af630: guard returns before parameter16; a lethal hit takes the
@@ -1085,12 +1094,19 @@ export class MeteorGame {
       const control=this._controlFor(target);if(control)control.directionBuffer=[];
     }
     const feedback = this.impactFeedback?.emit({ point: contact, direction: target.root.position.clone().sub(attacker.root.position), guarded, knockdown, local: !!(attacker.hero || target.hero) });
+    const direction=target.root.position.clone().sub(attacker.root.position);
+    const prefix = { sword: 'W00', blade: 'W05', spear: 'W07', dagger: 'W01', dart: 'W03', musket: 'W02', wheel: 'W06', qiankun: 'W09', ninja: 'W11', dual: 'W08', hammer: 'W04', knuckle: 'W10' }[attacker.weapon];
+    this.bloodFeedback?.emit({point:contact,direction,guarded,damage:confirmedDamage});
+    this.combatFeedbackSerial=(this.combatFeedbackSerial||0)+1;
+    const actors=[this.hero,...(this.enemies||[])];
+    (this.combatFeedbackEvents||=[]).push({id:this.combatFeedbackSerial,time:this.matchElapsed||0,point:contact.toArray(),direction:direction.normalize().toArray(),guarded,knockdown,blood:!guarded&&confirmedDamage>0,
+      attackerId:actors.find(actor=>actor?.root===attacker.root)?.networkId,targetId:target.networkId,sound:prefix&&Number.isInteger(reactionPose)?`${prefix}${guarded?'GD':'BL'}${String(reactionPose).padStart(3,'0')}`:null});
+    if(this.combatFeedbackEvents.length>32)this.combatFeedbackEvents.shift();
     if (attacker.hero && this.swordStyle === 'butterfly') this.butterflyVfx?.burst(contact, { guarded, knockdown, camera: this.camera });
     if (feedback) {
       if (attacker.combat && !attacker.dead) attacker.hitstop = Math.max(attacker.hitstop || 0, feedback.hitstop);
       if (!target.dead) target.hitstop = Math.max(target.hitstop || 0, feedback.hitstop);
     }
-    const prefix = { sword: 'W00', blade: 'W05', spear: 'W07', dagger: 'W01', dart: 'W03', musket: 'W02', wheel: 'W06', qiankun: 'W09', ninja: 'W11', dual: 'W08', hammer: 'W04', knuckle: 'W10' }[attacker.weapon];
     this._soundDefinition(`${prefix}${guarded ? 'GD' : 'BL'}${String(reactionPose).padStart(3, '0')}`); this._hud(); return true;
   }
   _resolveSceneContacts(attacker, state, attack) {
@@ -1251,8 +1267,10 @@ export class MeteorGame {
       // Run cosmetic springs once, after final body motion and separation.
       for (const actor of [this.hero,...this.enemies]) if(actor?.root.visible&&!actor.disposed)actor.character.updateSecondaryMotion?.(dt,{groundY:actor.grounded?actor.root.position.y:undefined});
       for (let i = this.effects.length - 1; i >= 0; i--) { const e = this.effects[i]; e.life -= dt; e.mesh.material.opacity = Math.max(0, e.life / .14); if (e.life <= 0) { e.mesh.removeFromParent(); e.mesh.geometry.dispose(); e.mesh.material.dispose(); this.effects.splice(i, 1); } }
-      this.impactFeedback?.update(dt);
-      this.rageVfx?.update(dt, this.camera);
+      const feedbackStep=this.paused?0:dt;
+      this.impactFeedback?.update(feedbackStep,this.camera);
+      this.bloodFeedback?.update(feedbackStep,this.camera,this.renderer?.domElement?.height||900);
+      this.rageVfx?.update(feedbackStep, this.camera);
       this.butterflyVfx?.update(dt, { attacking: !!this.hero?.combat?.attacking, camera: this.camera });
       if (this.hero?.phoenixSpear?.visible) this.hero.phoenixSpear.userData.update(this.elapsed);
   }
@@ -1327,7 +1345,7 @@ export class MeteorGame {
   dispose() {
     this.frameOverlay?.dispose();
     this.weather?.dispose();
-    this.rageVfx?.dispose(); this.effectContacts?.dispose(); this.projectiles?.dispose(); this.muskets?.dispose(); this.wheels?.dispose(); this.impactFeedback?.dispose(); this.items?.dispose(); this._clearDroppedWeapons(); this.missionHost?.dispose(); this.disposed = true; cancelAnimationFrame(this.raf); this._listeners.forEach(fn => fn()); this.hero?.character.dispose(); this.enemies.forEach(f => { this._disposeNameplate(f); f.character.dispose(); });
+    this.rageVfx?.dispose(); this.effectContacts?.dispose(); this.projectiles?.dispose(); this.muskets?.dispose(); this.wheels?.dispose(); this.impactFeedback?.dispose(); this.bloodFeedback?.dispose(); this.items?.dispose(); this._clearDroppedWeapons(); this.missionHost?.dispose(); this.disposed = true; cancelAnimationFrame(this.raf); this._listeners.forEach(fn => fn()); this.hero?.character.dispose(); this.enemies.forEach(f => { this._disposeNameplate(f); f.character.dispose(); });
     for (const data of this.mapData.values()) this._disposeMap(data); this.mapData.clear(); this.mapCache.clear();
     const geometries = new Set(), materials = new Set(), textures = new Set(); this.scene.traverse(o => { if (o.geometry) geometries.add(o.geometry); for (const m of o.material ? Array.isArray(o.material) ? o.material : [o.material] : []) { materials.add(m); if (m.map) textures.add(m.map); } });
     this.butterflyVfx?.dispose(); this.butterflyVfx = null;

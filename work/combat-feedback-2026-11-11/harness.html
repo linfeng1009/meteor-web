@@ -1,0 +1,24 @@
+<!doctype html><meta charset="utf-8"><title>攻击与飙血验收</title><style>body{margin:0;background:#142029;color:#eee;font:16px system-ui}header{padding:12px}button{padding:12px;margin-right:12px}canvas{display:block;width:100%;height:72vh}pre{margin:12px;white-space:pre-wrap}</style>
+<header>真实原人物 / 原招式 / 原伤害 · 隔离站位验收<br><br><button id="hit">长剑命中与飙血</button><button id="guard">格挡火花，不飙血</button><button id="musket">火铳普通攻击光效</button></header><canvas></canvas><pre id="state">载入中…</pre>
+<script type="module">
+import {MeteorGame} from '/engine.js';import * as T from '/vendor/three.module.js';
+const state=document.querySelector('#state'),events=[];
+const game=new MeteorGame(document.querySelector('canvas'),{onEvent:e=>{if(e.type==='hit')events.push({damage:e.amount,guarded:e.guarded});},onUpdate(){}});
+await game.ready;await game.start({map:'sifang',weapon:'sword',mode:'training'});
+const target=game.enemies[0];for(const other of game.enemies.slice(1)){other.root.removeFromParent();other.character.dispose();}game.enemies=[target];target.scriptControlled=true;target.scriptControl={paused:true};game.pause(true);
+const spawn=game.hero.root.position.clone();const present=game._updatePresentation.bind(game);game._updatePresentation=dt=>present(game.paused?0:dt);
+function render(){game.renderer.render(game.scene,game.camera);}
+async function run(guard=false,weapon='sword'){
+  game.pause(false);game.impactFeedback.clear();game.bloodFeedback.clear();game.rageVfx.clear();events.length=0;game.combatFeedbackEvents=[];
+  game._placeFighter(game.hero,{position:spawn});game._placeFighter(target,{position:spawn.clone().add(new T.Vector3(0,0,-1.3))});
+  game.hero.root.rotation.y=Math.PI;target.root.rotation.y=0;target.guard=guard;target.scriptControlled=true;target.scriptControl={paused:true,guard};
+  await game.setWeapon(weapon);game.locked=target;game.cameraAngle=.45;game.cameraDistance=5;game.cameraPitch=.35;game.cameraManualUntil=Infinity;game.cameraTarget.copy(game.hero.root.position).add(new T.Vector3(0,1.5,0));game._tickCamera(1);
+  const hp=target.hp;game.action('attack');let ticks=0;
+  for(;ticks<100;ticks++){game._advanceWorld(1/60);if(game.combatFeedbackEvents.length)break;}
+  // Advance a short presentation interval so actual contact blood has spread;
+  // simulation is then paused for a stable screenshot, without synthetic hits.
+  game._updatePresentation(.1);game.pause(true);game._tickCamera(1);render();
+  state.textContent=JSON.stringify({weapon:game.hero.weapon,pose:game.hero.combat.timeline.pose.id,hpBefore:hp,hpAfter:target.hp,contacts:events,bloodParticles:game.bloodFeedback.particles.filter(Boolean).length,sparkBursts:game.impactFeedback.active.length,trailStrips:game.rageVfx.trails.strips.length,nativeEffects:game.rageVfx.active.map(e=>e.id),ticks},null,2);
+}
+document.querySelector('#hit').onclick=()=>run();document.querySelector('#guard').onclick=()=>run(true);document.querySelector('#musket').onclick=()=>run(false,'musket');state.textContent='原资源就绪，请选择验收动作';render();
+</script>

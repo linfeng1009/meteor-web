@@ -3,6 +3,15 @@ import assert from 'node:assert/strict';
 import {NetworkRooms,createNetworkServer} from '../network-server.mjs';
 function room(){const rooms=new NetworkRooms(),a=rooms.create('房主'),b=rooms.join(a.room.code,'剑客');return {rooms,a,b,call:(p,op,data={})=>rooms.request(a.room.code,p.token,op,{round:rooms.rooms.get(a.room.code)?.round||0,...data})};}
 const frame=(a,b,sequence=1)=>({sequence,time:1,players:[a,b].map(p=>({id:p.playerId,position:[0,0,0],angle:0,hp:1000,maxHp:1000,rage:0,pose:6,source:0,frame:7400,serial:1,effectTime:0}))});
+
+test('host impact snapshots are bounded, validated atomically and cannot mark guarded contacts as blood',()=>{
+  const {a,b,call}=playing(),event={id:1,time:1,point:[0,1,0],direction:[0,0,1],guarded:false,knockdown:false,blood:true,sound:'W00BL090',attackerId:a.playerId,targetId:b.playerId};
+  const state={...frame(a,b),impacts:[event]};call(a,'sync',{frame:state});assert.deepEqual(call(b,'sync').frame.impacts,[event]);
+  for(const impacts of [[{...event,point:[NaN,0,0]}],[{...event,guarded:true}],[event,event],Array.from({length:33},(_,i)=>({...event,id:i+1}))]){
+    assert.throws(()=>call(a,'sync',{frame:{...state,sequence:2,impacts}}),/无效/);assert.equal(call(b,'sync').frame.sequence,1);
+  }
+  assert.throws(()=>call(b,'sync',{frame:{...state,sequence:2}}),/房主/);
+});
 test('room needs two prepared players and only the host may start; both clients must finish loading',()=>{
   const {a,b,call}=room();assert.throws(()=>call(a,'start'),/准备/);assert.throws(()=>call(b,'start'),/房主/);
   call(a,'ready',{ready:true});call(b,'ready',{ready:true});assert.equal(call(a,'start').room.phase,'loading');

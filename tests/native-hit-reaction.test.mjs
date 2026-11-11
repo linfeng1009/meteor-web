@@ -5,6 +5,7 @@ import * as THREE from '../dist/vendor/three.module.js';
 import { MeteorGame } from '../dist/engine.js';
 import { loadNativeCombat, NativeCombatController, NativePoseTimeline, createNativeDamageResolver, nativeReactionParameters, nativeHitAngle, nativeHitSelection, nativeGuardPose, NATIVE_GUARD_REACTIONS, NATIVE_DEFAULT_BLEND_TIME } from '../dist/native-combat.js';
 import { NativeImpactFeedback } from '../dist/native-impact-feedback.js';
+import { NativeBloodFeedback } from '../dist/native-blood-feedback.js';
 import { NetworkGame } from '../dist/network-game.js';
 import {bindLocalPlayerControl} from '../dist/player-control.js';
 import {NetworkClient} from '../dist/network-client.js';
@@ -72,7 +73,7 @@ test('front guard follows the original CRT53-bit draw distribution, including th
 });
 after(() => {
   for (const { game, floor } of fixtures) {
-    game.projectiles?.dispose(); game.impactFeedback?.dispose(); for (const actor of [game.hero, ...game.enemies]) actor.character.dispose();
+    game.projectiles?.dispose(); game.impactFeedback?.dispose(); game.bloodFeedback?.dispose(); for (const actor of [game.hero, ...game.enemies]) actor.character.dispose();
     for (const promise of game.weaponCache.values()) promise.then(model => model.traverse(node => {
       node.geometry?.dispose(); for (const material of Array.isArray(node.material) ? node.material : [node.material]) material?.dispose();
     }));
@@ -112,6 +113,20 @@ function tick(game, dt = 1 / 60) {
   game._updateFighter(game.hero, dt); for (const actor of game.enemies) game._updateFighter(actor, dt);
   game.projectiles.update(dt);
 }
+
+test('real native HP loss emits blood and a guard emits only sparks, including host event and replica deduplication',async()=>{
+  const {game,hero,target}=await fixture();game.bloodFeedback=new NativeBloodFeedback(game.scene);game.impactFeedback=new NativeImpactFeedback(game.scene);
+  hero.networkId='host';target.networkId='guest';const before=target.hp;hit(game,hero,target,262);
+  assert.ok(target.hp<before);assert.ok(game.bloodFeedback.mesh.visible);assert.equal(game.combatFeedbackEvents.at(-1).blood,true);
+  assert.equal(game.combatFeedbackEvents.at(-1).attackerId,'host');assert.equal(game.combatFeedbackEvents.at(-1).targetId,'guest');
+  game.bloodFeedback.clear();target.guard=true;hit(game,hero,target,262);assert.equal(game.bloodFeedback.mesh.visible,false);assert.equal(game.combatFeedbackEvents.at(-1).guarded,true);assert.equal(game.combatFeedbackEvents.at(-1).blood,false);
+  const events=game._combatFeedbackSnapshot(),played=[];
+  const session=new NetworkGame(game,{host:false,playerId:'guest',send(){}},{players:[{id:'host'},{id:'guest'}]});session.active=true;
+  const original=game._playCombatFeedback;game._playCombatFeedback=(event,local)=>played.push({id:event.id,local});
+  const frame={sequence:1,time:game.matchElapsed,players:[],impacts:events};session.apply(frame);session.apply(frame);session.apply({...frame,sequence:2});assert.equal(played.length,events.length);assert.ok(played.every(e=>e.local));
+  session.apply({...frame,sequence:3,time:5,impacts:[{...events[0],id:100,time:0}]});assert.equal(played.length,events.length,'expired feedback cannot replay after a stall');
+  game._playCombatFeedback=original;session.dispose();
+});
 
 test('listen-host remote inputs use native movement and hit the actual host, then replicas use the same HP snapshot',async()=>{
   const {game,hero,target}=await fixture();await game._equip(target,'sword');target.scriptControlled=false;target.networkId='guest';hero.networkId='host';target.root.rotation.y=Math.PI;

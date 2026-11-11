@@ -32,7 +32,8 @@ function effectGeometry(node) {
 export async function loadNativeRageVfx(scene) {
   const base=await loadNativeEffectManifest();
   const itemEffects=await fetch(new URL('./assets/original/item-vfx.json',import.meta.url)).then(r=>r.ok?r.json():{effects:{}}).catch(()=>({effects:{}}));
-  const manifest={...base,effects:{...base.effects,...itemEffects.effects}}, textures = new Map(), loader = new THREE.TextureLoader();
+  const combatEffects=await fetch(new URL('./assets/original/combat-vfx.json',import.meta.url)).then(r=>r.ok?r.json():{effects:{}}).catch(()=>({effects:{}}));
+  const manifest={...base,effects:{...combatEffects.effects,...base.effects,...itemEffects.effects}}, textures = new Map(), loader = new THREE.TextureLoader();
   try {
     await Promise.all(Object.entries(manifest.textures).filter(([, record]) => record.url).map(async ([name, record]) => {
       // Loading failures keep that visual hidden rather than drawing an opaque
@@ -61,7 +62,7 @@ export class NativeRageVfx {
       this.trails.clearActor(actor); return null;
     }
     const segments = state.segments?.length ? state.segments : [state], character = actor.character;
-    const hasEffect = this.actors.has(actor) || segments.some(s => s.context?.rage > 0 && this.manifest.effects[String(s.pose?.raw?.fields.effectid || '').toLowerCase()]);
+    const hasEffect = this.actors.has(actor) || segments.some(s => this.manifest.effects[String(s.pose?.raw?.fields.effectid || '').toLowerCase()]);
     const hasDrag = segments.some(s => !s.blend && s.pose?.drags?.some(d => s.frameIntervals?.some(r => r.to >= d.start && r.from < d.end + 1)));
     if (!hasEffect && !hasDrag) return null;
     const saved = { source: character.source, frame: character.frame }; let offset = 0, result = null;
@@ -92,7 +93,7 @@ export class NativeRageVfx {
   _sampleSegment(actor, state, fps, at) {
     const current = this.actors.get(actor), context = state.context;
     const id = String(state.pose?.raw?.fields.effectid || '').toLowerCase();
-    if (!(context?.rage > 0) || !this.manifest.effects[id]) {
+    if (!this.manifest.effects[id]) {
       if (current) this._retire(current, at - (state.consumed || 0));
       return null;
     }
@@ -113,11 +114,12 @@ export class NativeRageVfx {
     const effect = { ...createEffectTransforms(actor, definition, this.manifest), id, serial: state.serial, group, live: true, tail: 0, visualEnd: 0 };
     for (const node of effect.nodes) {
       const { source } = node; node.mesh = null;
-      if (!FORMATS.has(source.type) || !source.texture) continue;
-      const geometry = effectGeometry(source); if (!geometry) continue;
-      const material = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, blending: THREE.AdditiveBlending,
+      const particle=definition.particleAdapter && source.type==='PARTICLE';
+      if ((!FORMATS.has(source.type) && !particle) || !source.texture) continue;
+      const geometry = particle ? new THREE.BufferGeometry().setAttribute('position',new THREE.BufferAttribute(new Float32Array(24),3)) : effectGeometry(source); if (!geometry) continue;
+      const material = particle ? new THREE.PointsMaterial({size:.10,transparent:true,opacity:0,blending:THREE.AdditiveBlending,depthWrite:false,depthTest:true,toneMapped:false}) : new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, blending: THREE.AdditiveBlending,
         depthWrite: false, depthTest: true, side: THREE.DoubleSide, toneMapped: false });
-      const mesh = node.mesh = new THREE.Mesh(geometry, material); mesh.name = source.name;
+      const mesh = node.mesh = particle ? new THREE.Points(geometry,material) : new THREE.Mesh(geometry, material); mesh.name = source.name;
       effect.visualEnd = Math.max(effect.visualEnd, source.keys.at(-1)?.[0] || 0);
       mesh.matrixAutoUpdate = false; mesh.frustumCulled = false; mesh.visible = false; group.add(mesh);
     }
@@ -154,6 +156,12 @@ export class NativeRageVfx {
         const matrix = effectNodeMatrix(effect, node); if (!matrix) continue;
         const texture = this._texture(source.texture, effect.time); if (!texture) continue;
         mesh.matrix.copy(matrix);
+        if(mesh.isPoints){
+          // Presentation adapter only: original keys/anchors/texture, bounded deterministic spread.
+          const positions=mesh.geometry.attributes.position,age=Math.max(0,effect.time-keys[0][0]);
+          for(let i=0;i<8;i++){const phase=(age*2+i/8)%1,a=i*2.399963;positions.setXYZ(i,Math.cos(a)*phase*5,Math.sin(a)*phase*5,phase*2);}
+          positions.needsUpdate=true;
+        }
         if (source.type === 'BILLBOARD' && camera) {
           const p = new THREE.Vector3(), q = new THREE.Quaternion(), s = new THREE.Vector3(); matrix.decompose(p, q, s);
           mesh.matrix.compose(p, camera.quaternion, s);

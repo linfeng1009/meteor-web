@@ -1,4 +1,4 @@
-import { traversalTap, NATIVE_ROLL_POSES, nativeDashPose, NATIVE_CROUCH_POSES, NATIVE_JUMP_POSES, nativeTraversalDirection } from './native-traversal.js';
+import { traversalTap, NATIVE_ROLL_POSES, nativeDashPose, NATIVE_CROUCH_POSES, NATIVE_GROUND_MOVE_POSES, NATIVE_JUMP_POSES, nativeTraversalDirection } from './native-traversal.js';
 import { FixedStepClock } from './fixed-step.js';
 import { FrameMeter, RenderScaleController, createFrameOverlay } from './frame-meter.js';
 import { StaticColliderIndex } from './collision-index.js';
@@ -831,17 +831,30 @@ export class MeteorGame {
     if (f.guard) speed *= .3;
     if (f.combat.busy) speed = 0;
     if (!f.combat.busy) {
-      const jumpStart=f.jumpSequence?.start??NATIVE_LOCOMOTION.jumpStart,jumpAir=f.jumpSequence?.air??NATIVE_LOCOMOTION.jumpAir;
-      let pose = f.guard ? NATIVE_WEAPONS[f.weapon].guard : !f.grounded ? jumpAir : f.velocity.lengthSq() > .2 ? NATIVE_LOCOMOTION.run : f.combat.stance ?? NATIVE_WEAPONS[f.weapon].stance;
-      const startingJump = f.heldPose === 'jump' && f.combat.timeline?.pose.id === jumpStart && !f.combat.timeline.finished;
-      if (startingJump) pose = jumpStart;
-      const crouching = (f.scriptCrouched || control && control.keys.has('crouch')) && f.grounded;
-      if (crouching) {
-        const walking=direction.lengthSq()>0||f.velocity.lengthSq()>.2,requested=nativeTraversalDirection(control?.keys);
-        const movingPose=NATIVE_CROUCH_POSES[requested]??(f.heldPose>=145&&f.heldPose<=148?f.heldPose:NATIVE_CROUCH_POSES.forward);
-        pose=walking?movingPose:NATIVE_CROUCH_POSES.idle;
+      const current=f.combat.timeline?.pose.id,sequence=f.jumpSequence;
+      const startingJump=!f.grounded&&!!sequence&&sequence.start===current&&!f.combat.timeline.finished;
+      if(!f.grounded&&(!f.guard||startingJump)){
+        // POS owns start -> directional air -> 180. 004cf7d0 accepts all
+        // five air/fall poses; do not restart or loop the short air clip.
+        // 180's authored one-frame loop holds falling until physical landing.
+        const inFlight=current===NATIVE_LOCOMOTION.fall||!!sequence&&(current===sequence.start||current===sequence.air);
+        const pose=inFlight?current:sequence?.air??NATIVE_LOCOMOTION.fall;
+        if(current!==pose)f.combat.play(pose,{loop:pose===NATIVE_LOCOMOTION.fall,force:true});
+        else f.combat.timeline.loop=pose===NATIVE_LOCOMOTION.fall;
+        f.heldPose=pose;
+      }else{
+        const moving=direction.lengthSq()>0||f.velocity.lengthSq()>.2;
+        const facingMove=control&&(control.lookLocked||control.mouseLook?.locked||control.locked&&!control.locked.dead&&!control.locked.disposed);
+        const groundMove=facingMove?(NATIVE_GROUND_MOVE_POSES[nativeTraversalDirection(control.keys)]??(f.heldPose>=141&&f.heldPose<=143?f.heldPose:NATIVE_LOCOMOTION.run)):NATIVE_LOCOMOTION.run;
+        let pose=f.guard?NATIVE_WEAPONS[f.weapon].guard:moving?groundMove:f.combat.stance??NATIVE_WEAPONS[f.weapon].stance;
+        const crouching=(f.scriptCrouched||control&&control.keys.has('crouch'))&&f.grounded;
+        if(crouching){
+          const walking=direction.lengthSq()>0||f.velocity.lengthSq()>.2,requested=nativeTraversalDirection(control?.keys);
+          const movingPose=NATIVE_CROUCH_POSES[requested]??(f.heldPose>=145&&f.heldPose<=148?f.heldPose:NATIVE_CROUCH_POSES.forward);
+          pose=walking?movingPose:NATIVE_CROUCH_POSES.idle;
+        }
+        if(f.heldPose!==pose){f.combat.play(pose,{loop:true,force:true});f.heldPose=pose;}
       }
-      if (f.heldPose !== pose && !startingJump) { f.combat.play(pose, { loop: true, force: true }); f.heldPose = pose; }
     }
     const state = f.combat.update(dt, { grounded: f.grounded, projectileReady: !this.wheels?.hasOwner(f) }); if (!state) return;
     // A held defense is sampled continuously, including the exact frame a

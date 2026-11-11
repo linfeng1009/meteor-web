@@ -136,7 +136,7 @@ export const NATIVE_WEAPONS = Object.freeze({
     modes: { blade: { stance: 401, basic: [432, 433, 434] }, spear: { stance: 402, basic: [442] }, sheath: { stance: 403, basic: [520, 521] } } },
   ninja: { weaponId: 55, model: 'w11_0', stance: 404, guard: 482, basic: [461, 462], air: [478, 479], special: [468, 473, 474, 535, 540], family: [461, 479] }
 });
-export const NATIVE_LOCOMOTION = Object.freeze({ idle: 0, walk: 140, run: 144, jumpStart: 151, jumpAir: 152, hit: 90, dead: 117 });
+export const NATIVE_LOCOMOTION = Object.freeze({ idle: 0, walk: 140, run: 144, jumpStart: 151, jumpAir: 152, fall: 180, hit: 90, dead: 117 });
 // Original weapon-state initializers, matched by their guard stance (+18).
 // 004dce50 maps a CRT15-bit draw through4/32767 for direction0: usually
 // slots0..3, with slot4 at32767. Directions1/2/3 use slots4/5/6.
@@ -447,6 +447,9 @@ export class NativeCombatController {
       // are read from POS; they are not guessed physics constants. Undefined
       // grounded keeps the standalone timeline's previous non-holding behavior.
       if (this._attackChain && Number.isFinite(pose.loopStart) && Number.isFinite(pose.loopEnd)) timeline.loop = grounded === false;
+      // A POS link can enter falling within this same update. Apply its
+      // authored hold before consuming leftover time, not one host tick later.
+      if (pose.id === NATIVE_LOCOMOTION.fall && grounded !== undefined) timeline.loop = grounded === false;
       if (this.weapon === 'wheel' && pose.id === 219) timeline.loop = !projectileReady;
       const timedReaction = ['hit', 'guard'].includes(this._reaction?.phase) && Number.isFinite(pose.loopStart) && Number.isFinite(pose.loopEnd);
       if (timedReaction) timeline.loop = this._reaction.remainingDuration > 1e-7;
@@ -467,7 +470,7 @@ export class NativeCombatController {
         if (this._startTransition(request)) continue;
       }
       if (timeline.finished && pose.link != null) {
-        if (this._startTransition({ id: pose.link, loop: false }, { linked: true })) continue;
+        if (this._startTransition({ id: pose.link, loop: pose.link === NATIVE_LOCOMOTION.fall && grounded === false }, { linked: true })) continue;
       }
       if (timedReaction && remaining > 1e-7 && this._reaction.remainingDuration <= 1e-7 && !timeline.finished) continue;
       break;

@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import * as THREE from '../dist/vendor/three.module.js';
 import { MeteorGame } from '../dist/engine.js';
 import { NativeCombatController, decodeNativeText, parsePos, parseAct } from '../dist/native-combat.js';
-import {NATIVE_DASH_POSES,NATIVE_CROUCH_POSES,NATIVE_JUMP_POSES,nativeTraversalDirection} from '../dist/native-traversal.js';
+import {NATIVE_DASH_POSES,NATIVE_CROUCH_POSES,NATIVE_GROUND_MOVE_POSES,NATIVE_JUMP_POSES,nativeTraversalDirection} from '../dist/native-traversal.js';
 import { createNativeCharacter, parseNativeSkin, parseNativeBones, parseNativeAnimation, parseNativePoses } from '../dist/native-character.js';
 
 // Use the supplied native skin, skeleton and every original jump frame. A
@@ -78,6 +78,30 @@ test('crouch walking plays each original directional loop and resumes crouch idl
   }
 });
 
+test('mouse-facing movement uses native side/back steps instead of playing forward run backwards',()=>{
+  for(const [direction,poseId] of Object.entries(NATIVE_GROUND_MOVE_POSES)){
+    const state=fixture();
+    try{
+      const {game,hero}=state;game.mouseLook={locked:true};game.cameraAngle=0;hero.root.rotation.y=Math.PI;
+      game.action(direction);for(let i=0;i<30;i++)game._updateFighter(hero,1/60);
+      assert.equal(hero.combat.timeline.pose.id,poseId,direction);assert.equal(hero.combat.busy,false);
+      assert.ok(Math.abs(hero.root.rotation.y-Math.PI)<1e-6);assert.ok(hero.character.frame>combatData.poses.get(poseId).start);
+      game.action(direction,false);for(let i=0;i<60;i++)game._updateFighter(hero,1/60);
+      assert.equal(hero.combat.timeline.pose.id,hero.combat.stance);
+    }finally{state.dispose();}
+  }
+});
+
+test('remote directional stepping reads its own control and can yield directly to an attack',()=>{
+  const state=fixture();
+  try{
+    const {game,hero}=state;hero.hero=false;hero.playerControl={keys:new Set(['right']),lookLocked:true,cameraAngle:0,directionBuffer:[]};
+    game.keys.add('back');hero.weapon='sword';hero.combat.setWeapon('sword');hero.combat.play(6,{force:true});
+    for(let i=0;i<20;i++)game._updateFighter(hero,1/60);assert.equal(hero.combat.timeline.pose.id,141);
+    game._actionFighter(hero,hero.playerControl,'attack',true);assert.equal(hero.combat.attacking,true);assert.notEqual(hero.combat.timeline.pose.id,141);
+  }finally{state.dispose();}
+});
+
 test('directional jumps preserve original takeoff and air families through landing',()=>{
   for(const direction of ['forward','right','left','back']){
     const state=fixture();
@@ -95,6 +119,50 @@ test('directional jumps preserve original takeoff and air families through landi
       assert.equal(hero.grounded,true);assert.equal(hero.jumpSequence,null);
     }finally{state.dispose();}
   }
+});
+
+test('every directional jump follows its authored air-to-fall link without restarting the short air clip',()=>{
+  for(const direction of ['forward','right','left','back']){
+    const state=fixture();
+    try{
+      const {game,hero}=state,profile=NATIVE_JUMP_POSES[direction];game.action(direction);game.action('jump');
+      const seen=[],airSerials=new Set(),fallFrames=[];
+      for(let i=0;i<120;i++){
+        game._updateFighter(hero,1/60);
+        if(!hero.grounded){const id=hero.combat.timeline.pose.id;if(seen.at(-1)!==id)seen.push(id);
+          if(id===profile.air){airSerials.add(hero.combat.serial);assert.equal(hero.combat.timeline.loop,false);}
+          if(id===180){fallFrames.push(hero.character.frame);assert.equal(hero.combat.timeline.loop,true);}
+        }
+      }
+      assert.deepEqual(seen,[profile.start,profile.air,180],direction);
+      assert.equal(airSerials.size,1,'the host must not replay a POS-linked air entry');
+      assert.ok(fallFrames.length>5);assert.ok(fallFrames.every(frame=>frame===combatData.poses.get(180).loopStart));
+      assert.equal(hero.grounded,true);assert.notEqual(hero.combat.timeline.pose.id,180);
+    }finally{state.dispose();}
+  }
+});
+
+test('walking off a ledge enters the authored falling hold instead of replaying a jump',()=>{
+  const state=fixture();
+  try{
+    const {game,hero}=state;hero.root.position.y=20;hero.grounded=false;hero.vy=0;hero.nativeJump=null;hero.jumpSequence=null;
+    for(let i=0;i<20;i++){game._updateFighter(hero,1/60);assert.equal(hero.combat.timeline.pose.id,180);assert.equal(hero.nativeJump,null);}
+    assert.ok(hero.root.position.y<20);assert.equal(hero.combat.timeline.frame,combatData.poses.get(180).loopStart);
+    for(let i=0;i<120;i++)game._updateFighter(hero,1/60);
+    assert.equal(hero.grounded,true);assert.notEqual(hero.combat.timeline.pose.id,180);
+  }finally{state.dispose();}
+});
+
+test('falling locomotion yields to a native air attack and its ACT follow-up',()=>{
+  const state=fixture();
+  try{
+    const {game,hero}=state;hero.weapon='sword';hero.combat.setWeapon('sword');hero.combat.play(6,{force:true});
+    game.action('jump');for(let i=0;i<45;i++)game._updateFighter(hero,1/60);
+    assert.equal(hero.grounded,false);assert.equal(hero.combat.timeline.pose.id,180);
+    game.action('attack');assert.equal(hero.combat.attacking,true);assert.equal(hero.combat.timeline.pose.id,260);
+    for(let i=0;i<6;i++){game._updateFighter(hero,1/60);assert.notEqual(hero.combat.timeline.pose.id,180);}
+    game.action('attack');assert.ok(hero.combat.queued!=null||hero.combat.timeline.pose.id===261);
+  }finally{state.dispose();}
 });
 
 test('jump direction follows the controlling player with forward/back priority and opposing keys cancel',()=>{

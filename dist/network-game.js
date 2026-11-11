@@ -102,8 +102,8 @@ export class NetworkGame{
     const result=matchResult(this.rules,players,this.game.matchElapsed);if(result)this.finish(result);
   }
   updateBoard(){
-    if(!this.board)return;const seconds=Math.max(0,Math.ceil(this.rules.timeLimit-this.game.matchElapsed));
-    const rows=[`${NETWORK_MODES[this.rules.mode]} · ${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}${this.rules.mode==='leader'?` · ${this.rules.scoreLimit}杀获胜`:''}`];
+    if(!this.board)return;
+    const rows=[`${NETWORK_MODES[this.rules.mode]} · 击杀 / 阵亡`];
     for(const [id,actor] of [...this.actors].sort((a,b)=>(this.scores.get(b[0])?.kills||0)-(this.scores.get(a[0])?.kills||0))){const score=this.scores.get(id)||{};rows.push(`${this.rules.mode==='deathmatch'?(actor.team===1?'红队 ':'蓝队 '):''}${actor.name||id} · ${score.kills||0}/${score.deaths||0}${actor.dead?' · 阵亡':''}`);}
     this.board.textContent=rows.join('\n');
   }

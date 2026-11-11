@@ -41,3 +41,18 @@ test('render frame draws once and updates cosmetics once while catching up multi
     game._frame();assert.deepEqual({ticks,draws,presentation,camera},{ticks:6,draws:1,presentation:1,camera:1});
   }finally{globalThis.requestAnimationFrame=previous;}
 });
+
+test('静态菜单不更新世界或提交绘制，返回战斗没有累计补帧',()=>{
+  const previous=globalThis.requestAnimationFrame;globalThis.requestAnimationFrame=()=>1;
+  try{
+    const game=Object.create(MeteorGame.prototype);let draws=0,ticks=0,presentation=0,camera=0,seconds=20;
+    Object.assign(game,{menuIdle:true,clock:{getDelta:()=>seconds},simulationClock:new FixedStepClock(),hero:{},paused:false,
+      _stepWorld(){ticks++;},_updatePresentation(){presentation++;},_tickCamera(){camera++;},renderer:{render(){draws++;}}});
+    game.simulationClock.advance(1/120,()=>ticks++);
+    for(let i=0;i<60;i++)game._frame();
+    assert.deepEqual({draws,ticks,presentation,camera},{draws:0,ticks:0,presentation:0,camera:0});
+    assert.equal(game.simulationClock.accumulator,0);
+    game.menuIdle=false;seconds=1/60;game._frame();
+    assert.deepEqual({draws,ticks,presentation,camera},{draws:1,ticks:1,presentation:1,camera:1});
+  }finally{globalThis.requestAnimationFrame=previous;}
+});

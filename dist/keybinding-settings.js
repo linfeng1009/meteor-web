@@ -6,7 +6,8 @@ export function mountKeySettings(root, { bindings, storage, onSave }) {
   function render(){
     root.innerHTML='<p class="modal-note">点击键位后按下键盘或鼠标按键。每个动作最多两个键；Esc 取消录入，暂停键 Esc 固定。默认采用原版键鼠布局，触屏按钮保持可用。修改后点击保存。</p><div class="keybinding-list"></div><p role="status" aria-live="polite"></p><div class="modal-actions"><button type="button" class="primary-button" data-keys-save>保存键位</button><button type="button" class="secondary-button" data-keys-reset>恢复默认</button></div>';
     const list=root.querySelector('.keybinding-list');
-    for(const [action,label] of Object.entries(ACTION_LABELS)){
+    for(const action of ['forward','back','left','right','jump','crouch','attack','guard','lock','switch','drop']){
+      const label=ACTION_LABELS[action],group={forward:'移动与身法',attack:'攻击与防御',lock:'锁定与兵器'}[action];if(group){const heading=document.createElement('h3');heading.textContent=group;list.append(heading);}
       const row=document.createElement('div');row.className='settings-row keybinding-row';
       const title=document.createElement('span');title.textContent=label;row.append(title);
       const slots=document.createElement('div');slots.className='keybinding-slots';

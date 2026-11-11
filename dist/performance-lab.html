@@ -1,43 +1,11 @@
 <!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>游戏帧率验证</title>
-<style>body{margin:0;background:#101718;color:#ddd;font:14px sans-serif}canvas{width:100vw;height:80vh;display:block}button,select{padding:8px}pre{white-space:pre-wrap}</style>
-<canvas id="world"></canvas><button id="run">开始转视角测试（约15秒）</button>
+<style>html{overflow-y:scroll}body{margin:0;background:#101718;color:#ddd;font:14px sans-serif}canvas{width:100%;height:70vh;display:block}button,select{padding:8px}pre{white-space:pre-wrap}#controls{padding:10px;display:flex;gap:8px;flex-wrap:wrap}#result{padding:10px}#frame-meter{bottom:10px!important;left:auto!important;right:10px}#scene{position:relative;background:radial-gradient(ellipse,#29403b,#101718)}#scene-status{position:absolute;inset:0;display:grid;place-content:center;text-align:center;padding:24px;background:#101718cc;font-size:18px}#scene-status[hidden]{display:none}h1{font-size:20px;margin:12px}#help{margin:12px;line-height:1.6}</style>
+<h1>鼠标与帧率实测</h1><p id="help">场景会自动载入。选择人物、地图后开始测试；鼠标实测开始后点击“锁定鼠标进行实测”，再持续移动鼠标。</p>
+<div id="controls"><button id="manual">真实鼠标实测（请点这里）</button><button id="lock" disabled>锁定鼠标进行实测</button><button id="run">自动对照三项测试（无需移动鼠标）</button>
 <label>战场 <select id="map"><option value="sifang">四方阵</option><option value="sn14">炎硫岛</option></select></label>
-<label><input id="adaptive" type="checkbox">启用自动渲染倍率（对比测试建议关闭）</label>
-<pre id="result">固定原版人物、原版长剑、高画质、三名对手；预热5秒后采集10秒。自动匀速转向通过同一鼠标角度函数，非真实鼠标设备延迟测试。请保持标签页在前台。</pre>
-<script type="module">
-import {MeteorGame} from './engine.js';
-import {turnMouseCamera} from './mouse-look.js';
-const button=document.querySelector('#run'), result=document.querySelector('#result');
-let game;
-button.onclick=async()=>{
-  button.disabled=true; result.textContent='载入中…'; game?.dispose();
-  game=new MeteorGame(document.querySelector('canvas')); window.__performanceGame=game;
-  try {
-    await game.ready; game.setSwordStyle('original'); game.setQuality('high');
-    if(!document.querySelector('#adaptive').checked)game.renderScale.update=()=>game.renderScale.ratio;
-    await game.start({map:document.querySelector('#map').value,weapon:'sword',mode:'training'});
-    game.setMuted(true);
-    const cameraTick=game._tickCamera.bind(game); let previous=performance.now(),start=previous;
-    const frames=[],phases=[]; let measureStart=null,wasHidden=false;
-    const sample=game.frameMeter.sample.bind(game.frameMeter);
-    game.frameMeter.sample=(at,timing)=>{
-      const stats=sample(at,timing);
-      wasHidden ||= document.hidden;
-      if(at-start>=5000){if(measureStart===null){measureStart=at;game.frameMeter.reset();}else frames.push(at-previous);phases.push(timing);}
-      previous=at;
-      if(at-start>=15000){
-        game.frameMeter.sample=sample;game._tickCamera=cameraTick;
-        const sorted=frames.sort((a,b)=>a-b),avg=key=>phases.reduce((sum,p)=>sum+p[key],0)/phases.length;
-        const report={map:game.currentMap.id,viewport:[innerWidth,innerHeight],dpr:game.renderer.getPixelRatio(),frames:frames.length,fps:1000/(frames.reduce((a,b)=>a+b,0)/frames.length),p95Ms:sorted[Math.ceil(sorted.length*.95)-1],over25Ms:frames.filter(ms=>ms>25).length,cpuMs:avg('cpu'),worldMs:avg('world'),cameraMs:avg('camera'),renderSubmitMs:avg('render'),drawCalls:game.renderer.info.render.calls,triangles:game.renderer.info.render.triangles,hidden:document.hidden};
-        report.validForComparison=!wasHidden&&sorted.at(-1)<250;
-        report.note=report.validForComparison?'仅本机此场景，非真实鼠标延迟测量':'采样存在不可见页面或长停顿，不应据此判断正常游戏帧率';
-        result.textContent=JSON.stringify(report,null,2);button.disabled=false;game.pause(true);
-      }
-      return stats;
-    };
-    game.pointer={moved:true};
-    game._tickCamera=dt=>{turnMouseCamera(game,dt*180,0);cameraTick(dt);};
-    result.textContent='正在预热及采集…';
-  }catch(error){result.textContent=error.stack;button.disabled=false;}
-};
-</script></html>
+<label>人物 <select id="appearance"><option value="original">原版孟星魂</option><option value="springfield">春田</option><option value="yaemiko">八重神子</option></select></label>
+<label><input id="adaptive" type="checkbox">启用自动渲染倍率</label></div>
+<div id="scene"><canvas id="world" tabindex="0" aria-label="性能测试画面"></canvas><div id="scene-status" role="status">正在载入实测场景，请稍候…</div></div>
+<pre id="summary" aria-label="测试结果摘要"></pre>
+<pre id="result">每项重新开局，预热3秒再采集10秒。固定高画质、原版长剑及三名对手。自动转向使用相同角度函数，不是物理鼠标延迟测量。鼠标实测另统计实际mousemove事件、锁定状态和视角变化。请保持窗口前台；长帧如实记录。</pre>
+<script type="module">import('./performance-lab.js').catch(error=>{document.querySelector('#scene-status').textContent='场景脚本加载失败，请刷新重试：'+error.message;});</script></html>

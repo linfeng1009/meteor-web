@@ -3,6 +3,16 @@
 // command-token lifetime; exact original double-tap sampling remains unverified.
 export const NATIVE_TRAVERSAL_WINDOW=.3;
 export const NATIVE_ROLL_POSES=Object.freeze({forward:176,right:177,left:178,back:179});
+// 004cc730 maps crouched idle -> 10 and walk/run 140/144,141,142,143
+// to 145,146,147,148. 004cf770 selects directional takeoff; 004cf7d0
+// keeps the corresponding air pose (151/152,153/154,155/156,157/158).
+export const NATIVE_CROUCH_POSES=Object.freeze({idle:10,forward:145,right:146,left:147,back:148});
+export const NATIVE_JUMP_POSES=Object.freeze({forward:Object.freeze({start:151,air:152}),right:Object.freeze({start:153,air:154}),left:Object.freeze({start:155,air:156}),back:Object.freeze({start:157,air:158})});
+export function nativeTraversalDirection(keys){
+  const forward=Number(!!keys?.has('forward'))-Number(!!keys?.has('back'));
+  const right=Number(!!keys?.has('right'))-Number(!!keys?.has('left'));
+  return forward>0?'forward':forward<0?'back':right>0?'right':right<0?'left':null;
+}
 const poses=(forward,right,left,back)=>Object.freeze({forward,right,left,back});
 // 004cbf10 dispatches standing f/r/l/b as164/167/170/173 through weapon+28.
 // Verified remappers: dd790 sword, ddef0 spear, de640 blade, df600 dart,

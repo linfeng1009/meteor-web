@@ -1,4 +1,4 @@
-import { traversalTap, NATIVE_ROLL_POSES, nativeDashPose } from './native-traversal.js';
+import { traversalTap, NATIVE_ROLL_POSES, nativeDashPose, NATIVE_CROUCH_POSES, NATIVE_JUMP_POSES, nativeTraversalDirection } from './native-traversal.js';
 import { FixedStepClock } from './fixed-step.js';
 import { FrameMeter, RenderScaleController, createFrameOverlay } from './frame-meter.js';
 import { StaticColliderIndex } from './collision-index.js';
@@ -303,7 +303,7 @@ export class MeteorGame {
     this.rageVfx?.clearActor(f);
     this.effectContacts?.clearActor(f);
     clearNativeScriptItems(f);
-    f.nativeJump = null;
+    f.nativeJump = null; f.jumpSequence = null;
     const p = spawn?.position || this.currentMap.spawns[0].position; f.root.position.copy(p);
     // D_user DES quaternions use wxyz in the native Z-up coordinates.
     // Project their facing onto the walking plane instead of facing the player.
@@ -454,7 +454,7 @@ export class MeteorGame {
         f.nativeJump = null; f.vy -= this.hostPhysics.gravity * dt; p.y += f.vy * dt;
       }
       const landing = this._ground(p.x, p.z, p.y + Math.max(.7, -f.vy * dt + .15));
-      if (landing && p.y <= landing.point.y + .04 && f.vy <= 0) { p.y = landing.point.y + .015; f.vy = 0; f.grounded = true; f.nativeJump = null; }
+      if (landing && p.y <= landing.point.y + .04 && f.vy <= 0) { p.y = landing.point.y + .015; f.vy = 0; f.grounded = true; f.nativeJump = null; f.jumpSequence = null; }
     }
     const hazard = this.currentMap.environment?.sweep(from, p);
     if (hazard && !f.dead) {
@@ -626,7 +626,12 @@ export class MeteorGame {
   setDamageResolver(resolver) { if (resolver !== null && typeof resolver !== 'function') throw new Error('Damage resolver must be a function or null'); this.damageResolver = resolver; }
   _beginJump(actor) {
     if (!actor.grounded || actor.combat.busy) return false;
-    const pose = actor.combat.data.poses.get(NATIVE_LOCOMOTION.jumpStart);
+    const control=this._controlFor(actor),direction=nativeTraversalDirection(control?.keys)||'forward';
+    const sequence=NATIVE_JUMP_POSES[direction];
+    const pose = actor.combat.data.poses.get(sequence.start);
+    if(!pose?.valid)return false;
+    if(control&&!control.locked)actor.root.rotation.y=control.cameraAngle+Math.PI;
+    actor.jumpSequence={...sequence,direction,facing:actor.root.rotation.y};
     actor.grounded = false; actor.vy = this.hostPhysics.jumpVelocity;
     if (pose?.valid && actor.character.sampleSceneMotion) {
       // 004ce850 consumes d_base movement independently of the visible skin.
@@ -636,7 +641,7 @@ export class MeteorGame {
       actor.nativeJump = { pose, fps, elapsed: 0, height: 0, duration: (pose.end - pose.start) / fps,
         origin: actor.character.sampleSceneMotion(pose.source, pose.start).z };
     }
-    actor.combat.play(NATIVE_LOCOMOTION.jumpStart, { force: true }); actor.heldPose = 'jump'; return true;
+    actor.combat.play(sequence.start, { force: true }); actor.heldPose = 'jump'; return true;
   }
   _controlFor(actor) { return actor?.playerControl || (actor?.hero ? this.localControl || this : null); }
   _beginRoll(direction, poseId, actor = this.hero, control = this._controlFor(actor)) {
@@ -783,7 +788,11 @@ export class MeteorGame {
       if (f.combat.reactionPhase !== 'guard') f.guard = false;
     } else if (control) {
       if (f.scriptInputBlocked) f.guard = false;
-      direction = f.scriptInputBlocked ? v3() : this._moveDirection(control); if (control.locked && !control.locked.dead) this._face(f, control.locked.root.position, dt); else if (!f.combat.busy && (control.lookLocked || control.mouseLook?.locked)) this._face(f, f.root.position.clone().add(v3(-Math.sin(control.cameraAngle),0,-Math.cos(control.cameraAngle))),dt); else if (direction.lengthSq() > 0 && !f.combat.busy) this._face(f, f.root.position.clone().add(direction), dt);
+      direction = f.scriptInputBlocked ? v3() : this._moveDirection(control);
+      if(!f.grounded&&f.jumpSequence&&!f.combat.busy)f.root.rotation.y=f.jumpSequence.facing;
+      else if (control.locked && !control.locked.dead) this._face(f, control.locked.root.position, dt);
+      else if (!f.combat.busy && (control.keys.has('crouch') || control.lookLocked || control.mouseLook?.locked)) this._face(f, f.root.position.clone().add(v3(-Math.sin(control.cameraAngle),0,-Math.cos(control.cameraAngle))),dt);
+      else if (direction.lengthSq() > 0 && !f.combat.busy) this._face(f, f.root.position.clone().add(direction), dt);
     } else if (f.scriptControlled) {
       const control = f.scriptControl;
       f.guard = !!(control?.guard || !control?.paused && f.npcCombat?.guard) && !f.combat.busy; speed *= Number(control?.speedScale ?? 1) * .68;
@@ -822,10 +831,16 @@ export class MeteorGame {
     if (f.guard) speed *= .3;
     if (f.combat.busy) speed = 0;
     if (!f.combat.busy) {
-      let pose = f.guard ? NATIVE_WEAPONS[f.weapon].guard : !f.grounded ? NATIVE_LOCOMOTION.jumpAir : f.velocity.lengthSq() > .2 ? NATIVE_LOCOMOTION.run : f.combat.stance ?? NATIVE_WEAPONS[f.weapon].stance;
-      const startingJump = f.heldPose === 'jump' && f.combat.timeline?.pose.id === NATIVE_LOCOMOTION.jumpStart && !f.combat.timeline.finished;
-      if (startingJump) pose = NATIVE_LOCOMOTION.jumpStart;
-      const crouching = (f.scriptCrouched || control && control.keys.has('crouch')) && f.grounded; if (crouching) pose = 10;
+      const jumpStart=f.jumpSequence?.start??NATIVE_LOCOMOTION.jumpStart,jumpAir=f.jumpSequence?.air??NATIVE_LOCOMOTION.jumpAir;
+      let pose = f.guard ? NATIVE_WEAPONS[f.weapon].guard : !f.grounded ? jumpAir : f.velocity.lengthSq() > .2 ? NATIVE_LOCOMOTION.run : f.combat.stance ?? NATIVE_WEAPONS[f.weapon].stance;
+      const startingJump = f.heldPose === 'jump' && f.combat.timeline?.pose.id === jumpStart && !f.combat.timeline.finished;
+      if (startingJump) pose = jumpStart;
+      const crouching = (f.scriptCrouched || control && control.keys.has('crouch')) && f.grounded;
+      if (crouching) {
+        const walking=direction.lengthSq()>0||f.velocity.lengthSq()>.2,requested=nativeTraversalDirection(control?.keys);
+        const movingPose=NATIVE_CROUCH_POSES[requested]??(f.heldPose>=145&&f.heldPose<=148?f.heldPose:NATIVE_CROUCH_POSES.forward);
+        pose=walking?movingPose:NATIVE_CROUCH_POSES.idle;
+      }
       if (f.heldPose !== pose && !startingJump) { f.combat.play(pose, { loop: true, force: true }); f.heldPose = pose; }
     }
     const state = f.combat.update(dt, { grounded: f.grounded, projectileReady: !this.wheels?.hasOwner(f) }); if (!state) return;
@@ -1029,7 +1044,7 @@ export class MeteorGame {
       .some(hit => hit.distance > .05 && hit.distance < distance - .1 && hit.object.userData.nativeSceneInstance !== item);
     this.raycaster.far = Infinity; return !blocked;
   }
-  _tickCamera(dt) {
+  _tickCamera(dt, { directLook: directLookRequested = false } = {}) {
     if (!this.hero || !this.currentMap) return;
     const p = this.hero.root.position, eye = p.clone().add(v3(0, 1.65, 0)), target = eye.clone(); let desired;
     // Carry the camera rig with physical ascent/descent before smoothing its
@@ -1058,7 +1073,7 @@ export class MeteorGame {
     }
     this.cameraTarget.lerp(target, 1 - Math.exp(-dt * 8));
     const hasLiveLock = this.locked && !this.locked.dead && !this.locked.disposed;
-    const directLook = this.running && !this.paused && !hasLiveLock && (this.mouseLook?.locked || this.pointer?.moved);
+    const directLook = this.running && !this.paused && !hasLiveLock && (directLookRequested || this.mouseLook?.locked || this.pointer?.moved);
     if (directLook) {
       // Follow translation smoothly, but apply the sampled mouse orbit in this
       // render frame. Position lerp here added ~100ms of angular chase/drag.

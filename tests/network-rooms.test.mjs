@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {NetworkRooms,createNetworkServer} from '../network-server.mjs';
-function room(){const rooms=new NetworkRooms(),a=rooms.create('房主'),b=rooms.join(a.room.code,'剑客');return {rooms,a,b,call:(p,op,data={})=>rooms.request(a.room.code,p.token,op,{round:rooms.rooms.get(a.room.code)?.round||0,...data})};}
+function room(){const rooms=new NetworkRooms(),a=rooms.create('房主',{maxPlayers:2}),b=rooms.join(a.room.code,'剑客');return {rooms,a,b,call:(p,op,data={})=>rooms.request(a.room.code,p.token,op,{round:rooms.rooms.get(a.room.code)?.round||0,...data})};}
 const frame=(a,b,sequence=1)=>({sequence,time:1,players:[a,b].map(p=>({id:p.playerId,position:[0,0,0],angle:0,hp:1000,maxHp:1000,rage:0,pose:6,source:0,frame:7400,serial:1,effectTime:0}))});
 
 test('host impact snapshots are bounded, validated atomically and cannot mark guarded contacts as blood',()=>{
@@ -62,7 +62,7 @@ test('malformed batches are atomic and queue saturation never silently evicts ac
   assert.deepEqual(call(a,'sync').input.map(x=>x.sequence),[257]);
 });
 test('old-round writes and acknowledgements cannot affect the next match',()=>{
-  const next=playing();next.call(next.b,'leave');const guest=next.rooms.join(next.a.room.code,'新玩家');
+  const next=playing();next.call(next.a,'sync',{frame:{...frame(next.a,next.b),result:{reason:'score',winnerIds:[next.a.playerId]}}});next.call(next.a,'rematch');next.call(next.b,'leave');const guest=next.rooms.join(next.a.room.code,'新玩家');
   next.call(next.a,'ready',{ready:true});next.call(guest,'ready',{ready:true});next.call(next.a,'start');next.call(next.a,'loaded');next.call(guest,'loaded');
   assert.throws(()=>next.call(guest,'sync',{round:1,input:[{action:'attack',active:true,sequence:1,angle:0}]}),/对局/);
   assert.throws(()=>next.call(next.a,'sync',{round:1,inputAck:{[guest.playerId]:1}}),/对局/);
@@ -73,8 +73,7 @@ test('room revisions advance for membership, preparation and loading, but remain
   revisions.push(call(a,'ready',{ready:true}).room.revision,call(b,'ready',{ready:true}).room.revision,call(a,'start').room.revision,call(a,'loaded').room.revision,call(b,'loaded').room.revision);
   for(let i=1;i<revisions.length;i++)assert.ok(revisions[i]>revisions[i-1]);
   assert.equal(call(a,'sync').room.revision,revisions.at(-1));assert.equal(call(a,'sync').room.revision,revisions.at(-1));
-  call(b,'leave');const waiting=call(a,'sync').room;assert.ok(waiting.revision>revisions.at(-1));assert.equal(waiting.phase,'waiting');
-  const guest=rooms.join(a.room.code,'新客人');assert.ok(guest.room.revision>waiting.revision);
+  call(b,'leave');const waiting=call(a,'sync').room;assert.ok(waiting.revision>revisions.at(-1));assert.equal(waiting.phase,'playing');assert.equal(waiting.players.length,1);assert.throws(()=>rooms.join(a.room.code,'新客人'),/开局/);
 });
 test('guest timeout publishes a newer waiting-state revision while host remains connected',()=>{
   let now=0;const rooms=new NetworkRooms({now:()=>now}),host=rooms.create('房主'),guest=rooms.join(host.room.code,'客人');

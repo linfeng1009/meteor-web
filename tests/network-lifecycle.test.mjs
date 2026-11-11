@@ -4,7 +4,7 @@ import * as THREE from '../dist/vendor/three.module.js';
 import {NetworkLobby} from '../dist/network-lobby.js';
 import {NetworkGame} from '../dist/network-game.js';
 const deferred=()=>{let resolve,reject;const promise=new Promise((a,b)=>{resolve=a;reject=b;});return {promise,resolve,reject};};
-const room=(code='ABCDEF',phase='waiting')=>({code,phase,round:1,protocol:3,hostId:'host',players:[{id:'host'},{id:'guest'}]});
+const room=(code='ABCDEF',phase='waiting')=>({code,phase,round:1,protocol:4,hostId:'host',players:[{id:'host'},{id:'guest'}]});
 
 test('old connection failure cannot clear a newer connection or its connecting state',async()=>{
   const attempts=[],stops=[];

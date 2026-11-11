@@ -65,3 +65,12 @@ dialog{background:#111a1e;color:var(--paper);border:1px solid #8f785950;padding:
 .sword-style-icon.raiden{border-color:#b79bd2;color:#e0c3f4;background:#a16dc112}
 
 #musket-reticle{position:absolute;inset:0;pointer-events:none}#musket-reticle span{position:absolute;left:50%;top:50%;width:24px;height:24px;transform:translate(-50%,-50%);border:1px solid #ffffffc9;border-radius:50%;filter:drop-shadow(0 1px 2px #000)}#musket-reticle span:before,#musket-reticle span:after{content:"";position:absolute;background:#fff;left:50%;top:50%;transform:translate(-50%,-50%)}#musket-reticle span:before{width:2px;height:8px}#musket-reticle span:after{width:8px;height:2px}#musket-reticle small{position:absolute;top:calc(50% + 32px);left:50%;transform:translateX(-50%);color:#eee;text-shadow:0 1px 3px #000;white-space:nowrap}
+
+/* 联机房间：规则与入房操作分行，窄屏保持可读。 */
+#network-lobby{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#network-lobby>p,#network-lobby>h3,#network-lobby>.modal-note{grid-column:1/-1;margin:0}
+#network-lobby>label{display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--muted,#b8b4a9)}
+#network-lobby>.setting-select,#network-lobby>label>.setting-select{width:100%;min-width:0;box-sizing:border-box}
+#network-lobby>input[aria-label="联机玩家名字"],#network-lobby>button:first-of-type{grid-column:1/-1}
+#network-lobby>[hidden]{display:none}
+@media(max-width:520px){#network-lobby{grid-template-columns:1fr}.network-match-board{right:8px!important;top:100px!important;padding:8px!important;font-size:12px!important}}

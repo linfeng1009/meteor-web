@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import * as THREE from '../dist/vendor/three.module.js';
 import { MeteorGame } from '../dist/engine.js';
 import { NativeCombatController, decodeNativeText, parsePos, parseAct } from '../dist/native-combat.js';
-import {NATIVE_DASH_POSES,NATIVE_CROUCH_POSES,NATIVE_JUMP_POSES,nativeTraversalDirection} from '../dist/native-traversal.js';
+import {NATIVE_DASH_POSES,NATIVE_CROUCH_POSES,NATIVE_GROUND_MOVE_POSES,NATIVE_JUMP_POSES,nativeTraversalDirection} from '../dist/native-traversal.js';
 import { createNativeCharacter, parseNativeSkin, parseNativeBones, parseNativeAnimation, parseNativePoses } from '../dist/native-character.js';
 
 // Use the supplied native skin, skeleton and every original jump frame. A
@@ -20,6 +20,142 @@ const [skin, bones, personal, common, poses, act] = await Promise.all([
 const data = { id: 0, skin: parseNativeSkin(skin), skeleton: parseNativeBones(bones), animations: [parseNativeAnimation(common), parseNativeAnimation(personal)], poses: parseNativePoses(poses) };
 const combatData = { poses: parsePos(poses), actions: parseAct(decodeNativeText(act)) };
 const v = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z);
+
+function wallFixture(side='front',height=2){
+  const state=fixture(),{game,hero,colliders}=state;
+  const wall=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshBasicMaterial({side:THREE.DoubleSide}));
+  if(side==='front')wall.position.z=-.5;
+  else{wall.rotation.y=Math.PI/2;wall.position.x=side==='right'?.5:-.5;}
+  wall.position.y=height;wall.updateMatrixWorld(true);colliders.push(wall);
+  hero.root.position.y=height;hero.root.rotation.y=Math.PI;hero.grounded=false;hero.vy=0;game.cameraAngle=0;game.mouseLook={locked:true};game.action('forward');
+  return {...state,wall};
+}
+
+test('three native wall families enter, animate, kick away and follow their real POS air links',()=>{
+  for(const [side,entry,exit,air] of [['front',161,157,158],['right',162,159,156],['left',163,160,154]]){
+    const state=wallFixture(side);try{
+      const {game,hero}=state;game._updateFighter(hero,1/60);
+      assert.equal(hero.wallRun?.side,side);assert.equal(hero.combat.timeline.pose.id,entry);
+      const before=hero.character.bones[15].quaternion.toArray();
+      for(let i=0;i<12;i++)game._updateFighter(hero,1/60);
+      assert.notDeepEqual(hero.character.bones[15].quaternion.toArray(),before,'use original animated bones');
+      const start=hero.root.position.clone();game.action('jump');
+      assert.equal(hero.wallRun,null);assert.equal(hero.combat.timeline.pose.id,exit);assert.equal(hero.nativeJump.pose.id,exit);
+      const seen=new Set();let escaped;
+      for(let i=0;i<100;i++){game._updateFighter(hero,1/60);if(i===14)escaped=hero.root.position.clone();seen.add(hero.combat.timeline.pose.id);assert.ok(hero.root.position.toArray().every(Number.isFinite));}
+      assert.ok(seen.has(air));assert.ok(seen.has(180));assert.equal(hero.grounded,true);assert.equal(hero.wallEntries,0);
+      if(side==='front')assert.ok(escaped.z>start.z+.5);
+      else assert.ok((escaped.x-start.x)*(side==='right'?-1:1)>.5);
+    }finally{state.dispose();}
+  }
+});
+
+test('wall contact expires, cannot recharge in midair and resets only on landing',()=>{
+  const state=wallFixture('front',30);try{
+    const {game,hero}=state;for(let i=0;i<50;i++)game._updateFighter(hero,1/60);
+    assert.equal(hero.wallRun,null);assert.equal(hero.wallEntries,1);assert.ok(hero.root.position.y<=32.6);assert.equal(hero.grounded,false);
+    assert.equal(game._beginWallJump(hero),false);assert.equal(game._beginJump(hero),false);
+    for(let i=0;i<180;i++)game._updateFighter(hero,1/60);
+    assert.equal(hero.grounded,true);assert.equal(hero.wallEntries,0);
+  }finally{state.dispose();}
+});
+
+test('wall traversal releases on lost geometry, direction release, hits and input blocking',()=>{
+  for(const stop of ['geometry','release','hit','blocked','dead']){
+    const state=wallFixture();try{
+      const {game,hero,wall}=state;game._updateFighter(hero,1/60);assert.ok(hero.wallRun);
+      if(stop==='geometry'){wall.position.z=-4;wall.updateMatrixWorld(true);}
+      if(stop==='release')game.action('forward',false);
+      if(stop==='hit')hero.combat.react(90);
+      if(stop==='blocked')hero.scriptInputBlocked=true;
+      if(stop==='dead')hero.dead=true;
+      game._updateFighter(hero,1/60);
+      // Dead actors no longer update movement; kill itself clears the state.
+      if(stop!=='dead'){assert.equal(hero.wallRun,null,stop);assert.equal(game._beginWallJump(hero),false);}
+      else assert.equal(game._beginWallJump(hero),false);
+    }finally{state.dispose();}
+  }
+});
+
+test('short ledges and floor surfaces cannot count as a wall, and a roof stops climbing',()=>{
+  const state=wallFixture();try{
+    const {game,hero,wall}=state;wall.scale.y=.004;wall.position.y=2.85;wall.updateMatrixWorld(true);
+    game._updateFighter(hero,1/60);assert.equal(hero.wallRun,undefined);
+    wall.scale.y=1;wall.position.y=2;wall.updateMatrixWorld(true);
+    const roof=new THREE.Mesh(new THREE.PlaneGeometry(10,10),new THREE.MeshBasicMaterial({side:THREE.DoubleSide}));
+    roof.rotation.x=Math.PI/2;roof.position.y=4.4;roof.updateMatrixWorld(true);state.colliders.push(roof);
+    for(let i=0;i<15;i++){game._updateFighter(hero,1/60);assert.ok(hero.root.position.y+2.2<=4.4+.001);}
+    assert.equal(hero.wallRun,null);
+  }finally{state.dispose();}
+});
+
+test('remote wall traversal uses its own input, including the wall jump action',()=>{
+  const state=wallFixture('left');try{
+    const {game,hero}=state;hero.hero=false;hero.playerControl={keys:new Set(['forward']),lookLocked:true,cameraAngle:0,directionBuffer:[]};game.keys.clear();
+    game._updateFighter(hero,1/60);assert.equal(hero.wallRun?.side,'left');
+    game._actionFighter(hero,hero.playerControl,'jump',true);assert.equal(hero.combat.timeline.pose.id,160);assert.equal(hero.wallRun,null);
+  }finally{state.dispose();}
+});
+
+test('ceiling contact covers the body edge and an already flush head without penetrating',()=>{
+  for(const [x,z,height] of [[.35,0,4.25],[.25,.25,4.25],[0,0,4.2]]){
+    const state=wallFixture();try{
+      const {game,hero}=state;
+      const roof=new THREE.Mesh(new THREE.PlaneGeometry(.2,.2),new THREE.MeshBasicMaterial({side:THREE.DoubleSide}));
+      roof.rotation.x=Math.PI/2;roof.position.set(x,height,z);roof.updateMatrixWorld(true);state.colliders.push(roof);
+      for(let i=0;i<8;i++){game._updateFighter(hero,1/60);assert.ok(hero.root.position.y+2.2<=height+1e-6,`roof ${x}/${z}/${height}: ${hero.root.position.y}`);}
+      assert.equal(hero.wallRun,null);assert.equal(hero.nativeJump,null);assert.equal(hero.jumpSequence,null);
+    }finally{state.dispose();}
+  }
+});
+
+test('nonuniformly scaled wall geometry uses the geometric normal for attachment',()=>{
+  const state=wallFixture();try{
+    const {game,hero,wall}=state;
+    wall.geometry.rotateX(.5);wall.scale.y=4;wall.position.set(0,3.2,-.45);wall.updateMatrixWorld(true);
+    game._updateFighter(hero,1/60);assert.equal(hero.wallRun?.side,'front');
+    assert.ok(hero.wallRun.normal.z>.99);
+    for(let i=0;i<5;i++)game._updateFighter(hero,1/60);
+    assert.equal(hero.wallRun?.side,'front','plane continuity uses the 3D plane, not the horizontal kick direction');
+    assert.equal(game._beginWallJump(hero),true);
+  }finally{state.dispose();}
+});
+
+test('ordinary jumps cancel their takeoff sequence on ceiling contact and resume falling',()=>{
+  const state=fixture();try{
+    const {game,hero}=state;
+    const roof=new THREE.Mesh(new THREE.PlaneGeometry(10,10),new THREE.MeshBasicMaterial({side:THREE.DoubleSide}));
+    roof.rotation.x=Math.PI/2;roof.position.y=4.8;roof.updateMatrixWorld(true);state.colliders.push(roof);
+    game.action('jump');assert.equal(hero.grounded,false);let collided=false;
+    for(let i=0;i<80;i++){
+      game._updateFighter(hero,1/60);assert.ok(hero.root.position.y+2.2<=4.8+1e-6);
+      if(!hero.grounded&&hero.nativeJump===null){collided=true;assert.equal(hero.jumpSequence,null);}
+    }
+    assert.equal(collided,true);assert.equal(hero.grounded,true);assert.equal(hero.vy,0);
+  }finally{state.dispose();}
+});
+
+test('wall exit impulse cannot pass through an opposite wall and yields to a hit',()=>{
+  const state=wallFixture();try{
+    const {game,hero}=state;game._updateFighter(hero,1/60);assert.equal(game._beginWallJump(hero),true);
+    const opposite=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshBasicMaterial({side:THREE.DoubleSide}));opposite.position.z=1;opposite.updateMatrixWorld(true);state.colliders.push(opposite);
+    for(let i=0;i<12;i++){game._updateFighter(hero,1/60);assert.ok(hero.root.position.z<.61,'the normal collision radius stops the kick');}
+    assert.ok(hero.wallKick);hero.combat.react(90);game._updateFighter(hero,1/60);assert.equal(hero.wallKick,null);
+  }finally{state.dispose();}
+});
+
+test('wall contact rechecks live prop colliders and pause, guard and script gates',()=>{
+  const state=wallFixture('right');try{
+    const {game,hero,wall}=state;state.colliders.pop();let present=true;
+    game.currentMap.props={getCollidersNear:()=>present?[wall]:[]};
+    game.paused=true;game._updateWallTraversal(hero,v(0,0,-1),1/60);assert.equal(hero.wallRun,undefined);game.paused=false;
+    hero.guard=true;game._updateWallTraversal(hero,v(0,0,-1),1/60);assert.equal(hero.wallRun,undefined);hero.guard=false;
+    hero.scriptInputBlocked=true;game._updateWallTraversal(hero,v(0,0,-1),1/60);assert.equal(hero.wallRun,undefined);hero.scriptInputBlocked=false;
+    game._updateFighter(hero,1/60);assert.equal(hero.wallRun?.side,'right');
+    present=false;game._updateFighter(hero,1/60);assert.equal(hero.wallRun,null);assert.equal(game._beginWallJump(hero),false);
+    state.colliders.push(wall);
+  }finally{state.dispose();}
+});
 
 function fixture({ locked = false, wall = false } = {}) {
   const game = Object.create(MeteorGame.prototype), character = createNativeCharacter(data, { inPlace: true, loadTextures: false });
@@ -78,6 +214,30 @@ test('crouch walking plays each original directional loop and resumes crouch idl
   }
 });
 
+test('mouse-facing movement uses native side/back steps instead of playing forward run backwards',()=>{
+  for(const [direction,poseId] of Object.entries(NATIVE_GROUND_MOVE_POSES)){
+    const state=fixture();
+    try{
+      const {game,hero}=state;game.mouseLook={locked:true};game.cameraAngle=0;hero.root.rotation.y=Math.PI;
+      game.action(direction);for(let i=0;i<30;i++)game._updateFighter(hero,1/60);
+      assert.equal(hero.combat.timeline.pose.id,poseId,direction);assert.equal(hero.combat.busy,false);
+      assert.ok(Math.abs(hero.root.rotation.y-Math.PI)<1e-6);assert.ok(hero.character.frame>combatData.poses.get(poseId).start);
+      game.action(direction,false);for(let i=0;i<60;i++)game._updateFighter(hero,1/60);
+      assert.equal(hero.combat.timeline.pose.id,hero.combat.stance);
+    }finally{state.dispose();}
+  }
+});
+
+test('remote directional stepping reads its own control and can yield directly to an attack',()=>{
+  const state=fixture();
+  try{
+    const {game,hero}=state;hero.hero=false;hero.playerControl={keys:new Set(['right']),lookLocked:true,cameraAngle:0,directionBuffer:[]};
+    game.keys.add('back');hero.weapon='sword';hero.combat.setWeapon('sword');hero.combat.play(6,{force:true});
+    for(let i=0;i<20;i++)game._updateFighter(hero,1/60);assert.equal(hero.combat.timeline.pose.id,141);
+    game._actionFighter(hero,hero.playerControl,'attack',true);assert.equal(hero.combat.attacking,true);assert.notEqual(hero.combat.timeline.pose.id,141);
+  }finally{state.dispose();}
+});
+
 test('directional jumps preserve original takeoff and air families through landing',()=>{
   for(const direction of ['forward','right','left','back']){
     const state=fixture();
@@ -95,6 +255,50 @@ test('directional jumps preserve original takeoff and air families through landi
       assert.equal(hero.grounded,true);assert.equal(hero.jumpSequence,null);
     }finally{state.dispose();}
   }
+});
+
+test('every directional jump follows its authored air-to-fall link without restarting the short air clip',()=>{
+  for(const direction of ['forward','right','left','back']){
+    const state=fixture();
+    try{
+      const {game,hero}=state,profile=NATIVE_JUMP_POSES[direction];game.action(direction);game.action('jump');
+      const seen=[],airSerials=new Set(),fallFrames=[];
+      for(let i=0;i<120;i++){
+        game._updateFighter(hero,1/60);
+        if(!hero.grounded){const id=hero.combat.timeline.pose.id;if(seen.at(-1)!==id)seen.push(id);
+          if(id===profile.air){airSerials.add(hero.combat.serial);assert.equal(hero.combat.timeline.loop,false);}
+          if(id===180){fallFrames.push(hero.character.frame);assert.equal(hero.combat.timeline.loop,true);}
+        }
+      }
+      assert.deepEqual(seen,[profile.start,profile.air,180],direction);
+      assert.equal(airSerials.size,1,'the host must not replay a POS-linked air entry');
+      assert.ok(fallFrames.length>5);assert.ok(fallFrames.every(frame=>frame===combatData.poses.get(180).loopStart));
+      assert.equal(hero.grounded,true);assert.notEqual(hero.combat.timeline.pose.id,180);
+    }finally{state.dispose();}
+  }
+});
+
+test('walking off a ledge enters the authored falling hold instead of replaying a jump',()=>{
+  const state=fixture();
+  try{
+    const {game,hero}=state;hero.root.position.y=20;hero.grounded=false;hero.vy=0;hero.nativeJump=null;hero.jumpSequence=null;
+    for(let i=0;i<20;i++){game._updateFighter(hero,1/60);assert.equal(hero.combat.timeline.pose.id,180);assert.equal(hero.nativeJump,null);}
+    assert.ok(hero.root.position.y<20);assert.equal(hero.combat.timeline.frame,combatData.poses.get(180).loopStart);
+    for(let i=0;i<120;i++)game._updateFighter(hero,1/60);
+    assert.equal(hero.grounded,true);assert.notEqual(hero.combat.timeline.pose.id,180);
+  }finally{state.dispose();}
+});
+
+test('falling locomotion yields to a native air attack and its ACT follow-up',()=>{
+  const state=fixture();
+  try{
+    const {game,hero}=state;hero.weapon='sword';hero.combat.setWeapon('sword');hero.combat.play(6,{force:true});
+    game.action('jump');for(let i=0;i<45;i++)game._updateFighter(hero,1/60);
+    assert.equal(hero.grounded,false);assert.equal(hero.combat.timeline.pose.id,180);
+    game.action('attack');assert.equal(hero.combat.attacking,true);assert.equal(hero.combat.timeline.pose.id,260);
+    for(let i=0;i<6;i++){game._updateFighter(hero,1/60);assert.notEqual(hero.combat.timeline.pose.id,180);}
+    game.action('attack');assert.ok(hero.combat.queued!=null||hero.combat.timeline.pose.id===261);
+  }finally{state.dispose();}
 });
 
 test('jump direction follows the controlling player with forward/back priority and opposing keys cancel',()=>{

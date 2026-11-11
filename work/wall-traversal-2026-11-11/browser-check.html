@@ -1,0 +1,23 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>原版墙面动作验收</title>
+<style>body{margin:0;background:#182028;color:#eee;font:16px system-ui}header{padding:16px}button{padding:10px;margin-right:12px}canvas{display:block;width:100%;height:70vh}pre{margin:16px}</style>
+<header>原版墙面动作验收 · 隔离碰撞场景，真实 P0 骨骼及动画<br><br><button data-side="front">正面蹬墙</button><button data-side="right">右侧沿墙</button><button data-side="left">左侧沿墙</button><button id="jump">离墙跳</button></header>
+<canvas></canvas><pre id="result">正在读取原资源…</pre><script type="module">
+import * as T from '/vendor/three.module.js';
+import {MeteorGame} from '/engine.js';
+import {NativeCombatController,decodeNativeText,parsePos,parseAct} from '/native-combat.js';
+import {createNativeCharacter,parseNativeSkin,parseNativeBones,parseNativeAnimation,parseNativePoses} from '/native-character.js';
+const base='/assets/original/characters/',text=async p=>(await fetch(base+p)).text(),buffer=async p=>(await fetch(base+p)).arrayBuffer();
+const [skin,bones,common,personal,pos,act]=await Promise.all([text('p0/p0.skc'),text('p0/p0.bnc'),buffer('common/character.amb'),buffer('p0/p0.amb'),text('p0/p0.pos'),fetch('/assets/native/combat/character.act').then(r=>r.arrayBuffer())]);
+const character=createNativeCharacter({id:0,skin:parseNativeSkin(skin),skeleton:parseNativeBones(bones),animations:[parseNativeAnimation(common),parseNativeAnimation(personal)],poses:parseNativePoses(pos)},{inPlace:true,loadTextures:false});
+const v=(x=0,y=0,z=0)=>new T.Vector3(x,y,z),scene=new T.Scene();scene.background=new T.Color('#273442');scene.add(new T.HemisphereLight(0xffffff,0x8899aa,3));scene.add(character.group);
+const renderer=new T.WebGLRenderer({canvas:document.querySelector('canvas'),antialias:true});renderer.setSize(innerWidth,innerHeight*.7,false);
+const camera=new T.PerspectiveCamera(48,innerWidth/(innerHeight*.7),.1,1000);camera.position.set(7,6,9);camera.lookAt(0,3,0);
+const floor=new T.Mesh(new T.PlaneGeometry(200,200),new T.MeshBasicMaterial({color:0x546270,side:T.DoubleSide}));floor.rotation.x=-Math.PI/2;scene.add(floor);
+const wall=new T.Mesh(new T.PlaneGeometry(20,20),new T.MeshBasicMaterial({color:0x89abc1,side:T.DoubleSide,transparent:true,opacity:.3}));scene.add(wall);
+const hero={character,root:character.group,hero:true,id:0,weapon:'dagger',velocity:v(),vy:0,grounded:false,guard:false,dead:false,attackHits:new Set(),lastSerial:0,heldPose:null};
+hero.combat=new NativeCombatController({poses:parsePos(pos),actions:parseAct(decodeNativeText(new Uint8Array(act)))},{weapon:'dagger',sampleRoot:character.sampleRoot});
+const game=Object.create(MeteorGame.prototype);Object.assign(game,{hero,enemies:[],locked:null,keys:new Set(),directionBuffer:[],elapsed:10,running:true,paused:false,mode:'training',currentMap:{bounds:new T.Box3(v(-100,-1,-100),v(100,100,100)),colliders:[floor,wall]},hostPhysics:{speed:8,gravity:34,jumpVelocity:12,radius:.4,step:.55},camera,cameraAngle:0,mouseLook:{locked:true},raycaster:new T.Raycaster(),_unlockAudio(){}});
+function step(n){for(let i=0;i<n;i++){game.elapsed+=1/60;game._updateFighter(hero,1/60);}renderer.render(scene,camera);document.querySelector('#result').textContent=JSON.stringify({pose:hero.combat.timeline.pose.id,frame:character.frame,wall:hero.wallRun?.side||null,wallEntries:hero.wallEntries,position:hero.root.position.toArray(),air:hero.jumpSequence?.air||null},null,2);}
+for(const button of document.querySelectorAll('[data-side]'))button.onclick=()=>{const side=button.dataset.side;hero.root.position.set(0,2,0);hero.root.rotation.y=Math.PI;Object.assign(hero,{grounded:false,vy:0,nativeJump:null,jumpSequence:null,wallRun:null,wallKick:null,wallEntries:0});hero.velocity.set(0,0,0);hero.combat.play(180,{force:true,loop:true});wall.position.set(side==='front'?0:side==='right'?.5:-.5,2,side==='front'?-.5:0);wall.rotation.y=side==='front'?0:Math.PI/2;scene.updateMatrixWorld(true);game.keys.clear();game.action('forward');step(12);};
+document.querySelector('#jump').onclick=()=>{game.action('jump');step(8);};document.querySelector('#result').textContent='资源就绪，请选择墙面方向';renderer.render(scene,camera);
+</script></html>

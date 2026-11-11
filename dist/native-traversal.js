@@ -7,6 +7,9 @@ export const NATIVE_ROLL_POSES=Object.freeze({forward:176,right:177,left:178,bac
 // to 145,146,147,148. 004cf770 selects directional takeoff; 004cf7d0
 // keeps the corresponding air pose (151/152,153/154,155/156,157/158).
 export const NATIVE_CROUCH_POSES=Object.freeze({idle:10,forward:145,right:146,left:147,back:148});
+// Directional ground clips consumed by the same 004cc730 remapping path.
+// Forward retains the existing run adapter; 140 is a separate slow walk.
+export const NATIVE_GROUND_MOVE_POSES=Object.freeze({forward:144,right:141,left:142,back:143});
 export const NATIVE_JUMP_POSES=Object.freeze({forward:Object.freeze({start:151,air:152}),right:Object.freeze({start:153,air:154}),left:Object.freeze({start:155,air:156}),back:Object.freeze({start:157,air:158})});
 export function nativeTraversalDirection(keys){
   const forward=Number(!!keys?.has('forward'))-Number(!!keys?.has('back'));

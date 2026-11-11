@@ -1,0 +1,492 @@
+{
+  "baseline": "36a5451",
+  "scope": "Static catalog/POS inventory, not proof of full native gameplay parity",
+  "poseSource": {
+    "path": "dist/assets/original/characters/p0/p0.pos",
+    "sha256": "1e71f945afc6b701f86eb50e500feccca22f20b52f7f3bec073b0247d390a5fb"
+  },
+  "weaponFamilies": 12,
+  "catalogEntries": 196,
+  "entriesWithDeclaredPendingBehavior": 17,
+  "pending": [
+    {
+      "weapon": "dual",
+      "poseId": 557,
+      "name": "乘风",
+      "stance": "ground",
+      "reason": "乘风的持续加速状态尚未恢复"
+    },
+    {
+      "weapon": "knuckle",
+      "poseId": 412,
+      "name": "左打虎",
+      "stance": "ground",
+      "reason": "连招换兵器条件尚未恢复"
+    },
+    {
+      "weapon": "knuckle",
+      "poseId": 413,
+      "name": "右打虎",
+      "stance": "ground",
+      "reason": "连招换兵器条件尚未恢复"
+    },
+    {
+      "weapon": "ninja",
+      "poseId": 470,
+      "name": "夹头",
+      "stance": "ground",
+      "reason": "夹头擒拿与成对动作尚未恢复"
+    },
+    {
+      "weapon": "ninja",
+      "poseId": 526,
+      "name": "瞬移·前",
+      "stance": "ground",
+      "reason": "瞬移位移与无敌时段尚未恢复"
+    },
+    {
+      "weapon": "ninja",
+      "poseId": 530,
+      "name": "空中瞬移·前",
+      "stance": "air",
+      "reason": "瞬移位移与无敌时段尚未恢复"
+    },
+    {
+      "weapon": "ninja",
+      "poseId": 527,
+      "name": "瞬移·右",
+      "stance": "ground",
+      "reason": "瞬移位移与无敌时段尚未恢复"
+    },
+    {
+      "weapon": "ninja",
+      "poseId": 531,
+      "name": "空中瞬移·右",
+      "stance": "air",
+      "reason": "瞬移位移与无敌时段尚未恢复"
+    },
+    {
+      "weapon": "ninja",
+      "poseId": 528,
+      "name": "瞬移·左",
+      "stance": "ground",
+      "reason": "瞬移位移与无敌时段尚未恢复"
+    },
+    {
+      "weapon": "ninja",
+      "poseId": 532,
+      "name": "空中瞬移·左",
+      "stance": "air",
+      "reason": "瞬移位移与无敌时段尚未恢复"
+    },
+    {
+      "weapon": "ninja",
+      "poseId": 529,
+      "name": "瞬移·后",
+      "stance": "ground",
+      "reason": "瞬移位移与无敌时段尚未恢复"
+    },
+    {
+      "weapon": "ninja",
+      "poseId": 533,
+      "name": "空中瞬移·后",
+      "stance": "air",
+      "reason": "瞬移位移与无敌时段尚未恢复"
+    },
+    {
+      "weapon": "ninja",
+      "poseId": 468,
+      "name": "同归于尽",
+      "stance": "ground",
+      "reason": "原版自爆、自伤与范围判定尚未恢复"
+    },
+    {
+      "weapon": "ninja",
+      "poseId": 535,
+      "name": "忍法隐身",
+      "stance": "ground",
+      "reason": "原版隐身状态尚未恢复"
+    },
+    {
+      "weapon": "ninja",
+      "poseId": 540,
+      "name": "压制",
+      "stance": "ground",
+      "reason": "擒拿、踩踏与成对动作尚未恢复"
+    },
+    {
+      "weapon": "ninja",
+      "poseId": 473,
+      "name": "暴怒爆弹",
+      "stance": "ground",
+      "reason": "原版爆弹尚未恢复"
+    },
+    {
+      "weapon": "ninja",
+      "poseId": 474,
+      "name": "暴怒环杀",
+      "stance": "ground",
+      "reason": "需先接原版爆弹；范围攻击尚未恢复"
+    }
+  ],
+  "verifiedDashFamilies": [
+    "sword",
+    "spear",
+    "blade",
+    "dart",
+    "musket",
+    "wheel",
+    "qiankun",
+    "knuckle"
+  ],
+  "unmappedDashFamilies": [
+    "dual",
+    "dagger",
+    "hammer",
+    "ninja"
+  ],
+  "airChains": [
+    {
+      "direction": "forward",
+      "poses": [
+        151,
+        152,
+        180
+      ],
+      "sourceLinks": [
+        152,
+        180
+      ],
+      "airLoop": null,
+      "fallHold": [
+        811,
+        811
+      ]
+    },
+    {
+      "direction": "right",
+      "poses": [
+        153,
+        154,
+        180
+      ],
+      "sourceLinks": [
+        154,
+        180
+      ],
+      "airLoop": null,
+      "fallHold": [
+        811,
+        811
+      ]
+    },
+    {
+      "direction": "left",
+      "poses": [
+        155,
+        156,
+        180
+      ],
+      "sourceLinks": [
+        156,
+        180
+      ],
+      "airLoop": null,
+      "fallHold": [
+        811,
+        811
+      ]
+    },
+    {
+      "direction": "back",
+      "poses": [
+        157,
+        158,
+        180
+      ],
+      "sourceLinks": [
+        158,
+        180
+      ],
+      "airLoop": null,
+      "fallHold": [
+        811,
+        811
+      ]
+    }
+  ],
+  "locomotionCandidatesAudited": [
+    {
+      "id": 140,
+      "valid": true,
+      "source": 1,
+      "start": 218,
+      "end": 308,
+      "link": null,
+      "runtimeUse": "仍需恢复或核实触发规则"
+    },
+    {
+      "id": 141,
+      "valid": true,
+      "source": 0,
+      "start": 927,
+      "end": 986,
+      "link": null,
+      "runtimeUse": "本轮接入面向镜头的方向移动"
+    },
+    {
+      "id": 142,
+      "valid": true,
+      "source": 0,
+      "start": 999,
+      "end": 1056,
+      "link": null,
+      "runtimeUse": "本轮接入面向镜头的方向移动"
+    },
+    {
+      "id": 143,
+      "valid": true,
+      "source": 0,
+      "start": 1071,
+      "end": 1136,
+      "link": null,
+      "runtimeUse": "本轮接入面向镜头的方向移动"
+    },
+    {
+      "id": 159,
+      "valid": true,
+      "source": 0,
+      "start": 836,
+      "end": 846,
+      "link": 156,
+      "runtimeUse": "仍需恢复或核实触发规则"
+    },
+    {
+      "id": 160,
+      "valid": true,
+      "source": 0,
+      "start": 857,
+      "end": 866,
+      "link": 154,
+      "runtimeUse": "仍需恢复或核实触发规则"
+    },
+    {
+      "id": 161,
+      "valid": true,
+      "source": 0,
+      "start": 867,
+      "end": 882,
+      "link": null,
+      "runtimeUse": "仍需恢复或核实触发规则"
+    },
+    {
+      "id": 162,
+      "valid": true,
+      "source": 0,
+      "start": 883,
+      "end": 897,
+      "link": null,
+      "runtimeUse": "仍需恢复或核实触发规则"
+    },
+    {
+      "id": 163,
+      "valid": true,
+      "source": 0,
+      "start": 898,
+      "end": 913,
+      "link": null,
+      "runtimeUse": "仍需恢复或核实触发规则"
+    },
+    {
+      "id": 24,
+      "valid": true,
+      "source": 0,
+      "start": 1661,
+      "end": 1691,
+      "link": null,
+      "runtimeUse": "仍需恢复或核实触发规则"
+    }
+  ],
+  "characterValidation": [
+    {
+      "id": 0,
+      "directionalLinksMatch": true,
+      "groundPosesAvailable": true,
+      "fallHold": [
+        811,
+        811
+      ]
+    },
+    {
+      "id": 1,
+      "directionalLinksMatch": true,
+      "groundPosesAvailable": true,
+      "fallHold": [
+        674,
+        674
+      ]
+    },
+    {
+      "id": 2,
+      "directionalLinksMatch": true,
+      "groundPosesAvailable": true,
+      "fallHold": [
+        811,
+        811
+      ]
+    },
+    {
+      "id": 3,
+      "directionalLinksMatch": true,
+      "groundPosesAvailable": true,
+      "fallHold": [
+        811,
+        811
+      ]
+    },
+    {
+      "id": 4,
+      "directionalLinksMatch": true,
+      "groundPosesAvailable": true,
+      "fallHold": [
+        811,
+        811
+      ]
+    },
+    {
+      "id": 5,
+      "directionalLinksMatch": true,
+      "groundPosesAvailable": true,
+      "fallHold": [
+        811,
+        811
+      ]
+    },
+    {
+      "id": 6,
+      "directionalLinksMatch": true,
+      "groundPosesAvailable": true,
+      "fallHold": [
+        811,
+        811
+      ]
+    },
+    {
+      "id": 7,
+      "directionalLinksMatch": true,
+      "groundPosesAvailable": true,
+      "fallHold": [
+        811,
+        811
+      ]
+    },
+    {
+      "id": 8,
+      "directionalLinksMatch": true,
+      "groundPosesAvailable": true,
+      "fallHold": [
+        811,
+        811
+      ]
+    },
+    {
+      "id": 9,
+      "directionalLinksMatch": true,
+      "groundPosesAvailable": true,
+      "fallHold": [
+        811,
+        811
+      ]
+    },
+    {
+      "id": 10,
+      "directionalLinksMatch": true,
+      "groundPosesAvailable": true,
+      "fallHold": [
+        811,
+        811
+      ]
+    },
+    {
+      "id": 11,
+      "directionalLinksMatch": true,
+      "groundPosesAvailable": true,
+      "fallHold": [
+        811,
+        811
+      ]
+    },
+    {
+      "id": 12,
+      "directionalLinksMatch": true,
+      "groundPosesAvailable": true,
+      "fallHold": [
+        811,
+        811
+      ]
+    },
+    {
+      "id": 13,
+      "directionalLinksMatch": true,
+      "groundPosesAvailable": true,
+      "fallHold": [
+        674,
+        674
+      ]
+    },
+    {
+      "id": 14,
+      "directionalLinksMatch": true,
+      "groundPosesAvailable": true,
+      "fallHold": [
+        811,
+        811
+      ]
+    },
+    {
+      "id": 15,
+      "directionalLinksMatch": true,
+      "groundPosesAvailable": true,
+      "fallHold": [
+        811,
+        811
+      ]
+    },
+    {
+      "id": 16,
+      "directionalLinksMatch": true,
+      "groundPosesAvailable": true,
+      "fallHold": [
+        811,
+        811
+      ]
+    },
+    {
+      "id": 17,
+      "directionalLinksMatch": true,
+      "groundPosesAvailable": true,
+      "fallHold": [
+        674,
+        674
+      ]
+    },
+    {
+      "id": 18,
+      "directionalLinksMatch": true,
+      "groundPosesAvailable": true,
+      "fallHold": [
+        811,
+        811
+      ]
+    },
+    {
+      "id": 19,
+      "directionalLinksMatch": true,
+      "groundPosesAvailable": true,
+      "fallHold": [
+        811,
+        811
+      ]
+    }
+  ]
+}

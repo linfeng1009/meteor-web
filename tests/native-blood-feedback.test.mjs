@@ -44,7 +44,7 @@ test('actual force, knockdown and source reaction lift select blood levels and d
 
 test('blood uses visible world-sized streaks and different directional fans without per-hit GPU objects',()=>{
  const samples={};for(const kind of ['slash','thrust','impact','launch','shot']){
-  const blood=new NativeBloodFeedback(new T.Scene());assert.equal(blood.emit({point,direction,damage:20,style:{kind,level:2}}),80);
+  const blood=new NativeBloodFeedback(new T.Scene());assert.equal(blood.emit({point,direction,damage:20,style:{kind,level:2}}),128);
   blood.update(.15);samples[kind]=blood.particles.map(p=>p?.velocity.toArray()).filter(Boolean);
   assert.equal(blood.mesh.geometry.instanceCount,PROFILE.capacity);assert.equal(blood.mesh.geometry.index.count,6);assert.ok(blood.sizes.some(size=>size>.3));
   assert.equal(blood.mesh.material.depthWrite,false);blood.dispose();
@@ -59,4 +59,22 @@ test('guest blood style reproduces host density and trajectory independent of it
  assert.deepEqual(guest.positions,host.positions);assert.deepEqual(guest.sizes,host.sizes);assert.deepEqual(guest.alpha,host.alpha);
  for(const invalid of [null,{kind:'unknown',level:1},{kind:'slash',level:3},{kind:'slash',level:NaN}])assert.equal(validBloodStyle(invalid),false);
  host.dispose();guest.dispose();
+});
+
+
+test('large moves increase the main blood cloud count and visible footprint, not only tiny droplets',()=>{
+ const light=new NativeBloodFeedback(new T.Scene()),heavy=new NativeBloodFeedback(new T.Scene());
+ light.emit({point,direction,damage:24,style:{kind:'slash',level:0}});heavy.emit({point,direction,damage:89,style:{kind:'slash',level:2}});
+ light.update(.12);heavy.update(.12);
+ const cores=b=>b.particles.reduce((n,p,i)=>n+Number(!!p&&b.shapes[i]===0),0),area=b=>b.particles.reduce((n,p,i)=>n+(p?b.sizes[i*2]*b.sizes[i*2+1]*b.alpha[i]:0),0);
+ assert.equal(cores(light),4);assert.equal(cores(heavy),14);assert.ok(area(heavy)>area(light)*10,'a heavy move must have an unmistakably larger visible blood footprint');
+ heavy.update(.6);assert.ok(heavy.mesh.visible&&heavy.alpha.some(a=>a>.1));heavy.update(.7);assert.equal(heavy.mesh.visible,false);
+ light.dispose();heavy.dispose();
+});
+
+test('blood streams release over a short burst, freeze on zero time, and do not allocate another draw object',()=>{
+ const blood=new NativeBloodFeedback(new T.Scene());blood.emit({point,direction,damage:120,weapon:'hammer'});
+ assert.ok(blood.particles.some(p=>p&&p.delay>0));assert.ok(blood.particles.some((p,i)=>p&&p.delay>0&&blood.alpha[i]===0));
+ const snapshot=blood.positions.slice();blood.update(0);assert.deepEqual(blood.positions,snapshot);
+ blood.update(.08);assert.ok(blood.particles.every((p,i)=>!p||blood.alpha[i]>0));assert.equal(blood.mesh.geometry.instanceCount,PROFILE.capacity);blood.dispose();
 });

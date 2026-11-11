@@ -77,7 +77,7 @@ function tick(game, dt = 1 / 60) {
   game._updateFighter(game.hero, dt); game.projectiles.update(dt); game.wheels?.update(dt);
 }
 
-test('all twelve visible weapon choices equip their preserved original models and complete the E cycle', async () => {
+test('all twelve visible weapon choices equip their preserved original models without using E as a catalogue cycle', async () => {
   const html = await readFile(new URL('index.html',dist),'utf8');
   const choices = [...html.matchAll(/data-weapon="([^"]+)"/g)].map(m=>m[1]);
   assert.equal(choices.length,12); assert.equal(new Set(choices).size,12);
@@ -85,14 +85,14 @@ test('all twelve visible weapon choices equip their preserved original models an
   assert.deepEqual(Object.keys(NATIVE_WEAPON_MENU).sort(),choices);
   const { game,hero } = await fixture(); const seen = new Set();
   for(let i=0;i<12;i++) {
+    await game.setWeapon(Object.keys(NATIVE_WEAPONS)[i]);
     const profile=NATIVE_WEAPONS[hero.weapon]; seen.add(hero.weapon);
     assert.equal(hero.weaponId,profile.weaponId); assert.equal(hero.combat.timeline.pose.id,hero.combat.stance);
     const item=wm.items.find(item=>item.itemId===profile.weaponId);
     assert.equal(hero.weaponModels.length,item.modelIds.length);
     assert.ok(hero.weaponModels.every(model=>model.parent && model.getObjectByProperty('isMesh',true)));
-    await game.switchWeapon();
   }
-  assert.equal(seen.size,12); assert.equal(hero.weapon,'sword');
+  assert.equal(seen.size,12); const equipped=hero.weapon;await game.switchWeapon();assert.equal(hero.weapon,equipped,'E cannot invent a secondary weapon');
 });
 
 test('qiankun public inputs switch all three source stances and retain distinct A attacks and automatic recovery', async () => {

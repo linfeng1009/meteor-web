@@ -3,13 +3,16 @@ import {randomBytes} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import {resolve,extname,sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
-const actions=new Set(['forward','back','left','right','attack','guard','jump','crouch','lock','clear','look']);
+const actions=new Set(['forward','back','left','right','attack','guard','jump','crouch','lock','clear','look','switch','drop','pickup']);
 const token=()=>randomBytes(20).toString('hex');
 const finite=n=>typeof n==='number'&&Number.isFinite(n);
+const weaponId=id=>Number.isInteger(id)&&id>0&&id<1000;
+const validInventory=s=>!!s&&(s.weaponId===undefined||weaponId(s.weaponId))&&(s.weapon2Id===undefined||s.weapon2Id===null||s.weapon2Id===0||weaponId(s.weapon2Id))&&(s.pickupSerial===undefined||Number.isSafeInteger(s.pickupSerial)&&s.pickupSerial>=0&&s.pickupSerial<1e9)&&(s.statuses===undefined||Array.isArray(s.statuses)&&s.statuses.length<=32&&s.statuses.every(item=>item&&Number.isInteger(item.id)&&typeof item.name==='string'&&item.name.length<=128&&[item.statKey,item.remaining,item.value,item.period].every(finite)));
+const validLoot=loot=>loot===undefined||!!loot&&Array.isArray(loot.consumed)&&loot.consumed.length<=512&&loot.consumed.every(name=>typeof name==='string'&&name.length<=128)&&Array.isArray(loot.drops)&&loot.drops.length<=64&&new Set(loot.drops.map(drop=>drop?.name)).size===loot.drops.length&&loot.drops.every(drop=>drop&&typeof drop.name==='string'&&/^web-drop-\d{1,12}$/.test(drop.name)&&weaponId(drop.weaponId)&&Array.isArray(drop.position)&&drop.position.length===3&&drop.position.every(n=>finite(n)&&Math.abs(n)<5000));
 const fail=(message,status=400)=>{throw Object.assign(Error(message),{status});};
 export class NetworkRooms{
   constructor({now=()=>Date.now()}={}){this.rooms=new Map();this.now=now;}
-  public(room){return {code:room.code,revision:room.revision||0,round:room.round||0,protocol:2,phase:room.phase,hostId:room.hostId,map:'sifang',mode:'duel',players:room.players.map(p=>({id:p.id,name:p.name,ready:p.ready,loaded:p.loaded}))};}
+  public(room){return {code:room.code,revision:room.revision||0,round:room.round||0,protocol:3,phase:room.phase,hostId:room.hostId,map:'sifang',mode:'duel',players:room.players.map(p=>({id:p.id,name:p.name,ready:p.ready,loaded:p.loaded}))};}
   sweep(){for(const [code,r] of this.rooms){if(this.now()-r.players[0].seen>20000)this.rooms.delete(code);else if(r.players.length===2&&this.now()-r.players[1].seen>20000){r.players.pop();r.phase='waiting';r.frame=null;r.players[0].ready=false;r.players[0].loaded=false;r.revision=(r.revision||0)+1;}}}
   player(name){return {id:token().slice(0,12),token:token(),name:String(name||'江湖来客').trim().slice(0,16)||'江湖来客',seen:this.now(),ready:false,loaded:false,input:[],lastSequence:0,deliveredSequence:0,ackSequence:0};}
   create(name){this.sweep();if(this.rooms.size>=32)fail('房间数量已达上限');const p=this.player(name);let code;do{code=randomBytes(3).toString('hex').toUpperCase();}while(this.rooms.has(code));const r={code,hostId:p.id,phase:'waiting',players:[p],frame:null,frameSequence:0};this.rooms.set(code,r);return {room:this.public(r),playerId:p.id,token:p.token};}
@@ -47,7 +50,7 @@ export class NetworkRooms{
           acknowledgements.push([peer,sequence]);
         }
       }
-      if(data.frame!==undefined){if(!host)fail('只有房主能发布战斗状态',403);if(r.phase!=='playing')fail('对战尚未开始');const frame=data.frame;if(!frame||!Number.isSafeInteger(frame.sequence)||frame.sequence<=r.frameSequence||!Array.isArray(frame.players)||frame.players.length!==2||new Set(frame.players.map(p=>p.id)).size!==2||!finite(frame.time)||frame.players.some(s=>!r.players.some(p=>p.id===s.id)||!Array.isArray(s.position)||s.position.length!==3||!s.position.every(n=>finite(n)&&Math.abs(n)<5000)||!finite(s.angle)||!finite(s.hp)||!finite(s.maxHp)||s.maxHp<=0||!finite(s.rage)||!Number.isInteger(s.pose)||!finite(s.frame)||!Number.isInteger(s.source)||!Number.isInteger(s.serial)||!finite(s.effectTime)))fail('战斗状态无效');r.frame=frame;r.frameSequence=frame.sequence;}
+      if(data.frame!==undefined){if(!host)fail('只有房主能发布战斗状态',403);if(r.phase!=='playing')fail('对战尚未开始');const frame=data.frame;if(!frame||!validLoot(frame.loot)||!Number.isSafeInteger(frame.sequence)||frame.sequence<=r.frameSequence||!Array.isArray(frame.players)||frame.players.length!==2||new Set(frame.players.map(p=>p.id)).size!==2||!finite(frame.time)||frame.players.some(s=>!validInventory(s)||!r.players.some(p=>p.id===s.id)||!Array.isArray(s.position)||s.position.length!==3||!s.position.every(n=>finite(n)&&Math.abs(n)<5000)||!finite(s.angle)||!finite(s.hp)||!finite(s.maxHp)||s.maxHp<=0||!finite(s.rage)||!Number.isInteger(s.pose)||!finite(s.frame)||!Number.isInteger(s.source)||!Number.isInteger(s.serial)||!finite(s.effectTime)))fail('战斗状态无效');r.frame=frame;r.frameSequence=frame.sequence;}
       // Commit only after every field is validated: a rejected request must
       // neither consume operations nor partially accept an input batch.
       if(additions.length){p.input.push(...additions);p.lastSequence=additions.at(-1).sequence;for(const input of additions)if(input.time!==undefined)p.lastInputTime=input.time;}

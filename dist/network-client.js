@@ -5,7 +5,7 @@ export class NetworkClient{
   }
   resetInput(){this.queue=[];this.held=new Set();this.pendingInput=null;this.sequence=0;this.processed=new Map();}
   setRoom(room){
-    if(room.protocol!==2||!Number.isSafeInteger(room.round)||!Number.isSafeInteger(room.revision??0)||(room.revision??0)<0)throw Error('联机协议已更新，请重启服务并刷新双方页面。');
+    if(room.protocol!==3||!Number.isSafeInteger(room.round)||!Number.isSafeInteger(room.revision??0)||(room.revision??0)<0)throw Error('联机协议已更新，请重启服务并刷新双方页面。');
     if(this.room?.code===room.code&&(room.round<this.room.round||room.round===this.room.round&&(room.revision??0)<(this.room.revision??0)))return false;
     if(this.room?.round!==room.round)this.resetInput();this.room=room;this.onRoom(room);return true;
   }

@@ -105,3 +105,8 @@ test('blood style relays only bounded host-selected kind and force level, and le
  for(const bloodStyle of [{kind:'unknown',level:1},{kind:'slash',level:NaN},{kind:'slash',level:3},{kind:'slash',level:-1}]){assert.throws(()=>call(a,'sync',{frame:{...state,sequence:2,impacts:[{...event,bloodStyle}]}}),/无效/);assert.equal(call(b,'sync').frame.sequence,1);}
  assert.throws(()=>call(a,'sync',{frame:{...state,sequence:2,impacts:[{...event,blood:false}]}}),/无效/);
 });
+
+test('房间列表跨玩家可见且不暴露凭证，关闭房间后列表清除',()=>{
+ const rooms=new NetworkRooms(),host=rooms.create('局域网房主',{mode:'deathmatch'});let list=rooms.list();assert.equal(list.rooms[0].code,host.room.code);assert.equal(list.rooms[0].hostName,'局域网房主');assert.equal(list.rooms[0].mode,'deathmatch');assert.equal(JSON.stringify(list).includes(host.token),false);assert.equal('token' in list.rooms[0],false);
+ rooms.join(host.room.code,'客人');assert.equal(rooms.list().rooms[0].players,2);rooms.request(host.room.code,host.token,'leave');assert.deepEqual(rooms.list().rooms,[]);
+});

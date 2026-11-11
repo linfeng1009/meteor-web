@@ -1,0 +1,4574 @@
+{
+  "source": "assets/source/aether/空.pmx",
+  "version": 2.0,
+  "name": "Kong",
+  "name_en": "",
+  "comment": "感谢下载本模型\r\n\r\n◆允许完善物理，修正模型权重、表情等bug\r\n\r\n  允许改色，适度更改衣装，添加spa、toon等\r\n\r\n◆请勿二次配布，以及拆取部件以用于改造其他模型\r\n\r\n  请勿用于18禁作品，极端宗教宣传，血腥恐怖猎奇作品，人身攻击等\r\n\r\n  请勿用于商业用途\r\n\r\n◆他人使用本模型所造成的一切不良后果，不由模型改造者与miHoYo承担，请向使用者追究全部责任\r\n\r\n◆模型提供：miHoYo\r\n\r\n◆模型改造：观海\r\n\r\n  联系我【BiliBili：观海子】\r\n\r\n◆最终解释权归属：miHoYo\r\n\r\n请遵守本规则使用",
+  "comment_en": "\b",
+  "vertices": 15563,
+  "triangles": 17890,
+  "weights": {
+    "0": 8523,
+    "1": 7040
+  },
+  "textures": [
+    "tex/面.png",
+    "skin.bmp",
+    "tex/发.png",
+    "hair.bmp",
+    "tex/服.png",
+    "toon_defo.bmp",
+    "tex/表情.png"
+  ],
+  "materials": [
+    {
+      "name": "面1",
+      "name_en": "",
+      "diffuse": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "specular": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "shininess": 50.0,
+      "ambient": [
+        0.6000000238418579,
+        0.6000000238418579,
+        0.6000000238418579
+      ],
+      "flags": 31,
+      "edgeColor": [
+        0.250980406999588,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "edgeSize": 0.7143779993057251,
+      "texture": 0,
+      "sphereTexture": -1,
+      "sphereMode": 0,
+      "toonShared": 0,
+      "toonIndex": 1,
+      "comment": "",
+      "indexCount": 4554
+    },
+    {
+      "name": "面2",
+      "name_en": "",
+      "diffuse": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "specular": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "shininess": 50.0,
+      "ambient": [
+        0.6000000238418579,
+        0.6000000238418579,
+        0.6000000238418579
+      ],
+      "flags": 15,
+      "edgeColor": [
+        0.250980406999588,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "edgeSize": 0.7143779993057251,
+      "texture": 0,
+      "sphereTexture": -1,
+      "sphereMode": 0,
+      "toonShared": 0,
+      "toonIndex": 1,
+      "comment": "",
+      "indexCount": 240
+    },
+    {
+      "name": "睫",
+      "name_en": "",
+      "diffuse": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "specular": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "shininess": 50.0,
+      "ambient": [
+        0.6000000238418579,
+        0.6000000238418579,
+        0.6000000238418579
+      ],
+      "flags": 15,
+      "edgeColor": [
+        0.250980406999588,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "edgeSize": 0.7143779993057251,
+      "texture": 0,
+      "sphereTexture": -1,
+      "sphereMode": 0,
+      "toonShared": 0,
+      "toonIndex": -1,
+      "comment": "",
+      "indexCount": 342
+    },
+    {
+      "name": "目",
+      "name_en": "",
+      "diffuse": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "specular": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "shininess": 101.0,
+      "ambient": [
+        0.6000000238418579,
+        0.6000000238418579,
+        0.6000000238418579
+      ],
+      "flags": 3,
+      "edgeColor": [
+        0.250980406999588,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "edgeSize": 0.7143779993057251,
+      "texture": 2,
+      "sphereTexture": -1,
+      "sphereMode": 0,
+      "toonShared": 0,
+      "toonIndex": -1,
+      "comment": "",
+      "indexCount": 936
+    },
+    {
+      "name": "目星",
+      "name_en": "",
+      "diffuse": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "specular": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "shininess": 50.0,
+      "ambient": [
+        0.6000000238418579,
+        0.6000000238418579,
+        0.6000000238418579
+      ],
+      "flags": 3,
+      "edgeColor": [
+        0.250980406999588,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "edgeSize": 0.7143779993057251,
+      "texture": 0,
+      "sphereTexture": -1,
+      "sphereMode": 0,
+      "toonShared": 0,
+      "toonIndex": -1,
+      "comment": "",
+      "indexCount": 192
+    },
+    {
+      "name": "二重",
+      "name_en": "",
+      "diffuse": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "specular": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "shininess": 50.0,
+      "ambient": [
+        0.6000000238418579,
+        0.6000000238418579,
+        0.6000000238418579
+      ],
+      "flags": 15,
+      "edgeColor": [
+        0.250980406999588,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "edgeSize": 0.7143779993057251,
+      "texture": 0,
+      "sphereTexture": -1,
+      "sphereMode": 0,
+      "toonShared": 0,
+      "toonIndex": -1,
+      "comment": "",
+      "indexCount": 78
+    },
+    {
+      "name": "眉",
+      "name_en": "",
+      "diffuse": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "specular": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "shininess": 50.0,
+      "ambient": [
+        0.6000000238418579,
+        0.6000000238418579,
+        0.6000000238418579
+      ],
+      "flags": 15,
+      "edgeColor": [
+        0.250980406999588,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "edgeSize": 0.7143779993057251,
+      "texture": 0,
+      "sphereTexture": -1,
+      "sphereMode": 0,
+      "toonShared": 0,
+      "toonIndex": 3,
+      "comment": "",
+      "indexCount": 132
+    },
+    {
+      "name": "口舌",
+      "name_en": "",
+      "diffuse": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "specular": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "shininess": 50.0,
+      "ambient": [
+        0.6000000238418579,
+        0.6000000238418579,
+        0.6000000238418579
+      ],
+      "flags": 15,
+      "edgeColor": [
+        0.250980406999588,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "edgeSize": 0.7143779993057251,
+      "texture": 0,
+      "sphereTexture": -1,
+      "sphereMode": 0,
+      "toonShared": 0,
+      "toonIndex": 1,
+      "comment": "",
+      "indexCount": 1161
+    },
+    {
+      "name": "齿",
+      "name_en": "",
+      "diffuse": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "specular": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "shininess": 50.0,
+      "ambient": [
+        0.6000000238418579,
+        0.6000000238418579,
+        0.6000000238418579
+      ],
+      "flags": 15,
+      "edgeColor": [
+        0.250980406999588,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "edgeSize": 0.7143779993057251,
+      "texture": 0,
+      "sphereTexture": -1,
+      "sphereMode": 0,
+      "toonShared": 1,
+      "toonIndex": 0,
+      "comment": "",
+      "indexCount": 432
+    },
+    {
+      "name": "目白",
+      "name_en": "",
+      "diffuse": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "specular": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "shininess": 50.0,
+      "ambient": [
+        0.6000000238418579,
+        0.6000000238418579,
+        0.6000000238418579
+      ],
+      "flags": 3,
+      "edgeColor": [
+        0.250980406999588,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "edgeSize": 0.7143779993057251,
+      "texture": 0,
+      "sphereTexture": -1,
+      "sphereMode": 0,
+      "toonShared": 0,
+      "toonIndex": -1,
+      "comment": "",
+      "indexCount": 420
+    },
+    {
+      "name": "发",
+      "name_en": "",
+      "diffuse": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "specular": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "shininess": 50.0,
+      "ambient": [
+        0.6000000238418579,
+        0.6000000238418579,
+        0.6000000238418579
+      ],
+      "flags": 31,
+      "edgeColor": [
+        0.250980406999588,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "edgeSize": 0.7143779993057251,
+      "texture": 2,
+      "sphereTexture": -1,
+      "sphereMode": 0,
+      "toonShared": 0,
+      "toonIndex": 3,
+      "comment": "",
+      "indexCount": 7953
+    },
+    {
+      "name": "发饰",
+      "name_en": "",
+      "diffuse": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "specular": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "shininess": 50.0,
+      "ambient": [
+        0.6000000238418579,
+        0.6000000238418579,
+        0.6000000238418579
+      ],
+      "flags": 31,
+      "edgeColor": [
+        0.250980406999588,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "edgeSize": 0.7143779993057251,
+      "texture": 4,
+      "sphereTexture": -1,
+      "sphereMode": 0,
+      "toonShared": 0,
+      "toonIndex": 5,
+      "comment": "",
+      "indexCount": 348
+    },
+    {
+      "name": "身体",
+      "name_en": "",
+      "diffuse": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "specular": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "shininess": 50.0,
+      "ambient": [
+        0.6000000238418579,
+        0.6000000238418579,
+        0.6000000238418579
+      ],
+      "flags": 31,
+      "edgeColor": [
+        0.250980406999588,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "edgeSize": 0.7143779993057251,
+      "texture": 4,
+      "sphereTexture": -1,
+      "sphereMode": 0,
+      "toonShared": 0,
+      "toonIndex": 5,
+      "comment": "",
+      "indexCount": 19068
+    },
+    {
+      "name": "围巾",
+      "name_en": "",
+      "diffuse": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "specular": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "shininess": 50.0,
+      "ambient": [
+        0.6000000238418579,
+        0.6000000238418579,
+        0.6000000238418579
+      ],
+      "flags": 31,
+      "edgeColor": [
+        0.250980406999588,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "edgeSize": 0.7143779993057251,
+      "texture": 4,
+      "sphereTexture": -1,
+      "sphereMode": 0,
+      "toonShared": 0,
+      "toonIndex": 5,
+      "comment": "",
+      "indexCount": 1668
+    },
+    {
+      "name": "披风",
+      "name_en": "",
+      "diffuse": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "specular": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "shininess": 50.0,
+      "ambient": [
+        0.6000000238418579,
+        0.6000000238418579,
+        0.6000000238418579
+      ],
+      "flags": 31,
+      "edgeColor": [
+        0.250980406999588,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "edgeSize": 0.7143779993057251,
+      "texture": 4,
+      "sphereTexture": -1,
+      "sphereMode": 0,
+      "toonShared": 0,
+      "toonIndex": 5,
+      "comment": "",
+      "indexCount": 3876
+    },
+    {
+      "name": "手套",
+      "name_en": "",
+      "diffuse": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "specular": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "shininess": 50.0,
+      "ambient": [
+        0.6000000238418579,
+        0.6000000238418579,
+        0.6000000238418579
+      ],
+      "flags": 31,
+      "edgeColor": [
+        0.250980406999588,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "edgeSize": 0.7143779993057251,
+      "texture": 4,
+      "sphereTexture": -1,
+      "sphereMode": 0,
+      "toonShared": 0,
+      "toonIndex": 5,
+      "comment": "",
+      "indexCount": 4344
+    },
+    {
+      "name": "耳饰",
+      "name_en": "",
+      "diffuse": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "specular": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "shininess": 50.0,
+      "ambient": [
+        0.6000000238418579,
+        0.6000000238418579,
+        0.6000000238418579
+      ],
+      "flags": 31,
+      "edgeColor": [
+        0.250980406999588,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "edgeSize": 0.7143779993057251,
+      "texture": 4,
+      "sphereTexture": -1,
+      "sphereMode": 0,
+      "toonShared": 0,
+      "toonIndex": 5,
+      "comment": "",
+      "indexCount": 822
+    },
+    {
+      "name": "肌",
+      "name_en": "",
+      "diffuse": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "specular": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "shininess": 50.0,
+      "ambient": [
+        0.6000000238418579,
+        0.6000000238418579,
+        0.6000000238418579
+      ],
+      "flags": 31,
+      "edgeColor": [
+        0.250980406999588,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "edgeSize": 0.7143779993057251,
+      "texture": 4,
+      "sphereTexture": -1,
+      "sphereMode": 0,
+      "toonShared": 0,
+      "toonIndex": 1,
+      "comment": "",
+      "indexCount": 2400
+    },
+    {
+      "name": "手套",
+      "name_en": "",
+      "diffuse": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "specular": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "shininess": 50.0,
+      "ambient": [
+        0.6000000238418579,
+        0.6000000238418579,
+        0.6000000238418579
+      ],
+      "flags": 31,
+      "edgeColor": [
+        0.250980406999588,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "edgeSize": 0.7143779993057251,
+      "texture": 4,
+      "sphereTexture": -1,
+      "sphereMode": 0,
+      "toonShared": 0,
+      "toonIndex": 5,
+      "comment": "",
+      "indexCount": 4344
+    },
+    {
+      "name": "> <",
+      "name_en": "",
+      "diffuse": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "specular": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "shininess": 50.0,
+      "ambient": [
+        0.6000000238418579,
+        0.6000000238418579,
+        0.6000000238418579
+      ],
+      "flags": 1,
+      "edgeColor": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "edgeSize": 1.004098653793335,
+      "texture": 6,
+      "sphereTexture": -1,
+      "sphereMode": 0,
+      "toonShared": 1,
+      "toonIndex": 0,
+      "comment": "",
+      "indexCount": 180
+    },
+    {
+      "name": "脸红",
+      "name_en": "",
+      "diffuse": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "specular": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "shininess": 50.0,
+      "ambient": [
+        0.6000000238418579,
+        0.6000000238418579,
+        0.6000000238418579
+      ],
+      "flags": 1,
+      "edgeColor": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "edgeSize": 1.0040990114212036,
+      "texture": 6,
+      "sphereTexture": -1,
+      "sphereMode": 0,
+      "toonShared": 1,
+      "toonIndex": 0,
+      "comment": "",
+      "indexCount": 180
+    }
+  ],
+  "bones": [
+    {
+      "index": 0,
+      "name": "操作中心",
+      "name_en": "",
+      "position": [
+        0.0,
+        0.13231372833251953,
+        0.0
+      ],
+      "parent": -1,
+      "layer": 0,
+      "flags": 30,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 1,
+      "name": "全ての親",
+      "name_en": "",
+      "position": [
+        0.0,
+        0.13231372833251953,
+        0.0
+      ],
+      "parent": -1,
+      "layer": 0,
+      "flags": 31,
+      "tailBone": 2,
+      "weightedVertices": 0
+    },
+    {
+      "index": 2,
+      "name": "センター",
+      "name_en": "",
+      "position": [
+        0.0,
+        8.78332805633545,
+        0.0
+      ],
+      "parent": 1,
+      "layer": 0,
+      "flags": 30,
+      "tailOffset": [
+        0.0,
+        -9.880867004394531,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 3,
+      "name": "センター2",
+      "name_en": "",
+      "position": [
+        0.0,
+        8.78332805633545,
+        0.0
+      ],
+      "parent": 2,
+      "layer": 0,
+      "flags": 30,
+      "tailOffset": [
+        0.0,
+        -9.880867004394531,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 4,
+      "name": "グルーブ",
+      "name_en": "",
+      "position": [
+        0.0,
+        8.78332805633545,
+        0.0
+      ],
+      "parent": 3,
+      "layer": 0,
+      "flags": 30,
+      "tailOffset": [
+        0.0,
+        1.4716185331344604,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 5,
+      "name": "グルーブ2",
+      "name_en": "",
+      "position": [
+        0.0,
+        8.78332805633545,
+        0.0
+      ],
+      "parent": 4,
+      "layer": 0,
+      "flags": 30,
+      "tailOffset": [
+        0.0,
+        1.4716185331344604,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 6,
+      "name": "腰",
+      "name_en": "",
+      "position": [
+        0.0,
+        11.956202507019043,
+        0.26802781224250793
+      ],
+      "parent": 5,
+      "layer": 0,
+      "flags": 26,
+      "tailOffset": [
+        0.0,
+        0.698581874370575,
+        -0.6451188325881958
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 7,
+      "name": "上半身",
+      "name_en": "",
+      "position": [
+        1.2378150131553411e-06,
+        12.103706359863281,
+        -0.5972945094108582
+      ],
+      "parent": 6,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 8,
+      "weightedVertices": 704
+    },
+    {
+      "index": 8,
+      "name": "上半身2",
+      "name_en": "",
+      "position": [
+        3.822390681307297e-06,
+        13.943659782409668,
+        -0.6019840240478516
+      ],
+      "parent": 7,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 10,
+      "weightedVertices": 866
+    },
+    {
+      "index": 9,
+      "name": "下半身",
+      "name_en": "",
+      "position": [
+        -1.5170847689205402e-08,
+        11.87494945526123,
+        -0.529004693031311
+      ],
+      "parent": 6,
+      "layer": 0,
+      "flags": 26,
+      "tailOffset": [
+        0.0,
+        -1.0205399990081787,
+        0.0
+      ],
+      "weightedVertices": 2157
+    },
+    {
+      "index": 10,
+      "name": "首",
+      "name_en": "",
+      "position": [
+        7.644182915100828e-06,
+        16.246349334716797,
+        -0.3598417341709137
+      ],
+      "parent": 8,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 11,
+      "weightedVertices": 151
+    },
+    {
+      "index": 11,
+      "name": "頭",
+      "name_en": "",
+      "position": [
+        8.591118785261642e-06,
+        17.306316375732422,
+        -0.5666728615760803
+      ],
+      "parent": 10,
+      "layer": 0,
+      "flags": 26,
+      "tailOffset": [
+        0.0,
+        1.0205399990081787,
+        0.0
+      ],
+      "weightedVertices": 4391
+    },
+    {
+      "index": 12,
+      "name": "耳饰",
+      "name_en": "",
+      "position": [
+        0.8978458642959595,
+        17.76415252685547,
+        -0.45508360862731934
+      ],
+      "parent": 11,
+      "layer": 0,
+      "flags": 26,
+      "tailOffset": [
+        0.0,
+        -0.816431999206543,
+        0.0
+      ],
+      "weightedVertices": 269
+    },
+    {
+      "index": 13,
+      "name": "舌１",
+      "name_en": "",
+      "position": [
+        1.4006398487254046e-05,
+        17.386672973632812,
+        -1.4062916040420532
+      ],
+      "parent": 11,
+      "layer": 0,
+      "flags": 31,
+      "tailBone": -1,
+      "weightedVertices": 90
+    },
+    {
+      "index": 14,
+      "name": "舌２",
+      "name_en": "",
+      "position": [
+        1.4126825590210501e-05,
+        17.473228454589844,
+        -1.4070736169815063
+      ],
+      "parent": 11,
+      "layer": 0,
+      "flags": 31,
+      "tailBone": -1,
+      "weightedVertices": 90
+    },
+    {
+      "index": 15,
+      "name": "両目",
+      "name_en": "",
+      "position": [
+        0.0,
+        22.0876407623291,
+        0.0
+      ],
+      "parent": 11,
+      "layer": 0,
+      "flags": 26,
+      "tailOffset": [
+        0.0,
+        0.0,
+        -0.5102699995040894
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 16,
+      "name": "左目",
+      "name_en": "",
+      "position": [
+        0.4990840256214142,
+        18.102676391601562,
+        -1.1101348400115967
+      ],
+      "parent": 11,
+      "layer": 0,
+      "flags": 282,
+      "tailOffset": [
+        0.051026999950408936,
+        0.0,
+        -0.3061619997024536
+      ],
+      "inheritBone": 15,
+      "inheritWeight": 0.4000000059604645,
+      "weightedVertices": 165
+    },
+    {
+      "index": 17,
+      "name": "右目",
+      "name_en": "",
+      "position": [
+        -0.4976007342338562,
+        18.10269546508789,
+        -1.109951138496399
+      ],
+      "parent": 11,
+      "layer": 0,
+      "flags": 282,
+      "tailOffset": [
+        -0.051026999950408936,
+        0.0,
+        -0.3061619997024536
+      ],
+      "inheritBone": 15,
+      "inheritWeight": 0.4000000059604645,
+      "weightedVertices": 165
+    },
+    {
+      "index": 18,
+      "name": "右肩P",
+      "name_en": "shoulderP_R",
+      "position": [
+        -0.404464989900589,
+        16.050594329833984,
+        -0.2404285967350006
+      ],
+      "parent": 8,
+      "layer": 0,
+      "flags": 26,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 19,
+      "name": "右肩",
+      "name_en": "",
+      "position": [
+        -0.404464989900589,
+        16.050594329833984,
+        -0.2404285967350006
+      ],
+      "parent": 18,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 21,
+      "weightedVertices": 212
+    },
+    {
+      "index": 20,
+      "name": "右肩C",
+      "name_en": "",
+      "position": [
+        -1.5543155670166016,
+        15.629273414611816,
+        -0.18815277516841888
+      ],
+      "parent": 19,
+      "layer": 0,
+      "flags": 274,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "inheritBone": 18,
+      "inheritWeight": -1.0,
+      "weightedVertices": 0
+    },
+    {
+      "index": 21,
+      "name": "右腕",
+      "name_en": "",
+      "position": [
+        -1.5543155670166016,
+        15.629273414611816,
+        -0.18815277516841888
+      ],
+      "parent": 20,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 26,
+      "weightedVertices": 188
+    },
+    {
+      "index": 22,
+      "name": "右腕捩",
+      "name_en": "arm twist_R",
+      "position": [
+        -2.752662181854248,
+        14.801990509033203,
+        -0.1911066770553589
+      ],
+      "parent": 21,
+      "layer": 0,
+      "flags": 1050,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fixedAxis": [
+        -0.822942316532135,
+        -0.5681213140487671,
+        -0.002028533024713397
+      ],
+      "weightedVertices": 48
+    },
+    {
+      "index": 23,
+      "name": "右腕捩1",
+      "name_en": "",
+      "position": [
+        -2.2104806900024414,
+        15.176287651062012,
+        -0.18977022171020508
+      ],
+      "parent": 21,
+      "layer": 0,
+      "flags": 274,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "inheritBone": 22,
+      "inheritWeight": 0.25,
+      "weightedVertices": 264
+    },
+    {
+      "index": 24,
+      "name": "右腕捩2",
+      "name_en": "",
+      "position": [
+        -2.62697696685791,
+        14.888757705688477,
+        -0.1907968521118164
+      ],
+      "parent": 21,
+      "layer": 0,
+      "flags": 274,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "inheritBone": 22,
+      "inheritWeight": 0.5,
+      "weightedVertices": 144
+    },
+    {
+      "index": 25,
+      "name": "右腕捩3",
+      "name_en": "",
+      "position": [
+        -3.0434727668762207,
+        14.601227760314941,
+        -0.19182351231575012
+      ],
+      "parent": 21,
+      "layer": 0,
+      "flags": 274,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "inheritBone": 22,
+      "inheritWeight": 0.75,
+      "weightedVertices": 27
+    },
+    {
+      "index": 26,
+      "name": "右ひじ",
+      "name_en": "",
+      "position": [
+        -3.5515594482421875,
+        14.250468254089355,
+        -0.126438170671463
+      ],
+      "parent": 22,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 31,
+      "weightedVertices": 118
+    },
+    {
+      "index": 27,
+      "name": "右手捩",
+      "name_en": "wrist twist_R",
+      "position": [
+        -4.716681480407715,
+        13.440642356872559,
+        -0.16024574637413025
+      ],
+      "parent": 26,
+      "layer": 0,
+      "flags": 1050,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fixedAxis": [
+        -0.8209012150764465,
+        -0.5705733299255371,
+        -0.023819539695978165
+      ],
+      "weightedVertices": 160
+    },
+    {
+      "index": 28,
+      "name": "右手捩1",
+      "name_en": "",
+      "position": [
+        -4.027640342712402,
+        13.919565200805664,
+        -0.14025229215621948
+      ],
+      "parent": 26,
+      "layer": 0,
+      "flags": 274,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "inheritBone": 27,
+      "inheritWeight": 0.25,
+      "weightedVertices": 137
+    },
+    {
+      "index": 29,
+      "name": "右手捩2",
+      "name_en": "",
+      "position": [
+        -4.480194091796875,
+        13.605013847351074,
+        -0.1533837467432022
+      ],
+      "parent": 26,
+      "layer": 0,
+      "flags": 274,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "inheritBone": 27,
+      "inheritWeight": 0.5,
+      "weightedVertices": 106
+    },
+    {
+      "index": 30,
+      "name": "右手捩3",
+      "name_en": "",
+      "position": [
+        -4.932748317718506,
+        13.2904634475708,
+        -0.16651521623134613
+      ],
+      "parent": 26,
+      "layer": 0,
+      "flags": 274,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "inheritBone": 27,
+      "inheritWeight": 0.75,
+      "weightedVertices": 82
+    },
+    {
+      "index": 31,
+      "name": "右手首",
+      "name_en": "",
+      "position": [
+        -5.493430137634277,
+        12.900757789611816,
+        -0.18278412520885468
+      ],
+      "parent": 27,
+      "layer": 0,
+      "flags": 26,
+      "tailOffset": [
+        -0.5459185242652893,
+        -0.35914990305900574,
+        0.0
+      ],
+      "weightedVertices": 356
+    },
+    {
+      "index": 32,
+      "name": "左肩P",
+      "name_en": "shoulderP_L",
+      "position": [
+        0.4044795036315918,
+        16.050594329833984,
+        -0.24042829871177673
+      ],
+      "parent": 8,
+      "layer": 0,
+      "flags": 26,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 33,
+      "name": "左肩",
+      "name_en": "",
+      "position": [
+        0.4044795036315918,
+        16.050594329833984,
+        -0.24042829871177673
+      ],
+      "parent": 32,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 35,
+      "weightedVertices": 501
+    },
+    {
+      "index": 34,
+      "name": "左肩C",
+      "name_en": "",
+      "position": [
+        1.5543317794799805,
+        15.629273414611816,
+        -0.18816083669662476
+      ],
+      "parent": 33,
+      "layer": 0,
+      "flags": 274,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "inheritBone": 32,
+      "inheritWeight": -1.0,
+      "weightedVertices": 0
+    },
+    {
+      "index": 35,
+      "name": "左腕",
+      "name_en": "",
+      "position": [
+        1.5543317794799805,
+        15.629273414611816,
+        -0.18816083669662476
+      ],
+      "parent": 34,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 40,
+      "weightedVertices": 245
+    },
+    {
+      "index": 36,
+      "name": "左腕捩",
+      "name_en": "arm twist_L",
+      "position": [
+        2.7526767253875732,
+        14.801983833312988,
+        -0.18162016570568085
+      ],
+      "parent": 35,
+      "layer": 0,
+      "flags": 1050,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fixedAxis": [
+        0.8229330778121948,
+        -0.5681204795837402,
+        0.004491635598242283
+      ],
+      "weightedVertices": 48
+    },
+    {
+      "index": 37,
+      "name": "左腕捩1",
+      "name_en": "",
+      "position": [
+        1.674686074256897,
+        15.546185493469238,
+        -0.18750393390655518
+      ],
+      "parent": 35,
+      "layer": 0,
+      "flags": 274,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "inheritBone": 36,
+      "inheritWeight": 0.25,
+      "weightedVertices": 400
+    },
+    {
+      "index": 38,
+      "name": "左腕捩2",
+      "name_en": "",
+      "position": [
+        2.2693350315093994,
+        15.135663986206055,
+        -0.18425829708576202
+      ],
+      "parent": 35,
+      "layer": 0,
+      "flags": 274,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "inheritBone": 36,
+      "inheritWeight": 0.5,
+      "weightedVertices": 332
+    },
+    {
+      "index": 39,
+      "name": "左腕捩3",
+      "name_en": "",
+      "position": [
+        2.8639838695526123,
+        14.725141525268555,
+        -0.18101264536380768
+      ],
+      "parent": 35,
+      "layer": 0,
+      "flags": 274,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "inheritBone": 36,
+      "inheritWeight": 0.75,
+      "weightedVertices": 142
+    },
+    {
+      "index": 40,
+      "name": "左ひじ",
+      "name_en": "",
+      "position": [
+        3.5515732765197754,
+        14.250456809997559,
+        -0.12644214928150177
+      ],
+      "parent": 36,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 45,
+      "weightedVertices": 118
+    },
+    {
+      "index": 41,
+      "name": "左手捩",
+      "name_en": "wrist twist_L",
+      "position": [
+        4.716694355010986,
+        13.440629005432129,
+        -0.1601952165365219
+      ],
+      "parent": 40,
+      "layer": 0,
+      "flags": 1050,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fixedAxis": [
+        0.8209014534950256,
+        -0.5705745220184326,
+        -0.023781176656484604
+      ],
+      "weightedVertices": 160
+    },
+    {
+      "index": 42,
+      "name": "左手捩1",
+      "name_en": "",
+      "position": [
+        4.0276384353637695,
+        13.919563293457031,
+        -0.14023356139659882
+      ],
+      "parent": 40,
+      "layer": 0,
+      "flags": 274,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "inheritBone": 41,
+      "inheritWeight": 0.25,
+      "weightedVertices": 137
+    },
+    {
+      "index": 43,
+      "name": "左手捩2",
+      "name_en": "",
+      "position": [
+        4.480191707611084,
+        13.605011940002441,
+        -0.15334384143352509
+      ],
+      "parent": 40,
+      "layer": 0,
+      "flags": 274,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "inheritBone": 41,
+      "inheritWeight": 0.5,
+      "weightedVertices": 106
+    },
+    {
+      "index": 44,
+      "name": "左手捩3",
+      "name_en": "",
+      "position": [
+        4.932745456695557,
+        13.290461540222168,
+        -0.16645413637161255
+      ],
+      "parent": 40,
+      "layer": 0,
+      "flags": 274,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "inheritBone": 41,
+      "inheritWeight": 0.75,
+      "weightedVertices": 82
+    },
+    {
+      "index": 45,
+      "name": "左手首",
+      "name_en": "",
+      "position": [
+        5.493441581726074,
+        12.900744438171387,
+        -0.18269726634025574
+      ],
+      "parent": 41,
+      "layer": 0,
+      "flags": 26,
+      "tailOffset": [
+        0.5459185242652893,
+        -0.35914990305900574,
+        0.0
+      ],
+      "weightedVertices": 356
+    },
+    {
+      "index": 46,
+      "name": "左親指０",
+      "name_en": "",
+      "position": [
+        5.670654773712158,
+        12.608688354492188,
+        -0.4216281771659851
+      ],
+      "parent": 45,
+      "layer": 0,
+      "flags": 31,
+      "tailBone": 51,
+      "weightedVertices": 47
+    },
+    {
+      "index": 47,
+      "name": "左人指１",
+      "name_en": "",
+      "position": [
+        6.297173500061035,
+        12.221656799316406,
+        -0.48839202523231506
+      ],
+      "parent": 45,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 53,
+      "weightedVertices": 63
+    },
+    {
+      "index": 48,
+      "name": "左中指１",
+      "name_en": "",
+      "position": [
+        6.325286865234375,
+        12.234153747558594,
+        -0.24083192646503448
+      ],
+      "parent": 45,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 55,
+      "weightedVertices": 68
+    },
+    {
+      "index": 49,
+      "name": "左薬指１",
+      "name_en": "",
+      "position": [
+        6.262539863586426,
+        12.234349250793457,
+        0.010708780027925968
+      ],
+      "parent": 45,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 57,
+      "weightedVertices": 62
+    },
+    {
+      "index": 50,
+      "name": "左小指１",
+      "name_en": "A01+UpperArmTwist R ",
+      "position": [
+        6.102673530578613,
+        12.298796653747559,
+        0.1772862672805786
+      ],
+      "parent": 45,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 59,
+      "weightedVertices": 75
+    },
+    {
+      "index": 51,
+      "name": "左親指１",
+      "name_en": "A02+AmiceB R B02",
+      "position": [
+        5.741387844085693,
+        12.419119834899902,
+        -0.6792660355567932
+      ],
+      "parent": 46,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 52,
+      "weightedVertices": 58
+    },
+    {
+      "index": 52,
+      "name": "左親指２",
+      "name_en": "",
+      "position": [
+        5.945696830749512,
+        12.10177993774414,
+        -0.8438780307769775
+      ],
+      "parent": 51,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": -1,
+      "weightedVertices": 67
+    },
+    {
+      "index": 53,
+      "name": "左人指２",
+      "name_en": "",
+      "position": [
+        6.565799236297607,
+        12.012877464294434,
+        -0.5164213180541992
+      ],
+      "parent": 47,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 54,
+      "weightedVertices": 62
+    },
+    {
+      "index": 54,
+      "name": "左人指３",
+      "name_en": "",
+      "position": [
+        6.7759108543396,
+        11.855565071105957,
+        -0.5395210385322571
+      ],
+      "parent": 53,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": -1,
+      "weightedVertices": 65
+    },
+    {
+      "index": 55,
+      "name": "左中指２",
+      "name_en": "",
+      "position": [
+        6.638268947601318,
+        12.02645492553711,
+        -0.22528426349163055
+      ],
+      "parent": 48,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 56,
+      "weightedVertices": 64
+    },
+    {
+      "index": 56,
+      "name": "左中指３",
+      "name_en": "",
+      "position": [
+        6.898305892944336,
+        11.850635528564453,
+        -0.21215403079986572
+      ],
+      "parent": 55,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": -1,
+      "weightedVertices": 65
+    },
+    {
+      "index": 57,
+      "name": "左薬指２",
+      "name_en": "",
+      "position": [
+        6.570828914642334,
+        12.022370338439941,
+        0.057262927293777466
+      ],
+      "parent": 49,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 58,
+      "weightedVertices": 70
+    },
+    {
+      "index": 58,
+      "name": "左薬指３",
+      "name_en": "",
+      "position": [
+        6.830198764801025,
+        11.85449504852295,
+        0.09875863790512085
+      ],
+      "parent": 57,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": -1,
+      "weightedVertices": 67
+    },
+    {
+      "index": 59,
+      "name": "左小指２",
+      "name_en": "",
+      "position": [
+        6.340965270996094,
+        12.064523696899414,
+        0.2969154119491577
+      ],
+      "parent": 50,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 60,
+      "weightedVertices": 60
+    },
+    {
+      "index": 60,
+      "name": "左小指３",
+      "name_en": "",
+      "position": [
+        6.4808502197265625,
+        11.915738105773926,
+        0.3642562925815582
+      ],
+      "parent": 59,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": -1,
+      "weightedVertices": 64
+    },
+    {
+      "index": 61,
+      "name": "腰キャンセル左",
+      "name_en": "",
+      "position": [
+        0.8207076787948608,
+        10.748563766479492,
+        -0.3550386428833008
+      ],
+      "parent": 9,
+      "layer": 0,
+      "flags": 274,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "inheritBone": 6,
+      "inheritWeight": -1.0,
+      "weightedVertices": 0
+    },
+    {
+      "index": 62,
+      "name": "左足",
+      "name_en": "",
+      "position": [
+        0.8129600286483765,
+        11.061156272888184,
+        -0.3823896646499634
+      ],
+      "parent": 9,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 63,
+      "weightedVertices": 793
+    },
+    {
+      "index": 63,
+      "name": "左ひざ",
+      "name_en": "",
+      "position": [
+        0.7129340171813965,
+        5.9245171546936035,
+        -0.3784337341785431
+      ],
+      "parent": 62,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 64,
+      "weightedVertices": 656
+    },
+    {
+      "index": 64,
+      "name": "左足首",
+      "name_en": "",
+      "position": [
+        0.6486657857894897,
+        1.265572190284729,
+        -0.008592420257627964
+      ],
+      "parent": 63,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 67,
+      "weightedVertices": 265
+    },
+    {
+      "index": 65,
+      "name": "左つま先",
+      "name_en": "",
+      "position": [
+        0.7920828461647034,
+        0.19128543138504028,
+        -1.291946530342102
+      ],
+      "parent": 64,
+      "layer": 0,
+      "flags": 1,
+      "tailBone": -1,
+      "weightedVertices": 0
+    },
+    {
+      "index": 66,
+      "name": "左足補",
+      "name_en": "",
+      "position": [
+        0.8207077383995056,
+        11.0579195022583,
+        -0.3550385534763336
+      ],
+      "parent": 61,
+      "layer": 1,
+      "flags": 282,
+      "tailOffset": [
+        0.0,
+        -1.0511561632156372,
+        0.0
+      ],
+      "inheritBone": 62,
+      "inheritWeight": 0.4000000059604645,
+      "weightedVertices": 0
+    },
+    {
+      "index": 67,
+      "name": "左足先EX",
+      "name_en": "",
+      "position": [
+        0.7921212911605835,
+        0.19119441509246826,
+        -1.2910016775131226
+      ],
+      "parent": 64,
+      "layer": 1,
+      "flags": 27,
+      "tailBone": -1,
+      "weightedVertices": 98
+    },
+    {
+      "index": 68,
+      "name": "腰キャンセル右",
+      "name_en": "",
+      "position": [
+        -0.8207076787948608,
+        10.748563766479492,
+        -0.3550386428833008
+      ],
+      "parent": 9,
+      "layer": 0,
+      "flags": 274,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "inheritBone": 6,
+      "inheritWeight": -1.0,
+      "weightedVertices": 0
+    },
+    {
+      "index": 69,
+      "name": "右足",
+      "name_en": "",
+      "position": [
+        -0.8129596710205078,
+        11.061159133911133,
+        -0.3823899030685425
+      ],
+      "parent": 9,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 70,
+      "weightedVertices": 1025
+    },
+    {
+      "index": 70,
+      "name": "右ひざ",
+      "name_en": "",
+      "position": [
+        -0.7129963040351868,
+        5.924644470214844,
+        -0.41852590441703796
+      ],
+      "parent": 69,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 71,
+      "weightedVertices": 657
+    },
+    {
+      "index": 71,
+      "name": "右足首",
+      "name_en": "",
+      "position": [
+        -0.648723304271698,
+        1.2690907716751099,
+        -0.00818602368235588
+      ],
+      "parent": 70,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 74,
+      "weightedVertices": 264
+    },
+    {
+      "index": 72,
+      "name": "右つま先",
+      "name_en": "",
+      "position": [
+        -0.7918087840080261,
+        0.19334493577480316,
+        -1.28948974609375
+      ],
+      "parent": 71,
+      "layer": 0,
+      "flags": 1,
+      "tailBone": -1,
+      "weightedVertices": 0
+    },
+    {
+      "index": 73,
+      "name": "右足補",
+      "name_en": "",
+      "position": [
+        -0.8207077383995056,
+        11.0579195022583,
+        -0.3550385534763336
+      ],
+      "parent": 68,
+      "layer": 1,
+      "flags": 282,
+      "tailOffset": [
+        -6.382474111887859e-06,
+        -1.051151156425476,
+        -0.003246551612392068
+      ],
+      "inheritBone": 69,
+      "inheritWeight": 0.4000000059604645,
+      "weightedVertices": 0
+    },
+    {
+      "index": 74,
+      "name": "右足先EX",
+      "name_en": "",
+      "position": [
+        -0.7918087840080261,
+        0.19334493577480316,
+        -1.2894901037216187
+      ],
+      "parent": 71,
+      "layer": 1,
+      "flags": 27,
+      "tailBone": -1,
+      "weightedVertices": 98
+    },
+    {
+      "index": 75,
+      "name": "左足IK親",
+      "name_en": "",
+      "position": [
+        0.7920828461647034,
+        -1.0975390672683716,
+        0.0
+      ],
+      "parent": 1,
+      "layer": 0,
+      "flags": 31,
+      "tailBone": 76,
+      "weightedVertices": 0
+    },
+    {
+      "index": 76,
+      "name": "左足ＩＫ",
+      "name_en": "",
+      "position": [
+        0.648665726184845,
+        1.265572428703308,
+        -0.008592389523983002
+      ],
+      "parent": 75,
+      "layer": 1,
+      "flags": 63,
+      "tailBone": 77,
+      "ikTarget": 64,
+      "ikIterations": 40,
+      "ikLimit": 2.0000007152557373,
+      "ikLinks": [
+        {
+          "index": 63,
+          "limited": 1,
+          "min": [
+            -3.1415927410125732,
+            0.0,
+            0.0
+          ],
+          "max": [
+            -0.008726646192371845,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "index": 62,
+          "limited": 0
+        }
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 77,
+      "name": "左つま先ＩＫ",
+      "name_en": "",
+      "position": [
+        0.7920828461647034,
+        0.19128543138504028,
+        -1.291946530342102
+      ],
+      "parent": 76,
+      "layer": 1,
+      "flags": 62,
+      "tailOffset": [
+        0.0,
+        -0.7661982774734497,
+        0.003300601849332452
+      ],
+      "ikTarget": 65,
+      "ikIterations": 40,
+      "ikLimit": 0.06981316953897476,
+      "ikLinks": [
+        {
+          "index": 64,
+          "limited": 0
+        }
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 78,
+      "name": "右足IK親",
+      "name_en": "",
+      "position": [
+        -0.7920828461647034,
+        -1.0975390672683716,
+        0.0
+      ],
+      "parent": 1,
+      "layer": 0,
+      "flags": 31,
+      "tailBone": 79,
+      "weightedVertices": 0
+    },
+    {
+      "index": 79,
+      "name": "右足ＩＫ",
+      "name_en": "",
+      "position": [
+        -0.648665726184845,
+        1.265572428703308,
+        -0.008592389523983002
+      ],
+      "parent": 78,
+      "layer": 1,
+      "flags": 63,
+      "tailBone": 80,
+      "ikTarget": 71,
+      "ikIterations": 40,
+      "ikLimit": 2.0000007152557373,
+      "ikLinks": [
+        {
+          "index": 70,
+          "limited": 1,
+          "min": [
+            -3.1415927410125732,
+            0.0,
+            0.0
+          ],
+          "max": [
+            -0.008726646192371845,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "index": 69,
+          "limited": 0
+        }
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 80,
+      "name": "右つま先ＩＫ",
+      "name_en": "",
+      "position": [
+        -0.7920828461647034,
+        0.19128543138504028,
+        -1.291946530342102
+      ],
+      "parent": 79,
+      "layer": 1,
+      "flags": 62,
+      "tailOffset": [
+        0.0,
+        -0.7661982774734497,
+        0.003300601849332452
+      ],
+      "ikTarget": 72,
+      "ikIterations": 40,
+      "ikLimit": 0.06981316953897476,
+      "ikLinks": [
+        {
+          "index": 71,
+          "limited": 0
+        }
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 81,
+      "name": "披风_0_0",
+      "name_en": "Skirt_0_0",
+      "position": [
+        -1.6326384544372559,
+        14.079120635986328,
+        1.1236262321472168
+      ],
+      "parent": 8,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 90,
+      "weightedVertices": 4
+    },
+    {
+      "index": 82,
+      "name": "披风_0_1",
+      "name_en": "Skirt_0_1",
+      "position": [
+        -1.3935441970825195,
+        14.079120635986328,
+        1.1236262321472168
+      ],
+      "parent": 8,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 91,
+      "weightedVertices": 4
+    },
+    {
+      "index": 83,
+      "name": "披风_0_2",
+      "name_en": "Skirt_0_2",
+      "position": [
+        -0.8163192272186279,
+        14.079120635986328,
+        1.1236262321472168
+      ],
+      "parent": 8,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 92,
+      "weightedVertices": 9
+    },
+    {
+      "index": 84,
+      "name": "披风_0_3",
+      "name_en": "Skirt_0_3",
+      "position": [
+        -0.2390943467617035,
+        14.079120635986328,
+        1.1236262321472168
+      ],
+      "parent": 8,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 93,
+      "weightedVertices": 10
+    },
+    {
+      "index": 85,
+      "name": "披风_0_4",
+      "name_en": "Skirt_0_4",
+      "position": [
+        2.32043930511322e-13,
+        14.079120635986328,
+        1.1236262321472168
+      ],
+      "parent": 8,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 94,
+      "weightedVertices": 16
+    },
+    {
+      "index": 86,
+      "name": "披风_0_5",
+      "name_en": "Skirt_0_5",
+      "position": [
+        0.2390943467617035,
+        14.079120635986328,
+        1.1236262321472168
+      ],
+      "parent": 8,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 95,
+      "weightedVertices": 10
+    },
+    {
+      "index": 87,
+      "name": "披风_0_6",
+      "name_en": "Skirt_0_6",
+      "position": [
+        0.8163192272186279,
+        14.079120635986328,
+        1.1236262321472168
+      ],
+      "parent": 8,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 96,
+      "weightedVertices": 11
+    },
+    {
+      "index": 88,
+      "name": "披风_0_7",
+      "name_en": "Skirt_0_7",
+      "position": [
+        1.3935441970825195,
+        14.079120635986328,
+        1.1236262321472168
+      ],
+      "parent": 8,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 97,
+      "weightedVertices": 6
+    },
+    {
+      "index": 89,
+      "name": "披风_0_8",
+      "name_en": "Skirt_0_8",
+      "position": [
+        1.6326384544372559,
+        14.079120635986328,
+        1.1236262321472168
+      ],
+      "parent": 8,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 98,
+      "weightedVertices": 4
+    },
+    {
+      "index": 90,
+      "name": "披风_1_0",
+      "name_en": "Skirt_1_0",
+      "position": [
+        -1.8750075101852417,
+        13.161391258239746,
+        1.3061697483062744
+      ],
+      "parent": 81,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 99,
+      "weightedVertices": 4
+    },
+    {
+      "index": 91,
+      "name": "披风_1_1",
+      "name_en": "Skirt_1_1",
+      "position": [
+        -1.6004189252853394,
+        13.161391258239746,
+        1.3061697483062744
+      ],
+      "parent": 82,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 100,
+      "weightedVertices": 6
+    },
+    {
+      "index": 92,
+      "name": "披风_1_2",
+      "name_en": "Skirt_1_2",
+      "position": [
+        -0.9375037550926208,
+        13.161391258239746,
+        1.3061697483062744
+      ],
+      "parent": 83,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 101,
+      "weightedVertices": 8
+    },
+    {
+      "index": 93,
+      "name": "披风_1_3",
+      "name_en": "Skirt_1_3",
+      "position": [
+        -0.38586848974227905,
+        13.161391258239746,
+        1.3061697483062744
+      ],
+      "parent": 84,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 102,
+      "weightedVertices": 6
+    },
+    {
+      "index": 94,
+      "name": "披风_1_4",
+      "name_en": "Skirt_1_4",
+      "position": [
+        2.32043930511322e-13,
+        13.161391258239746,
+        1.3061697483062744
+      ],
+      "parent": 85,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 103,
+      "weightedVertices": 8
+    },
+    {
+      "index": 95,
+      "name": "披风_1_5",
+      "name_en": "Skirt_1_5",
+      "position": [
+        0.38586848974227905,
+        13.161391258239746,
+        1.3061697483062744
+      ],
+      "parent": 86,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 104,
+      "weightedVertices": 6
+    },
+    {
+      "index": 96,
+      "name": "披风_1_6",
+      "name_en": "Skirt_1_6",
+      "position": [
+        0.9375037550926208,
+        13.161391258239746,
+        1.3061697483062744
+      ],
+      "parent": 87,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 105,
+      "weightedVertices": 8
+    },
+    {
+      "index": 97,
+      "name": "披风_1_7",
+      "name_en": "Skirt_1_7",
+      "position": [
+        1.6004189252853394,
+        13.161391258239746,
+        1.3061697483062744
+      ],
+      "parent": 88,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 106,
+      "weightedVertices": 6
+    },
+    {
+      "index": 98,
+      "name": "披风_1_8",
+      "name_en": "Skirt_1_8",
+      "position": [
+        1.8750075101852417,
+        13.161391258239746,
+        1.3061697483062744
+      ],
+      "parent": 89,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 107,
+      "weightedVertices": 4
+    },
+    {
+      "index": 99,
+      "name": "披风_2_0",
+      "name_en": "Skirt_2_0",
+      "position": [
+        -2.137190103530884,
+        12.243663787841797,
+        1.488713264465332
+      ],
+      "parent": 90,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 108,
+      "weightedVertices": 4
+    },
+    {
+      "index": 100,
+      "name": "披风_2_1",
+      "name_en": "Skirt_2_1",
+      "position": [
+        -1.824205994606018,
+        12.243663787841797,
+        1.488713264465332
+      ],
+      "parent": 91,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 109,
+      "weightedVertices": 6
+    },
+    {
+      "index": 101,
+      "name": "披风_2_2",
+      "name_en": "Skirt_2_2",
+      "position": [
+        -1.068595051765442,
+        12.243663787841797,
+        1.488713264465332
+      ],
+      "parent": 92,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 110,
+      "weightedVertices": 6
+    },
+    {
+      "index": 102,
+      "name": "披风_2_3",
+      "name_en": "Skirt_2_3",
+      "position": [
+        -0.34515872597694397,
+        12.243663787841797,
+        1.488713264465332
+      ],
+      "parent": 93,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 111,
+      "weightedVertices": 6
+    },
+    {
+      "index": 103,
+      "name": "披风_2_4",
+      "name_en": "Skirt_2_4",
+      "position": [
+        2.32043930511322e-13,
+        12.243663787841797,
+        1.488713264465332
+      ],
+      "parent": 94,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 112,
+      "weightedVertices": 8
+    },
+    {
+      "index": 104,
+      "name": "披风_2_5",
+      "name_en": "Skirt_2_5",
+      "position": [
+        0.34515872597694397,
+        12.243663787841797,
+        1.488713264465332
+      ],
+      "parent": 95,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 113,
+      "weightedVertices": 6
+    },
+    {
+      "index": 105,
+      "name": "披风_2_6",
+      "name_en": "Skirt_2_6",
+      "position": [
+        1.068595051765442,
+        12.243663787841797,
+        1.488713264465332
+      ],
+      "parent": 96,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 114,
+      "weightedVertices": 6
+    },
+    {
+      "index": 106,
+      "name": "披风_2_7",
+      "name_en": "Skirt_2_7",
+      "position": [
+        1.824205994606018,
+        12.243663787841797,
+        1.488713264465332
+      ],
+      "parent": 97,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 115,
+      "weightedVertices": 8
+    },
+    {
+      "index": 107,
+      "name": "披风_2_8",
+      "name_en": "Skirt_2_8",
+      "position": [
+        2.137190103530884,
+        12.243663787841797,
+        1.488713264465332
+      ],
+      "parent": 98,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 116,
+      "weightedVertices": 4
+    },
+    {
+      "index": 108,
+      "name": "披风_3_0",
+      "name_en": "Skirt_3_0",
+      "position": [
+        -2.3908579349517822,
+        11.325936317443848,
+        1.6712565422058105
+      ],
+      "parent": 99,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 117,
+      "weightedVertices": 8
+    },
+    {
+      "index": 109,
+      "name": "披风_3_1",
+      "name_en": "Skirt_3_1",
+      "position": [
+        -2.040724992752075,
+        11.325936317443848,
+        1.6712565422058105
+      ],
+      "parent": 100,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 118,
+      "weightedVertices": 8
+    },
+    {
+      "index": 110,
+      "name": "披风_3_2",
+      "name_en": "Skirt_3_2",
+      "position": [
+        -1.1954289674758911,
+        11.325936317443848,
+        1.6712565422058105
+      ],
+      "parent": 101,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 119,
+      "weightedVertices": 10
+    },
+    {
+      "index": 111,
+      "name": "披风_3_3",
+      "name_en": "Skirt_3_3",
+      "position": [
+        -0.2521583139896393,
+        11.325936317443848,
+        1.6712565422058105
+      ],
+      "parent": 102,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 120,
+      "weightedVertices": 6
+    },
+    {
+      "index": 112,
+      "name": "披风_3_4",
+      "name_en": "Skirt_3_4",
+      "position": [
+        2.32043930511322e-13,
+        11.325936317443848,
+        1.6712565422058105
+      ],
+      "parent": 103,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 121,
+      "weightedVertices": 0
+    },
+    {
+      "index": 113,
+      "name": "披风_3_5",
+      "name_en": "Skirt_3_5",
+      "position": [
+        0.2521583139896393,
+        11.325936317443848,
+        1.6712565422058105
+      ],
+      "parent": 104,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 122,
+      "weightedVertices": 6
+    },
+    {
+      "index": 114,
+      "name": "披风_3_6",
+      "name_en": "Skirt_3_6",
+      "position": [
+        1.1954289674758911,
+        11.325936317443848,
+        1.6712565422058105
+      ],
+      "parent": 105,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 123,
+      "weightedVertices": 10
+    },
+    {
+      "index": 115,
+      "name": "披风_3_7",
+      "name_en": "Skirt_3_7",
+      "position": [
+        2.040724992752075,
+        11.325936317443848,
+        1.6712565422058105
+      ],
+      "parent": 106,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 124,
+      "weightedVertices": 8
+    },
+    {
+      "index": 116,
+      "name": "披风_3_8",
+      "name_en": "Skirt_3_8",
+      "position": [
+        2.3908579349517822,
+        11.325936317443848,
+        1.6712565422058105
+      ],
+      "parent": 107,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 125,
+      "weightedVertices": 8
+    },
+    {
+      "index": 117,
+      "name": "披风_4_0",
+      "name_en": "Skirt_4_0",
+      "position": [
+        -2.6142165660858154,
+        10.408208847045898,
+        1.8538000583648682
+      ],
+      "parent": 108,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 126,
+      "weightedVertices": 6
+    },
+    {
+      "index": 118,
+      "name": "披风_4_1",
+      "name_en": "Skirt_4_1",
+      "position": [
+        -2.2313730716705322,
+        10.408208847045898,
+        1.8538000583648682
+      ],
+      "parent": 109,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 127,
+      "weightedVertices": 6
+    },
+    {
+      "index": 119,
+      "name": "披风_4_2",
+      "name_en": "Skirt_4_2",
+      "position": [
+        -1.3071082830429077,
+        10.408208847045898,
+        1.8538000583648682
+      ],
+      "parent": 110,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 128,
+      "weightedVertices": 10
+    },
+    {
+      "index": 120,
+      "name": "披风_4_3",
+      "name_en": "Skirt_4_3",
+      "position": [
+        -0.19657011330127716,
+        10.408208847045898,
+        1.8538000583648682
+      ],
+      "parent": 111,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 129,
+      "weightedVertices": 6
+    },
+    {
+      "index": 121,
+      "name": "披风_4_4",
+      "name_en": "Skirt_4_4",
+      "position": [
+        2.32043930511322e-13,
+        10.408208847045898,
+        1.8538000583648682
+      ],
+      "parent": 112,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 130,
+      "weightedVertices": 0
+    },
+    {
+      "index": 122,
+      "name": "披风_4_5",
+      "name_en": "Skirt_4_5",
+      "position": [
+        0.19657011330127716,
+        10.408208847045898,
+        1.8538000583648682
+      ],
+      "parent": 113,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 131,
+      "weightedVertices": 6
+    },
+    {
+      "index": 123,
+      "name": "披风_4_6",
+      "name_en": "Skirt_4_6",
+      "position": [
+        1.3071082830429077,
+        10.408208847045898,
+        1.8538000583648682
+      ],
+      "parent": 114,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 132,
+      "weightedVertices": 10
+    },
+    {
+      "index": 124,
+      "name": "披风_4_7",
+      "name_en": "Skirt_4_7",
+      "position": [
+        2.2313730716705322,
+        10.408208847045898,
+        1.8538000583648682
+      ],
+      "parent": 115,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 133,
+      "weightedVertices": 6
+    },
+    {
+      "index": 125,
+      "name": "披风_4_8",
+      "name_en": "Skirt_4_8",
+      "position": [
+        2.6142165660858154,
+        10.408208847045898,
+        1.8538000583648682
+      ],
+      "parent": 116,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 134,
+      "weightedVertices": 6
+    },
+    {
+      "index": 126,
+      "name": "披风_5_0",
+      "name_en": "Skirt_5_0",
+      "position": [
+        -2.792004108428955,
+        9.490480422973633,
+        2.036343574523926
+      ],
+      "parent": 117,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 135,
+      "weightedVertices": 22
+    },
+    {
+      "index": 127,
+      "name": "披风_5_1",
+      "name_en": "Skirt_5_1",
+      "position": [
+        -2.383124351501465,
+        9.490480422973633,
+        2.036343574523926
+      ],
+      "parent": 118,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 136,
+      "weightedVertices": 18
+    },
+    {
+      "index": 128,
+      "name": "披风_5_2",
+      "name_en": "Skirt_5_2",
+      "position": [
+        -1.3960020542144775,
+        9.490480422973633,
+        2.036343574523926
+      ],
+      "parent": 119,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 137,
+      "weightedVertices": 8
+    },
+    {
+      "index": 129,
+      "name": "披风_5_3",
+      "name_en": "Skirt_5_3",
+      "position": [
+        -0.22260650992393494,
+        9.490480422973633,
+        2.036343574523926
+      ],
+      "parent": 120,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 138,
+      "weightedVertices": 6
+    },
+    {
+      "index": 130,
+      "name": "披风_5_4",
+      "name_en": "Skirt_5_4",
+      "position": [
+        2.32043930511322e-13,
+        9.490480422973633,
+        2.036343574523926
+      ],
+      "parent": 121,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 139,
+      "weightedVertices": 0
+    },
+    {
+      "index": 131,
+      "name": "披风_5_5",
+      "name_en": "Skirt_5_5",
+      "position": [
+        0.22260650992393494,
+        9.490480422973633,
+        2.036343574523926
+      ],
+      "parent": 122,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 140,
+      "weightedVertices": 6
+    },
+    {
+      "index": 132,
+      "name": "披风_5_6",
+      "name_en": "Skirt_5_6",
+      "position": [
+        1.3960020542144775,
+        9.490480422973633,
+        2.036343574523926
+      ],
+      "parent": 123,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 141,
+      "weightedVertices": 8
+    },
+    {
+      "index": 133,
+      "name": "披风_5_7",
+      "name_en": "Skirt_5_7",
+      "position": [
+        2.383124351501465,
+        9.490480422973633,
+        2.036343574523926
+      ],
+      "parent": 124,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 142,
+      "weightedVertices": 18
+    },
+    {
+      "index": 134,
+      "name": "披风_5_8",
+      "name_en": "Skirt_5_8",
+      "position": [
+        2.792004108428955,
+        9.490480422973633,
+        2.036343574523926
+      ],
+      "parent": 125,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 143,
+      "weightedVertices": 22
+    },
+    {
+      "index": 135,
+      "name": "披风_6_0",
+      "name_en": "Skirt_6_0",
+      "position": [
+        -2.9154937267303467,
+        8.57275104522705,
+        2.2188870906829834
+      ],
+      "parent": 126,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 144,
+      "weightedVertices": 0
+    },
+    {
+      "index": 136,
+      "name": "披风_6_1",
+      "name_en": "Skirt_6_1",
+      "position": [
+        -2.4885294437408447,
+        8.57275104522705,
+        2.2188870906829834
+      ],
+      "parent": 127,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 145,
+      "weightedVertices": 32
+    },
+    {
+      "index": 137,
+      "name": "披风_6_2",
+      "name_en": "Skirt_6_2",
+      "position": [
+        -1.4577468633651733,
+        8.57275104522705,
+        2.2188870906829834
+      ],
+      "parent": 128,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 146,
+      "weightedVertices": 38
+    },
+    {
+      "index": 138,
+      "name": "披风_6_3",
+      "name_en": "Skirt_6_3",
+      "position": [
+        -0.3289894759654999,
+        8.57275104522705,
+        2.2188870906829834
+      ],
+      "parent": 129,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 147,
+      "weightedVertices": 6
+    },
+    {
+      "index": 139,
+      "name": "披风_6_4",
+      "name_en": "Skirt_6_4",
+      "position": [
+        2.32043930511322e-13,
+        8.57275104522705,
+        2.2188870906829834
+      ],
+      "parent": 130,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 148,
+      "weightedVertices": 0
+    },
+    {
+      "index": 140,
+      "name": "披风_6_5",
+      "name_en": "Skirt_6_5",
+      "position": [
+        0.3289894759654999,
+        8.57275104522705,
+        2.2188870906829834
+      ],
+      "parent": 131,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 149,
+      "weightedVertices": 6
+    },
+    {
+      "index": 141,
+      "name": "披风_6_6",
+      "name_en": "Skirt_6_6",
+      "position": [
+        1.4577468633651733,
+        8.57275104522705,
+        2.2188870906829834
+      ],
+      "parent": 132,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 150,
+      "weightedVertices": 38
+    },
+    {
+      "index": 142,
+      "name": "披风_6_7",
+      "name_en": "Skirt_6_7",
+      "position": [
+        2.4885294437408447,
+        8.57275104522705,
+        2.2188870906829834
+      ],
+      "parent": 133,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 151,
+      "weightedVertices": 32
+    },
+    {
+      "index": 143,
+      "name": "披风_6_8",
+      "name_en": "Skirt_6_8",
+      "position": [
+        2.9154937267303467,
+        8.57275104522705,
+        2.2188870906829834
+      ],
+      "parent": 134,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 152,
+      "weightedVertices": 0
+    },
+    {
+      "index": 144,
+      "name": "披风_7_0",
+      "name_en": "Skirt_7_0",
+      "position": [
+        -2.982492446899414,
+        7.655022621154785,
+        2.401430606842041
+      ],
+      "parent": 135,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 153,
+      "weightedVertices": 0
+    },
+    {
+      "index": 145,
+      "name": "披风_7_1",
+      "name_en": "Skirt_7_1",
+      "position": [
+        -2.5457170009613037,
+        7.655022621154785,
+        2.401430606842041
+      ],
+      "parent": 136,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 154,
+      "weightedVertices": 246
+    },
+    {
+      "index": 146,
+      "name": "披风_7_2",
+      "name_en": "Skirt_7_2",
+      "position": [
+        -1.491246223449707,
+        7.655022621154785,
+        2.401430606842041
+      ],
+      "parent": 137,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 155,
+      "weightedVertices": 20
+    },
+    {
+      "index": 147,
+      "name": "披风_7_3",
+      "name_en": "Skirt_7_3",
+      "position": [
+        -0.46895039081573486,
+        7.655022621154785,
+        2.401430606842041
+      ],
+      "parent": 138,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 156,
+      "weightedVertices": 20
+    },
+    {
+      "index": 148,
+      "name": "披风_7_4",
+      "name_en": "Skirt_7_4",
+      "position": [
+        2.32043930511322e-13,
+        7.655022621154785,
+        2.401430606842041
+      ],
+      "parent": 139,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 157,
+      "weightedVertices": 0
+    },
+    {
+      "index": 149,
+      "name": "披风_7_5",
+      "name_en": "Skirt_7_5",
+      "position": [
+        0.46895039081573486,
+        7.655022621154785,
+        2.401430606842041
+      ],
+      "parent": 140,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 158,
+      "weightedVertices": 20
+    },
+    {
+      "index": 150,
+      "name": "披风_7_6",
+      "name_en": "Skirt_7_6",
+      "position": [
+        1.491246223449707,
+        7.655022621154785,
+        2.401430606842041
+      ],
+      "parent": 141,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 159,
+      "weightedVertices": 20
+    },
+    {
+      "index": 151,
+      "name": "披风_7_7",
+      "name_en": "Skirt_7_7",
+      "position": [
+        2.5457170009613037,
+        7.655022621154785,
+        2.401430606842041
+      ],
+      "parent": 142,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 160,
+      "weightedVertices": 246
+    },
+    {
+      "index": 152,
+      "name": "披风_7_8",
+      "name_en": "Skirt_7_8",
+      "position": [
+        2.982492446899414,
+        7.655022621154785,
+        2.401430606842041
+      ],
+      "parent": 143,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 161,
+      "weightedVertices": 0
+    },
+    {
+      "index": 153,
+      "name": "披风_8_0",
+      "name_en": "Skirt_8_0",
+      "position": [
+        -2.9973409175872803,
+        6.7372941970825195,
+        2.5839743614196777
+      ],
+      "parent": 144,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 162,
+      "weightedVertices": 0
+    },
+    {
+      "index": 154,
+      "name": "披风_8_1",
+      "name_en": "Skirt_8_1",
+      "position": [
+        -2.5583906173706055,
+        6.7372941970825195,
+        2.5839743614196777
+      ],
+      "parent": 145,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 163,
+      "weightedVertices": 0
+    },
+    {
+      "index": 155,
+      "name": "披风_8_2",
+      "name_en": "Skirt_8_2",
+      "position": [
+        -1.4986704587936401,
+        6.7372941970825195,
+        2.5839743614196777
+      ],
+      "parent": 146,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 164,
+      "weightedVertices": 0
+    },
+    {
+      "index": 156,
+      "name": "披风_8_3",
+      "name_en": "Skirt_8_3",
+      "position": [
+        -0.5502303838729858,
+        6.7372941970825195,
+        2.5839743614196777
+      ],
+      "parent": 147,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 165,
+      "weightedVertices": 0
+    },
+    {
+      "index": 157,
+      "name": "披风_8_4",
+      "name_en": "Skirt_8_4",
+      "position": [
+        2.32043930511322e-13,
+        6.7372941970825195,
+        2.5839743614196777
+      ],
+      "parent": 148,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 166,
+      "weightedVertices": 0
+    },
+    {
+      "index": 158,
+      "name": "披风_8_5",
+      "name_en": "Skirt_8_5",
+      "position": [
+        0.5502303838729858,
+        6.7372941970825195,
+        2.5839743614196777
+      ],
+      "parent": 149,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 167,
+      "weightedVertices": 0
+    },
+    {
+      "index": 159,
+      "name": "披风_8_6",
+      "name_en": "Skirt_8_6",
+      "position": [
+        1.4986704587936401,
+        6.7372941970825195,
+        2.5839743614196777
+      ],
+      "parent": 150,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 168,
+      "weightedVertices": 0
+    },
+    {
+      "index": 160,
+      "name": "披风_8_7",
+      "name_en": "Skirt_8_7",
+      "position": [
+        2.5583906173706055,
+        6.7372941970825195,
+        2.5839743614196777
+      ],
+      "parent": 151,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 169,
+      "weightedVertices": 0
+    },
+    {
+      "index": 161,
+      "name": "披风_8_8",
+      "name_en": "Skirt_8_8",
+      "position": [
+        2.9973409175872803,
+        6.7372941970825195,
+        2.5839743614196777
+      ],
+      "parent": 152,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 170,
+      "weightedVertices": 0
+    },
+    {
+      "index": 162,
+      "name": "披风_9_0",
+      "name_en": "Skirt_9_0",
+      "position": [
+        -2.9709131717681885,
+        5.8195672035217285,
+        2.7665176391601562
+      ],
+      "parent": 153,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 163,
+      "name": "披风_9_1",
+      "name_en": "Skirt_9_1",
+      "position": [
+        -2.5358333587646484,
+        5.8195672035217285,
+        2.7665176391601562
+      ],
+      "parent": 154,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 164,
+      "name": "披风_9_2",
+      "name_en": "Skirt_9_2",
+      "position": [
+        -1.4854565858840942,
+        5.8195672035217285,
+        2.7665176391601562
+      ],
+      "parent": 155,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 165,
+      "name": "披风_9_3",
+      "name_en": "Skirt_9_3",
+      "position": [
+        -0.4350802004337311,
+        5.8195672035217285,
+        2.7665176391601562
+      ],
+      "parent": 156,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 166,
+      "name": "披风_9_4",
+      "name_en": "Skirt_9_4",
+      "position": [
+        2.32043930511322e-13,
+        5.8195672035217285,
+        2.7665176391601562
+      ],
+      "parent": 157,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 167,
+      "name": "披风_9_5",
+      "name_en": "Skirt_9_5",
+      "position": [
+        0.4350802004337311,
+        5.8195672035217285,
+        2.7665176391601562
+      ],
+      "parent": 158,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 168,
+      "name": "披风_9_6",
+      "name_en": "Skirt_9_6",
+      "position": [
+        1.4854565858840942,
+        5.8195672035217285,
+        2.7665176391601562
+      ],
+      "parent": 159,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 169,
+      "name": "披风_9_7",
+      "name_en": "Skirt_9_7",
+      "position": [
+        2.5358333587646484,
+        5.8195672035217285,
+        2.7665176391601562
+      ],
+      "parent": 160,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 170,
+      "name": "披风_9_8",
+      "name_en": "Skirt_9_8",
+      "position": [
+        2.9709131717681885,
+        5.8195672035217285,
+        2.7665176391601562
+      ],
+      "parent": 161,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 171,
+      "name": "辫_0_1",
+      "name_en": "Skirt_0_1",
+      "position": [
+        -4.410097062645946e-06,
+        17.42676544189453,
+        0.7114627361297607
+      ],
+      "parent": 11,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 172,
+      "weightedVertices": 246
+    },
+    {
+      "index": 172,
+      "name": "辫_1_1",
+      "name_en": "Skirt_1_1",
+      "position": [
+        -4.410097062645946e-06,
+        16.555553436279297,
+        1.0014444589614868
+      ],
+      "parent": 171,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 173,
+      "weightedVertices": 186
+    },
+    {
+      "index": 173,
+      "name": "辫_2_1",
+      "name_en": "Skirt_2_1",
+      "position": [
+        -4.410097062645946e-06,
+        15.68433666229248,
+        1.2776134014129639
+      ],
+      "parent": 172,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 174,
+      "weightedVertices": 210
+    },
+    {
+      "index": 174,
+      "name": "辫_3_1",
+      "name_en": "Skirt_3_1",
+      "position": [
+        -4.410097062645946e-06,
+        14.81312084197998,
+        1.5565448999404907
+      ],
+      "parent": 173,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 175,
+      "weightedVertices": 211
+    },
+    {
+      "index": 175,
+      "name": "辫_4_1",
+      "name_en": "Skirt_4_1",
+      "position": [
+        -4.410097062645946e-06,
+        13.941904067993164,
+        1.8437639474868774
+      ],
+      "parent": 174,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 176,
+      "weightedVertices": 202
+    },
+    {
+      "index": 176,
+      "name": "辫_5_1",
+      "name_en": "Skirt_5_1",
+      "position": [
+        -4.410097062645946e-06,
+        13.070687294006348,
+        2.1337459087371826
+      ],
+      "parent": 175,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 177,
+      "weightedVertices": 156
+    },
+    {
+      "index": 177,
+      "name": "辫_6_1",
+      "name_en": "Skirt_6_1",
+      "position": [
+        -4.410097062645946e-06,
+        12.199470520019531,
+        2.4099154472351074
+      ],
+      "parent": 176,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 178,
+      "weightedVertices": 96
+    },
+    {
+      "index": 178,
+      "name": "辫_7_1",
+      "name_en": "Skirt_7_1",
+      "position": [
+        -4.410097062645946e-06,
+        11.328252792358398,
+        2.6446475982666016
+      ],
+      "parent": 177,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 179,
+      "weightedVertices": 43
+    },
+    {
+      "index": 179,
+      "name": "辫_8_1",
+      "name_en": "Skirt_8_1",
+      "position": [
+        -4.410097062645946e-06,
+        10.457035064697266,
+        2.799267292022705
+      ],
+      "parent": 178,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 180,
+      "name": "围巾_0_1",
+      "name_en": "Skirt_0_1",
+      "position": [
+        1.3339651823043823,
+        15.270453453063965,
+        -1.2949800491333008
+      ],
+      "parent": 33,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 181,
+      "weightedVertices": 20
+    },
+    {
+      "index": 181,
+      "name": "围巾_1_1",
+      "name_en": "Skirt_1_1",
+      "position": [
+        1.5234476327896118,
+        14.290915489196777,
+        -1.4902679920196533
+      ],
+      "parent": 180,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 182,
+      "weightedVertices": 30
+    },
+    {
+      "index": 182,
+      "name": "围巾_2_1",
+      "name_en": "Skirt_2_1",
+      "position": [
+        1.7129297256469727,
+        13.311376571655273,
+        -1.6370478868484497
+      ],
+      "parent": 181,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 183,
+      "weightedVertices": 30
+    },
+    {
+      "index": 183,
+      "name": "围巾_3_1",
+      "name_en": "Skirt_3_1",
+      "position": [
+        1.902411699295044,
+        12.331838607788086,
+        -1.7374720573425293
+      ],
+      "parent": 182,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 184,
+      "weightedVertices": 216
+    },
+    {
+      "index": 184,
+      "name": "围巾_4_1",
+      "name_en": "Skirt_4_1",
+      "position": [
+        2.0918939113616943,
+        11.352300643920898,
+        -1.7975852489471436
+      ],
+      "parent": 183,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 185,
+      "weightedVertices": 288
+    },
+    {
+      "index": 185,
+      "name": "围巾_5_1",
+      "name_en": "Skirt_5_1",
+      "position": [
+        2.2813761234283447,
+        10.372760772705078,
+        -1.8273239135742188
+      ],
+      "parent": 184,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 186,
+      "weightedVertices": 78
+    },
+    {
+      "index": 186,
+      "name": "围巾_6_1",
+      "name_en": "Skirt_6_1",
+      "position": [
+        1.8798600435256958,
+        9.7224760055542,
+        -1.9511786699295044
+      ],
+      "parent": 185,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 187,
+      "weightedVertices": 168
+    },
+    {
+      "index": 187,
+      "name": "围巾_7_1",
+      "name_en": "Skirt_7_1",
+      "position": [
+        2.0693585872650146,
+        8.413683891296387,
+        -1.9655457735061646
+      ],
+      "parent": 186,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 188,
+      "name": "右親指０",
+      "name_en": "",
+      "position": [
+        -5.670654773712158,
+        12.608688354492188,
+        -0.4216281771659851
+      ],
+      "parent": 31,
+      "layer": 0,
+      "flags": 31,
+      "tailBone": 193,
+      "weightedVertices": 47
+    },
+    {
+      "index": 189,
+      "name": "右人指１",
+      "name_en": "",
+      "position": [
+        -6.297173500061035,
+        12.221656799316406,
+        -0.48839202523231506
+      ],
+      "parent": 31,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 195,
+      "weightedVertices": 63
+    },
+    {
+      "index": 190,
+      "name": "右中指１",
+      "name_en": "",
+      "position": [
+        -6.325286865234375,
+        12.234153747558594,
+        -0.24083192646503448
+      ],
+      "parent": 31,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 197,
+      "weightedVertices": 68
+    },
+    {
+      "index": 191,
+      "name": "右薬指１",
+      "name_en": "",
+      "position": [
+        -6.262539863586426,
+        12.234349250793457,
+        0.010708780027925968
+      ],
+      "parent": 31,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 199,
+      "weightedVertices": 62
+    },
+    {
+      "index": 192,
+      "name": "右小指１",
+      "name_en": "A01+UpperArmTwist R ",
+      "position": [
+        -6.102673530578613,
+        12.298796653747559,
+        0.1772862672805786
+      ],
+      "parent": 31,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 201,
+      "weightedVertices": 75
+    },
+    {
+      "index": 193,
+      "name": "右親指１",
+      "name_en": "A02+AmiceB R B02",
+      "position": [
+        -5.741387844085693,
+        12.419119834899902,
+        -0.6792660355567932
+      ],
+      "parent": 188,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 194,
+      "weightedVertices": 58
+    },
+    {
+      "index": 194,
+      "name": "右親指２",
+      "name_en": "",
+      "position": [
+        -5.945696830749512,
+        12.10177993774414,
+        -0.8438780307769775
+      ],
+      "parent": 193,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": -1,
+      "weightedVertices": 67
+    },
+    {
+      "index": 195,
+      "name": "右人指２",
+      "name_en": "",
+      "position": [
+        -6.565799236297607,
+        12.012877464294434,
+        -0.5164213180541992
+      ],
+      "parent": 189,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 196,
+      "weightedVertices": 62
+    },
+    {
+      "index": 196,
+      "name": "右人指３",
+      "name_en": "",
+      "position": [
+        -6.7759108543396,
+        11.855565071105957,
+        -0.5395210385322571
+      ],
+      "parent": 195,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": -1,
+      "weightedVertices": 65
+    },
+    {
+      "index": 197,
+      "name": "右中指２",
+      "name_en": "",
+      "position": [
+        -6.638268947601318,
+        12.02645492553711,
+        -0.22528426349163055
+      ],
+      "parent": 190,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 198,
+      "weightedVertices": 64
+    },
+    {
+      "index": 198,
+      "name": "右中指３",
+      "name_en": "",
+      "position": [
+        -6.898305892944336,
+        11.850635528564453,
+        -0.21215403079986572
+      ],
+      "parent": 197,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": -1,
+      "weightedVertices": 65
+    },
+    {
+      "index": 199,
+      "name": "右薬指２",
+      "name_en": "",
+      "position": [
+        -6.570828914642334,
+        12.022370338439941,
+        0.057262927293777466
+      ],
+      "parent": 191,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 200,
+      "weightedVertices": 70
+    },
+    {
+      "index": 200,
+      "name": "右薬指３",
+      "name_en": "",
+      "position": [
+        -6.830198764801025,
+        11.85449504852295,
+        0.09875863790512085
+      ],
+      "parent": 199,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": -1,
+      "weightedVertices": 67
+    },
+    {
+      "index": 201,
+      "name": "右小指２",
+      "name_en": "",
+      "position": [
+        -6.340965270996094,
+        12.064523696899414,
+        0.2969154119491577
+      ],
+      "parent": 192,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": 202,
+      "weightedVertices": 60
+    },
+    {
+      "index": 202,
+      "name": "右小指３",
+      "name_en": "",
+      "position": [
+        -6.4808502197265625,
+        11.915738105773926,
+        0.3642562925815582
+      ],
+      "parent": 201,
+      "layer": 0,
+      "flags": 27,
+      "tailBone": -1,
+      "weightedVertices": 64
+    },
+    {
+      "index": 203,
+      "name": "左胸先",
+      "name_en": "左胸先",
+      "position": [
+        0.5949131846427917,
+        13.777120590209961,
+        -1.4480338096618652
+      ],
+      "parent": 72,
+      "layer": 0,
+      "flags": 19,
+      "tailBone": -1,
+      "weightedVertices": 0
+    },
+    {
+      "index": 204,
+      "name": "左胸下先",
+      "name_en": "左胸下先",
+      "position": [
+        0.5970838069915771,
+        13.822897911071777,
+        -1.44278883934021
+      ],
+      "parent": 203,
+      "layer": 0,
+      "flags": 19,
+      "tailBone": -1,
+      "weightedVertices": 0
+    },
+    {
+      "index": 205,
+      "name": "右胸先",
+      "name_en": "右胸先",
+      "position": [
+        -0.5949134826660156,
+        13.777120590209961,
+        -1.4480338096618652
+      ],
+      "parent": 204,
+      "layer": 0,
+      "flags": 19,
+      "tailBone": -1,
+      "weightedVertices": 0
+    },
+    {
+      "index": 206,
+      "name": "右胸下先",
+      "name_en": "右胸下先",
+      "position": [
+        -0.5970839858055115,
+        13.822897911071777,
+        -1.44278883934021
+      ],
+      "parent": 205,
+      "layer": 0,
+      "flags": 19,
+      "tailBone": -1,
+      "weightedVertices": 0
+    },
+    {
+      "index": 207,
+      "name": "スカート_10_0",
+      "name_en": "Skirt_10_0",
+      "position": [
+        5.100118372070028e-08,
+        6.965282440185547,
+        -3.188002109527588
+      ],
+      "parent": 206,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 208,
+      "name": "スカート_10_1",
+      "name_en": "Skirt_10_1",
+      "position": [
+        1.6335744857788086,
+        6.996273517608643,
+        -2.83497953414917
+      ],
+      "parent": 206,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 209,
+      "name": "スカート_10_2",
+      "name_en": "Skirt_10_2",
+      "position": [
+        2.8294341564178467,
+        7.057473659515381,
+        -1.8705759048461914
+      ],
+      "parent": 206,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 210,
+      "name": "スカート_10_3",
+      "name_en": "Skirt_10_3",
+      "position": [
+        3.267148971557617,
+        7.085546970367432,
+        -0.5533441305160522
+      ],
+      "parent": 206,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 211,
+      "name": "スカート_10_4",
+      "name_en": "Skirt_10_4",
+      "position": [
+        2.8294339179992676,
+        7.0491838455200195,
+        0.8679836392402649
+      ],
+      "parent": 206,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 212,
+      "name": "スカート_10_5",
+      "name_en": "Skirt_10_5",
+      "position": [
+        1.6335746049880981,
+        6.98191499710083,
+        1.9083442687988281
+      ],
+      "parent": 206,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 213,
+      "name": "スカート_10_6",
+      "name_en": "Skirt_10_6",
+      "position": [
+        -1.8438888105265505e-07,
+        6.948701858520508,
+        2.289116859436035
+      ],
+      "parent": 206,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 214,
+      "name": "スカート_10_7",
+      "name_en": "Skirt_10_7",
+      "position": [
+        -1.63357412815094,
+        6.98191499710083,
+        1.9083445072174072
+      ],
+      "parent": 206,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 215,
+      "name": "スカート_10_8",
+      "name_en": "Skirt_10_8",
+      "position": [
+        -2.8294336795806885,
+        7.049184322357178,
+        0.8679827451705933
+      ],
+      "parent": 206,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 216,
+      "name": "スカート_10_9",
+      "name_en": "Skirt_10_9",
+      "position": [
+        -3.267148494720459,
+        7.085546970367432,
+        -0.5533445477485657
+      ],
+      "parent": 206,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 217,
+      "name": "スカート_10_10",
+      "name_en": "Skirt_10_10",
+      "position": [
+        -2.8294336795806885,
+        7.057473659515381,
+        -1.870576024055481
+      ],
+      "parent": 206,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 218,
+      "name": "スカート_10_11",
+      "name_en": "Skirt_10_11",
+      "position": [
+        -1.6335737705230713,
+        6.996273517608643,
+        -2.83497953414917
+      ],
+      "parent": 206,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 219,
+      "name": "左发_6_1",
+      "name_en": "Skirt_6_1",
+      "position": [
+        1.9246742725372314,
+        14.837836265563965,
+        0.5822134017944336
+      ],
+      "parent": 218,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 220,
+      "name": "右发_6_1",
+      "name_en": "Skirt_6_1",
+      "position": [
+        -1.9246742725372314,
+        14.837836265563965,
+        0.5822134017944336
+      ],
+      "parent": 219,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 221,
+      "name": "左带_6_1",
+      "name_en": "Skirt_6_1",
+      "position": [
+        1.4034712314605713,
+        10.27818489074707,
+        1.8704229593276978
+      ],
+      "parent": 220,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 222,
+      "name": "左侧发_5_1",
+      "name_en": "Skirt_5_1",
+      "position": [
+        0.9823857545852661,
+        15.91315746307373,
+        -0.6525848507881165
+      ],
+      "parent": 221,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 223,
+      "name": "右带_6_1",
+      "name_en": "Skirt_6_1",
+      "position": [
+        -1.4034712314605713,
+        10.27818489074707,
+        1.8704229593276978
+      ],
+      "parent": 222,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        -0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    },
+    {
+      "index": 224,
+      "name": "右侧发_5_1",
+      "name_en": "Skirt_5_1",
+      "position": [
+        -0.9823857545852661,
+        15.91315746307373,
+        -0.6525848507881165
+      ],
+      "parent": 223,
+      "layer": 0,
+      "flags": 18,
+      "tailOffset": [
+        -0.0,
+        0.0,
+        0.0
+      ],
+      "weightedVertices": 0
+    }
+  ],
+  "bounds": [
+    [
+      -7.2026472091674805,
+      7.2026472091674805
+    ],
+    [
+      0.05166996270418167,
+      20.967397689819336
+    ],
+    [
+      -2.2750043869018555,
+      2.855246067047119
+    ]
+  ],
+  "parsedOffset": 771788,
+  "totalBytes": 1197103
+}

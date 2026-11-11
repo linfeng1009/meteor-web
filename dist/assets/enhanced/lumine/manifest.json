@@ -1,0 +1,115 @@
+{
+  "schema": 1,
+  "characterId": 0,
+  "appearance": "lumine",
+  "label": "荧 · 模型适配",
+  "mesh": "mesh.json",
+  "complete": true,
+  "completeness": {
+    "bodyGeometry": true,
+    "headHairGeometry": true,
+    "eyes": true,
+    "faceGeometry": true,
+    "sourcePmxSkeleton": true,
+    "originalSourceGameSkeleton": false
+  },
+  "stats": {
+    "sourceVertices": 17757,
+    "sourceTriangles": 22868,
+    "vertices": 17757,
+    "triangles": 20795,
+    "sourceBones": 272,
+    "bones": 30,
+    "dummies": 6,
+    "secondaryBones": 22,
+    "materials": 19,
+    "textures": 5,
+    "omittedTriangles": 2073
+  },
+  "retarget": {
+    "method": "Original mesh proportions preserved by a single uniform transform; independent source-length display skeleton follows original AMB/POS rotations; display weapon sockets follow the new hands.",
+    "provisional": true,
+    "sourceSkeletonMissing": false,
+    "hairPhysics": true,
+    "hairPhysicsProfile": "web-spring-bone-v2-restrained",
+    "originalMmdPhysics": false,
+    "clothPhysics": false,
+    "fingerArticulation": "Thumb and index chains of the native rig drive the source finger groups; other fingers fold into those two chains."
+  },
+  "provenance": {
+    "sourceArchive": "assets/source/lumine",
+    "sourceModel": "PlayerGirl",
+    "modelAuthor": "miHoYo",
+    "rigAuthor": "观海（BiliBili：观海子）",
+    "credit": "模型提供：miHoYo；模型改造：观海（BiliBili：观海子）。",
+    "license": "Original distribution readme retained verbatim. It forbids redistribution, part extraction and commercial use, and states MMD use; this is a user-requested local adaptation, not a rights grant or published distribution.",
+    "limits": [
+      "Original source proportions preserved; action retarget remains approximate.",
+      "Source PMX has no verified real-world centimetre calibration; no physical height is claimed.",
+      "Source hair skeleton and weights retained but MMD rigid bodies are not executed.",
+      "Skirt panels (Q_*), sashes (带) and hair ornaments are rigid on their parent body bones; no cloth solver.",
+      "No expression morph or independent per-finger solver.",
+      "Original toon ramp and sphere maps are not reproduced; base colour, alpha cutout and roughness are used."
+    ]
+  },
+  "omittedRenderPasses": [
+    {
+      "material": "髪+",
+      "sourceMaterial": 19,
+      "triangles": 2073,
+      "reason": "Sphere/SP overlay pass over the identical 髪 hair surface."
+    }
+  ],
+  "sourceFiles": [
+    {
+      "file": "荧.pmx",
+      "bytes": 1264002,
+      "sha256": "b92cf1066bbc8762c899c48e993f9d91321fdc02150f13c4a8c840e55b6371eb"
+    },
+    {
+      "file": "Texture/颜.png",
+      "runtime": "textures/颜.png",
+      "sha256": "3ee58773d72cabd440daefbd1c0c74d7cf6963b3425830d061e40890172aac15",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "Texture/髪.png",
+      "runtime": "textures/髪.png",
+      "sha256": "01b43bc5145c89a28c6f55f0874d4a8c28229edcab952a06be193fc8ef629a8a",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "Texture/衣.png",
+      "runtime": "textures/衣.png",
+      "sha256": "472fa1ebe226b811c8d73941cbe973490043f5a0b182477b032e1a4500e9cab8",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "Texture/肌.png",
+      "runtime": "textures/肌.png",
+      "sha256": "f3c4fb106993640a9235486bbc13025560c72cca540d49283626e347fa74c4e7",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "Texture/元素1.png",
+      "runtime": "textures/元素1.png",
+      "sha256": "7a389c8246520108f883d22152a3df7ef1079491b0197fa32b15556af0fe0f54",
+      "size": [
+        2048,
+        2048
+      ]
+    }
+  ]
+}

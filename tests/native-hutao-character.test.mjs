@@ -17,7 +17,7 @@ const withFetch = async callback => { const before = globalThis.fetch; globalThi
 const matrices = character => [...character.bones, ...character.dummies].map(node => node.matrixWorld.toArray());
 
 test('appearance registry separates native, Blender HD and HuTao bundles without adding a fake native character', () => {
-  assert.deepEqual(Object.keys(NATIVE_APPEARANCES), ['original', 'hd', 'hutao', 'raiden', 'emilia', 'doubao', 'springfield', 'ganyu', 'yaemiko', 'shogun']);
+  assert.deepEqual(Object.keys(NATIVE_APPEARANCES), ['original', 'hd', 'hutao', 'raiden', 'emilia', 'doubao', 'springfield', 'ganyu', 'yaemiko', 'shogun', 'lumine', 'aether', 'furina', 'zhaojun']);
   assert.equal(NATIVE_APPEARANCES.hd.characterId, 0); assert.equal(NATIVE_APPEARANCES.hutao.characterId, 0);
   assert.notEqual(NATIVE_APPEARANCES.hd.assetPath, NATIVE_APPEARANCES.hutao.assetPath);
   assert.equal(Object.isFrozen(NATIVE_APPEARANCES), true); assert.equal(Object.isFrozen(NATIVE_APPEARANCES.hutao), true);

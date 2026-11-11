@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "characterId": 0,
+  "appearance": "aether",
+  "label": "空 · 模型适配",
+  "mesh": "mesh.json",
+  "complete": true,
+  "completeness": {
+    "bodyGeometry": true,
+    "headHairGeometry": true,
+    "eyes": true,
+    "faceGeometry": true,
+    "sourcePmxSkeleton": true,
+    "originalSourceGameSkeleton": false
+  },
+  "stats": {
+    "sourceVertices": 15563,
+    "sourceTriangles": 17890,
+    "vertices": 15563,
+    "triangles": 17890,
+    "sourceBones": 225,
+    "bones": 30,
+    "dummies": 6,
+    "secondaryBones": 9,
+    "materials": 21,
+    "textures": 4,
+    "omittedTriangles": 0
+  },
+  "retarget": {
+    "method": "Original mesh proportions preserved by a single uniform transform; independent source-length display skeleton follows original AMB/POS rotations; display weapon sockets follow the new hands.",
+    "provisional": true,
+    "sourceSkeletonMissing": false,
+    "hairPhysics": true,
+    "hairPhysicsProfile": "web-spring-bone-v2-restrained",
+    "originalMmdPhysics": false,
+    "clothPhysics": false,
+    "fingerArticulation": "Thumb and index chains of the native rig drive the source finger groups; other fingers fold into those two chains."
+  },
+  "provenance": {
+    "sourceArchive": "assets/source/aether",
+    "sourceModel": "Kong",
+    "modelAuthor": "miHoYo",
+    "rigAuthor": "观海（BiliBili：观海子）",
+    "credit": "模型提供：miHoYo；模型改造：观海（BiliBili：观海子）。",
+    "license": "Original distribution readme retained verbatim. It forbids redistribution, part extraction and commercial use, and states MMD use; this is a user-requested local adaptation, not a rights grant or published distribution.",
+    "limits": [
+      "Original source proportions preserved; action retarget remains approximate.",
+      "Source PMX has no verified real-world centimetre calibration; no physical height is claimed.",
+      "Source hair skeleton and weights retained but MMD rigid bodies are not executed.",
+      "Cape (披风, 90 bones), scarf (围巾) and skirt cloth are rigid on their parent body bones; no cloth solver.",
+      "No expression morph or independent per-finger solver.",
+      "Original toon ramp and sphere maps are not reproduced; base colour, alpha cutout and roughness are used."
+    ]
+  },
+  "omittedRenderPasses": [],
+  "sourceFiles": [
+    {
+      "file": "空.pmx",
+      "bytes": 1197103,
+      "sha256": "4a78a8e791497c03026c1b7e12eb7eb567464c21ee4a329fea617304ccf6912d"
+    },
+    {
+      "file": "tex/面.png",
+      "runtime": "textures/面.png",
+      "sha256": "9795beae55b0d9213437b9682e1898c9c29e5f6fc473b5ba2e646f8bc827dd07",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "tex/发.png",
+      "runtime": "textures/发.png",
+      "sha256": "b9550cbecdc6865898bd960b19e791a5b050555aca9485c94dbd41ad6b4000e5",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "tex/服.png",
+      "runtime": "textures/服.png",
+      "sha256": "73e75f272b91845ba9292fc26c04e445ccec3c7c36483de156dc31fc2bf4f151",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "tex/表情.png",
+      "runtime": "textures/表情.png",
+      "sha256": "99029281df36ca2db9f880f56c000c345f4f4bad770b85951c90cb7b60d002e6",
+      "size": [
+        4096,
+        4096
+      ]
+    }
+  ]
+}

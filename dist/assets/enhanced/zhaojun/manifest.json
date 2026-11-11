@@ -1,0 +1,171 @@
+{
+  "schema": 1,
+  "characterId": 0,
+  "appearance": "zhaojun",
+  "label": "王昭君 · 长夜焕生",
+  "mesh": "mesh.json",
+  "complete": true,
+  "completeness": {
+    "bodyGeometry": true,
+    "headHairGeometry": true,
+    "eyes": true,
+    "faceGeometry": true,
+    "sourcePmxSkeleton": true,
+    "originalSourceGameSkeleton": false
+  },
+  "stats": {
+    "sourceVertices": 41289,
+    "sourceTriangles": 58373,
+    "vertices": 41289,
+    "triangles": 58373,
+    "sourceBones": 353,
+    "bones": 30,
+    "dummies": 6,
+    "secondaryBones": 44,
+    "materials": 21,
+    "textures": 12,
+    "omittedTriangles": 0
+  },
+  "retarget": {
+    "method": "Original mesh proportions preserved by a single uniform transform; independent source-length display skeleton follows original AMB/POS rotations; display weapon sockets follow the new hands.",
+    "provisional": true,
+    "sourceSkeletonMissing": false,
+    "hairPhysics": true,
+    "hairPhysicsProfile": "web-spring-bone-v2-restrained",
+    "originalMmdPhysics": false,
+    "clothPhysics": false,
+    "fingerArticulation": "Thumb and index chains of the native rig drive the source finger groups; other fingers fold into those two chains."
+  },
+  "provenance": {
+    "sourceArchive": "assets/source/zhaojun",
+    "sourceModel": "【王者荣耀】王昭君-长夜焕生",
+    "modelAuthor": "腾讯《王者荣耀》",
+    "rigAuthor": "未提供署名文件",
+    "credit": "角色与美术素材：腾讯《王者荣耀》王昭君「长夜焕生」。本包未附署名或配布说明文件。",
+    "license": "No readme, credit or licence file was shipped with this pack, so nothing can be quoted or retained. Treated as a private local conversion of a commercial game asset; not redistributed or published.",
+    "limits": [
+      "Original source proportions preserved; action retarget remains approximate.",
+      "Source PMX has no verified real-world centimetre calibration; no physical height is claimed.",
+      "Source hair skeleton and weights retained but MMD rigid bodies are not executed.",
+      "Skirt layers (qunzi_*, QunBai_*), streamers and shell trim are rigid on their parent body bones; no cloth solver.",
+      "No expression morph or independent per-finger solver.",
+      "Original toon ramp and sphere maps are not reproduced; base colour, alpha cutout and roughness are used."
+    ]
+  },
+  "omittedRenderPasses": [],
+  "sourceFiles": [
+    {
+      "file": "长夜焕生.pmx",
+      "bytes": 3756230,
+      "sha256": "4aeaea08d32a8fc8780452c05e3ebc6936097544934daec2f227e8d54c8bef97"
+    },
+    {
+      "file": "textures/15213_WangZhaoJun_Hair_D_Show.png",
+      "runtime": "textures/15213_WangZhaoJun_Hair_D_Show.png",
+      "sha256": "45395279e9c7ac59922f823679e1cf0c102ca72b1768506fac3ff8c6ee44591a",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "file": "textures/15213_WangZhaoJun_Redstreamers1_D_Show.png",
+      "runtime": "textures/15213_WangZhaoJun_Redstreamers1_D_Show.png",
+      "sha256": "46d74759ce7a498b8a8f95d449a6690a3908444661a46c80f2d7a9858c599171",
+      "size": [
+        512,
+        512
+      ]
+    },
+    {
+      "file": "textures/15213_WangZhaoJun_D_Show.png",
+      "runtime": "textures/15213_WangZhaoJun_D_Show.png",
+      "sha256": "610122b793741033ea321a79a3a1a6d5b220707b0cf0bb4c9f5c8ff962a821ba",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "textures/15213_WangZhaoJun_QunZi2_D_Show.png",
+      "runtime": "textures/15213_WangZhaoJun_QunZi2_D_Show.png",
+      "sha256": "4843a562998da2f3aa90aa826119af9a7cdfb8ef465fb8ead6a866b9b5ca94af",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "file": "textures/15213_WangZhaoJun_BlueHair_D_Show.png",
+      "runtime": "textures/15213_WangZhaoJun_BlueHair_D_Show.png",
+      "sha256": "97adad843fa36efbb7fe5bc78ff8957fc94ab303f917b38249ed17ca02af6ed9",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "file": "textures/Line_WangZhaoJun_CPmj_PF_lxq_038.png",
+      "runtime": "textures/Line_WangZhaoJun_CPmj_PF_lxq_038.png",
+      "sha256": "5abef8d388d93bfa30732af046d21b694085efc79dd492ca7f21523c4c9ab22d",
+      "size": [
+        128,
+        128
+      ]
+    },
+    {
+      "file": "textures/15213_WangZhaoJun_QunZiMask_D_Show.png",
+      "runtime": "textures/15213_WangZhaoJun_QunZiMask_D_Show.png",
+      "sha256": "f7eb3e28de7f6183ef3cf0074bfb9025b8308dc7f054493d0e2640c211422d2a",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "file": "textures/Leg.png",
+      "runtime": "textures/Leg.png",
+      "sha256": "2b3fc9dd128056c104f70e058e4bf666151da7e3c9374b163486814ba0e1c80a",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "file": "textures/15213_WangZhaoJun_QunBai_D_Show.png",
+      "runtime": "textures/15213_WangZhaoJun_QunBai_D_Show.png",
+      "sha256": "5795172a352a5f793654ab595bd9fd4b405c243e2ea94cd0006d3e8caf2270dc",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "file": "textures/15213_WangZhaoJunXiuZiShuiLang_D_Show.png",
+      "runtime": "textures/15213_WangZhaoJunXiuZiShuiLang_D_Show.png",
+      "sha256": "1f73001697dfb5057a4e3908edc579143dacd2eb5781435e1ff086002586aa37",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "file": "textures/15213_WangZhaoJun_Eyes_D_Show.png",
+      "runtime": "textures/15213_WangZhaoJun_Eyes_D_Show.png",
+      "sha256": "c658dbe576276514e8e04786495b256a267cc12fa13ac5958e5c2120708e4000",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "file": "textures/15213_WangZhaoJun_Face_D_Show.png",
+      "runtime": "textures/15213_WangZhaoJun_Face_D_Show.png",
+      "sha256": "c9c07de804b74f1a96970d27779dda78852e9f0cde78e885bc14d254091c8255",
+      "size": [
+        1024,
+        1024
+      ]
+    }
+  ]
+}

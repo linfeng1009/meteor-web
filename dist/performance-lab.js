@@ -5,6 +5,20 @@ const canvas=document.querySelector('canvas'),result=document.querySelector('#re
 const buttons=[...document.querySelectorAll('#run,#manual')],lockButton=document.querySelector('#lock');
 let game;
 let pointerErrors=[];
+const sceneStatus=document.querySelector('#scene-status');
+let adaptiveUpdate;
+const ready=(async()=>{
+  buttons.forEach(button=>button.disabled=true);
+  game=new MeteorGame(canvas,{onEvent:event=>{
+    if(event.type==='pointer-error')pointerErrors.push(event.text);
+    if(event.type==='load')sceneStatus.textContent=event.text;
+  }});
+  await game.ready;game.setSwordStyle('original');game.setMuted(true);game.setQuality('high');
+  adaptiveUpdate=game.renderScale.update.bind(game.renderScale);
+  await game.menu('sifang');sceneStatus.hidden=true;
+  buttons.forEach(button=>button.disabled=false);
+})();
+ready.catch(error=>{sceneStatus.hidden=false;sceneStatus.textContent='场景载入失败，请刷新重试：'+error.message;result.textContent=error.stack;});
 
 async function trial(mode,settings){
   await game.start({map:settings.map,weapon:'sword',mode:'training'});
@@ -53,10 +67,9 @@ async function run(modes){
   const settings={map:document.querySelector('#map').value,appearance:document.querySelector('#appearance').value,adaptive:document.querySelector('#adaptive').checked};
   const reports=[];
   try{
-    result.textContent='载入中…';game?.dispose();pointerErrors=[];game=new MeteorGame(canvas,{onEvent:event=>{if(event.type==='pointer-error')pointerErrors.push(event.text);}});
-    await game.ready;game.setSwordStyle('original');game.setMuted(true);game.setQuality('high');
+    result.textContent='载入中…';await ready;pointerErrors=[];game.setQuality('high');
     await game.setCharacterAppearance(settings.appearance);
-    if(!settings.adaptive)game.renderScale.update=()=>game.renderScale.ratio;
+    game.renderScale.update=settings.adaptive?adaptiveUpdate:()=>game.renderScale.ratio;
     for(const mode of modes){
       result.textContent=JSON.stringify(reports,null,2)+`\n正在运行 ${mode}，预热3秒+采集${mode==='manual'?30:10}秒…`;
       reports.push(await trial(mode,settings));

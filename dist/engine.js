@@ -24,7 +24,7 @@ import { NativeItemSystem, useNativeScriptItem, useNativeAttackItem, useNativeSe
 import { QIANKUN_MODE_NAMES } from './native-weapon-menu.js';
 import { sweepActorCapsule, NativeProjectileSystem, NATIVE_DART_PROFILE, NativeMusketSystem, NATIVE_MUSKET_PROFILE, NativeWheelSystem, NATIVE_WHEEL_PROFILE } from './native-projectiles.js';
 import { NativeImpactFeedback } from './native-impact-feedback.js';
-import { NativeBloodFeedback } from './native-blood-feedback.js';
+import { NativeBloodFeedback, bloodStyleForHit } from './native-blood-feedback.js';
 import { loadNativeRageVfx } from './native-rage-vfx.js';
 import { loadNativeEffectManifest } from './native-effect-transforms.js';
 import { NativeEffectContacts } from './native-effect-contacts.js';
@@ -717,7 +717,7 @@ export class MeteorGame {
   _playCombatFeedback(event,local=false){
     const point=v3(...event.point),direction=v3(...event.direction);
     this.impactFeedback?.emit({point,direction,guarded:event.guarded,knockdown:event.knockdown,local});
-    this.bloodFeedback?.emit({point,direction,guarded:event.guarded,damage:event.blood?1:0});
+    this.bloodFeedback?.emit({point,direction,guarded:event.guarded,damage:event.blood?1:0,style:event.bloodStyle});
     if(event.sound)this._soundDefinition(event.sound);
   }
   _applyLootState(state){
@@ -1132,10 +1132,18 @@ export class MeteorGame {
     const feedback = this.impactFeedback?.emit({ point: contact, direction: target.root.position.clone().sub(attacker.root.position), guarded, knockdown, local: !!(attacker.hero || target.hero) });
     const direction=target.root.position.clone().sub(attacker.root.position);
     const prefix = { sword: 'W00', blade: 'W05', spear: 'W07', dagger: 'W01', dart: 'W03', musket: 'W02', wheel: 'W06', qiankun: 'W09', ninja: 'W11', dual: 'W08', hammer: 'W04', knuckle: 'W10' }[attacker.weapon];
-    this.bloodFeedback?.emit({point:contact,direction,guarded,damage:confirmedDamage});
+    let lift=0;
+    const reaction=this.combatData.poses?.get(reactionPose),sample=target.character?.sampleSceneMotion;
+    if(reaction?.valid&&sample){
+      const key=`${target.character.nativeCharacterId??0}:${reactionPose}`,cache=this.bloodLiftCache||=new Map();
+      if(!cache.has(key)){const origin=sample(reaction.source,reaction.start).z;let peak=0;for(let i=1;i<=8;i++){const z=sample(reaction.source,reaction.start+(reaction.end-reaction.start)*i/8).z-origin;if(Number.isFinite(z))peak=Math.max(peak,z);}cache.set(key,peak*.08);}
+      lift=cache.get(key)*Math.max(0,Number(attack.targetmove)||0);
+    }
+    const bloodStyle=bloodStyleForHit({damage,force:attack.targetmove,weapon:attacker.weapon,knockdown,lift,reactionPose});
+    this.bloodFeedback?.emit({point:contact,direction,guarded,damage:confirmedDamage,style:bloodStyle});
     this.combatFeedbackSerial=(this.combatFeedbackSerial||0)+1;
     const actors=[this.hero,...(this.enemies||[])];
-    (this.combatFeedbackEvents||=[]).push({id:this.combatFeedbackSerial,time:this.matchElapsed||0,point:contact.toArray(),direction:direction.normalize().toArray(),guarded,knockdown,blood:!guarded&&confirmedDamage>0,
+    (this.combatFeedbackEvents||=[]).push({id:this.combatFeedbackSerial,time:this.matchElapsed||0,point:contact.toArray(),direction:direction.normalize().toArray(),guarded,knockdown,blood:!guarded&&confirmedDamage>0,bloodStyle:!guarded&&confirmedDamage>0?bloodStyle:undefined,
       attackerId:actors.find(actor=>actor?.root===attacker.root)?.networkId,targetId:target.networkId,sound:prefix&&Number.isInteger(reactionPose)?`${prefix}${guarded?'GD':'BL'}${String(reactionPose).padStart(3,'0')}`:null});
     if(this.combatFeedbackEvents.length>32)this.combatFeedbackEvents.shift();
     if (attacker.hero && this.swordStyle === 'butterfly') this.butterflyVfx?.burst(contact, { guarded, knockdown, camera: this.camera });

@@ -98,3 +98,11 @@ test('aim pitch is bounded on input and snapshot without partially accepting inv
  const state=frame(a,b);state.players[0].musketAim=true;state.players[0].aimPitch=.4;call(a,'sync',{frame:state});
  for(const patch of [{musketAim:1},{aimPitch:NaN},{aimPitch:1.3}]){const invalid=structuredClone(state);invalid.sequence=2;Object.assign(invalid.players[0],patch);assert.throws(()=>call(a,'sync',{frame:invalid}),/无效/);assert.equal(call(b,'sync').frame.sequence,1);}
 });
+
+
+test('blood style relays only bounded host-selected kind and force level, and legacy events still work',()=>{
+ const {a,b,call}=playing(),event={id:1,time:1,point:[0,1,0],direction:[0,0,1],guarded:false,knockdown:true,blood:true,bloodStyle:{kind:'launch',level:2}};
+ const state={...frame(a,b),impacts:[event]};call(a,'sync',{frame:state});assert.deepEqual(call(b,'sync').frame.impacts[0].bloodStyle,event.bloodStyle);
+ for(const bloodStyle of [{kind:'unknown',level:1},{kind:'slash',level:NaN},{kind:'slash',level:3},{kind:'slash',level:-1}]){assert.throws(()=>call(a,'sync',{frame:{...state,sequence:2,impacts:[{...event,bloodStyle}]}}),/无效/);assert.equal(call(b,'sync').frame.sequence,1);}
+ assert.throws(()=>call(a,'sync',{frame:{...state,sequence:2,impacts:[{...event,blood:false}]}}),/无效/);
+});

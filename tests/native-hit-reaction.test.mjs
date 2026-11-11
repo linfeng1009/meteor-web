@@ -118,7 +118,7 @@ function tick(game, dt = 1 / 60) {
 test('real native HP loss emits blood and a guard emits only sparks, including host event and replica deduplication',async()=>{
   const {game,hero,target}=await fixture();game.bloodFeedback=new NativeBloodFeedback(game.scene);game.impactFeedback=new NativeImpactFeedback(game.scene);
   hero.networkId='host';target.networkId='guest';const before=target.hp;hit(game,hero,target,262);
-  assert.ok(target.hp<before);assert.ok(game.bloodFeedback.mesh.visible);assert.equal(game.combatFeedbackEvents.at(-1).blood,true);
+  assert.ok(target.hp<before);assert.ok(game.bloodFeedback.mesh.visible);assert.equal(game.combatFeedbackEvents.at(-1).blood,true);assert.deepEqual(game.combatFeedbackEvents.at(-1).bloodStyle,{kind:'slash',level:0});
   assert.equal(game.combatFeedbackEvents.at(-1).attackerId,'host');assert.equal(game.combatFeedbackEvents.at(-1).targetId,'guest');
   game.bloodFeedback.clear();target.guard=true;hit(game,hero,target,262);assert.equal(game.bloodFeedback.mesh.visible,false);assert.equal(game.combatFeedbackEvents.at(-1).guarded,true);assert.equal(game.combatFeedbackEvents.at(-1).blood,false);
   const events=game._combatFeedbackSnapshot(),played=[];

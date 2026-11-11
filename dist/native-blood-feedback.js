@@ -1,48 +1,72 @@
 import * as THREE from './vendor/three.module.js';
 
-// Bounded presentation adapter. Emitted only after confirmed positive HP loss;
-// blood motion, density and lifetime are not recovered EXE particle constants.
-export const BLOOD_FEEDBACK_ADAPTER=Object.freeze({capacity:384,count:18,lifetime:.48,gravity:8});
+// Presentation adapter, not recovered EXE emitter constants. Original damage,
+// TargetMove and the selected reaction's d_base lift choose distinct feedback.
+export const BLOOD_KINDS=Object.freeze(['slash','thrust','impact','launch','shot']);
+export const BLOOD_FEEDBACK_ADAPTER=Object.freeze({capacity:512,count:32,lifetime:.56,gravity:8});
+export function bloodStyleForHit({damage=0,force=0,weapon='',knockdown=false,lift=0,reactionPose=null}={}){
+  const power=Number.isFinite(damage)?Math.max(0,damage):0,push=Number.isFinite(force)?Math.max(0,force):0;
+  const level=knockdown||power>=90?2:power>=45||push>=8||reactionPose===100?1:0;
+  const kind=lift>=.45||reactionPose===100?'launch':weapon==='musket'||weapon==='dart'?'shot':weapon==='hammer'||weapon==='knuckle'?'impact':weapon==='spear'||weapon==='dagger'?'thrust':'slash';
+  return {kind,level};
+}
+export function validBloodStyle(style){return !!style&&BLOOD_KINDS.includes(style.kind)&&Number.isInteger(style.level)&&style.level>=0&&style.level<=2;}
+export function bloodProfile(style){
+  const {kind,level}=validBloodStyle(style)?style:{kind:'slash',level:0};
+  return {kind,level,count:[32,52,80][level],size:[1,1.35,1.8][level],speed:[1,1.25,1.55][level],life:[.56,.68,.82][level]};
+}
 export class NativeBloodFeedback{
   constructor(scene){
     this.scene=scene;this.cursor=0;this.disposed=false;this.particles=Array(BLOOD_FEEDBACK_ADAPTER.capacity).fill(null);
-    const count=this.particles.length;this.positions=new Float32Array(count*3);this.alpha=new Float32Array(count);this.sizes=new Float32Array(count);
-    const geometry=new THREE.BufferGeometry();
-    geometry.setAttribute('position',new THREE.BufferAttribute(this.positions,3).setUsage(THREE.DynamicDrawUsage));
-    geometry.setAttribute('opacity',new THREE.BufferAttribute(this.alpha,1).setUsage(THREE.DynamicDrawUsage));
-    geometry.setAttribute('size',new THREE.BufferAttribute(this.sizes,1).setUsage(THREE.DynamicDrawUsage));
-    const material=new THREE.ShaderMaterial({transparent:true,depthWrite:false,depthTest:true,toneMapped:false,uniforms:{focalScale:{value:900}},
-      vertexShader:`attribute float opacity; attribute float size; uniform float focalScale; varying float fade;
-        void main(){vec4 eye=modelViewMatrix*vec4(position,1.);fade=opacity;gl_Position=projectionMatrix*eye;
-        gl_PointSize=opacity>0.&&eye.z<0.?clamp(size*focalScale/max(.1,-eye.z),1.,14.):0.;}`,
-      fragmentShader:`varying float fade;void main(){vec2 p=(gl_PointCoord-.5)*2.;float d=length(p*vec2(1.,.72));
-        if(d>1.||fade<=0.)discard;float a=(1.-smoothstep(.45,1.,d))*fade;
-        gl_FragColor=vec4(mix(vec3(.24,.005,.012),vec3(.72,.025,.035),1.-d),a);
-        #include <colorspace_fragment>
-      }`});
-    this.mesh=new THREE.Points(geometry,material);this.mesh.name='命中血滴 · 网页表现';this.mesh.frustumCulled=false;this.mesh.visible=false;scene.add(this.mesh);
+    const count=this.particles.length;this.positions=new Float32Array(count*3);this.alpha=new Float32Array(count);this.sizes=new Float32Array(count*2);this.velocities=new Float32Array(count*3);this.shapes=new Float32Array(count);this.seeds=new Float32Array(count);
+    const geometry=new THREE.InstancedBufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute([-1,-1,0,1,-1,0,1,1,0,-1,1,0],3));geometry.setIndex([0,1,2,0,2,3]);geometry.instanceCount=count;
+    for(const [name,array,width] of [['offset',this.positions,3],['opacity',this.alpha,1],['size',this.sizes,2],['velocity',this.velocities,3],['shape',this.shapes,1],['seed',this.seeds,1]])geometry.setAttribute(name,new THREE.InstancedBufferAttribute(array,width).setUsage(THREE.DynamicDrawUsage));
+    const material=new THREE.ShaderMaterial({transparent:true,depthWrite:false,depthTest:true,toneMapped:false,side:THREE.DoubleSide,
+      vertexShader:`attribute vec3 offset;attribute float opacity;attribute vec2 size;attribute vec3 velocity;attribute float shape;attribute float seed;
+        varying vec2 vBloodUv;varying float fade;varying float form;varying float noiseSeed;
+        void main(){vec4 eye=modelViewMatrix*vec4(offset,1.);vec2 axis=(mat3(modelViewMatrix)*velocity).xy;
+          if(length(axis)<.001)axis=vec2(cos(seed),sin(seed));else axis=normalize(axis);
+          eye.xy+=axis*position.y*size.y+vec2(axis.y,-axis.x)*position.x*size.x;
+          gl_Position=projectionMatrix*eye;vBloodUv=position.xy;fade=opacity;form=shape;noiseSeed=seed;}`,
+      fragmentShader:`varying vec2 vBloodUv;varying float fade;varying float form;varying float noiseSeed;
+        void main(){if(fade<=0.)discard;float d=length(vBloodUv),angle=atan(vBloodUv.y,vBloodUv.x);
+          if(form<.5){float edge=.66+.14*sin(angle*5.+noiseSeed)+.10*sin(angle*9.-noiseSeed);d/=edge;}
+          else if(form<1.5){float width=.23+.67*(vBloodUv.y+1.)*.5;d=length(vec2(vBloodUv.x/width,vBloodUv.y));}
+          if(d>1.)discard;float a=(1.-smoothstep(.50,1.,d))*fade;
+          gl_FragColor=vec4(mix(vec3(.16,.002,.006),vec3(.55,.012,.018),1.-d*.6),a);
+          #include <colorspace_fragment>
+        }`});
+    this.mesh=new THREE.Mesh(geometry,material);this.mesh.name='分级血花与血流 · 网页表现';this.mesh.frustumCulled=false;this.mesh.visible=false;scene.add(this.mesh);
   }
-  emit({point,direction,damage=0,guarded=false}={}){
+  emit({point,direction,damage=0,guarded=false,style=null,...features}={}){
     if(this.disposed||guarded||!Number.isFinite(damage)||!(damage>0)||!point||![point.x,point.y,point.z].every(Number.isFinite)||direction&&![direction.x,direction.y,direction.z].every(Number.isFinite))return 0;
+    const profile=bloodProfile(validBloodStyle(style)?style:bloodStyleForHit({damage,...features}));
     const forward=direction?.clone()||new THREE.Vector3(0,0,1);forward.y=0;if(forward.lengthSq()<1e-8)forward.set(0,0,1);forward.normalize();
-    const right=new THREE.Vector3(forward.z,0,-forward.x),count=BLOOD_FEEDBACK_ADAPTER.count;
+    const right=new THREE.Vector3(forward.z,0,-forward.x),count=profile.count;
     for(let i=0;i<count;i++){
-      const slot=this.cursor++%this.particles.length,a=i*2.3999632297,speed=.6+(i%5)*.24;
-      const velocity=forward.clone().multiplyScalar(speed).addScaledVector(right,Math.cos(a)*2.8);velocity.y=.8+Math.sin(a)*1.3+(i%3)*.22;
-      const life=BLOOD_FEEDBACK_ADAPTER.lifetime+(i%4)*.035;
-      this.particles[slot]={origin:point.clone(),velocity,age:0,life};this.positions.set(point.toArray(),slot*3);this.alpha[slot]=.9;this.sizes[slot]=.035+(i%4)*.009;
+      const slot=this.cursor++%this.particles.length,a=i*2.3999632297,phase=(i%11)/10;
+      let lateral=Math.cos(a)*2.6,along=.8+phase*2.2,up=.8+Math.sin(a)*1.6;
+      if(profile.kind==='slash'){lateral=Math.sin(a)*3.6;along=.5+Math.cos(a)*1.2;up=.9+Math.sin(a*1.7)*1.5;}
+      if(profile.kind==='thrust'||profile.kind==='shot'){lateral=Math.cos(a)*(profile.kind==='shot'?1.7:1);along=1.8+phase*3;up=.7+Math.sin(a)*.9;}
+      if(profile.kind==='impact'){lateral=Math.cos(a)*3;along=Math.sin(a)*2.6;up=.8+phase*2;}
+      if(profile.kind==='launch'){lateral=Math.cos(a)*2;along=.7+phase;up=2.6+phase*3;}
+      const velocity=forward.clone().multiplyScalar(along*profile.speed).addScaledVector(right,lateral*profile.speed);velocity.y=up*profile.speed;
+      const core=i<3,streak=!core&&i%3!==0,life=profile.life+(i%4)*.03;
+      this.particles[slot]={origin:point.clone(),velocity,age:0,life,style:profile.kind,level:profile.level};this.positions.set(point.toArray(),slot*3);this.alpha[slot]=core?.55:.85;
+      this.sizes[slot*2]=(core?.24:streak?.028:.052)*profile.size*(.8+phase*.6);
+      this.sizes[slot*2+1]=(core?.28:streak?.13:.07)*profile.size*(.8+phase*.6);
+      this.velocities.set(velocity.toArray(),slot*3);this.shapes[slot]=core?0:streak?1:2;this.seeds[slot]=a;
     }
     this.mesh.visible=true;this._dirty();return count;
   }
-  _dirty(){for(const attribute of Object.values(this.mesh.geometry.attributes))attribute.needsUpdate=true;}
-  update(dt,camera=null,height=900){
+  _dirty(){for(const attribute of Object.values(this.mesh.geometry.attributes))if(attribute.isInstancedBufferAttribute)attribute.needsUpdate=true;}
+  update(dt){
     if(this.disposed)return;const step=Number.isFinite(dt)?Math.max(0,dt):0;let active=0;
-    if(camera?.fov&&Number.isFinite(height)&&height>0)this.mesh.material.uniforms.focalScale.value=height/(2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2)));
     for(let i=0;i<this.particles.length;i++){
       const p=this.particles[i];if(!p)continue;p.age+=step;
       if(p.age>=p.life){this.particles[i]=null;this.alpha[i]=0;continue;}
       this.positions[i*3]=p.origin.x+p.velocity.x*p.age;this.positions[i*3+1]=p.origin.y+p.velocity.y*p.age-.5*BLOOD_FEEDBACK_ADAPTER.gravity*p.age*p.age;
-      this.positions[i*3+2]=p.origin.z+p.velocity.z*p.age;this.alpha[i]=.9*(1-p.age/p.life)**1.5;active++;
+      this.positions[i*3+2]=p.origin.z+p.velocity.z*p.age;this.alpha[i]=(this.shapes[i]===0?.55:.85)*Math.pow(1-p.age/p.life,1.2);active++;
     }
     this.mesh.visible=active>0;this._dirty();
   }

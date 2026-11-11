@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import * as THREE from '../dist/vendor/three.module.js';
 import { MeteorGame } from '../dist/engine.js';
 import { NativeCombatController, decodeNativeText, parsePos, parseAct } from '../dist/native-combat.js';
-import {NATIVE_DASH_POSES} from '../dist/native-traversal.js';
+import {NATIVE_DASH_POSES,NATIVE_CROUCH_POSES,NATIVE_JUMP_POSES,nativeTraversalDirection} from '../dist/native-traversal.js';
 import { createNativeCharacter, parseNativeSkin, parseNativeBones, parseNativeAnimation, parseNativePoses } from '../dist/native-character.js';
 
 // Use the supplied native skin, skeleton and every original jump frame. A
@@ -58,6 +58,58 @@ function jump(fixture, visit) {
   }
   return frames;
 }
+
+test('crouch walking plays each original directional loop and resumes crouch idle when stopped',()=>{
+  for(const direction of ['forward','right','left','back']){
+    const state=fixture();
+    try{
+      const {game,hero}=state;game.cameraAngle=0;hero.root.rotation.y=Math.PI;
+      const start=hero.root.position.clone();game.action('crouch');game.action(direction);
+      const samples=[];
+      for(let i=0;i<40;i++){game._updateFighter(hero,1/60);samples.push({pose:hero.combat.timeline.pose.id,frame:hero.character.frame,bone:hero.character.bones[15].quaternion.toArray()});}
+      assert.ok(samples.every(s=>s.pose===NATIVE_CROUCH_POSES[direction]),direction);
+      assert.notDeepEqual(samples[5].bone,samples[30].bone,`${direction}: original bones must animate, not slide in pose10`);
+      assert.ok(hero.root.position.distanceTo(start)>1);
+      assert.ok(Math.abs(hero.root.rotation.y-Math.PI)<1e-6,'strafe animation keeps its facing instead of turning into a forward shuffle');
+      game.action(direction,false);for(let i=0;i<60;i++)game._updateFighter(hero,1/60);
+      assert.equal(hero.combat.timeline.pose.id,10);
+      game.action('crouch',false);game._updateFighter(hero,1/60);assert.equal(hero.combat.timeline.pose.id,hero.combat.stance);
+    }finally{state.dispose();}
+  }
+});
+
+test('directional jumps preserve original takeoff and air families through landing',()=>{
+  for(const direction of ['forward','right','left','back']){
+    const state=fixture();
+    try{
+      const {game,hero}=state,profile=NATIVE_JUMP_POSES[direction];game.action(direction);
+      game.action('jump');assert.equal(hero.combat.timeline.pose.id,profile.start);
+      assert.equal(hero.nativeJump.pose.id,profile.start,'vertical scene track must use the selected native jump');
+      const facing=hero.root.rotation.y,seen=new Set();
+      for(let i=0;i<120;i++){
+        game._updateFighter(hero,1/60);game._tickCamera(1/60);
+        if(!hero.grounded&&!hero.combat.busy){seen.add(hero.combat.timeline.pose.id);assert.ok(Math.abs(hero.root.rotation.y-facing)<1e-6);}
+        assert.ok(hero.root.position.toArray().every(Number.isFinite));
+      }
+      assert.ok(seen.has(profile.start),direction);assert.ok(seen.has(profile.air),direction);
+      assert.equal(hero.grounded,true);assert.equal(hero.jumpSequence,null);
+    }finally{state.dispose();}
+  }
+});
+
+test('jump direction follows the controlling player with forward/back priority and opposing keys cancel',()=>{
+  assert.equal(nativeTraversalDirection(new Set(['back','right'])),'back');
+  assert.equal(nativeTraversalDirection(new Set(['forward','back','left'])),'left');
+  assert.equal(nativeTraversalDirection(new Set(['forward','back','left','right'])),null);
+  const state=fixture();
+  try{
+    const {game,hero}=state;hero.hero=false;hero.playerControl={keys:new Set(['left']),cameraAngle:.8,directionBuffer:[]};
+    game.keys.add('back');assert.equal(game._beginJump(hero),true);assert.equal(hero.combat.timeline.pose.id,155);
+    hero.playerControl.keys.clear();hero.playerControl.keys.add('right');
+    for(let i=0;i<36;i++)game._updateFighter(hero,1/60);
+    assert.equal(hero.jumpSequence.start,155,'air steering must not restart another takeoff');
+  }finally{state.dispose();}
+});
 
 test('four crouch double-tap rolls play original poses and consume their actual d_base displacement',()=>{
   for(const [direction,poseId,axis,sign] of [['forward',176,'z',-1],['right',177,'x',1],['left',178,'x',-1],['back',179,'z',1]]){

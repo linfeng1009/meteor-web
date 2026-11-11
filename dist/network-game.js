@@ -28,17 +28,23 @@ export class NetworkReplicaMotion{
   }
 }
 export class NetworkGame{
-  static async create(game,client,room){
+  static async create(game,client,room,{isCurrent=()=>true}={}){
+    const valid=()=>isCurrent()&&!client.closed&&!game.disposed;
+    if(!valid())return null;
     game.pause(true);
     for(const f of game.enemies){game._disposeNameplate(f);f.character.dispose();f.root.removeFromParent();}
-    game.enemies=[];await game._equip(game.hero,'sword');game.setInfiniteRage(false);
+    game.enemies=[];await game._equip(game.hero,'sword');if(!valid())return null;game.setInfiniteRage(false);
     const self=room.players.find(p=>p.id===client.playerId),other=room.players.find(p=>p.id!==client.playerId);
     game.hero.name=self.name;game.hero.networkId=self.id;game.hero.team=game.hero.teamMask=client.host?1:2;
-    const peer=await game._createFighter(0,other.name);peer.networkId=other.id;peer.team=peer.teamMask=client.host?2:1;
-    peer.spawnIndex=client.host?1:0;game.scene.add(peer.root);game.enemies.push(peer);await game._equip(peer,'sword');
-    game._placeFighter(game.hero,game.currentMap.spawns[client.host?0:1]);game._placeFighter(peer,game.currentMap.spawns[client.host?1:0]);
-    game._disposeNameplate(peer);game._nameplate(peer);
-    return new NetworkGame(game,client,room);
+    const peer=await game._createFighter(0,other.name);let retained=false;
+    try{
+      if(!valid())return null;peer.networkId=other.id;peer.team=peer.teamMask=client.host?2:1;
+      peer.spawnIndex=client.host?1:0;game.scene.add(peer.root);game.enemies.push(peer);await game._equip(peer,'sword');
+      if(!valid())return null;
+      game._placeFighter(game.hero,game.currentMap.spawns[client.host?0:1]);game._placeFighter(peer,game.currentMap.spawns[client.host?1:0]);
+      game._disposeNameplate(peer);game._nameplate(peer);
+      const session=new NetworkGame(game,client,room);retained=true;return session;
+    }finally{if(!retained){game.enemies=game.enemies.filter(actor=>actor!==peer);game._disposeNameplate(peer);peer.disposed=true;peer.character.dispose();peer.root.removeFromParent();}}
   }
   constructor(game,client,room){
     Object.assign(this,{game,client,room,active:false,sequence:0,lastFrame:0,actors:new Map([[game.hero.networkId,game.hero],[game.enemies[0].networkId,game.enemies[0]]])});
@@ -46,22 +52,26 @@ export class NetworkGame{
     this.presentation=new NetworkReplicaMotion();
     this.remote=createPlayerControl({cameraAngle:Math.PI,lookLocked:true});
     this.peer=game.enemies[0];this.previousControl=this.peer.playerControl;this.peer.playerControl=this.remote;
-    this.original={};for(const key of ['action','pause','_updateFighter','_updatePresentation','_separateCharacters','_kill'])this.original[key]=game[key];
+    this.original={};for(const key of ['action','pause','releaseInput','_updateFighter','_updatePresentation','_separateCharacters','_kill'])this.original[key]=game[key];
     const session=this;
     game.action=function(name,down=true){
-      if(!session.active)return;if(name==='switch'||/^weapon/.test(name)||name==='pickup')return;
-      if(!client.host){if(name==='lock'){game.locked=game.locked?null:game.enemies[0];game.cameraManualUntil=0;}client.send(name,down);return;}
+      if(!session.active||session.inputSuspended&&down)return;if(name==='switch'||/^weapon/.test(name)||name==='pickup')return;
+      if(!client.host){if(name==='lock'&&down){game.locked=game.locked?null:game.enemies[0];game.cameraManualUntil=0;}client.send(name,down);return;}
       return session.original.action.call(game,name,down);
     };
-    game.pause=function(value=true){client.send('clear',false);if(client.host)session.original.action.call(game,'guard',false);session.original.pause.call(game,session.active?false:value);if(value){game.keyboard?.reset();game.mouseLook?.release();game.keys.clear();}};
+    game.releaseInput=function(options={}){if(options.releaseMouse!==false)session.inputSuspended=true;client.send('clear',false);session.original.releaseInput.call(game,options);};
+    game.pause=function(value=true){session.inputSuspended=!!value;session.original.pause.call(game,session.active?false:value);if(value)game.mouseLook?.release();};
     game._updateFighter=function(f,dt){if(session.active&&client.host)return session.original._updateFighter.call(game,f,dt);};
     game._separateCharacters=function(dt){if(session.active&&client.host)return session.original._separateCharacters.call(game,dt);};
     game._updatePresentation=function(dt){if(session.active&&!client.host)for(const actor of session.actors.values())session.presentation.update(actor,dt);session.original._updatePresentation.call(game,dt);};
     game._kill=function(target,options){const wasDead=target.dead;session.original._kill.call(game,target,options);if(!wasDead&&target.dead){session.scores.get(target.networkId).deaths++;if(options?.awardKill!==false){const rival=[...session.scores.keys()].find(id=>id!==target.networkId);session.scores.get(rival).kills++;}}const score=session.scores.get(client.playerId);game.kills=score.kills;game.deaths=score.deaths;};
   }
-  play(){this.active=true;this.original.pause.call(this.game,false);}
+  play(){this.active=true;this.inputSuspended=false;this.original.pause.call(this.game,false);}
   inputs(batch){if(!this.client.host||!this.active)return;const actor=this.peer,control=this.remote;
     for(const input of batch){if(input.playerId!==actor.networkId)continue;
+      // Client clock is used only for command intervals. World time, movement,
+      // recovery expiration and damage continue on the host's fixed ticks.
+      control.inputTime=Number.isFinite(input.time)?input.time:this.game.elapsed;
       if(input.action==='clear'){control.keys.clear();clearPlayerCommands(control);actor.guard=false;continue;}
       control.cameraAngle=input.angle;
       if(input.action==='look'){const held=new Set(input.held||[]);for(const key of continuous){if(control.keys.has(key)&&!held.has(key))this.game._actionFighter(actor,control,key,false);else if(!control.keys.has(key)&&held.has(key))this.game._actionFighter(actor,control,key,true);}continue;}

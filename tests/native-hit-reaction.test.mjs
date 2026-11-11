@@ -151,6 +151,78 @@ test('reliable transport applies the real remote sword attack once despite lost 
   }finally{session.dispose();}
 });
 
+test('guest lock toggles only on key down; focus loss clears input and menus reject new actions without stopping the world',async()=>{
+  const {game,hero,target}=await fixture();hero.networkId='guest';target.networkId='host';const sent=[];
+  const client={host:false,playerId:'guest',send:(action,active)=>sent.push({action,active})},room={players:[{id:'host'},{id:'guest'}]};
+  const session=new NetworkGame(game,client,room);session.play();game.locked=null;sent.length=0;
+  try{
+    game.action('lock',true);assert.equal(game.locked,target);game.action('lock',false);assert.equal(game.locked,target,'key release must not undo the local lock');
+    game.action('lock',true);game.action('lock',false);assert.equal(game.locked,null);
+    game.action('forward');game.directionBuffer=[{direction:'up'}];game.recoveryAttack={actor:hero};game.traversalTap={direction:'forward'};hero.guard=true;
+    game.releaseInput();assert.equal(sent.at(-1).action,'clear');assert.equal(game.keys.size,0);assert.equal(game.directionBuffer.length,0);assert.equal(game.recoveryAttack,null);assert.equal(game.traversalTap,null);assert.equal(hero.guard,false);
+    const count=sent.length;for(const action of ['attack','jump','forward','guard','lock'])game.action(action,true);assert.equal(sent.length,count);assert.equal(game.locked,null);
+    game.pause(true);assert.equal(game.paused,false,'menu must not freeze network world');game.pause(false);const resumed=sent.length;
+    game.action('forward');assert.equal(sent.length,resumed+1);assert.equal(sent.at(-1).action,'forward');
+  }finally{session.dispose();}
+});
+
+test('host input suspension releases held defense and movement while remote input remains active',async()=>{
+  const {game,hero,target}=await fixture();bindLocalPlayerControl(game);target.networkId='guest';hero.networkId='host';target.root.position.z=10;
+  const session=new NetworkGame(game,{host:true,playerId:'host',send(){}},{players:[{id:'host'},{id:'guest'}]});session.play();
+  try{
+    game.action('guard');game.action('right');session.inputs([{playerId:'guest',action:'forward',active:true,angle:Math.PI}]);
+    game.pause(true);assert.equal(hero.guard,false);assert.equal(game.keys.size,0);assert.ok(session.remote.keys.has('forward'));
+    const serial=hero.combat.serial;game.action('attack');game.action('guard');game.action('right');assert.equal(hero.combat.serial,serial);assert.equal(hero.guard,false);assert.equal(game.keys.size,0);
+    const z=target.root.position.z;for(let i=0;i<20;i++)tick(game);assert.ok(target.root.position.z>z+.5,'remote keeps moving while host menu is open');
+    game.pause(false);game.action('guard');assert.equal(hero.guard,true);
+  }finally{session.dispose();}
+});
+
+test('reliable focus-release clear reaches the host after a lost response and removes held controls',async()=>{
+  const {game,hero,target}=await fixture(),rooms=new NetworkRooms(),a=rooms.create('房主'),b=rooms.join(a.room.code,'客人');
+  const request=(player,op,data={})=>rooms.request(a.room.code,player.token,op,{round:1,...data});
+  request(a,'ready',{ready:true});request(b,'ready',{ready:true});request(a,'start');request(a,'loaded');request(b,'loaded');
+  hero.networkId=a.playerId;target.networkId=b.playerId;let session;const host=new NetworkClient({onInput:batch=>session.inputs(batch)}),guest=new NetworkClient();
+  for(const [client,player] of [[host,a],[guest,b]]){Object.assign(client,{room:request(player,'sync').room,code:a.room.code,playerId:player.playerId});client.api=async(path,data)=>request(player,'sync',data);}
+  session=new NetworkGame(game,host,host.room);session.play();
+  try{
+    guest.send('forward');guest.send('guard');await guest.sync();await host.sync();assert.ok(session.remote.keys.has('forward'));assert.ok(session.remote.keys.has('guard'));
+    const api=guest.api;let dropped=false;guest.api=async(path,data)=>{const result=await api(path,data);if(!dropped){dropped=true;throw Error('释放响应丢失');}return result;};
+    guest.send('clear',false);await guest.sync();await guest.sync();await host.sync();assert.equal(session.remote.keys.size,0);assert.equal(target.guard,false);assert.equal(guest.held.size,0);
+    await host.sync();assert.equal(session.remote.keys.size,0,'acknowledgement retry must not restore old held controls');
+  }finally{session.dispose();}
+});
+
+test('standing double tap preserves the sword down-up-up attack and works through remote player controls',async()=>{
+  const {game,hero,target}=await fixture();hero.networkId='host';target.networkId='guest';await game._equip(target,'sword');
+  const session=new NetworkGame(game,{host:true,playerId:'host',send(){}},{players:[{id:'host'},{id:'guest'}]});session.play();
+  try{
+    game.action('back');game.action('back',false);game.elapsed+=.1;game.action('forward');game.action('forward',false);game.elapsed+=.1;game.action('forward');game.action('forward',false);
+    assert.equal(hero.combat.timeline.pose.id,165);game.action('attack');assert.equal(hero.combat.currentMove.poseId,277);assert.equal(hero.combat.currentMove.name,'忌冬雨');assert.equal(hero.rage,0);
+    const localBuffer=game.directionBuffer;
+    session.inputs([{playerId:'guest',action:'right',active:true,angle:Math.PI},{playerId:'guest',action:'right',active:false,angle:Math.PI}]);game.elapsed+=.1;
+    session.inputs([{playerId:'guest',action:'right',active:true,angle:Math.PI}]);assert.equal(target.combat.timeline.pose.id,168);assert.equal(target.combat.currentMove.kind,'dash');assert.equal(game.directionBuffer,localBuffer);
+    session.inputs([{playerId:'guest',action:'clear',active:false,angle:0}]);assert.equal(session.remote.keys.size,0);assert.equal(target.combat.currentMove.kind,'dash','release does not invent a forced motion cancel');
+  }finally{session.dispose();}
+});
+
+test('one delivered batch preserves rapid remote dash/roll/command timing without advancing host time',async()=>{
+  const {game,hero,target}=await fixture();hero.networkId='host';target.networkId='guest';await game._equip(target,'sword');
+  const session=new NetworkGame(game,{host:true,playerId:'host',send(){}},{players:[{id:'host'},{id:'guest'}]});session.play();
+  const send=(action,active,time)=>({playerId:'guest',action,active,time,angle:Math.PI});
+  try{
+    const elapsed=game.elapsed,position=target.root.position.clone();
+    session.inputs([send('forward',true,100),send('forward',false,100.03),send('forward',true,100.12)]);
+    assert.equal(target.combat.timeline.pose.id,165);assert.equal(game.elapsed,elapsed);assert.deepEqual(target.root.position.toArray(),position.toArray(),'recognizing input must not simulate client elapsed movement');
+    target.combat.play(6,{force:true});session.inputs([send('clear',false,101),send('crouch',true,101.01),send('right',true,101.02),send('right',false,101.03),send('right',true,101.15)]);
+    assert.equal(target.combat.timeline.pose.id,177);
+    target.combat.play(6,{force:true});session.inputs([send('clear',false,102),send('back',true,102.01),send('back',false,102.02),send('forward',true,102.08),send('forward',false,102.09),send('forward',true,102.16),send('forward',false,102.17),send('attack',true,102.2)]);
+    assert.equal(target.combat.currentMove.poseId,277);assert.equal(game.elapsed,elapsed);assert.equal(hero.combat.busy,false);
+    target.combat.react(90);session.inputs([send('attack',true,103)]);assert.equal(session.remote.recoveryAttack.time,103);assert.ok(session.remote.recoveryAttack.expires<=elapsed+.301,'recovery expiration must use the host clock');
+    game.elapsed+=.4;game._updateFighter(target,1/60);assert.equal(session.remote.recoveryAttack,null,'expired recovery cannot wait for the unrelated client clock');
+  }finally{session.dispose();}
+});
+
 test('two players keep movement, keys and camera independent without swapping game references',async()=>{
   const {game,hero,target}=await fixture();bindLocalPlayerControl(game);target.networkId='guest';hero.networkId='host';target.root.position.z=10;
   const session=new NetworkGame(game,{host:true,playerId:'host',send(){}},{players:[{id:'host'},{id:'guest'}]});session.play();

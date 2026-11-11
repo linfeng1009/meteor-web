@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 import * as THREE from '../dist/vendor/three.module.js';
 import { MeteorGame } from '../dist/engine.js';
 import { NativeCombatController, decodeNativeText, parsePos, parseAct } from '../dist/native-combat.js';
+import {NATIVE_DASH_POSES} from '../dist/native-traversal.js';
 import { createNativeCharacter, parseNativeSkin, parseNativeBones, parseNativeAnimation, parseNativePoses } from '../dist/native-character.js';
 
 // Use the supplied native skin, skeleton and every original jump frame. A
@@ -72,6 +73,39 @@ test('four crouch double-tap rolls play original poses and consume their actual 
       assert.equal(hero.combat.busy,false);assert.equal(hero.combat.timeline.pose.id,10);assert.equal(hero.hp,undefined,'locomotion must not invent HP or immunity');
     }finally{f.dispose();}
   }
+});
+
+test('verified standing dashes use original scene trajectories for each weapon and direction',()=>{
+  for(const [weapon,mapping] of Object.entries(NATIVE_DASH_POSES))for(const [direction,poseId] of Object.entries(mapping)){
+    const f=fixture();try{
+      const {game,hero}=f;hero.weapon=weapon;hero.combat.setWeapon(weapon);hero.combat.sampleRoot=hero.character.sampleSceneMotion;hero.combat.play(hero.combat.stance,{force:true});
+      game.cameraAngle=0;game.action(direction);game.action(direction,false);game.elapsed+=.15;game.action(direction);
+      assert.equal(hero.combat.timeline.pose.id,poseId);assert.equal(hero.combat.busy,true);assert.equal(hero.combat.attacking,false);assert.equal(game.directionBuffer.length,2,'dash must retain both taps for attack recognition');
+      game.action(direction,false);const start=hero.root.position.clone(),pose=hero.combat.timeline.pose,a=hero.character.sampleSceneMotion(pose.source,pose.start),b=hero.character.sampleSceneMotion(pose.source,pose.end);
+      const expected=Math.hypot(b.x-a.x,b.y-a.y)*.08;
+      for(let i=0;i<45;i++){game.elapsed+=1/60;game._updateFighter(hero,1/60);}
+      const delta=hero.root.position.clone().sub(start);assert.ok(expected>.5);assert.ok(Math.abs(Math.hypot(delta.x,delta.z)-expected)<.03,`${weapon}/${direction}: ${delta.toArray()} vs ${expected}`);
+      assert.equal(hero.combat.busy,false);assert.equal(hero.hp,undefined);
+    }finally{f.dispose();}
+  }
+});
+test('standing dash can enter an attack while crouch roll cannot invent an ACT transition',()=>{
+  const f=fixture();try{
+    const {game,hero}=f;hero.weapon='sword';hero.combat.setWeapon('sword');hero.combat.play(6,{force:true});game.cameraAngle=0;
+    game.action('back');game.action('back',false);game.elapsed+=.1;game.action('back');game.action('back',false);assert.equal(hero.combat.currentMove.kind,'dash');
+    game.action('attack');assert.equal(hero.combat.currentMove?.kind==='dash',false);assert.equal(hero.combat._motionChain,false);assert.ok(hero.combat._attackChain);
+    hero.combat.play(6,{force:true});game.keys.clear();game.action('crouch');assert.equal(game._beginRoll('forward',176),true);assert.equal(hero.combat.attack({poseId:262}),false);
+  }finally{f.dispose();}
+});
+test('standing dash respects wall collision and airborne, guard and script gates, and a hit interrupts it',()=>{
+  const f=fixture({wall:true});try{
+    const {game,hero}=f;hero.weapon='sword';hero.combat.setWeapon('sword');hero.combat.sampleRoot=hero.character.sampleSceneMotion;hero.combat.play(6,{force:true});game.cameraAngle=0;
+    assert.equal(game._beginDash('back',174),true);for(let i=0;i<45;i++){game.elapsed+=1/60;game._updateFighter(hero,1/60);}assert.ok(hero.root.position.z<3.7);
+    for(const mutate of [()=>hero.grounded=false,()=>hero.dead=true,()=>hero.guard=true,()=>hero.scriptInputBlocked=true,()=>game.paused=true]){
+      hero.grounded=true;hero.dead=false;hero.guard=false;hero.scriptInputBlocked=false;game.paused=false;mutate();assert.equal(game._beginDash('forward',165),false);
+    }
+    hero.grounded=true;hero.dead=false;hero.guard=false;hero.scriptInputBlocked=false;game.paused=false;assert.equal(game._beginDash('forward',165),true);assert.equal(hero.combat.react(90),true);assert.equal(hero.combat._motionChain,false);
+  }finally{f.dispose();}
 });
 
 test('held direction repeats, air, dead, paused and script-blocked players cannot force a roll',()=>{

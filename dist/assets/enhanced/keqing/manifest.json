@@ -1,0 +1,108 @@
+{
+  "schema": 1,
+  "characterId": 0,
+  "appearance": "keqing",
+  "label": "刻晴 · 模型适配",
+  "mesh": "mesh.json",
+  "complete": true,
+  "completeness": {
+    "bodyGeometry": true,
+    "headHairGeometry": true,
+    "eyes": true,
+    "faceGeometry": true,
+    "sourcePmxSkeleton": true,
+    "originalSourceGameSkeleton": false
+  },
+  "stats": {
+    "sourceVertices": 16254,
+    "sourceTriangles": 20103,
+    "vertices": 16254,
+    "triangles": 20103,
+    "sourceBones": 276,
+    "bones": 30,
+    "dummies": 6,
+    "secondaryBones": 30,
+    "materials": 20,
+    "textures": 5,
+    "omittedTriangles": 0
+  },
+  "retarget": {
+    "method": "Original mesh proportions preserved by a single uniform transform; independent source-length display skeleton follows original AMB/POS rotations; display weapon sockets follow the new hands.",
+    "provisional": true,
+    "sourceSkeletonMissing": false,
+    "hairPhysics": true,
+    "hairPhysicsProfile": "web-spring-bone-v2-restrained",
+    "originalMmdPhysics": false,
+    "clothPhysics": false,
+    "fingerArticulation": "Thumb and index chains of the native rig drive the source finger groups; other fingers fold into those two chains."
+  },
+  "provenance": {
+    "sourceArchive": "assets/source/keqing",
+    "sourceModel": "KeQing",
+    "modelAuthor": "miHoYo",
+    "rigAuthor": "观海（BiliBili：观海子）",
+    "credit": "模型提供：miHoYo；模型改造：观海（BiliBili：观海子）。",
+    "license": "Original distribution readme retained verbatim. It forbids redistribution, part extraction and commercial use, and states MMD use; this is a user-requested local adaptation, not a rights grant or published distribution.",
+    "limits": [
+      "Original source proportions preserved; action retarget remains approximate.",
+      "Source PMX has no verified real-world centimetre calibration; no physical height is claimed.",
+      "Source hair skeleton and weights retained but MMD rigid bodies are not executed.",
+      "Skirt layers (スカート_*), ribbons (带), sleeves and tassels are rigid on their parent body bones; no cloth solver.",
+      "No expression morph or independent per-finger solver.",
+      "Original toon ramp and sphere maps are not reproduced; base colour, alpha cutout and roughness are used."
+    ]
+  },
+  "omittedRenderPasses": [],
+  "sourceFiles": [
+    {
+      "file": "刻晴.pmx",
+      "bytes": 1239519,
+      "sha256": "c2d2f2dd4e90023a0b59c6519968b5523bb5269b06bfd85cdb6dc9ee59413926"
+    },
+    {
+      "file": "tex/面.png",
+      "runtime": "textures/面.png",
+      "sha256": "444ac18c32db73d15ecdbc19c63ccd6b933ec4d0fe649f71768f01f41526fc9f",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "tex/发.png",
+      "runtime": "textures/发.png",
+      "sha256": "55fa0a7ac08df4d34516f18afefb69b369f414ead409a74e357bccbb80d237b6",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "tex/服.png",
+      "runtime": "textures/服.png",
+      "sha256": "0c4281996c74e2b04c06227c4486b88deb04fb2104f04507ba12008f84df1d52",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "tex/肌.png",
+      "runtime": "textures/肌.png",
+      "sha256": "643bab56e6a9a5066a271ae8b4fa2b18642aa3f92bda8374abf6af46156f2f8a",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "tex/表情.png",
+      "runtime": "textures/表情.png",
+      "sha256": "99029281df36ca2db9f880f56c000c345f4f4bad770b85951c90cb7b60d002e6",
+      "size": [
+        4096,
+        4096
+      ]
+    }
+  ]
+}

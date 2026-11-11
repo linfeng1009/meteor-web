@@ -16,7 +16,8 @@ const details = Object.freeze({
   lumine: { name: '荧', seal: '荧', shortLabel: '荧', title: '荧 · 模型适配', kind: 'pmx', note: '保留原模型身高、躯干与四肢比例，网格与贴图未经压缩，沿用《流星》动作；双马尾为轻量跟随。模型提供：miHoYo；模型改造：观海（BiliBili：观海子）。裙摆、飘带与表情尚未接入物理与控制。' },
   aether: { name: '空', seal: '空', shortLabel: '空', title: '空 · 模型适配', kind: 'pmx', note: '保留原模型身高、躯干与四肢比例，网格与贴图未经压缩，沿用《流星》动作；辫发为轻量跟随。模型提供：miHoYo；模型改造：观海（BiliBili：观海子）。披风、围巾与表情尚未接入物理与控制。' },
   furina: { name: '芙宁娜', seal: '芙', shortLabel: '芙宁娜', title: '芙宁娜 · 模型适配', kind: 'pmx', note: '保留原模型身高、躯干与四肢比例，网格与贴图未经压缩，沿用《流星》动作；长发与卷发为轻量跟随。模型提供：miHoYo；模型改造：观海（BiliBili：观海子）。多层裙摆、礼帽与表情尚未接入物理与控制。' },
-  zhaojun: { name: '王昭君', seal: '昭', shortLabel: '长夜焕生', title: '王昭君 · 长夜焕生', kind: 'pmx', note: '王者荣耀王昭君「长夜焕生」皮肤，保留原模型身高、躯干与四肢比例，网格与贴图未经压缩，沿用《流星》动作；长发与飘带为轻量跟随。本包未附署名或配布说明文件，素材归属腾讯《王者荣耀》。长裙、飘带与披帛尚未接入物理。' }
+  zhaojun: { name: '王昭君', seal: '昭', shortLabel: '长夜焕生', title: '王昭君 · 长夜焕生', kind: 'pmx', note: '王者荣耀王昭君「长夜焕生」皮肤，保留原模型身高、躯干与四肢比例，网格与贴图未经压缩，沿用《流星》动作；长发与飘带为轻量跟随。本包未附署名或配布说明文件，素材归属腾讯《王者荣耀》。长裙、飘带与披帛尚未接入物理。' },
+  keqing: { name: '刻晴', seal: '刻', shortLabel: '刻晴', title: '刻晴 · 模型适配', kind: 'pmx', note: '保留原模型身高、躯干与四肢比例，网格与贴图未经压缩，沿用《流星》动作；左右长发与辫子为轻量跟随。模型提供：miHoYo；模型改造：观海（BiliBili：观海子）。裙摆、飘带与表情尚未接入物理与控制。' }
 });
 
 export const WORKSHOP_APPEARANCES = Object.freeze(Object.keys(NATIVE_APPEARANCES).filter(id => NATIVE_APPEARANCES[id].assetPath));

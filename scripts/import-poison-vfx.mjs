@@ -1,7 +1,8 @@
 // Extract original AttrPOIS channels without inventing geometry or keys.
 import fs from 'node:fs';
 import {createHash} from 'node:crypto';
-const source=new URL('../dist/assets/original/sounds/definitions/AttrPOIS.ef',import.meta.url),data=fs.readFileSync(source);
+function extract(id,file){
+const source=new URL('../dist/assets/original/sounds/definitions/'+file,import.meta.url),data=fs.readFileSync(source);
 if(data.subarray(0,11).toString()!=='PonEF V1.00')throw Error('Invalid PonEF');
 const types=['AUDIO','BOX','BILLBOARD','CYLINDER','DRAG','DONUT','MODEL','PARTICLE','PATH','PLANE','SPHERE','TRAPE'];
 const dims={PLANE:2,BILLBOARD:2,CYLINDER:5,SPHERE:5,BOX:3};
@@ -20,8 +21,8 @@ const nodes=offsets.map(({type,offset},index)=>{
   else node.unsupportedVisual=type!=='AUDIO';
   return node;
 });
-const definition={id:'attrpois',source:'sounds/definitions/AttrPOIS.ef',sha256:createHash('sha256').update(data).digest('hex'),nodes};
-fs.writeFileSync(new URL('../dist/assets/original/poison-vfx.json',import.meta.url),JSON.stringify({version:1,effects:{attrpois:definition},adapters:'Original AttrPOIS particle keys and ZS2 texture; bounded Web looping, spread and attachment are adapters.'},null,2)+'\n');
-console.log(`Extracted ${nodes.length} original AttrPOIS nodes; emitter motion remains a Web adapter.`);
-
-
+return {id,source:'sounds/definitions/'+file,sha256:createHash('sha256').update(data).digest('hex'),nodes};
+}
+const effects={attrpois:extract('attrpois','AttrPOIS.ef'),attrslow:extract('attrslow','AttrSLOW.ef')};
+fs.writeFileSync(new URL('../dist/assets/original/poison-vfx.json',import.meta.url),JSON.stringify({version:1,effects,adapters:'Original poison and slow EF keys/textures; Web spread, looping, attachment and visibility gain are adapters.'},null,2)+'\n');
+console.log('Extracted original poison and slow channels.');

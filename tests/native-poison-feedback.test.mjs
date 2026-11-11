@@ -33,3 +33,13 @@ test('长时间循环与多人中毒有界，普通增益不冒毒气，清场�
  let disposed=0;v.mesh.geometry.addEventListener('dispose',()=>disposed++);v.clear();assert.equal(v.actors.size,0);v.dispose();v.dispose();assert.equal(disposed,1);
  const a=actor();a.scriptItems=[{id:3,statKey:4,value:20,period:0,remaining:30}];assert.equal(hasNativePoison(a),false);
 });
+
+test('原钝筋和错骨按已有状态显示减速粒子，增速与过期状态不显示',()=>{
+ const a=actor(),v=new NativePoisonFeedback(new T.Scene(),manifest.effects.attrslow,new T.Texture());
+ for(const id of [10,13]){
+  clearNativeScriptItems(a);useNativeScriptItem(a,records.find(r=>r.type===2&&r.id===id));v.update(.2,[a]);assert.equal(v.mesh.geometry.drawRange.count,16);
+  a.networkItemStatuses=[];v.update(0,[a]);assert.equal(v.mesh.visible,false);delete a.networkItemStatuses;
+  updateNativeScriptItems(a,61);v.update(.1,[a]);assert.equal(v.mesh.visible,false);
+ }
+ useNativeScriptItem(a,records.find(r=>r.type===2&&r.id===5));v.update(.1,[a]);assert.equal(v.mesh.visible,false);v.dispose();
+});

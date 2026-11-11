@@ -38,6 +38,7 @@ export const NATIVE_SCRIPT_ITEM_PROVENANCE = Object.freeze({
 });
 
 const scriptItemSpecs = new Map([
+  [10, { statKey:5,mode:1,value:50,lifetime:150,rate:10,effectType:-1,period:0,kind:'modifier' }],
   [2, { statKey:1,value:500,lifetime:6000,rate:10,effectType:-1,period:0,kind:'modifier' }],
   [3, { statKey:4,value:20,lifetime:900,rate:10,effectType:-1,period:0,kind:'modifier' }],
   [5, { statKey:5,mode:1,value:150,lifetime:600,rate:10,effectType:-1,period:0,kind:'modifier' }],

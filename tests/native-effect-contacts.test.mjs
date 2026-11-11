@@ -460,3 +460,19 @@ test('source wheel slow scales actual walking, expires, and rage loss uses the o
   assert.equal(actor.scriptItems.length, 0, 'instant rage loss leaves no timed item');
   useNativeScriptItem(actor, data.itemRecords.get(13)); clearNativeScriptItems(actor); assert.equal(nativeMovementScale(actor), 1);
 });
+
+test('雷神锥真实飞镖命中施加原钝筋，刷新不叠加且移动恢复', async () => {
+ const {game,events}=await fixture([v(0,0,5)]);await game._equip(game.hero,'dart');
+ dartCommand(game,['forward'],209,0);for(let i=0;i<120;i++)tick(game);
+ const target=game.enemies[0],hit=events.find(e=>e.type==='hit'&&e.poseId===209);
+ assert.ok(hit?.projectileId);assert.equal(hit.raw.attackItem.id,10);assert.equal(nativeMovementScale(target),.5);
+ assert.equal(target.scriptItems.filter(x=>x.id===10).length,1);
+ useNativeScriptItem(target,data.itemRecords.get(10));assert.equal(target.scriptItems[0].remaining,15);assert.equal(nativeMovementScale(target),.5);
+ updateNativeScriptItems(target,15.2);assert.equal(nativeMovementScale(target),1);
+ useNativeScriptItem(game.hero,data.itemRecords.get(10));game.action('forward');for(let i=0;i<60;i++)tick(game);game.action('forward',false);
+ assert.ok(Math.abs(game.hero.velocity.length()-nativeStrideSpeed(game.hero.character.nativeCharacterId??0,144)*.5)<1e-5);
+ const guarded=await fixture([v(0,0,5)]);await guarded.game._equip(guarded.game.hero,'dart');guarded.game.enemies[0].scriptControl.guard=true;
+ dartCommand(guarded.game,['forward'],209,0);for(let i=0;i<120;i++)tick(guarded.game);
+ assert.ok(guarded.events.some(e=>e.type==='hit'&&e.poseId===209&&e.guarded));
+ assert.equal(guarded.game.enemies[0].scriptItems.length,0);assert.equal(nativeMovementScale(guarded.game.enemies[0]),1);
+});

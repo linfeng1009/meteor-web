@@ -9,12 +9,12 @@ const pose = id => records.find(record => record.type === 3 && record.id === id)
 const actor = () => ({ hp: 3000, maxHp: 3000, rage: 80, dead: false, scriptItems: [], activeItems: [] });
 
 test('attack-item resolution follows original parameter16 and exact source effect data', () => {
-  for (const [id, expected] of [[201, 22], [551, 22], [203, 12], [204, 12], [210, 11]]) {
+  for (const [id, expected] of [[201, 22], [551, 22], [203, 12], [204, 12], [210, 11], [209, 10]]) {
     const a = actor(), effect = useNativeAttackItem(a, pose(id), items);
     assert.equal(effect.id, expected); assert.equal(effect.record, items.get(expected));
   }
   assert.equal(useNativeAttackItem(actor(), pose(200), items), null);
-  assert.equal(useNativeAttackItem(actor(), pose(209), items), null, 'stat5 slow stays unsupported until its movement consumer is restored');
+
   assert.equal(useNativeAttackItem(actor(), { ...pose(201), type: 2 }, items), null);
   assert.equal(useNativeAttackItem(actor(), { ...pose(201), parameters: [{ words: [16, 99999, 0] }] }, items), null);
   const invalid = structuredClone(items.get(12)); invalid.effects[0].words[3] = 1;

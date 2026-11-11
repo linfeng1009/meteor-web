@@ -29,7 +29,7 @@ function move(weapon, poseId, keys, name, { stance = 'ground', rage = 0, continu
 
 // 飞镖。The special EF emitters are not replaced by a fabricated melee hit.
 move('dart', 200, 'A', '黑蜂针');
-move('dart', 209, 'UA', '雷神锥');
+move('dart', 209, 'UA', '雷神锥', { help: '命中施加原钝筋：移动速度系数50%，持续15秒；可格挡，重复命中刷新。' });
 move('dart', 210, 'DA', '赤练牙');
 move('dart', 201, 'DUA', '八方绝', { rage: 60, notes: '原EF十二攻击球命中，存活且未格挡的目标在受击加怒后削减20怒；人物接触体与时钟为Web适配。' });
 move('dart', 203, 'DUUA', '落樱雪', { rage: 100, notes: '原203→204→205→329攻击与收招；命中施加原item12蛊毒，每2秒损失10气血、持续60秒，重复命中刷新时长。计时为Web适配。' });

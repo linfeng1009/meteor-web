@@ -39,6 +39,8 @@ const clamp = THREE.MathUtils.clamp;
 const v3 = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z);
 const nativePosition = p => v3(p[0] * SCALE, p[2] * SCALE, -p[1] * SCALE);
 const surfaceY = hit => hit.face ? hit.face.normal.clone().transformDirection(hit.object.matrixWorld).y : 0;
+const wallSurfaceNormal = hit => hit.face.normal.clone().applyNormalMatrix(new THREE.Matrix3().getNormalMatrix(hit.object.matrixWorld));
+const ceilingProbeOffsets = [[0,0],...Array.from({length:8},(_,i)=>[Math.cos(i*Math.PI/4),Math.sin(i*Math.PI/4)])];
 const flatDistance = (a, b) => Math.hypot(a.x - b.x, a.z - b.z);
 const originalRoot = new URL('./assets/original/', import.meta.url);
 
@@ -435,11 +437,12 @@ export class MeteorGame {
     for(const height of WALL.heights){
       this.raycaster.set(actor.root.position.clone().add(v3(0,height,0)),toward);this.raycaster.far=reach;
       const hit=this.raycaster.intersectObjects(this._collisionCandidates(actor.root.position.x,actor.root.position.z,reach+1),false).find(hit=>hit.face&&hit.distance>=.001);
-      this.raycaster.far=Infinity;if(!hit||Math.abs(hit.face.normal.clone().transformDirection(hit.object.matrixWorld).y)>WALL.maxNormalY)return null;
-      const normal=hit.face.normal.clone().transformDirection(hit.object.matrixWorld);if(normal.dot(toward)>0)normal.negate();normal.y=0;normal.normalize();
-      hits.push({normal,point:hit.point.clone()});
+      this.raycaster.far=Infinity;if(!hit)return null;
+      const normal=wallSurfaceNormal(hit);if(Math.abs(normal.y)>WALL.maxNormalY)return null;
+      if(normal.dot(toward)>0)normal.negate();const planeNormal=normal.clone();normal.y=0;normal.normalize();
+      hits.push({normal,planeNormal,point:hit.point.clone()});
     }
-    if(hits[0].normal.dot(hits[1].normal)<.95||Math.abs(hits[0].normal.dot(hits[1].point.clone().sub(hits[0].point)))>.1)return null;
+    if(hits[0].planeNormal.dot(hits[1].planeNormal)<.95||Math.abs(hits[0].planeNormal.dot(hits[1].point.clone().sub(hits[0].point)))>.1)return null;
     return {...hits[0],side,forward};
   }
   _endWallTraversal(actor) {
@@ -450,7 +453,7 @@ export class MeteorGame {
     const allowed=this.running&&!actor.grounded&&!actor.dead&&!actor.scriptInputBlocked&&!actor.guard&&!actor.combat.busy;
     if(actor.wallRun){
       const wall=actor.wallRun,hit=allowed&&direction.lengthSq()>0?this._wallContact(actor,wall.side,wall.facing):null;
-      if(!hit||wall.elapsed+dt>WALL.duration||hit.normal.dot(wall.normal)<.95||Math.abs(wall.normal.dot(hit.point.clone().sub(wall.point)))>.15||direction.dot(wall.forward)<.25){this._endWallTraversal(actor);return;}
+      if(!hit||wall.elapsed+dt>WALL.duration||hit.planeNormal.dot(wall.planeNormal)<.95||Math.abs(wall.planeNormal.dot(hit.point.clone().sub(wall.point)))>.15||direction.dot(wall.forward)<.25){this._endWallTraversal(actor);return;}
       wall.elapsed+=dt;return;
     }
     if(!allowed||!this._controlFor(actor)||(actor.wallEntries||0)>=WALL.maxEntries||direction.lengthSq()===0)return;
@@ -467,7 +470,7 @@ export class MeteorGame {
   _beginWallJump(actor) {
     const wall=actor.wallRun;if(!wall||!this.running||this.paused||actor.dead||actor.scriptInputBlocked||actor.guard||actor.combat.busy)return false;
     const hit=this._wallContact(actor,wall.side,wall.facing);
-    if(!hit||hit.normal.dot(wall.normal)<.95||Math.abs(wall.normal.dot(hit.point.clone().sub(wall.point)))>.15){this._endWallTraversal(actor);return false;}
+    if(!hit||hit.planeNormal.dot(wall.planeNormal)<.95||Math.abs(wall.planeNormal.dot(hit.point.clone().sub(wall.point)))>.15){this._endWallTraversal(actor);return false;}
     const id=NATIVE_WALL_POSES[wall.side].exit,pose=actor.combat.data.poses.get(id);
     if(!pose?.valid||!Number.isFinite(pose.link)||!actor.character.sampleSceneMotion)return false;
     actor.wallRun=null;actor.grounded=false;actor.vy=this.hostPhysics.jumpVelocity;
@@ -478,9 +481,15 @@ export class MeteorGame {
   }
   _ceilingBlocked(position,rise) {
     if(!(rise>0)||!this.raycaster||!this.currentMap)return false;
-    this.raycaster.set(position.clone().add(v3(0,WALL.bodyHeight,0)),v3(0,1,0));this.raycaster.far=rise+.05;
-    const blocked=this.raycaster.intersectObjects(this._collisionCandidates(position.x,position.z,1),false).some(hit=>hit.distance>.001&&Math.abs(surfaceY(hit))>.4);
-    this.raycaster.far=Infinity;return blocked;
+    // Sample the collision body's perimeter too: a central ray misses eaves
+    // over a shoulder. Distance zero is a valid flush ceiling contact.
+    const radius=this.hostPhysics.radius,candidates=this._collisionCandidates(position.x,position.z,radius+1);
+    for(const [x,z] of ceilingProbeOffsets){
+      this.raycaster.set(v3(position.x+x*radius,position.y+WALL.bodyHeight,position.z+z*radius),v3(0,1,0));this.raycaster.far=rise+.05;
+      const blocked=this.raycaster.intersectObjects(candidates,false).some(hit=>hit.face&&Math.abs(wallSurfaceNormal(hit).y)>.4);
+      if(blocked){this.raycaster.far=Infinity;return true;}
+    }
+    this.raycaster.far=Infinity;return false;
   }
   _move(f, direction, speed, dt, motion = null) {
     if(f.combat.reacting)f.wallKick=null;
@@ -514,7 +523,7 @@ export class MeteorGame {
       } else {
         f.nativeJump = null; f.vy -= this.hostPhysics.gravity * dt; p.y += f.vy * dt;
       }
-      if(p.y>beforeY&&this._ceilingBlocked(v3(p.x,beforeY,p.z),p.y-beforeY)){p.y=beforeY;f.vy=0;f.nativeJump=null;if(f.wallRun)this._endWallTraversal(f);}
+      if(p.y>beforeY&&this._ceilingBlocked(v3(p.x,beforeY,p.z),p.y-beforeY)){p.y=beforeY;f.vy=0;f.nativeJump=null;f.jumpSequence=null;if(f.wallRun)this._endWallTraversal(f);}
       const landing = this._ground(p.x, p.z, p.y + Math.max(.7, -f.vy * dt + .15));
       if (landing && p.y <= landing.point.y + .04 && f.vy <= 0) { p.y = landing.point.y + .015; f.vy = 0; f.grounded = true; f.nativeJump = null; f.jumpSequence = null; f.wallRun=null;f.wallKick=null;f.wallEntries=0; }
     }

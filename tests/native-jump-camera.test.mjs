@@ -97,6 +97,44 @@ test('remote wall traversal uses its own input, including the wall jump action',
   }finally{state.dispose();}
 });
 
+test('ceiling contact covers the body edge and an already flush head without penetrating',()=>{
+  for(const [x,z,height] of [[.35,0,4.25],[.25,.25,4.25],[0,0,4.2]]){
+    const state=wallFixture();try{
+      const {game,hero}=state;
+      const roof=new THREE.Mesh(new THREE.PlaneGeometry(.2,.2),new THREE.MeshBasicMaterial({side:THREE.DoubleSide}));
+      roof.rotation.x=Math.PI/2;roof.position.set(x,height,z);roof.updateMatrixWorld(true);state.colliders.push(roof);
+      for(let i=0;i<8;i++){game._updateFighter(hero,1/60);assert.ok(hero.root.position.y+2.2<=height+1e-6,`roof ${x}/${z}/${height}: ${hero.root.position.y}`);}
+      assert.equal(hero.wallRun,null);assert.equal(hero.nativeJump,null);assert.equal(hero.jumpSequence,null);
+    }finally{state.dispose();}
+  }
+});
+
+test('nonuniformly scaled wall geometry uses the geometric normal for attachment',()=>{
+  const state=wallFixture();try{
+    const {game,hero,wall}=state;
+    wall.geometry.rotateX(.5);wall.scale.y=4;wall.position.set(0,3.2,-.45);wall.updateMatrixWorld(true);
+    game._updateFighter(hero,1/60);assert.equal(hero.wallRun?.side,'front');
+    assert.ok(hero.wallRun.normal.z>.99);
+    for(let i=0;i<5;i++)game._updateFighter(hero,1/60);
+    assert.equal(hero.wallRun?.side,'front','plane continuity uses the 3D plane, not the horizontal kick direction');
+    assert.equal(game._beginWallJump(hero),true);
+  }finally{state.dispose();}
+});
+
+test('ordinary jumps cancel their takeoff sequence on ceiling contact and resume falling',()=>{
+  const state=fixture();try{
+    const {game,hero}=state;
+    const roof=new THREE.Mesh(new THREE.PlaneGeometry(10,10),new THREE.MeshBasicMaterial({side:THREE.DoubleSide}));
+    roof.rotation.x=Math.PI/2;roof.position.y=4.8;roof.updateMatrixWorld(true);state.colliders.push(roof);
+    game.action('jump');assert.equal(hero.grounded,false);let collided=false;
+    for(let i=0;i<80;i++){
+      game._updateFighter(hero,1/60);assert.ok(hero.root.position.y+2.2<=4.8+1e-6);
+      if(!hero.grounded&&hero.nativeJump===null){collided=true;assert.equal(hero.jumpSequence,null);}
+    }
+    assert.equal(collided,true);assert.equal(hero.grounded,true);assert.equal(hero.vy,0);
+  }finally{state.dispose();}
+});
+
 test('wall exit impulse cannot pass through an opposite wall and yields to a hit',()=>{
   const state=wallFixture();try{
     const {game,hero}=state;game._updateFighter(hero,1/60);assert.equal(game._beginWallJump(hero),true);

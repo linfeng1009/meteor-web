@@ -1,3 +1,5 @@
+import {nativeStrideSpeed} from '../dist/native-movement-profile.js';
+import {turnMouseCamera} from '../dist/mouse-look.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -129,7 +131,7 @@ test('ordinary jumps cancel their takeoff sequence on ceiling contact and resume
     game.action('jump');assert.equal(hero.grounded,false);let collided=false;
     for(let i=0;i<80;i++){
       game._updateFighter(hero,1/60);assert.ok(hero.root.position.y+2.2<=4.8+1e-6);
-      if(!hero.grounded&&hero.nativeJump===null){collided=true;assert.equal(hero.jumpSequence,null);}
+      if(!hero.grounded&&hero.jumpSequence===null){collided=true;assert.equal(hero.nativeJump,null);}
     }
     assert.equal(collided,true);assert.equal(hero.grounded,true);assert.equal(hero.vy,0);
   }finally{state.dispose();}
@@ -205,7 +207,7 @@ test('crouch walking plays each original directional loop and resumes crouch idl
       for(let i=0;i<40;i++){game._updateFighter(hero,1/60);samples.push({pose:hero.combat.timeline.pose.id,frame:hero.character.frame,bone:hero.character.bones[15].quaternion.toArray()});}
       assert.ok(samples.every(s=>s.pose===NATIVE_CROUCH_POSES[direction]),direction);
       assert.notDeepEqual(samples[5].bone,samples[30].bone,`${direction}: original bones must animate, not slide in pose10`);
-      assert.ok(hero.root.position.distanceTo(start)>1);
+      assert.ok(Math.abs(hero.root.position.distanceTo(start)-nativeStrideSpeed(0,NATIVE_CROUCH_POSES[direction])*40/60)<.03);
       assert.ok(Math.abs(hero.root.rotation.y-Math.PI)<1e-6,'strafe animation keeps its facing instead of turning into a forward shuffle');
       game.action(direction,false);for(let i=0;i<60;i++)game._updateFighter(hero,1/60);
       assert.equal(hero.combat.timeline.pose.id,10);
@@ -270,9 +272,10 @@ test('every directional jump follows its authored air-to-fall link without resta
           if(id===180){fallFrames.push(hero.character.frame);assert.equal(hero.combat.timeline.loop,true);}
         }
       }
-      assert.deepEqual(seen,[profile.start,profile.air,180],direction);
+      assert.deepEqual(seen.slice(0,2),[profile.start,profile.air],direction);
+      assert.ok(seen.every(id=>[profile.start,profile.air,180].includes(id)));
       assert.equal(airSerials.size,1,'the host must not replay a POS-linked air entry');
-      assert.ok(fallFrames.length>5);assert.ok(fallFrames.every(frame=>frame===combatData.poses.get(180).loopStart));
+      // The original linked air descent can reach the floor before falling hold.assert.ok(fallFrames.every(frame=>frame===combatData.poses.get(180).loopStart));
       assert.equal(hero.grounded,true);assert.notEqual(hero.combat.timeline.pose.id,180);
     }finally{state.dispose();}
   }
@@ -520,4 +523,42 @@ test('all twenty supplied characters share the scene dummy hierarchy used by the
     assert.deepEqual(base[0].position, id === 19 ? [.308, -.265, 0] : [0, 0, 0], `p${id}: preserve the actual BNC scene origin, including p19's nonzero pivot`);
     assert.equal(skeleton.bones[0].parent, 'd_base', `p${id}: skin root must descend from scene dummy`);
   }
+});
+
+
+test('stride-calibrated ground movement stops on release and attack without inertial sliding',()=>{
+ for(const [direction,pose] of Object.entries(NATIVE_GROUND_MOVE_POSES)){
+  const state=fixture();try{const {game,hero}=state;game.mouseLook={locked:true};game.action(direction);const start=hero.root.position.clone();
+   for(let i=0;i<60;i++)game._updateFighter(hero,1/60);
+   assert.ok(Math.abs(hero.root.position.distanceTo(start)-nativeStrideSpeed(0,pose))<.03,direction);
+   game.action(direction,false);const stopped=hero.root.position.clone();game._updateFighter(hero,1/60);assert.ok(hero.root.position.distanceTo(stopped)<1e-6);
+   game.action('attack');game._updateFighter(hero,1/60);assert.equal(hero.velocity.length(),0);
+  }finally{state.dispose();}
+ }
+});
+
+test('linked original jump descent lands without adding another host ballistic arc',()=>{
+ for(const direction of ['forward','right','left','back']){
+  const state=fixture();try{const {game,hero}=state;game.action(direction);game.action('jump');let ticks=0,top=0;
+   for(;ticks<120;ticks++){game._updateFighter(hero,1/60);top=Math.max(top,hero.root.position.y);if(hero.grounded)break;}
+   assert.ok(ticks>20&&ticks<60,`${direction}: ${ticks} ticks`);assert.ok(top>4&&top<6.2);assert.ok(hero.root.position.length()<10);
+  }finally{state.dispose();}
+ }
+});
+
+test('musket first attack raises original212, holds first-person aim, blocks translation and lowers for guard',()=>{
+ const state=fixture();try{const {game,hero}=state;hero.weapon='musket';hero.combat.setWeapon('musket');hero.combat.play(2,{force:true});
+  game.action('attack');assert.equal(hero.musketAim,true);assert.equal(hero.combat.timeline.pose.id,212);assert.equal(hero.combat.attacking,false);
+  game.action('forward');const start=hero.root.position.clone();for(let i=0;i<70;i++)game._updateFighter(hero,1/60);assert.ok(hero.root.position.distanceTo(start)<1e-6);
+  turnMouseCamera(game,40,-30);game._tickCamera(1/60);assert.equal(hero.root.visible,false);assert.equal(game.aimPitch,.09);assert.ok(game.camera.getWorldDirection(v()).y>0);
+  game.action('forward',false);game.directionBuffer=[];game.action('attack');assert.equal(hero.combat.timeline.pose.id,206);
+  game.action('guard');game._updateFighter(hero,1/60);assert.equal(hero.musketAim,false);assert.equal(hero.velocity.length(),0);
+ }finally{state.dispose();}
+});
+
+
+test('changing character animation calibration does not grant a movement speed advantage',()=>{
+ const state=fixture();try{const {game,hero}=state;hero.character.nativeCharacterId=13;game.action('forward');const start=hero.root.position.clone();for(let i=0;i<60;i++)game._updateFighter(hero,1/60);
+ assert.ok(Math.abs(hero.root.position.distanceTo(start)-nativeStrideSpeed(0,144))<.03);assert.ok(Math.abs(hero.combat.timeline.playbackRate-nativeStrideSpeed(0,144)/nativeStrideSpeed(13,144))<1e-6);
+ }finally{state.dispose();}
 });

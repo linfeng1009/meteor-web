@@ -48,13 +48,13 @@ test('restart/mission disposal clears only script-owned effects and leaves no pe
   updateNativeScriptItems(a, 100); assert.equal(a.hp, 3000);
 });
 
-test('slow affects walking only while active and does not change any weapon family baseline speed', () => {
+test('movement uses original weapon speed and timed slow together without losing the weapon baseline', () => {
   const weapons = resources.allRecords.filter(record => record.type === 1);
   assert.ok(weapons.length > 12);
   for (const weaponRecord of weapons) {
     const a = { ...actor(), weaponRecord };
-    assert.equal(nativeMovementScale(a), 1, weaponRecord.id);
-    useNativeScriptItem(a, item(13)); assert.equal(nativeMovementScale(a), .3, weaponRecord.id);
-    clearNativeScriptItems(a); assert.equal(nativeMovementScale(a), 1, weaponRecord.id);
+    assert.equal(nativeMovementScale(a), nativeEffectiveStat(5,100,[weaponRecord])/100, weaponRecord.id);
+    useNativeScriptItem(a, item(13)); assert.equal(nativeMovementScale(a), nativeEffectiveStat(5,100,[weaponRecord,item(13)])/100, weaponRecord.id);
+    clearNativeScriptItems(a); assert.equal(nativeMovementScale(a), nativeEffectiveStat(5,100,[weaponRecord])/100, weaponRecord.id);
   }
 });

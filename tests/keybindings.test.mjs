@@ -58,3 +58,10 @@ test('untouched previous Web defaults upgrade, while customized layouts are reta
   const old={forward:['KeyW','ArrowUp'],back:['KeyS','ArrowDown'],left:['KeyA','ArrowLeft'],right:['KeyD','ArrowRight'],attack:['KeyJ'],guard:['KeyK','Space'],jump:['KeyL'],crouch:['KeyC'],lock:['KeyQ'],switch:['KeyE'],pickup:['KeyF'],weapon1:['Digit1'],weapon2:['Digit2'],weapon3:['Digit3'],weapon4:['Digit4'],weapon5:['Digit5']};
   assert.deepEqual(loadBindings({getItem:()=>JSON.stringify(old)}),defaultBindings());old.attack=['KeyH'];assert.deepEqual(loadBindings({getItem:()=>JSON.stringify(old)}).attack,['KeyH']);
 });
+
+
+test('obsolete catalogue and explicit pickup shortcuts are removed while customized combat bindings survive migration',()=>{
+ const prior={...defaultBindings(),attack:['KeyH'],pickup:['KeyF'],weapon1:['Digit1'],weapon2:['Digit2'],weapon3:['Digit3'],weapon4:['Digit4'],weapon5:['Digit5']};
+ const loaded=loadBindings({getItem:()=>JSON.stringify(prior)});assert.deepEqual(loaded.attack,['KeyH']);assert.ok(!('pickup' in loaded));assert.ok(!('weapon1' in loaded));
+ const h=harness(loaded);for(const code of ['KeyF','Digit1','Digit2','Digit3','Digit4','Digit5'])h.emit('keydown',code);assert.deepEqual(h.events,[]);h.controller.dispose();
+});

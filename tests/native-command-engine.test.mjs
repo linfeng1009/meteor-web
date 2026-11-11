@@ -66,6 +66,8 @@ async function fixture(weapon = 'sword') {
 }
 
 function command(game, directions) {
+  if(game.hero.weapon==='musket'&&game.hero.musketAim&&game.hero.combat.timeline?.pose.id===212&&!game.hero.combat.timeline.finished)for(let i=0;i<70;i++)tick(game);
+  if(game.hero.weapon==='musket'&&!game.hero.musketAim){game.action('attack');for(let i=0;i<70;i++)tick(game);game.directionBuffer=[];}
   for (const direction of directions) {
     const key = { up: 'forward', down: 'back', left: 'left', right: 'right' }[direction];
     game.action(key, true); game.action(key, false); game.elapsed += .08;
@@ -299,7 +301,7 @@ test('jump then down-A selects native down attacks, with sword wind-up held thro
         if (hero.combat.timeline.pose.id !== 265) break;
         const b = hero.character.sampleSceneMotion(timeline.pose.source, timeline.frame);
         if (b.z - a.z < -1e-4) {
-          assert.ok(Math.abs(hero.root.position.y - before - (b.z - a.z) * .08) < 1e-5);
+          assert.ok(hero.grounded?Math.abs(hero.root.position.y-.015)<1e-5:Math.abs(hero.root.position.y-before-(b.z-a.z)*.08)<1e-5);
           sawAuthoredDescent = true; break;
         }
       }

@@ -90,3 +90,11 @@ test('operation timestamps preserve short intervals, reject invalid/backward bat
   assert.deepEqual(call(a,'sync').input.map(x=>x.time),[10,10.03,10.12]);
   assert.throws(()=>call(b,'sync',{input:[input(4,10.1)]}),/时间/);assert.equal(rooms.rooms.get(a.room.code).players[1].lastSequence,3);
 });
+
+
+test('aim pitch is bounded on input and snapshot without partially accepting invalid state',()=>{
+ const {a,b,call}=playing();for(const pitch of [NaN,Infinity,1.21,-1.21])assert.throws(()=>call(b,'sync',{input:[{sequence:1,action:'look',active:false,angle:0,pitch}]}),/无效/);
+ call(b,'sync',{input:[{sequence:1,action:'look',active:false,angle:0,pitch:.4}]});assert.equal(call(a,'sync').input[0].pitch,.4);
+ const state=frame(a,b);state.players[0].musketAim=true;state.players[0].aimPitch=.4;call(a,'sync',{frame:state});
+ for(const patch of [{musketAim:1},{aimPitch:NaN},{aimPitch:1.3}]){const invalid=structuredClone(state);invalid.sequence=2;Object.assign(invalid.players[0],patch);assert.throws(()=>call(a,'sync',{frame:invalid}),/无效/);assert.equal(call(b,'sync').frame.sequence,1);}
+});

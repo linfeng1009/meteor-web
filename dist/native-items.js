@@ -81,12 +81,11 @@ export function nativeRageMaximum(actor) {
   return nativeEffectiveStat(7, actor.nativeStats?.[7] ?? 100, [actor.weaponRecord, ...(actor.activeItems || [])]);
 }
 
-// The host's walking speed is a Web physics value. Apply recovered percent
-// active item modifiers on a normalized basis, preserving native integer stat
-// arithmetic. Weapon speed is not reapplied to the host's existing base speed.
+// Apply original weapon and active-item stat5 modifiers once to the host's
+// unmodified stride baseline, preserving native additive integer arithmetic.
 export function nativeMovementScale(actor) {
   const basis = actor.nativeStats?.[5] ?? 100;
-  return basis > 0 ? nativeEffectiveStat(5, basis, actor.activeItems || []) / basis : 1;
+  return basis > 0 ? nativeEffectiveStat(5, basis, [actor.weaponRecord,...(actor.activeItems || [])]) / basis : 1;
 }
 
 function syncScriptMaxHp(actor) {

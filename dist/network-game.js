@@ -74,17 +74,18 @@ export class NetworkGame{
       // Client clock is used only for command intervals. World time, movement,
       // recovery expiration and damage continue on the host's fixed ticks.
       control.inputTime=Number.isFinite(input.time)?input.time:this.game.elapsed;
-      if(input.action==='clear'){control.keys.clear();clearPlayerCommands(control);actor.guard=false;continue;}
-      control.cameraAngle=input.angle;
+      if(input.action==='clear'){control.keys.clear();clearPlayerCommands(control);actor.guard=false;actor.musketAim=false;continue;}
+      control.cameraAngle=input.angle;control.aimPitch=input.pitch??0;
       if(input.action==='look'){const held=new Set(input.held||[]);for(const key of continuous){if(control.keys.has(key)&&!held.has(key))this.game._actionFighter(actor,control,key,false);else if(!control.keys.has(key)&&held.has(key))this.game._actionFighter(actor,control,key,true);}continue;}
       this.game._actionFighter(actor,control,input.action,input.active);
     }
   }
-  snapshot(){if(!this.active||!this.client.host)return null;const g=this.game;return {sequence:++this.sequence,time:g.matchElapsed,loot:g._lootSnapshot?.(),impacts:g._combatFeedbackSnapshot?.(),players:[g.hero,...g.enemies].map(f=>({id:f.networkId,weaponId:f.weaponId,weapon2Id:f.weapon2Id??null,pickupSerial:f.pickupSerial||0,statuses:(f.scriptItems||[]).map(item=>({id:item.id,name:item.name,statKey:item.statKey,remaining:item.remaining,value:item.value,period:item.period||0})),position:f.root.position.toArray(),angle:f.root.rotation.y,hp:f.hp,maxHp:f.maxHp,rage:f.rage,dead:f.dead,grounded:f.grounded,guard:f.guard,pose:f.combat.timeline?.pose.id||0,source:f.character.source??0,frame:f.character.frame??0,serial:f.combat.serial,effectTime:f.combat._effectElapsed||0,context:f.combat.currentMove?{name:f.combat.currentMove.name||'',rage:f.combat.currentMove.rage||0,poseId:f.combat.currentMove.poseId,command:f.combat.currentMove.command||''}:null,...this.scores.get(f.networkId)}))};}
+  snapshot(){if(!this.active||!this.client.host)return null;const g=this.game;return {sequence:++this.sequence,time:g.matchElapsed,loot:g._lootSnapshot?.(),impacts:g._combatFeedbackSnapshot?.(),players:[g.hero,...g.enemies].map(f=>({id:f.networkId,weaponId:f.weaponId,weapon2Id:f.weapon2Id??null,pickupSerial:f.pickupSerial||0,statuses:(f.scriptItems||[]).map(item=>({id:item.id,name:item.name,statKey:item.statKey,remaining:item.remaining,value:item.value,period:item.period||0})),position:f.root.position.toArray(),angle:f.root.rotation.y,hp:f.hp,maxHp:f.maxHp,rage:f.rage,dead:f.dead,grounded:f.grounded,guard:f.guard,musketAim:!!f.musketAim,aimPitch:this.game._controlFor?.(f)?.aimPitch||0,pose:f.combat.timeline?.pose.id||0,source:f.character.source??0,frame:f.character.frame??0,serial:f.combat.serial,effectTime:f.combat._effectElapsed||0,context:f.combat.currentMove?{name:f.combat.currentMove.name||'',rage:f.combat.currentMove.rage||0,poseId:f.combat.currentMove.poseId,command:f.combat.currentMove.command||''}:null,...this.scores.get(f.networkId)}))};}
   apply(frame){if(this.client.host||!this.active||frame.sequence<=this.lastFrame)return;this.lastFrame=frame.sequence;const g=this.game,duration=frame.time-this.presentationTime;this.presentationTime=frame.time;g.matchElapsed=frame.time;
     g._applyLootState?.(frame.loot);
     for(const state of frame.players){const f=this.actors.get(state.id);if(!f||!f.combat.data.poses.has(state.pose))continue;
       const previousFrame=f.character.frame,previousSerial=f.networkSerial;
+      const enteringAim=!f.musketAim&&state.musketAim;f.musketAim=!!state.musketAim;if(f===g.hero&&enteringAim){(g.localControl||g).aimPitch=Number.isFinite(state.aimPitch)?state.aimPitch:0;g.cameraAngle=state.angle-Math.PI;}
       Object.assign(f,{hp:state.hp,maxHp:state.maxHp,rage:state.rage,dead:!!state.dead,grounded:!!state.grounded,guard:!!state.guard});
       const weaponChanged=Number.isInteger(state.weaponId)&&g.weaponItems?.has(state.weaponId)&&f.weaponId!==state.weaponId;
       if(weaponChanged)g._equip(f,state.weaponId).catch(()=>{});

@@ -184,7 +184,7 @@ const pageKinds=new Set(['network','mission','guide','resources','settings']);
 function showLobbyPage(page){
   if(running)return;
   disposeKeySettings?.();disposeKeySettings=null;
-  if(modal.open)modal.close();modalKind='';lobbyPage=page;
+  if(modal.open)modal.close();modalKind='';lobbyPage=page;$('#lobby').dataset.page=page;
   $('#home-page').hidden=page!=='home';$('#prep-page').hidden=page!=='prep';$('#page-content').hidden=['home','prep'].includes(page);
   $$('[data-route], .side-nav [data-open]').forEach(button=>{const active=(button.dataset.route||button.dataset.open)===page;if(active)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});
   $('#active-room').hidden=!networkLobby?.client;
@@ -195,9 +195,9 @@ function openModal(kind){
   if(kind==='guide')guideWeapon=weapons[game?.hero?.weapon]?game.hero.weapon:prefs.weapon;
   const renderers={guide:guideHTML,weapons:weaponsHTML,characters:charactersHTML,mission:missionHTML,maps:mapsHTML,network:()=>header('JIANGHU / MULTIPLAYER','江湖会武','同一游戏服务中的房间会出现在这里。')+'<div id="network-lobby"></div>',resources:resourcesHTML,settings:settingsHTML,keys:()=>header('SETTINGS / CONTROLS','自定义按键','保存键位后生效；关闭返回设置。')+'<div id="key-settings"></div>',pause:pauseHTML};
   if(!running&&!ended&&pageKinds.has(kind)){
-    showLobbyPage(kind);$('#page-content').innerHTML=(renderers[kind]||guideHTML)();
+    showLobbyPage(kind);$('#page-content').innerHTML='<button class="game-back" data-route="home" aria-label="返回游戏大厅">← 返回大厅</button>'+(renderers[kind]||guideHTML)();
     if(kind==='network')networkLobby.mount($('#network-lobby'));
-    $('#page-content').focus();return;
+    $('#page-content').focus({preventScroll:true});return;
   }
   if(!modal.open)priorFocus=document.activeElement;
   modalKind=kind;modal.dataset.kind=kind;

@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="./style.css">
   <link rel="stylesheet" href="./keybindings.css">
   <link rel="stylesheet" href="./cold-ink.css">
+  <link rel="stylesheet" href="./game-shell.css">
 </head>
 <body>
   <svg class="svg-defs" aria-hidden="true"><defs>
@@ -41,7 +42,7 @@
         <div class="home-bottom"><span id="home-loadout">孟星魂 · 原版长剑</span><button class="secondary-button" data-route="prep">战前整装 →</button><button class="guide-button" data-open="guide">初入江湖 · 查看操作</button><button id="active-room" class="secondary-button" data-open="network" hidden>返回我的房间</button></div>
 
       </section>
-      <section id="prep-page" class="lobby-page" hidden aria-labelledby="prep-title"><div class="page-heading"><div><div class="eyebrow">江湖 / 自由演武</div><h2 id="prep-title">战前整装</h2></div><span>角色 → 战场与兵器 → 入场</span></div>
+      <section id="prep-page" class="lobby-page" hidden aria-labelledby="prep-title"><div class="page-heading"><div><div class="eyebrow">江湖 / 自由演武</div><h2 id="prep-title">战前整装</h2></div><span><button class="game-back" data-route="home">← 返回大厅</button></span></div>
       <div class="prep-character"><button class="hero-character" data-open="characters" aria-label="选择人物"><span class="hero-character-seal" id="hero-character-seal" aria-hidden="true">孟</span><span class="hero-character-copy"><small>本局人物</small><strong id="hero-character-name">孟星魂</strong><span>更换人物 / 外观 →</span></span></button><p>演武自由选择人物；单机沿用任务身份与装备，联机使用入房时选定的人物。</p><a href="./character-compare.html">人物工坊 · 外观对照 ↗</a></div>
       <div class="scene-caption"><div><small id="scene-english">THE FOUR SQUARES</small><strong id="scene-name">四方阵</strong><span id="scene-poem">方寸之间，自有天地。</span><small id="scene-load-status" role="status"></small></div><button class="secondary-button" data-open="maps">更换战场</button></div>
       <div class="preparation-layout">

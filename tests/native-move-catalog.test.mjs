@@ -89,12 +89,13 @@ test('catalog scope and unresolved projectile commands are explicit rather than 
   assert.equal(NATIVE_WEAPON_FAMILIES.length, 12);
   assert.deepEqual(NATIVE_WEAPON_FAMILIES.filter(weapon => weapon.available).map(weapon => weapon.id).sort(), ['blade', 'dagger', 'dart', 'dual', 'hammer', 'knuckle', 'musket', 'ninja', 'qiankun', 'spear', 'sword', 'wheel']);
   const pending = NATIVE_MOVE_CATALOG.filter(move => move.pending);
-  assert.equal(NATIVE_MOVE_CATALOG.length, 197); assert.equal(pending.length, 13);
+  assert.equal(NATIVE_MOVE_CATALOG.length, 197); assert.equal(pending.length, 12);
+  assert.equal(byPose('ninja',470).pending,undefined);
   assert.equal(byPose('dual',557).pending,undefined);
   for (const [weapon, ids] of [['hammer', [567, 325]], ['musket', [215, 216]], ['wheel', [552, 224, 554]], ['knuckle', [416, 489]], ['qiankun', [570]]])
     for (const id of ids) assert.equal(byPose(weapon, id).pending, undefined, `${weapon}-${id}`);
   for (const poseId of [201, 203, 551]) assert.equal(byPose('dart', poseId).pending, undefined);
-  for (const move of pending) assert.ok(move.rage > 0 || move.kind === 'movement' || ['knuckle-412', 'knuckle-413', 'ninja-470'].includes(move.id), move.id);
+  for (const move of pending) assert.ok(move.rage > 0 || move.kind === 'movement' || ['knuckle-412', 'knuckle-413'].includes(move.id), move.id);
   assert.deepEqual(poses.get(259).attacks.map(attack => attack.bones), [['effect']], '阎罗 cannot damage through a fabricated weapon hit');
   assert.equal(byPose('dagger', 259).pending, undefined);
   assert.match(byPose('dagger', 343).notes, /第二段.*effect窗推开/);

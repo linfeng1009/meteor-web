@@ -689,3 +689,18 @@ test('乾坤刀大绝回鞘阶段的五个原攻击窗仍查询前段特效',asy
  assert.deepEqual([...windows].sort(),[0,1,2,3,4]);assert.equal(game.hero.rage,0);
  assert.equal(events.filter(e=>e.type==='move'&&e.poseId===451).length,1);
 });
+
+test('忍刀夹头使用原攻击盒摔飞对手，破防且不吸附远处目标',async()=>{
+ const effect=manifest.effects.pos470,bytes=await readFile(new URL(`assets/original/${effect.source}`,dist));
+ assert.equal(createHash('sha256').update(bytes).digest('hex'),effect.sha256);
+ const {game,events}=await fixture([v(0,.015,3),v(0,.015,16),v(0,.015,-8)]);await game._equip(game.hero,'ninja');
+ game.enemies[0].scriptControl.guard=true;manual(game,['back','back','forward']);assert.equal(game.hero.combat.currentMove.poseId,470);
+ settle(game);
+ const hits=events.filter(e=>e.type==='hit'&&e.poseId===470);
+ assert.equal(hits.length,1);assert.equal(hits[0].contactSource,'effect');assert.equal(hits[0].effectNode,'AttackBox');
+ assert.equal(hits[0].guardBypassed,true);assert.equal(hits[0].raw.selectedTargetPose,106);
+ assert.equal(game.enemies[1].hp,10000);assert.equal(game.enemies[2].hp,10000);assert.equal(game.hero.combat.busy,false);
+ const miss=await fixture([v(0,.015,16)]);await miss.game._equip(miss.game.hero,'ninja');miss.game.hero.rage=73;
+ manual(miss.game,['back','back','forward']);settle(miss.game);
+ assert.equal(miss.events.filter(e=>e.type==='hit').length,0);assert.equal(miss.game.hero.rage,73);assert.equal(miss.game.hero.combat.busy,false);
+});

@@ -227,7 +227,7 @@ move('ninja', 463, 'UA', '跃斩');
 move('ninja', 464, 'DA', '横斩');
 move('ninja', 466, 'UDA', '插地');
 move('ninja', 467, 'UDA', '后拉', { continuationOf: [466], alternateInputs: ['A'], command: '↑↓A↑↓A' });
-move('ninja', 470, 'DDUA', '夹头', { pending: '夹头擒拿与成对动作尚未恢复' });
+move('ninja', 470, 'DDUA', '夹头', { help: '按原攻击盒命中并摔飞对手，可破防；未命中时完整收招。' });
 move('ninja', 471, 'DUA', '升龙脚');
 move('ninja', 472, 'LRUA', '剪刀脚');
 for (const [id, keys, name] of [[526, 'UUA', '前'], [527, 'RRA', '右'], [528, 'LLA', '左'], [529, 'DDA', '后']]) {

@@ -54,6 +54,17 @@ test('忍刀八个瞬移保留原始闪光球与特效字节，不伪造攻击�
  }finally{vfx.dispose();}
 });
 
+test('自爆尾焰在死亡后继续，漏掉起手的联机快照也只补播一次',()=>{
+ const {actor,vfx}=fixture('ninja');try{
+  const cast={...state(468,1.15,{poseId:468},1),effectTime:1.15};vfx.detachOnDeath(actor,cast);actor.dead=true;
+  assert.equal(vfx.active.length,1);assert.equal(vfx.active[0].persistAfterDeath,true);vfx.update(.1);assert.equal(vfx.active.length,1);
+  vfx.clear();const death={...state(469,0,{poseId:468,deathEffectTime:1.15},2),deathEffectAge:.2};
+  vfx.sample(actor,death);assert.equal(vfx.active.length,1);assert.ok(Math.abs(vfx.active[0].time-1.35)<1e-9);
+  vfx.sample(actor,death);assert.equal(vfx.active.length,1);vfx.update(.1);assert.ok(vfx.active[0].nodes.some(n=>n.mesh?.visible));
+  vfx.update(5);assert.equal(vfx.active.length,0);vfx.sample(actor,death);assert.equal(vfx.active.length,0);
+ }finally{vfx.dispose();}
+});
+
 test('ordinary native EF definitions keep source hashes and render without a rage context',async()=>{
   const extra=JSON.parse(await readFile(new URL('../dist/assets/original/combat-vfx.json',import.meta.url),'utf8'));
   assert.ok(Object.keys(extra.effects).length>=66);

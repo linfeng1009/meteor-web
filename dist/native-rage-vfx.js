@@ -57,13 +57,24 @@ export async function loadNativeRageVfx(scene) {
 export class NativeRageVfx {
   constructor({ scene, manifest, textures = new Map() }) {
     this.scene = scene; this.manifest = manifest; this.textures = textures;
-    this.active = []; this.actors = new Map(); this.disposed = false;
+    this.active = []; this.actors = new Map(); this.deathCasts=new WeakMap();this.disposed = false;
     this.time = 0; this.trails = new NativeWeaponTrails(scene, manifest);
     this.group = new THREE.Group(); this.group.name = '原版怒气技能特效'; scene.add(this.group);
   }
   sample(actor, state, fps = 30) {
     if (this.disposed || !actor || !state) return null;
-    if (actor.dead || actor.disposed || actor.scriptRemoved) { this.clearActor(actor); return null; }
+    if(actor.disposed||actor.scriptRemoved){this.clearActor(actor);return null;}
+    if(actor.dead){
+      const context=state.context;
+      if(state.pose?.id===469&&context?.poseId===468&&Number.isFinite(context.deathEffectTime)&&this.deathCasts.get(actor)!==state.serial){
+        this.deathCasts.set(actor,state.serial);
+        let effect=this.actors.get(actor);
+        if(effect?.id!=='pos468'){if(effect)this._remove(effect);effect=this.manifest.effects.pos468?this._create(actor,state,'pos468'):null;}
+        if(effect){effect.time=Math.max(0,context.deathEffectTime+(state.deathEffectAge||0));effect.persistAfterDeath=true;effect.anchorSnapshot=snapshotEffectAnchors(effect);this._retire(effect);}
+      }
+      for(const effect of [...this.active])if(effect.actor===actor&&!effect.persistAfterDeath)this._remove(effect);
+      this.trails.clearActor(actor);return null;
+    }
     if (actor.combat?.reacting) {
       const live = this.actors.get(actor); if (live) this._remove(live);
       this.trails.clearActor(actor); return null;
@@ -98,6 +109,11 @@ export class NativeRageVfx {
     if(live&&this.active.includes(live))this.actors.set(actor,live);else this.actors.delete(actor);
     effect.live=false;effect.time=0;effect.tail=Math.max(RAGE_VFX_ADAPTER.tail,effect.visualEnd);effect.updatedAt=this.time;
     return effect;
+  }
+  detachOnDeath(actor,state,fps=30){
+    this.sample(actor,state,fps);
+    const effect=this.actors.get(actor);if(!effect)return;
+    effect.persistAfterDeath=true;this._retire(effect);this.trails.clearActor(actor);
   }
   _sampleSegment(actor, state, fps, at) {
     const current = this.actors.get(actor), context = state.context;
@@ -157,7 +173,7 @@ export class NativeRageVfx {
     const step = Number.isFinite(dt) ? Math.max(0, dt) : 0;
     this.time += step; this.trails.update(step);
     for (const effect of [...this.active]) {
-      if (effect.actor.dead || effect.actor.disposed || effect.actor.scriptRemoved || effect.live && effect.actor.combat?.reacting) { this._remove(effect); continue; }
+      if (effect.actor.dead&&!effect.persistAfterDeath || effect.actor.disposed || effect.actor.scriptRemoved || effect.live && effect.actor.combat?.reacting) { this._remove(effect); continue; }
       if (!effect.live) {
         const elapsed = Math.max(0, this.time - effect.updatedAt); effect.updatedAt = this.time;
         effect.time += elapsed; effect.tail -= elapsed;
@@ -195,8 +211,8 @@ export class NativeRageVfx {
     effect.group.removeFromParent();
     for (const node of effect.nodes) if (node.mesh) { node.mesh.geometry.dispose(); node.mesh.material.dispose(); }
   }
-  clearActor(actor) { for (const effect of [...this.active]) if (effect.actor === actor) this._remove(effect); this.trails.clearActor(actor); }
-  clear() { for (const effect of [...this.active]) this._remove(effect); this.trails.clear(); }
+  clearActor(actor) { for (const effect of [...this.active]) if (effect.actor === actor) this._remove(effect); this.trails.clearActor(actor);this.deathCasts.delete(actor); }
+  clear() { for (const effect of [...this.active]) this._remove(effect); this.trails.clear();this.deathCasts=new WeakMap(); }
   dispose() {
     if (this.disposed) return; this.clear(); this.group.removeFromParent(); this.trails.dispose();
     for (const texture of new Set(this.textures.values())) texture.dispose(); this.textures.clear(); this.disposed = true;

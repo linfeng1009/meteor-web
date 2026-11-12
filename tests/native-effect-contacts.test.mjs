@@ -623,7 +623,7 @@ test('plane and donut bounds match the recovered native constructors, including 
 
 test('忍法隐身 completes535→536, charges50, refreshes120 seconds and remains hittable',async()=>{
  const {game,events}=await fixture([]);await game._equip(game.hero,'ninja');game.hero.rage=100;manual(game,['left','right','back']);assert.equal(game.hero.combat.currentMove.poseId,535);assert.equal(game.hero.rage,50);assert.equal(nativeIsInvisible(game.hero),false);
- const seen=settle(game);assert.ok(seen.has(536));assert.equal(game.hero.scriptItems[0].id,36);assert.ok(game.hero.scriptItems[0].remaining>119);assert.equal(nativeIsInvisible(game.hero),true);
+ const seen=settle(game);assert.ok(seen.has(536));assert.equal(game.hero.scriptItems[0].id,36);assert.equal(game.hero.scriptItems[0].duration,120);assert.ok(game.hero.scriptItems[0].remaining>=119);assert.equal(nativeIsInvisible(game.hero),true);
  game.hero.rage=100;manual(game,['left','right','back']);settle(game);assert.equal(game.hero.scriptItems.length,1);assert.equal(events.filter(e=>e.type==='self-item').at(-1).refreshed,true);
  updateNativeScriptItems(game.hero,121);assert.equal(nativeIsInvisible(game.hero),false);
  game.hero.rage=100;manual(game,['left','right','back']);game.hero.combat.react(103);settle(game);assert.equal(nativeIsInvisible(game.hero),false);
@@ -793,4 +793,31 @@ test('换兵招式加载副兵器失败时恢复原兵器、模型和副兵器�
  try{manual(game,['right','right']);await new Promise(resolve=>setImmediate(resolve));}finally{console.error=prior;}
  assert.equal(game.hero.weaponId,51);assert.equal(game.hero.weapon2Id,8);assert.equal(game.hero.combat.weapon,'knuckle');assert.equal(game.weapon,'knuckle');
  assert.deepEqual(game.hero.weaponModels,models);assert.ok(models.every(model=>model.parent));settle(game);assert.equal(game.hero.combat.busy,false);
+});
+
+test('忍刀自爆按原攻击窗伤敌并消耗原自身道具，不先死亡吞掉爆炸',async()=>{
+ const {game,events}=await fixture([v(0,.015,3),v(0,.015,8),v(0,.015,-8)]);await game._equip(game.hero,'ninja');game.hero.rage=100;
+ manual(game,['left','right','forward','back']);assert.equal(game.hero.rage,50);
+ for(let i=0;i<120&&!game.hero.dead;i++)tick(game);
+ const hits=events.filter(e=>e.type==='hit');
+ assert.ok(hits.length);assert.ok(hits.every(e=>e.poseId===468));assert.equal(game.hero.hp,0);assert.equal(game.hero.dead,true);assert.equal(game.hero.combat.timeline.pose.id,469);
+ assert.equal(game.deaths,1);assert.equal(events.filter(e=>e.type==='self-item'&&e.itemId===35).length,1);
+ assert.equal(hits.length,1);assert.equal(hits[0].amount,634);assert.equal(hits[0].effectNode,'AttackBox');assert.equal(game.enemies[1].hp,10000);assert.equal(game.enemies[2].hp,10000);
+});
+
+test('自爆可被格挡或打断，粗步长仍只结算一次爆炸和自身死亡',async()=>{
+ const blocked=await fixture([v(0,.015,3)]);await blocked.game._equip(blocked.game.hero,'ninja');blocked.game.hero.rage=100;blocked.game.enemies[0].scriptControl.guard=true;
+ manual(blocked.game,['left','right','forward','back']);for(let i=0;i<120&&!blocked.game.hero.dead;i++)tick(blocked.game);
+ assert.ok(blocked.events.find(e=>e.type==='hit')?.guarded);assert.equal(blocked.game.enemies[0].hp,10000);assert.equal(blocked.game.hero.dead,true);
+ const interrupted=await fixture([]);await interrupted.game._equip(interrupted.game.hero,'ninja');interrupted.game.hero.rage=100;manual(interrupted.game,['left','right','forward','back']);
+ interrupted.game.hero.combat.react(103);for(let i=0;i<120;i++)tick(interrupted.game);assert.equal(interrupted.game.hero.dead,false);assert.equal(interrupted.game.hero.hp,1000);assert.equal(interrupted.events.some(e=>e.type==='self-item'),false);
+ const coarse=await fixture([v(0,.015,3)]);await coarse.game._equip(coarse.game.hero,'ninja');coarse.game.hero.rage=100;manual(coarse.game,['left','right','forward','back']);
+ for(let i=0;i<12&&!coarse.game.hero.dead;i++)tick(coarse.game,.2);
+ assert.equal(coarse.events.filter(e=>e.type==='hit'&&e.poseId===468).length,1);assert.equal(coarse.game.hero.dead,true);assert.equal(coarse.game.deaths,1);
+});
+
+test('自身道具在原动作最后两帧生效，而非等整个动画结束',async()=>{
+ const {game}=await fixture([]);await game._equip(game.hero,'ninja');game.hero.rage=100;manual(game,['left','right','back']);
+ for(let i=0;i<180&&!nativeIsInvisible(game.hero);i++)tick(game);
+ const timeline=game.hero.combat.timeline;assert.equal(timeline.pose.id,535);assert.ok(timeline.frame>=timeline.pose.end-1);assert.ok(timeline.frame<timeline.pose.end);assert.equal(timeline.finished,false);
 });

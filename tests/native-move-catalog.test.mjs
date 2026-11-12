@@ -90,7 +90,8 @@ test('catalog scope and unresolved projectile commands are explicit rather than 
   assert.equal(NATIVE_WEAPON_FAMILIES.length, 12);
   assert.deepEqual(NATIVE_WEAPON_FAMILIES.filter(weapon => weapon.available).map(weapon => weapon.id).sort(), ['blade', 'dagger', 'dart', 'dual', 'hammer', 'knuckle', 'musket', 'ninja', 'qiankun', 'spear', 'sword', 'wheel']);
   const pending = NATIVE_MOVE_CATALOG.filter(move => move.pending);
-  assert.equal(NATIVE_MOVE_CATALOG.length, 197); assert.equal(pending.length, 1);
+  assert.equal(NATIVE_MOVE_CATALOG.length, 197); assert.equal(pending.length, 0);
+  assert.equal(byPose('ninja',468).pending,undefined);
   for(const id of [412,413])assert.equal(byPose('knuckle',id).pending,undefined);
   assert.equal(byPose('ninja',540).pending,undefined);
   assert.equal(byPose('ninja',470).pending,undefined);

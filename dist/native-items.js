@@ -67,6 +67,7 @@ const scriptItemSpecs = new Map([
   [22, { statKey: 6, value: -20, lifetime: 0, rate: 0, effectType: 0, period: 0, kind: 'immediate' }],
   [34, { statKey: 3, value: 40, lifetime: 900, rate: 10, effectType: -1, period: 0, kind: 'modifier' }],
   [37, { statKey: 6, value: -5, lifetime: 0, rate: 0, effectType: 0, period: 0, kind: 'immediate' }],
+  [35, { statKey: 2, value: -99999, lifetime: 0, rate: 0, effectType: 0, period: 0, kind: 'immediate' }],
   [40, { statKey: 4, value: 20, lifetime: 1200, rate: 10, effectType: -1, period: 0, kind: 'modifier' }]
 ]);
 const maxHpBeforeScriptItems = new WeakMap();

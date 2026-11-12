@@ -234,7 +234,7 @@ for (const [id, keys, name] of [[526, 'UUA', '前'], [527, 'RRA', '右'], [528, 
   move('ninja', id, keys, `瞬移·${name}`, { kind: 'movement', help: '沿原动作轨迹快速位移，受地形碰撞约束；可按原接招表衔接攻击。' });
   move('ninja', id + 4, keys, `空中瞬移·${name}`, { kind: 'movement', stance: 'air', help: '空中沿原动作轨迹快速位移，保留下落；可衔接空中攻击。' });
 }
-move('ninja', 468, 'LRUDA', '同归于尽', { rage: 50, pending: '原版自爆、自伤与范围判定尚未恢复' });
+move('ninja', 468, 'LRUDA', '同归于尽', { rage: 50, help: '爆炸按原攻击盒判定，施展末段自身损失99999气血；可被打断，爆炸可格挡。' });
 move('ninja', 535, 'LRDA', '忍法隐身', { rage: 50, help: '施展完成后隐身120秒，降低人物可见度并阻止敌人新发现；不会免疫攻击，重复施展刷新时长。' });
 move('ninja', 540, 'LRA', '压制', { rage: 10, help: '起手击倒后自动踩踏、收刀；初踩期间再次输入←→A可接再踩，每次实际接招消耗10怒气。' });
 move('ninja', 473, 'DUUA', '暴怒爆弹', { rage: 50, help: '释放爆弹，命中削减敌人5怒气；可接暴怒环杀。原粒子发射器仍在完善。' });

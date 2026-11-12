@@ -1133,19 +1133,22 @@ export class MeteorGame {
         const basicEmitter = { dart: NATIVE_DART_PROFILE, musket: NATIVE_MUSKET_PROFILE, wheel: NATIVE_WHEEL_PROFILE }[f.weapon];
         if (segment.pose.attacks.length && !basicEmitter?.poseIds.includes(segment.pose.id)) this._soundDefinition(segment.pose.raw.fields.effectid);
       }
-      // Source parameter18 is a deferred self item, independent of landing a
-      // hit. Commit once on casting completion; interruption discards the cast.
-      if (!segment.blend && segment.finished && !['roll','dash'].includes(segment.context?.kind) && segment.context?.poseId === segment.pose.id && f.selfItemSerial !== segment.serial) {
-        f.selfItemSerial = segment.serial;
-        const item = useNativeSelfItem(f, this.combatData.moveRecords.get(segment.pose.id), this.combatData.itemRecords);
-        if (item) this.onEvent?.({ type: 'self-item', actorId: f.scriptId ?? f.id, poseId: segment.pose.id, itemId: item.id, name: item.name, duration: item.duration, refreshed: item.refreshed });
-      }
       // A rendered frame can cross several narrow original attack windows.
       // Sample each window's authored frame, keeping its original index and
       // serial so multi-thrusts hit once per window, never once per render.
       for (const attack of segment.attacks)this._resolveAttackWindow(f,segment,attack);
+      // 004ce410 pushes2 to004dc8c0: End-floor(frame)<2. Parameter18
+      // applies near the final two source frames, independently of contact.
+      // Resolve this host step's attack before committing lethal self damage.
+      if(!segment.blend&&segment.frame>=segment.pose.end-1&&!['roll','dash'].includes(segment.context?.kind)&&segment.context?.poseId===segment.pose.id&&f.selfItemSerial!==segment.serial){
+        f.selfItemSerial=segment.serial;
+        const item=useNativeSelfItem(f,this.combatData.moveRecords.get(segment.pose.id),this.combatData.itemRecords);
+        if(item)this.onEvent?.({type:'self-item',actorId:f.scriptId??f.id,poseId:segment.pose.id,itemId:item.id,name:item.name,duration:item.duration,refreshed:item.refreshed});
+        if(item&&f.hp<=0){this.rageVfx?.detachOnDeath(f,segment,f.combat.fps);this._kill(f,{awardKill:false,deathPose:segment.pose.link,deathContext:{...segment.context,deathEffectTime:segment.effectTime,deathEffectAt:this.matchElapsed}});break;}
+      }
     }
     }finally{f.root.rotation.y=finalFacing;}
+    if(f.dead){const pose=f.combat.timeline.pose;f.character.setPoseFrame(pose.source,f.combat.timeline.frame);return;}
     if (state.blend && f.character.setPoseBlend) f.character.setPoseBlend(state.blend.from, state.blend.to, state.blend.weight);
     else f.character.setPoseFrame(state.source, state.frame);
     this.rageVfx?.sample(f, state, f.combat.fps);
@@ -1288,11 +1291,11 @@ export class MeteorGame {
       else this.onEvent({ type: 'scene-contact', objectName: object.name, attackerId: attacker.scriptId, poseId: state.poseId, damagePending: true });
     }
   }
-  _kill(target, { awardKill = true } = {}) {
+  _kill(target, { awardKill = true, deathPose = NATIVE_LOCOMOTION.dead, deathContext = null } = {}) {
     if(!target.dead&&this.droppedWeapons?.size<64){const id=target.weaponId,item=this.weaponItems?.get(id),templates=item?.modelIds.map(id=>this.weaponCache.get(id.toLowerCase()));
       if(templates?.every(Boolean)){const session=this.sessionRequest,position=target.root.position.clone();Promise.all(templates).then(models=>{if(!this.disposed&&session===this.sessionRequest&&this.droppedWeapons.size<64)this._spawnDroppedWeapon(id,position,`web-drop-${++this.lootSerial}`,models);}).catch(()=>{});}}
     target.wallRun=null;target.wallKick=null;
-    if (target.dead) return; this.stealthFeedback?.clearActor(target); target.dead = true; target.guard = false; target.musketAim=false; target.hitstop = 0; target.respawn = this.mode === 'story' ? Infinity : 3; target.combat.play(NATIVE_LOCOMOTION.dead, { force: true });
+    if (target.dead) return; this.stealthFeedback?.clearActor(target); target.dead = true; target.guard = false; target.musketAim=false; target.hitstop = 0; target.respawn = this.mode === 'story' ? Infinity : 3; target.combat.play(this.combatData?.poses?.has(deathPose)?deathPose:NATIVE_LOCOMOTION.dead, { force: true,context:deathContext });
     clearPlayerCommands(this._controlFor(target));
     if (target.hero) this.deaths++; else if (awardKill) this.kills++;
     for(const actor of [this.hero,...this.enemies]){const control=this._controlFor(actor);if(control?.locked===target)control.locked=null;}

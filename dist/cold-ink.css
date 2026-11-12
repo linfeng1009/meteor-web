@@ -54,3 +54,37 @@
 /* The preparation banner is decorative, not a preview of the selected map. */
 .scene-caption{background:radial-gradient(ellipse at 85% 50%,#7b8c5e22,transparent 60%),linear-gradient(115deg,#22352d,#17231f);position:relative;overflow:hidden}
 .scene-caption:after{content:'论剑';position:absolute;right:175px;top:8px;font:70px LocalCalligraphy,var(--serif);letter-spacing:12px;color:#a4b18c0d;pointer-events:none}
+/* Map scenery comes from the selected scene, captured once by menu-snapshots. */
+#lobby{background-image:linear-gradient(90deg,#101719f7,#101719e8 65%,#101719eb),var(--selected-map-image,linear-gradient(#14201a,#101719));background-position:center;background-size:cover}
+.ink-landscape{background-image:linear-gradient(90deg,#10171918,transparent 45%),linear-gradient(0deg,#08110ff2,transparent 70%),var(--selected-map-image,linear-gradient(135deg,#31413a,#101b18));background-position:center;background-size:cover}
+.scene-caption{background-image:linear-gradient(90deg,#17241ff2,#17241e88),var(--selected-map-image,linear-gradient(115deg,#22352d,#17231f));background-position:center;background-size:cover}
+#menu-map-state{font-size:10px;letter-spacing:1px;max-width:65%;text-align:right}
+.weapon-preview{float:right;width:43%;height:195px;position:relative;margin:3px 0 18px 20px;padding:8px 12px 47px;border:1px solid #b8a17b33;background:radial-gradient(ellipse at center,#78897322,transparent 70%),#101a18;overflow:hidden}
+.weapon-preview:before{content:'';position:absolute;width:130px;height:130px;left:50%;top:45%;transform:translate(-50%,-50%);border:1px solid #b8a17b16;border-radius:50%;pointer-events:none}
+.weapon-preview img{display:block;width:100%;height:100%;object-fit:contain;position:relative}
+.weapon-preview figcaption{position:absolute;left:14px;right:14px;bottom:11px;display:flex;flex-direction:column;gap:5px}.weapon-preview strong{font:17px LocalCalligraphy,var(--serif);letter-spacing:2px;color:#d8c49c}.weapon-preview [role=status]{font:10px/1.5 var(--sans);color:#9cae9b;letter-spacing:.5px}
+.sword-wardrobe .weapon-selector{width:calc(57% - 20px)}.sword-wardrobe .wardrobe-divider{clear:both}.sword-wardrobe .practice-options{clear:both}
+@media(max-width:800px){.weapon-preview{width:43%;height:190px;margin-left:14px}.sword-wardrobe .weapon-selector{width:calc(57% - 14px)}#menu-map-state{font-size:9px}}
+@media(max-width:480px){.weapon-preview{float:none;width:100%;height:185px;margin:10px 0 18px}.sword-wardrobe .weapon-selector{width:100%}.landscape-top{right:18px}#menu-map-state{max-width:70%;font-size:9px}}
+/* Preparation uses explicit tracks so previews never displace controls. */
+#prep-page{display:grid;grid-template-columns:210px minmax(0,1fr);gap:20px 24px;align-items:start}
+#prep-page>.page-heading{grid-column:1/-1;margin:0}
+#prep-page>.prep-character{grid-column:1;grid-row:2/4;float:none;width:auto;min-width:0;margin:0}
+#prep-page>.scene-caption{grid-column:2;margin:0;min-width:0}
+#prep-page>.preparation-layout{grid-column:2;display:block;margin:0;min-width:0}
+#prep-page .sword-wardrobe{display:grid;grid-template-columns:minmax(0,1fr) minmax(230px,.85fr);gap:16px;padding:20px;min-width:0}
+#prep-page .sword-wardrobe-heading{grid-column:1/-1;margin:0;min-width:0;flex-wrap:wrap}
+#prep-page .weapon-preview{grid-column:2;grid-row:2;float:none;width:auto;height:195px;margin:0;min-width:0}
+#prep-page .weapon-selector{grid-column:1;grid-row:2;width:auto;min-width:0;margin:0}
+#prep-page .weapon-selector .loadout{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:0}
+#prep-page .weapon-selector .quiet-label{grid-column:1/-1}
+#prep-page .weapon-chip{min-width:0;margin:0;padding:9px 5px;white-space:normal}
+#prep-page .sword-wardrobe>div:not(.weapon-selector):not(.sword-wardrobe-heading),#prep-page .sword-wardrobe>details,#prep-page .sword-wardrobe>p{grid-column:1/-1;min-width:0;margin-top:0;margin-bottom:0}
+#prep-page>.prep-dock{grid-column:1/-1;position:static;margin:0;box-shadow:none;min-width:0}
+@media(max-width:1100px){#prep-page{grid-template-columns:180px minmax(0,1fr);gap:18px}#prep-page .sword-wardrobe{grid-template-columns:minmax(0,1fr) minmax(180px,.8fr);padding:16px;gap:12px}#prep-page .weapon-selector .loadout{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:800px){#prep-page{grid-template-columns:minmax(0,1fr)}#prep-page>.prep-character,#prep-page>.scene-caption,#prep-page>.preparation-layout,#prep-page>.prep-dock{grid-column:1;grid-row:auto}#prep-page .weapon-selector .loadout{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:480px){#prep-page .sword-wardrobe{grid-template-columns:minmax(0,1fr)}#prep-page .weapon-preview{grid-column:1;grid-row:3}#prep-page .weapon-selector{grid-column:1;grid-row:2}#prep-page .weapon-selector .loadout{grid-template-columns:repeat(4,minmax(0,1fr))}}
+#prep-page>.scene-caption{inset:auto;align-self:stretch;opacity:1}
+/* The room browser owns its columns; the legacy lobby wrapper must not split it. */
+#page-content #network-lobby{display:block;width:100%;min-width:0}
+#page-content .room-browser{width:100%;min-width:0}

@@ -835,3 +835,47 @@ test('真实原角色的联机过渡插值与本地同权重骨骼姿势一致',
  }
  assert.equal(a.hp,b.hp);
 });
+
+test('自身增益提前接招时在原接招窗生效，早输入不提前授予状态',async t=>{
+ for(const [weapon,keys,poseId,nextKeys,nextPose,itemId] of [
+  ['hammer',['back','forward','forward'],567,[],315,40],
+  ['knuckle',['back','back','forward'],489,['left','right'],411,34],
+  ['dual',['back','back','forward'],557,['right'],237,41]
+ ])await t.test(weapon,async()=>{
+  const {game,events}=await fixture([]);await game._equip(game.hero,weapon);game.hero.rage=100;manual(game,keys);
+  const pose=data.poses.get(poseId),window=pose.cancels[0];manual(game,nextKeys);
+  assert.equal(game.hero.combat.queued,nextPose);assert.equal(game.hero.scriptItems.length,0);
+  for(let i=0;i<180&&!game.hero.scriptItems.length;i++){
+   if(game.hero.combat.timeline.pose.id===poseId&&game.hero.combat.timeline.frame<window.start)assert.equal(game.hero.scriptItems.length,0);
+   tick(game);
+  }
+  assert.equal(game.hero.scriptItems[0]?.id,itemId);assert.ok(game.hero.combat.timeline.pose.id!==poseId||game.hero.combat.timeline.frame<pose.end-1);
+  const seen=settle(game);assert.ok(seen.has(nextPose));assert.equal(events.filter(e=>e.type==='self-item'&&e.itemId===itemId).length,1);
+  assert.equal(game.hero.scriptItems.length,1);assert.equal(game.hero.rage,0);
+ });
+});
+
+test('接招窗前受击取消增益，已合法接招得到的增益不会因后续受击消失',async()=>{
+ for(const afterArmed of [false,true]){
+  const {game,events}=await fixture([]);await game._equip(game.hero,'hammer');game.hero.rage=100;manual(game,['back','forward','forward']);manual(game,[]);
+  if(afterArmed)for(let i=0;i<180&&!game.hero.scriptItems.length;i++)tick(game);
+  game.hero.combat.react(103);settle(game);
+  assert.equal(game.hero.scriptItems.length,Number(afterArmed));assert.equal(events.filter(e=>e.type==='self-item').length,Number(afterArmed));
+ }
+});
+
+test('怒气不足的后招不提前结算待生效的自身增益',async()=>{
+ const {game}=await fixture([]);await game._equip(game.hero,'hammer');game.hero.rage=100;manual(game,['back','forward','forward']);manual(game,['left','right','forward']);
+ assert.equal(game.hero.combat.queued,null);assert.equal(game.hero.scriptItems.length,0);
+ const pose=data.poses.get(567);while(game.hero.combat.timeline.frame<pose.cancels[0].start+1)tick(game);
+ assert.equal(game.hero.scriptItems.length,0);settle(game);assert.equal(game.hero.scriptItems[0].id,40);
+});
+
+test('原接招窗内接受后招立即结算自身道具，连点不刷新同次施展',async()=>{
+ const {game,events}=await fixture([]);await game._equip(game.hero,'hammer');game.hero.rage=100;manual(game,['back','forward','forward']);
+ const pose=data.poses.get(567);while(game.hero.combat.timeline.frame<pose.cancels[0].start)tick(game);
+ assert.equal(game.hero.scriptItems.length,0);manual(game,[]);
+ assert.equal(game.hero.scriptItems[0].id,40);assert.equal(game.hero.combat.timeline.pose.id,567);assert.equal(game.hero.combat.queued,315);
+ const item=game.hero.scriptItems[0];item.remaining=60;manual(game,[]);assert.equal(item.remaining,60);
+ assert.equal(events.filter(e=>e.type==='self-item').length,1);settle(game);assert.equal(events.filter(e=>e.type==='self-item').length,1);
+});

@@ -939,6 +939,8 @@ export class MeteorGame {
     if (move?.pending) { if (f.hero) this._emit(move.pending, 'info'); return false; }
     if (move && (f.rage || 0) < move.rage) { if (f.hero) this._emit(`怒气不足 · 需要 ${move.rage} 点`, 'info'); return false; }
     if (target && (!f.combat.busy || f.combat.currentMove?.kind==='dash') && !savedInput?.npcMove) this._face(f, target.root.position);
+    const outgoingSelfCast=f.combat.busy&&f.combat.timeline?.canCancel&&!f.combat.poseBlend
+      ?{pose:f.combat.timeline.pose,source:f.combat.timeline.pose.source,frame:f.combat.timeline.frame,serial:f.combat.serial,context:f.combat.currentMove,effectTime:f.combat._effectElapsed}:null;
     const accepted = f.combat.attack({ air: !f.grounded, poseId: move?.poseId ?? null, context: move,
       // Input posture is checked when the command is accepted. An ACT-legal
       // queued continuation stays attached to that active predecessor if it
@@ -957,6 +959,9 @@ export class MeteorGame {
       }
     });
     if (accepted) {
+      // 004cff30 flushes pending parameter18 when an ACT request is accepted
+      // into native state2. Early Web buffering alone must not grant the item.
+      if(outgoingSelfCast)this._commitNativeSelfItem(f,outgoingSelfCast);
       f.guard = false; f.heldPose = 'attack';
       if (control) { control.directionBuffer = []; control.recoveryAttack = null; }
     }
@@ -1098,6 +1103,8 @@ export class MeteorGame {
       const stride=nativeStrideSpeed(f.character.nativeCharacterId??0,locomotion);
       if(stride>0){const rate=speed/this.hostPhysics.speed;if(control)speed=nativeStrideSpeed(0,locomotion)*rate;f.combat.timeline.playbackRate=speed/stride;}
     }
+    const queuedRequest=f.combat._queuedRequest;
+    const queuedCastSerial=queuedRequest&&queuedRequest.canStart?.(queuedRequest.context)!==false?f.combat.serial:null;
     const state = f.combat.update(dt, { grounded: f.grounded, projectileReady: !this.wheels?.hasOwner(f), getFacing:()=>f.root.rotation.y }); if (!state) return;
     this.effectContacts?.beginStep(f,state);
     // A held defense is sampled continuously, including the exact frame a
@@ -1140,12 +1147,9 @@ export class MeteorGame {
       // 004ce410 pushes2 to004dc8c0: End-floor(frame)<2. Parameter18
       // applies near the final two source frames, independently of contact.
       // Resolve this host step's attack before committing lethal self damage.
-      if(!segment.blend&&segment.frame>=segment.pose.end-1&&!['roll','dash'].includes(segment.context?.kind)&&segment.context?.poseId===segment.pose.id&&f.selfItemSerial!==segment.serial){
-        f.selfItemSerial=segment.serial;
-        const item=useNativeSelfItem(f,this.combatData.moveRecords.get(segment.pose.id),this.combatData.itemRecords);
-        if(item)this.onEvent?.({type:'self-item',actorId:f.scriptId??f.id,poseId:segment.pose.id,itemId:item.id,name:item.name,duration:item.duration,refreshed:item.refreshed});
-        if(item&&f.hp<=0){this.rageVfx?.detachOnDeath(f,segment,f.combat.fps);this._kill(f,{awardKill:false,deathPose:segment.pose.link,deathContext:{...segment.context,deathEffectTime:segment.effectTime,deathEffectAt:this.matchElapsed}});break;}
-      }
+      const armedQueue=segment.serial===queuedCastSerial&&segment.pose.cancels.some(window=>segment.frameIntervals?.some(range=>range.from<=window.end&&range.to>=window.start));
+      if(!segment.blend&&(segment.frame>=segment.pose.end-1||armedQueue))this._commitNativeSelfItem(f,segment);
+      if(f.dead)break;
     }
     }finally{f.root.rotation.y=finalFacing;}
     if(f.dead){const pose=f.combat.timeline.pose;f.character.setPoseFrame(pose.source,f.combat.timeline.frame);return;}
@@ -1153,6 +1157,14 @@ export class MeteorGame {
     else f.character.setPoseFrame(state.source, state.frame);
     this.rageVfx?.sample(f, state, f.combat.fps);
     if (f.nameplate) { f.nameplate.quaternion.copy(f.root.quaternion).invert().multiply(this.camera.quaternion); }
+  }
+  _commitNativeSelfItem(actor,state){
+    if(['roll','dash'].includes(state.context?.kind)||state.context?.poseId!==state.pose.id||actor.selfItemSerial===state.serial)return null;
+    actor.selfItemSerial=state.serial;
+    const item=useNativeSelfItem(actor,this.combatData?.moveRecords?.get(state.pose.id),this.combatData?.itemRecords);
+    if(item)this.onEvent?.({type:'self-item',actorId:actor.scriptId??actor.id,poseId:state.pose.id,itemId:item.id,name:item.name,duration:item.duration,refreshed:item.refreshed});
+    if(item&&actor.hp<=0){this.rageVfx?.detachOnDeath(actor,state,actor.combat.fps);this._kill(actor,{awardKill:false,deathPose:state.pose.link,deathContext:{...state.context,deathEffectTime:state.effectTime,deathEffectAt:this.matchElapsed}});}
+    return item;
   }
   _resolveAttackWindow(actor,segment,attack){
     // Projectile release and independent EF clocks retain their existing path.

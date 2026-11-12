@@ -1,0 +1,13 @@
+// One frame per interaction, coalesced; no idle render loop or extra WebGL context.
+export function mountModelViewer({canvas,draw,active=()=>true,kind='character',onError=()=>{}}){
+  let disposed=false,frame=null,busy=false,dirty=false,pointer=null;
+  const defaults={yaw:kind==='weapon'?.35:0,pitch:kind==='weapon'?.18:0,zoom:1},view={...defaults};
+  function request(){if(disposed||!active())return;dirty=true;if(frame===null&&!busy)frame=requestAnimationFrame(render);}
+  async function render(){frame=null;if(disposed||!active())return;dirty=false;busy=true;try{await draw({...view});}catch(error){onError(error);}finally{busy=false;if(dirty&&!disposed)request();}}
+  function adjust(action){if(action==='reset')Object.assign(view,defaults);if(action==='left')view.yaw-=.25;if(action==='right')view.yaw+=.25;if(action==='up')view.pitch=Math.min(1.3,view.pitch+.15);if(action==='down')view.pitch=Math.max(-1.3,view.pitch-.15);if(action==='in')view.zoom=Math.min(2.5,view.zoom*1.15);if(action==='out')view.zoom=Math.max(.65,view.zoom/1.15);request();}
+  const handlers={pointerdown(e){if(e.button!==0)return;pointer={id:e.pointerId,x:e.clientX,y:e.clientY};canvas.setPointerCapture(e.pointerId);e.preventDefault();},pointermove(e){if(pointer?.id!==e.pointerId)return;view.yaw+=(e.clientX-pointer.x)*.012;view.pitch=Math.max(-1.3,Math.min(1.3,view.pitch+(e.clientY-pointer.y)*.009));pointer.x=e.clientX;pointer.y=e.clientY;request();},pointerup(e){if(pointer?.id===e.pointerId){pointer=null;if(canvas.hasPointerCapture(e.pointerId))canvas.releasePointerCapture(e.pointerId);}},pointercancel(){pointer=null;},wheel(e){e.preventDefault();adjust(e.deltaY<0?'in':'out');},keydown(e){const action={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down','+':'in','=':'in','-':'out',Home:'reset'}[e.key];if(action){e.preventDefault();e.stopPropagation();adjust(action);}}};
+  function resize(){const rect=canvas.getBoundingClientRect();if(rect.width<=0||rect.height<=0)return;const width=Math.min(900,Math.max(320,Math.round(rect.width))),height=Math.max(180,Math.round(width*rect.height/rect.width));if(canvas.width!==width||canvas.height!==height){canvas.width=width;canvas.height=height;request();}}
+  const observer=new ResizeObserver(resize);observer.observe(canvas);resize();
+  for(const [name,fn] of Object.entries(handlers))canvas.addEventListener(name,fn,{passive:false});request();
+  return {adjust,dispose(){disposed=true;observer.disconnect();if(frame!==null)cancelAnimationFrame(frame);pointer=null;for(const [name,fn] of Object.entries(handlers))canvas.removeEventListener(name,fn);canvas.width=1;canvas.height=1;}};
+}

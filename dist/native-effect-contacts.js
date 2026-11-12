@@ -4,7 +4,7 @@ import { createEffectTransforms, setEffectTime, effectNodeMatrix } from './nativ
 // 00556910: POS "effect" =0x1001; 0055da50 ->0056f1d0 checks EF
 // nodes whose first name byte is A/a, excluding AUDIO/PATH. It queries
 // oriented bounds (005818f0/0055d950/00570630), not rendered triangles,
-// opacity or texture presence. SPHERE/BOX/CYLINDER bounds are recovered here.
+// opacity or texture presence. SPHERE/BOX/CYLINDER/PLANE/DONUT bounds are recovered here.
 // MODEL/PATH and the other primitive families still require their own rules.
 export const NATIVE_EFFECT_CONTACT_ADAPTER = Object.freeze({
   sampleStep: 1 / 120, maxSamplesPerInterval: 256, bodyRadius: .4, bodyHalfHeight: 1.3,
@@ -24,6 +24,16 @@ export function nativeEffectBounds(source) {
     half.set(...d.map(value => Math.abs(value) / 2));
     // 00589a40 keeps the original second dimension as the base offset.
     if (source.flags?.[0] === 1) center.z = d[1] / 2;
+  }
+  else if (source.type === 'PLANE' && d.length === 2) {
+    // 00585400: authored width/height halves and fixed native Z half-size3.
+    half.set(Math.abs(d[0])/2,Math.abs(d[1])/2,3);
+    if(source.flags?.[0]===1)center.z=d[1]/2;
+  }
+  else if (source.type === 'DONUT' && d.length === 6) {
+    // 005881a0: the native attack uses its OBB, including the visual hole.
+    half.set(Math.abs(d[1]),Math.abs(d[1]),Math.abs(d[1]-d[0])/2);
+    if(source.flags?.[0]===1)center.z=(d[1]-d[0])/2;
   }
   else return null;
   return { center, half };

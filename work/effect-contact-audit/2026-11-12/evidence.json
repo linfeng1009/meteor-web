@@ -1,0 +1,70 @@
+{
+  "primary": {
+    "sample": "Meteor.exe",
+    "sha256": "2479bc4bdf916d4a6386ed6352cfa9c5446708de9c1b5e859d4a674a3b42da94",
+    "executed": false,
+    "functions": {
+      "plane_constructor": {
+        "address": "0x585360",
+        "bytes": 157,
+        "sha256": "8d13306604e936abda13a2ba2fe0f1d032ab6cc9b4cbc153ee9575a05c2e085b"
+      },
+      "plane_bounds": {
+        "address": "0x585400",
+        "bytes": 222,
+        "sha256": "5257c63c7e21192a81bb070f757dd035473cbc7d18a5fe2b9c60b84256090222"
+      },
+      "donut_constructor": {
+        "address": "0x5880d0",
+        "bytes": 197,
+        "sha256": "303324d2a2ebacd5d50fc0107aa825e7d28aea692ec0a76982f79e66a4d8fdb7"
+      },
+      "donut_bounds": {
+        "address": "0x5881a0",
+        "bytes": 357,
+        "sha256": "234ada1e7bd07164943f468f68897877cb912cdc2b1023cbbadc9ed30c2157b1"
+      }
+    }
+  },
+  "comparison": {
+    "sample": "Meteor.exe$0",
+    "sha256": "2edf1401cf02b4332231c477c185ec7f337b868a9c46fadd8e369d1c922bb4c4",
+    "executed": false,
+    "functions": {
+      "plane_constructor": {
+        "address": "0x585360",
+        "bytes": 157,
+        "sha256": "8d13306604e936abda13a2ba2fe0f1d032ab6cc9b4cbc153ee9575a05c2e085b"
+      },
+      "plane_bounds": {
+        "address": "0x585400",
+        "bytes": 222,
+        "sha256": "5257c63c7e21192a81bb070f757dd035473cbc7d18a5fe2b9c60b84256090222"
+      },
+      "donut_constructor": {
+        "address": "0x5880d0",
+        "bytes": 197,
+        "sha256": "303324d2a2ebacd5d50fc0107aa825e7d28aea692ec0a76982f79e66a4d8fdb7"
+      },
+      "donut_bounds": {
+        "address": "0x5881a0",
+        "bytes": 357,
+        "sha256": "234ada1e7bd07164943f468f68897877cb912cdc2b1023cbbadc9ed30c2157b1"
+      }
+    }
+  },
+  "relevantFunctionsIdentical": true,
+  "planeHalf": [
+    "abs(width)/2",
+    "abs(height)/2",
+    3
+  ],
+  "planeBaseOffsetZ": "flag0==1 ? height/2 : 0",
+  "donutHalf": [
+    "abs(outer)",
+    "abs(outer)",
+    "abs(outer-inner)/2"
+  ],
+  "donutBaseOffsetZ": "flag0==1 ? (outer-inner)/2 : 0",
+  "notes": "Source attack tests use oriented bounds, not visual triangles or the donut hole. Web body shape, interpolation and time sampling remain adapters."
+}

@@ -576,3 +576,40 @@ test('凤凰羽 original369 wave hits a distant target while leaving rear and of
  const definition=manifest.effects.pos369,bytes=await readFile(new URL(`assets/original/${definition.source}`,dist));
  assert.equal(createHash('sha256').update(bytes).digest('hex'),definition.sha256);
 });
+
+
+test('血残气丧 uses its original thin moving planes for ranged contact without an oversized aura',async()=>{
+ const {game,events}=await fixture([v(0,0,5),v(0,0,-5),v(10,0,5)]);await game._equip(game.hero,'sword');game.hero.rage=100;
+ manual(game,['right','left']);assert.equal(game.hero.combat.timeline.pose.id,560);assert.equal(game.hero.rage,40);
+ for(let i=0;i<180;i++)tick(game);
+ const hits=events.filter(e=>e.type==='hit'&&e.poseId===560);assert.ok(hits.length>=1&&hits.length<=2);assert.ok(hits.every(e=>e.contactSource==='effect'&&/^AttackWave/.test(e.effectNode)));
+ assert.ok(game.enemies[0].hp<10000);assert.equal(game.enemies[1].hp,10000);assert.equal(game.enemies[2].hp,10000);assert.equal(game.hero.combat.busy,false);
+});
+
+test('忍刀暴怒爆弹 uses original DONUT bounds once per target, drains5 rage and respects source guard',async()=>{
+ const {game,events}=await fixture([v(5,0,0),v(-5,0,0),v(0,0,5),v(0,0,-5),v(30,0,0)]);await game._equip(game.hero,'ninja');game.hero.rage=100;
+ game.enemies[1].scriptControl.guard=true;game.enemies[0].rage=100;
+ manual(game,['back','forward','forward']);assert.equal(game.hero.combat.timeline.pose.id,473);assert.equal(game.hero.rage,50);
+ for(let i=0;i<180;i++)tick(game);
+ const hits=events.filter(e=>e.type==='hit'&&e.poseId===473);assert.equal(hits.length,4);assert.ok(hits.every(e=>e.contactSource==='effect'&&e.effectNode==='AttackDonut'));
+ const normal=hits.find(e=>e.targetName===game.enemies[0].name),block=hits.find(e=>e.targetName===game.enemies[1].name);
+ assert.equal(normal.raw.attackItem.id,37);assert.equal(normal.raw.attackItem.rageAfter,95);assert.equal(block.guarded,true);assert.equal(block.raw.attackItem,undefined);assert.equal(game.enemies[1].hp,10000);assert.equal(game.enemies[4].hp,10000);
+ assert.equal(game.hero.combat.busy,false);assert.equal(events.filter(e=>e.type==='move').length,1);
+});
+
+test('暴怒环杀 requires its actual predecessor, uses source fire columns and pays another50 rage once',async()=>{
+ const {game,events}=await fixture([v(3,0,0)]);await game._equip(game.hero,'ninja');game.hero.rage=100;game.enemies[0].scriptControl.guard=true;
+ manual(game,['back','forward','forward']);while(!game.hero.combat.timeline.canCancel&&!game.hero.combat.timeline.finished)tick(game);
+ manual(game,['back','forward','forward']);assert.equal(game.hero.combat.queuedMove?.poseId??game.hero.combat.currentMove.poseId,474);
+ const seen=new Set();for(let i=0;i<240;i++){tick(game);seen.add(game.hero.combat.timeline.pose.id);}
+ assert.ok(seen.has(474));assert.equal(game.hero.rage,0);assert.equal(game.hero.combat.busy,false);
+ const hits=events.filter(e=>e.type==='hit'&&e.poseId===474);assert.equal(hits.length,1);assert.equal(hits[0].contactSource,'effect');assert.match(hits[0].effectNode,/^Attack(Fire|Ball)/);assert.equal(hits[0].guardBypassed,true);
+ assert.deepEqual(events.filter(e=>e.type==='move').map(e=>e.poseId),[473,474]);
+});
+
+test('plane and donut bounds match the recovered native constructors, including source base offsets',()=>{
+ assert.deepEqual(nativeEffectBounds({type:'PLANE',dimensions:[32,20],flags:[0]}).half.toArray(),[16,10,3]);
+ assert.deepEqual(nativeEffectBounds({type:'PLANE',dimensions:[32,20],flags:[1]}).center.toArray(),[0,0,10]);
+ assert.deepEqual(nativeEffectBounds({type:'DONUT',dimensions:[3,5,0,360,0,360],flags:[0]}).half.toArray(),[5,5,1]);
+ assert.deepEqual(nativeEffectBounds({type:'DONUT',dimensions:[3,5,0,360,0,360],flags:[1]}).center.toArray(),[0,0,1]);
+});

@@ -10,7 +10,7 @@ import argparse, hashlib, json, math, re, struct, zipfile, subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 TYPES = ['AUDIO','BOX','BILLBOARD','CYLINDER','DRAG','DONUT','MODEL','PARTICLE','PATH','PLANE','SPHERE','TRAPE']
-DIMS = {'PLANE':2, 'BILLBOARD':2, 'CYLINDER':5, 'SPHERE':5, 'BOX':3}
+DIMS = {'PLANE':2, 'BILLBOARD':2, 'CYLINDER':5, 'SPHERE':5, 'BOX':3, 'DONUT':6}
 
 def read_effect(path):
     data = path.read_bytes()
@@ -43,52 +43,18 @@ def read_effect(path):
         if kind in DIMS:
             if end-cursor != DIMS[kind]*4: raise ValueError(f'Unexpected shape size {path}:{name}:{end-cursor}')
             node['dimensions'] = list(struct.unpack_from('<'+'f'*DIMS[kind],data,cursor))
+            if kind=='DONUT': node['unsupportedVisual']=True
         else:
             node['unsupportedVisual'] = kind != 'AUDIO'
         nodes.append(node)
     return dict(id=path.stem.lower(),source=f'sounds/definitions/{path.name}',sha256=hashlib.sha256(data).hexdigest(),nodes=nodes)
 
-def main():
-    parser=argparse.ArgumentParser()
-    parser.add_argument('--source',type=Path,default=Path('/Users/dulinfeng/Downloads/流星86726/lxhdj_'))
-    parser.add_argument('--include-pose',type=int,action='append',default=[],help='Import an additional original pose/link chain for inspection without enabling its command')
-    parser.add_argument('--extend-existing',action='store_true',help='Merge requested EF definitions using only textures already imported')
-    args=parser.parse_args()
-    source=args.source; output=ROOT/'dist/assets/original/rage-vfx';output.mkdir(parents=True,exist_ok=True)
-    # Discover enabled rage commands from the same runtime catalog, retaining
-    # every automatic POS link. This also tracks newly ported weapon families.
-    code = '''import {readFileSync} from 'node:fs';
-import {parsePos,decodeNativeText} from './dist/native-combat.js';
-import {NATIVE_MOVE_CATALOG} from './dist/native-move-catalog.js';
-const poses=parsePos(decodeNativeText(readFileSync('dist/assets/native/combat/P0.POS'))), effects=new Map();
-for(const move of [...NATIVE_MOVE_CATALOG.filter(m=>m.rage&&!m.pending),...process.argv.slice(1).map(id=>({poseId:Number(id),weapon:'asset-inspection'}))]){let id=move.poseId,seen=new Set();while(!seen.has(id)&&poses.has(id)){seen.add(id);const p=poses.get(id),effectId=p.raw.fields.effectid;if(effectId)effects.set(effectId.toLowerCase(),{id:effectId.toLowerCase(),poseId:id,weapon:move.weapon,start:p.start,end:p.end});id=p.link;}}
-process.stdout.write(JSON.stringify([...effects.values()]));'''
-    requested=json.loads(subprocess.run(['node','--input-type=module','-e',code,*map(str,args.include_pose)],cwd=ROOT,check=True,capture_output=True,text=True).stdout)
-    if args.extend_existing:
-        # Preserve prior explicitly imported poses and extracted texture records.
-        # Validate the complete batch before writing; never silently omit images.
-        manifest_path=output/'manifest.json'
-        manifest=json.loads(manifest_path.read_text(encoding='utf-8'))
-        added={}
-        for request in requested:
-            if request['id'] in manifest['effects']: continue
-            effect=read_effect(ROOT/f'dist/assets/original/sounds/definitions/{request["id"]}.ef')
-            for node in effect['nodes']:
-                texture=node['texture']
-                if node['type']!='AUDIO' and texture and texture not in manifest['textures']:
-                    raise ValueError(f'Texture requires full archive extraction: {texture}')
-            added[effect['id']]=effect
-        manifest['effects'].update(added)
-        manifest_path.write_text(json.dumps(manifest,ensure_ascii=False,separators=(',',':'))+'\n',encoding='utf-8')
-        print(json.dumps(dict(added=list(added),sourceHashes={k:v['sha256'] for k,v in added.items()})))
-        return
-    evidence_dir=ROOT/'work/rage-vfx';evidence_dir.mkdir(parents=True,exist_ok=True)
-    (evidence_dir/'requested-effects.json').write_text(json.dumps(requested,ensure_ascii=False,indent=2)+'\n')
+def extract_effect_textures(references,textures,source,output):
+    if not references:return
     archives=[]
     for name in ['TexturePatch.pak','ETexture.pak']:
         archive=zipfile.ZipFile(source/name)
         archives.append((name,archive,{Path(n).name.lower():n for n in archive.namelist()}))
-    textures={}
     def extract(name):
         key=Path(name.replace('\\','/')).name.lower()
         if not key or key in textures:return
@@ -112,14 +78,54 @@ process.stdout.write(JSON.stringify([...effects.values()]));'''
                 record.update(url='textures/'+filename,width=image.width,height=image.height)
             return
         raise FileNotFoundError(f'Original effect texture missing: {key}')
+    try:
+        for reference in sorted(references):extract(reference)
+    finally:
+        for _,archive,_ in archives:archive.close()
+
+
+def main():
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--source',type=Path,default=Path('/Users/dulinfeng/Downloads/流星86726/lxhdj_'))
+    parser.add_argument('--include-pose',type=int,action='append',default=[],help='Import an additional original pose/link chain for inspection without enabling its command')
+    parser.add_argument('--extend-existing',action='store_true',help='Merge requested EF definitions; extract missing textures from --source if needed')
+    args=parser.parse_args()
+    source=args.source; output=ROOT/'dist/assets/original/rage-vfx';output.mkdir(parents=True,exist_ok=True)
+    # Discover enabled rage commands from the same runtime catalog, retaining
+    # every automatic POS link. This also tracks newly ported weapon families.
+    code = '''import {readFileSync} from 'node:fs';
+import {parsePos,decodeNativeText} from './dist/native-combat.js';
+import {NATIVE_MOVE_CATALOG} from './dist/native-move-catalog.js';
+const poses=parsePos(decodeNativeText(readFileSync('dist/assets/native/combat/P0.POS'))), effects=new Map();
+for(const move of [...NATIVE_MOVE_CATALOG.filter(m=>m.rage&&!m.pending),...process.argv.slice(1).map(id=>({poseId:Number(id),weapon:'asset-inspection'}))]){let id=move.poseId,seen=new Set();while(!seen.has(id)&&poses.has(id)){seen.add(id);const p=poses.get(id),effectId=p.raw.fields.effectid;if(effectId)effects.set(effectId.toLowerCase(),{id:effectId.toLowerCase(),poseId:id,weapon:move.weapon,start:p.start,end:p.end});id=p.link;}}
+process.stdout.write(JSON.stringify([...effects.values()]));'''
+    requested=json.loads(subprocess.run(['node','--input-type=module','-e',code,*map(str,args.include_pose)],cwd=ROOT,check=True,capture_output=True,text=True).stdout)
+    if args.extend_existing:
+        # Preserve prior explicitly imported poses and extracted texture records.
+        # Validate the complete batch before writing; never silently omit images.
+        manifest_path=output/'manifest.json'
+        manifest=json.loads(manifest_path.read_text(encoding='utf-8'))
+        added={}
+        for request in requested:
+            if request['id'] in manifest['effects']: continue
+            effect=read_effect(ROOT/f'dist/assets/original/sounds/definitions/{request["id"]}.ef')
+            added[effect['id']]=effect
+        references={node['texture'] for effect in added.values() for node in effect['nodes'] if node['type']!='AUDIO' and node['texture'] and node['texture'] not in manifest['textures']}
+        extract_effect_textures(references,manifest['textures'],source,output)
+        manifest['effects'].update(added)
+        manifest_path.write_text(json.dumps(manifest,ensure_ascii=False,separators=(',',':'))+'\n',encoding='utf-8')
+        print(json.dumps(dict(added=list(added),sourceHashes={k:v['sha256'] for k,v in added.items()})))
+        return
+    evidence_dir=ROOT/'work/rage-vfx';evidence_dir.mkdir(parents=True,exist_ok=True)
+    (evidence_dir/'requested-effects.json').write_text(json.dumps(requested,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+    textures={}
     effects={}
     for request in requested:
         path=ROOT/f'dist/assets/original/sounds/definitions/{request["id"]}.ef'
         if not path.exists(): continue
         effect=read_effect(path);effects[effect['id']]=effect
-        for node in effect['nodes']:
-            if node['type']!='AUDIO' and node['texture']:extract(node['texture'])
-    weapons=json.loads((ROOT/'dist/assets/original/weapon-models/manifest.json').read_text())
+    extract_effect_textures({node['texture'] for effect in effects.values() for node in effect['nodes'] if node['type']!='AUDIO' and node['texture']},textures,source,output)
+    weapons=json.loads((ROOT/'dist/assets/original/weapon-models/manifest.json').read_text(encoding='utf-8'))
     attachments={}
     for model in weapons['models']:
         model_id=model['modelId'].lower();path=ROOT/f'dist/assets/original/weapon-models/models/{model_id}/{model_id}.des'
@@ -128,10 +134,10 @@ process.stdout.write(JSON.stringify([...effects.values()]));'''
             position=re.search(r'Position:\s+([-+\d.]+)\s+([-+\d.]+)\s+([-+\d.]+)',block[2])
             quaternion=re.search(r'Quaternion:\s+([-+\d.]+)\s+([-+\d.]+)\s+([-+\d.]+)\s+([-+\d.]+)',block[2])
             if position and quaternion:attachments.setdefault(model_id,{})[block[1].lower()]=dict(position=list(map(float,position.groups())),quaternion=list(map(float,quaternion.groups())))
-    manifest=dict(version=1,source='Original PonEF V1.00 + ETexture.pak / TexturePatch.pak; read-only offline extraction',keyLayout='28 float32: time, positionXYZ, quaternionXYZW, scaleXYZ, material channels; opacity at 24. Raw values retained.',presentationAdapters=['Linear key interpolation / quaternion slerp.','Textured shape meshing and additive brightness limit .65.','IFL playback at 30fps; full native texture-channel semantics remain pending.','Particle emitters, DRAG, MODEL, PATH and DONUT are not synthesized. Source SPHERE/BOX/CYLINDER attack bounds are consumed independently by native-effect-contacts.js.'],effects=effects,textures=textures,weaponAttachments=attachments)
-    (output/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,separators=(',',':'))+'\n')
-    supported=sum(1 for effect in effects.values() for node in effect['nodes'] if node['type'] in DIMS and node['texture'])
+    manifest=dict(version=1,source='Original PonEF V1.00 + ETexture.pak / TexturePatch.pak; read-only offline extraction',keyLayout='28 float32: time, positionXYZ, quaternionXYZW, scaleXYZ, material channels; opacity at 24. Raw values retained.',presentationAdapters=['Linear key interpolation / quaternion slerp.','Textured shape meshing and additive brightness limit .65.','IFL playback at 30fps; full native texture-channel semantics remain pending.','Particle emitters, DRAG, MODEL, PATH and DONUT are not synthesized. Source SPHERE/BOX/CYLINDER/PLANE/DONUT attack bounds are consumed independently by native-effect-contacts.js.'],effects=effects,textures=textures,weaponAttachments=attachments)
+    (output/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,separators=(',',':'))+'\n',encoding='utf-8')
+    supported=sum(1 for effect in effects.values() for node in effect['nodes'] if node['type'] in {'PLANE','BILLBOARD','CYLINDER','SPHERE','BOX'} and node['texture'])
     evidence=dict(effects=len(effects),texturedShapes=supported,textures=len(textures),sourceHashes={k:v['sha256'] for k,v in effects.items()},unsupported=sorted(set(node['type'] for effect in effects.values() for node in effect['nodes'] if node.get('unsupportedVisual'))))
-    (ROOT/'work/rage-vfx/extraction.json').write_text(json.dumps(evidence,ensure_ascii=False,indent=2)+'\n')
+    (ROOT/'work/rage-vfx/extraction.json').write_text(json.dumps(evidence,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     print(json.dumps(evidence,ensure_ascii=False))
 if __name__=='__main__':main()

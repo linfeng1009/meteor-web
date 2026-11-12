@@ -265,12 +265,16 @@ test('public spear AAA can chain into the original group-selected rage finish an
   assert.ok(events.some(e => e.type === 'hit' && e.poseId === 294 && e.contactSource === 'effect'));
 });
 
-test('effect query rejects unresolved parents, zero scales, non-effect windows and disposed systems', async () => {
+test('effect query uses native default anchors for unresolved names and rejects zero scales, non-effect windows and disposed systems', async () => {
   const { game } = await fixture([]), actor = game.hero, pose = data.poses.get(293);
   const state = { pose, source: 0, serial: 99, previousFrame: pose.start, frame: pose.start + 90, previousEffectTime: 0, effectTime: 3 };
   const altered = structuredClone(manifest), node = altered.effects.pos293.nodes.find(node => node.name === 'AttackBall01');
   node.bindings = ['missing-parent', 'missing-parent']; const system = new NativeEffectContacts({ manifest: altered });
-  assert.deepEqual(system.sample(actor, state, pose.attacks[0]), []);
+  actor.root.position.set(31,2,-7);
+  const fallback=system.sample(actor,state,pose.attacks[0]);assert.ok(fallback.length);
+  node.bindings=['ROOT','ROOT'];const expected=system.sample(actor,{...state,serial:101},pose.attacks[0]);
+  assert.deepEqual(fallback.map(v=>v.center.toArray()),expected.map(v=>v.center.toArray()));
+  assert.ok(fallback.every(v=>v.center.distanceTo(actor.root.position)<1e-7));
   assert.deepEqual(game.effectContacts.sample(actor, state, { ...pose.attacks[0], bones: ['weapon'] }), []);
   node.bindings = ['b', 'b']; for (const key of node.keys) key.splice(8, 3, 0, 0, 0);
   assert.deepEqual(system.sample(actor, { ...state, serial: 100 }, pose.attacks[0]), []);
@@ -703,4 +707,40 @@ test('忍刀夹头使用原攻击盒摔飞对手，破防且不吸附远处目�
  const miss=await fixture([v(0,.015,16)]);await miss.game._equip(miss.game.hero,'ninja');miss.game.hero.rage=73;
  manual(miss.game,['back','back','forward']);settle(miss.game);
  assert.equal(miss.events.filter(e=>e.type==='hit').length,0);assert.equal(miss.game.hero.rage,73);assert.equal(miss.game.hero.combat.busy,false);
+});
+
+test('忍刀四向地面瞬移逐一消费原场景运动轨迹，不造成攻击伤害',async t=>{
+ for(const [id,key] of [[526,'forward'],[527,'right'],[528,'left'],[529,'back']])await t.test(String(id),async()=>{
+  const {game,events}=await fixture([]);await game._equip(game.hero,'ninja');manual(game,[key,key]);
+  assert.equal(game.hero.combat.currentMove.poseId,id);
+  const origin=game.hero.root.position.clone(),angle=game.hero.root.rotation.y,pose=data.poses.get(id);
+  const a=game.hero.character.sampleSceneMotion(0,pose.start),b=game.hero.character.sampleSceneMotion(0,pose.end);
+  const x=(b.x-a.x)*.08,z=-(b.y-a.y)*.08,expected=v(Math.cos(angle)*x+Math.sin(angle)*z,0,-Math.sin(angle)*x+Math.cos(angle)*z);
+  settle(game);const actual=game.hero.root.position.clone().sub(origin);actual.y=0;
+  assert.ok(actual.distanceTo(expected)<.002,`${id}: ${actual.toArray()} vs ${expected.toArray()}`);
+  assert.ok(actual.length()>5.5&&actual.length()<5.7);assert.equal(game.hero.combat.busy,false);
+  assert.equal(events.filter(e=>e.type==='hit').length,0);assert.equal(game.hero.rage,0);
+ });
+});
+
+test('忍刀四向空中瞬移可正常起跳施展，保留下落并接空中轻斩',async t=>{
+ for(const [id,key] of [[530,'forward'],[531,'right'],[532,'left'],[533,'back']])await t.test(String(id),async()=>{
+  const {game,events}=await fixture([]);await game._equip(game.hero,'ninja');game.action('jump');for(let i=0;i<12;i++)tick(game);
+  assert.equal(game.hero.grounded,false);manual(game,[key,key]);assert.equal(game.hero.combat.currentMove.poseId,id);
+  const origin=game.hero.root.position.clone();let lowest=origin.y;for(let i=0;i<36;i++){tick(game);lowest=Math.min(lowest,game.hero.root.position.y);}
+  const distance=Math.hypot(game.hero.root.position.x-origin.x,game.hero.root.position.z-origin.z);
+  assert.ok(distance>5.5&&distance<5.7,`${id}: ${distance}`);assert.ok(lowest<origin.y);
+  // A fresh naturally airborne cast can immediately queue the authored ACT continuation.
+  settle(game);game.action('jump');for(let i=0;i<12;i++)tick(game);manual(game,[key,key]);game.action('attack',false);game.action('attack');
+  assert.equal(game.hero.combat.queuedMove?.poseId,478);settle(game);
+  assert.ok(events.some(e=>e.type==='move'&&e.poseId===478));assert.equal(game.hero.combat.busy,false);
+ });
+});
+
+test('忍刀瞬移仍受墙体约束，并能按原接招表接出攻击',async()=>{
+ const {game,events}=await fixture([]);await game._equip(game.hero,'ninja');
+ const wall=new THREE.Mesh(new THREE.BoxGeometry(30,30,.3),new THREE.MeshBasicMaterial());wall.position.set(0,10,3);wall.updateMatrixWorld(true);game.currentMap.colliders.push(wall);
+ try{manual(game,['forward','forward']);game.action('attack',false);game.action('attack');assert.equal(game.hero.combat.queuedMove?.poseId,461);settle(game);
+  assert.ok(game.hero.root.position.z<3);assert.ok(events.some(e=>e.type==='move'&&e.poseId===461));assert.equal(game.hero.combat.busy,false);
+ }finally{game.currentMap.colliders.pop();wall.geometry.dispose();wall.material.dispose();}
 });

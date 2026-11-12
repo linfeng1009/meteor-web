@@ -35,7 +35,8 @@ test('every advertised manual command addresses preserved native animation and R
       seen.add(pose.id); foundAttack ||= pose.attacks.length > 0;
       pose = poses.get(pose.link);
     }
-    assert.ok(foundAttack || move.kind === 'movement' && move.pending, `${move.id}: source attack or explicitly pending movement`);
+    const verifiedMovement=move.kind==='movement'&&move.weapon==='ninja'&&move.poseId>=526&&move.poseId<=533;
+    assert.ok(foundAttack || verifiedMovement || move.kind === 'movement' && move.pending, `${move.id}: source attack or verified movement`);
   }
 });
 
@@ -89,8 +90,9 @@ test('catalog scope and unresolved projectile commands are explicit rather than 
   assert.equal(NATIVE_WEAPON_FAMILIES.length, 12);
   assert.deepEqual(NATIVE_WEAPON_FAMILIES.filter(weapon => weapon.available).map(weapon => weapon.id).sort(), ['blade', 'dagger', 'dart', 'dual', 'hammer', 'knuckle', 'musket', 'ninja', 'qiankun', 'spear', 'sword', 'wheel']);
   const pending = NATIVE_MOVE_CATALOG.filter(move => move.pending);
-  assert.equal(NATIVE_MOVE_CATALOG.length, 197); assert.equal(pending.length, 12);
+  assert.equal(NATIVE_MOVE_CATALOG.length, 197); assert.equal(pending.length, 4);
   assert.equal(byPose('ninja',470).pending,undefined);
+  for(let id=526;id<=533;id++)assert.equal(byPose('ninja',id).pending,undefined);
   assert.equal(byPose('dual',557).pending,undefined);
   for (const [weapon, ids] of [['hammer', [567, 325]], ['musket', [215, 216]], ['wheel', [552, 224, 554]], ['knuckle', [416, 489]], ['qiankun', [570]]])
     for (const id of ids) assert.equal(byPose(weapon, id).pending, undefined, `${weapon}-${id}`);
@@ -119,7 +121,9 @@ test('every usable command has a source bone, projectile or supported original e
     const implementedEmitter = emitter && chain.some(pose => emitter.poseIds.includes(pose.id));
     const sourceEffect = chain.some(pose => pose.attacks.some(attack => attack.bones.includes('effect')) &&
       effectManifest.effects[String(pose.raw.fields.effectid).toLowerCase()]?.nodes.some(node => /^[aA]/.test(node.name) && nativeEffectBounds(node)));
-    assert.ok(nativeContact || implementedEmitter || sourceEffect, `${move.id}: an unsupported pure effect cannot be advertised as a functioning hit`);
+    const movement=move.kind==='movement'&&move.weapon==='ninja'&&move.poseId>=526&&move.poseId<=533;
+    if(movement)assert.ok(chain.every(pose=>pose.attacks.length===0),'瞬移不能伪造攻击窗');
+    assert.ok(nativeContact || implementedEmitter || sourceEffect || movement, `${move.id}: an unsupported pure effect cannot be advertised as a functioning hit`);
   }
   assert.ok(poses.get(343).attacks[0].bones.some(bone => bone === 'weapon'));
   assert.deepEqual(poses.get(343).attacks[1].bones, ['effect']);

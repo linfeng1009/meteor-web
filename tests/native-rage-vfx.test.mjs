@@ -42,6 +42,18 @@ test('原特效继续跟随无特效衔接段，下一招在过渡完成后才�
  }finally{vfx.dispose();}
 });
 
+test('忍刀八个瞬移保留原始闪光球与特效字节，不伪造攻击节点',async()=>{
+ const {actor,vfx}=fixture('ninja');try{
+  for(let id=526;id<=533;id++){
+   const source=manifest.effects[`pos${id}`],bytes=await readFile(new URL(`../dist/assets/original/${source.source}`,import.meta.url));
+   assert.equal(createHash('sha256').update(bytes).digest('hex'),source.sha256);
+   assert.ok(source.nodes.every(n=>!/^Attack/i.test(n.name)));
+   const effect=vfx.sample(actor,{...state(id,.15,{poseId:id},id),effectTime:.15});vfx.update(0);
+   assert.ok(effect.nodes.some(n=>n.source.type==='SPHERE'&&n.mesh?.visible),String(id));
+  }
+ }finally{vfx.dispose();}
+});
+
 test('ordinary native EF definitions keep source hashes and render without a rage context',async()=>{
   const extra=JSON.parse(await readFile(new URL('../dist/assets/original/combat-vfx.json',import.meta.url),'utf8'));
   assert.ok(Object.keys(extra.effects).length>=66);
@@ -159,12 +171,15 @@ test('hit interruption, weapon changes and clear remove visuals and dispose each
   const count = textures.size; vfx.dispose(); vfx.dispose(); assert.equal(textureDisposals, count);
 });
 
-test('invalid native parent bindings remain hidden instead of emitting at the world origin', () => {
+test('unresolved native parent bindings use the owner default matrix rather than world origin', () => {
   const pack = structuredClone(manifest), node = pack.effects.pos571.nodes.find(node => node.name === 'Board_15');
   node.bindings = ['not-a-native-bone', 'not-a-native-bone'];
-  const { actor, vfx } = fixture(); vfx.manifest = pack;
+  const { actor, vfx } = fixture(); vfx.manifest = pack;actor.root.position.set(31,2,-7);
   const effect = vfx.sample(actor, state(571, .4)); vfx.update(0);
-  assert.equal(effect.nodes.find(node => node.source.name === 'Board_15').mesh.visible, false);
+  const fallback=effect.nodes.find(node => node.source.name === 'Board_15').mesh;assert.equal(fallback.visible,true);
+  const matrix=fallback.matrix.clone();node.bindings=['ROOT','ROOT'];
+  const expected=vfx.sample(actor,state(571,.4,{rage:60},2));vfx.update(0);
+  assert.deepEqual(matrix.elements,expected.nodes.find(node=>node.source.name==='Board_15').mesh.matrix.elements);
   assert.ok(effect.nodes.filter(node => node.mesh).every(node => node.mesh.matrix.elements.every(Number.isFinite)));
   vfx.dispose();
 });

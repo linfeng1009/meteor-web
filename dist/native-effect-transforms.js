@@ -66,7 +66,10 @@ function anchor(graph, name, visiting, rotation = false) {
     const q = dummy.quaternion, local = new THREE.Matrix4().compose(new THREE.Vector3(...dummy.position), new THREE.Quaternion(q[1], q[2], q[3], q[0]).normalize(), UNIT);
     return model.matrixWorld.clone().multiply(NATIVE_TO_WEB).multiply(local);
   }
-  return null;
+  // 0056e230 also returns the owner's default matrix when no named bone,
+  // weapon socket or sibling effect resolves (e.g. original blink binding b).
+  if(rotation)return NATIVE_WORLD;
+  actor.root.updateWorldMatrix(true,false);return actor.root.matrixWorld;
 }
 
 // Detached visual tails keep the caster's last sampled anchors, while their

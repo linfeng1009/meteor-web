@@ -231,8 +231,8 @@ move('ninja', 470, 'DDUA', '夹头', { help: '按原攻击盒命中并摔飞对�
 move('ninja', 471, 'DUA', '升龙脚');
 move('ninja', 472, 'LRUA', '剪刀脚');
 for (const [id, keys, name] of [[526, 'UUA', '前'], [527, 'RRA', '右'], [528, 'LLA', '左'], [529, 'DDA', '后']]) {
-  move('ninja', id, keys, `瞬移·${name}`, { kind: 'movement', pending: '瞬移位移与无敌时段尚未恢复' });
-  move('ninja', id + 4, keys, `空中瞬移·${name}`, { kind: 'movement', stance: 'air', pending: '瞬移位移与无敌时段尚未恢复' });
+  move('ninja', id, keys, `瞬移·${name}`, { kind: 'movement', help: '沿原动作轨迹快速位移，受地形碰撞约束；可按原接招表衔接攻击。' });
+  move('ninja', id + 4, keys, `空中瞬移·${name}`, { kind: 'movement', stance: 'air', help: '空中沿原动作轨迹快速位移，保留下落；可衔接空中攻击。' });
 }
 move('ninja', 468, 'LRUDA', '同归于尽', { rage: 50, pending: '原版自爆、自伤与范围判定尚未恢复' });
 move('ninja', 535, 'LRDA', '忍法隐身', { rage: 50, help: '施展完成后隐身120秒，降低人物可见度并阻止敌人新发现；不会免疫攻击，重复施展刷新时长。' });

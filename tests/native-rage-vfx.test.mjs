@@ -446,3 +446,74 @@ test('原球形特效显示完整共享球面，发射角度只约束粒子取�
     assert.ok(checked >= 178);
   } finally { f.vfx.dispose(); }
 });
+
+
+test('原球面滚动采用独立材质偏移，两个角色共享贴图时不会串动或修改顶点', async () => {
+  const f = fixture();
+  const combat = JSON.parse(await readFile(new URL('../dist/assets/original/combat-vfx.json', import.meta.url), 'utf8'));
+  f.vfx.manifest = { ...manifest, effects: { ...combat.effects, ...manifest.effects } };
+  try {
+    const a = f.vfx._create(f.actor, { serial: 1 }, 'pos411');
+    const b = f.vfx._create({ ...f.actor }, { serial: 2 }, 'pos411');
+    a.time = .571; b.time = .613;
+    const nodeA = a.nodes.find(n => n.source.name === 'Sphere_6'), nodeB = b.nodes.find(n => n.source.name === 'Sphere_6');
+    assert.deepEqual(nodeA.source.uvSpeed, [-20, 0]);
+    const uv = Array.from(nodeA.mesh.geometry.attributes.uv.array), version = nodeA.mesh.geometry.attributes.uv.version;
+    f.vfx.update(0);
+    assert.ok(nodeA.mesh.visible && nodeB.mesh.visible);
+    assert.equal(nodeA.mesh.material.map, nodeB.mesh.material.map);
+    const close = (actual, expected) => assert.ok(Math.abs(actual - expected) < 1e-8, `${actual} versus ${expected}`);
+    close(nodeA.uvOffset.x, (-20 * a.time * Math.fround(.4)) % 1);
+    close(nodeB.uvOffset.x, (-20 * b.time * Math.fround(.4)) % 1);
+    assert.notEqual(nodeA.uvOffset.x, nodeB.uvOffset.x);
+    assert.deepEqual(nodeA.mesh.material.map.offset.toArray(), [0, 0]);
+    assert.deepEqual(Array.from(nodeA.mesh.geometry.attributes.uv.array), uv);
+    assert.equal(nodeA.mesh.geometry.attributes.uv.version, version);
+    const shader = () => ({ uniforms: {}, vertexShader: THREE.ShaderLib.basic.vertexShader });
+    const shaderA = shader(), shaderB = shader();
+    nodeA.mesh.material.onBeforeCompile(shaderA); nodeB.mesh.material.onBeforeCompile(shaderB);
+    assert.equal(shaderA.uniforms.nativeUvOffset.value, nodeA.uvOffset);
+    assert.equal(shaderB.uniforms.nativeUvOffset.value, nodeB.uvOffset);
+    assert.notEqual(shaderA.uniforms.nativeUvOffset.value, shaderB.uniforms.nativeUvOffset.value);
+    assert.equal(shaderA.vertexShader, shaderB.vertexShader);
+    assert.ok(shaderA.vertexShader.includes('vMapUv += nativeUvOffset;'));
+    assert.equal(nodeA.mesh.material.customProgramCacheKey(), nodeB.mesh.material.customProgramCacheKey());
+    const materialVersion = nodeA.mesh.material.version;
+    a.time += .057; f.vfx.update(0);
+    close(shaderA.uniforms.nativeUvOffset.value.x, (-20 * a.time * Math.fround(.4)) % 1);
+    assert.equal(nodeA.mesh.material.version, materialVersion, 'UV animation does not invalidate the material program');
+  } finally { f.vfx.dispose(); }
+});
+
+test('圆柱从自身关键帧起点滚动，动作尾效继续且暂停不会累加显示时钟', async () => {
+  const combat = JSON.parse(await readFile(new URL('../dist/assets/original/combat-vfx.json', import.meta.url), 'utf8'));
+  const f = fixture();
+  try {
+    f.vfx.manifest = { ...manifest, effects: { ...combat.effects, ...manifest.effects } };
+    const effect = f.vfx._create(f.actor, { serial: 1 }, 'pos279');
+    const node = effect.nodes.find(n => n.source.name === 'Cylinder_4'), start = node.source.keys[0][0];
+    assert.deepEqual(node.source.uvSpeed, [-15, 0]);
+    effect.time = start; f.vfx.update(0); assert.equal(Math.abs(node.uvOffset.x), 0);
+    effect.time = start + .037; f.vfx.update(0);
+    assert.ok(Math.abs(node.uvOffset.x - (-15 * .037) % 1) < 1e-8);
+    const before = node.uvOffset.x; f.vfx.update(0); assert.equal(node.uvOffset.x, before);
+    f.vfx._retire(effect); f.vfx.update(.011);
+    assert.ok(Math.abs(node.uvOffset.x - (-15 * .048) % 1) < 1e-8);
+    assert.equal(f.actor.hp, 1000); assert.equal(f.actor.rage, 100);
+  } finally { f.vfx.dispose(); }
+});
+
+test('球形V滚动保留原符号与速度，静止节点不增加滚动着色器', async () => {
+  const f = fixture();
+  const combat = JSON.parse(await readFile(new URL('../dist/assets/original/combat-vfx.json', import.meta.url), 'utf8'));
+  f.vfx.manifest = { ...manifest, effects: { ...combat.effects, ...manifest.effects } };
+  try {
+    const effect = f.vfx._create(f.actor, { serial: 1 }, 'pos420'); effect.time = .571; f.vfx.update(0);
+    const node = effect.nodes.find(n => n.source.name === 'Sphere_23');
+    assert.deepEqual(node.source.uvSpeed, [0, 5]); assert.ok(node.mesh.visible);
+    assert.ok(Math.abs(node.uvOffset.y - (5 * effect.time) % 1) < 1e-8);
+    const still = effect.nodes.find(n => n.mesh && !n.source.uvSpeed);
+    assert.ok(still); assert.equal(still.uvOffset, undefined);
+    assert.equal(still.mesh.material.onBeforeCompile, THREE.Material.prototype.onBeforeCompile);
+  } finally { f.vfx.dispose(); }
+});

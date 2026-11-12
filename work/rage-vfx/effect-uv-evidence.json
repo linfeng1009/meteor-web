@@ -1,0 +1,49 @@
+{
+  "sourceSha256": "2479bc4bdf916d4a6386ed6352cfa9c5446708de9c1b5e859d4a674a3b42da94",
+  "executed": false,
+  "functions": {
+    "0058e8a0": {
+      "bytes": 340,
+      "sha256": "901d79470804c2df1038521b8fcb7282955da2aed6f50138d1e487394fa2d61a"
+    },
+    "00582460": {
+      "bytes": 144,
+      "sha256": "208bbc7d65de907157c93df218bbae41c1242b943275979206f23e8780187e47"
+    },
+    "00585130": {
+      "bytes": 559,
+      "sha256": "3afed9c7c9caef19686a95f58188ce34cc8ed4028ac12e05d4da917373a349f5"
+    },
+    "0047ddb0": {
+      "bytes": 107,
+      "sha256": "080e3a235b6a6a61609c3f33ebb50e2c2ef317ca9799f2203f2627da015dbde5"
+    },
+    "00582e90": {
+      "bytes": 158,
+      "sha256": "fdbd590dbbf9d0455e32a5a5b7907b1cddd0336da8696d5187a9095da1156166"
+    },
+    "0056e870": {
+      "bytes": 719,
+      "sha256": "92d9637a5f7e43fb05be2d9bc777f2327b63547912a79f12da7c7cd4ed9fd4b5"
+    }
+  },
+  "materialReader": {
+    "function": "0058e8a0",
+    "payloadBytesAfterTextureName": 93,
+    "uvSpeedByteOffsets": [
+      73,
+      77
+    ],
+    "materialObjectOffsets": [
+      "78",
+      "7c"
+    ],
+    "commonEffectObjectOffsets": [
+      "b0",
+      "b4"
+    ]
+  },
+  "genericUpdate": "00582460: UV += speed * dt only inside the node key interval (00582e90)",
+  "sphereDraw": "00585130: temporary UV += effectElapsed * speed * (float32(.4), 1), then undo",
+  "webAdapter": "Continuous integration over the active node interval; sphere uses effect age. Independent per-material uniforms, wrapped modulo1."
+}

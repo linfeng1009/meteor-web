@@ -155,6 +155,17 @@ export class NativeRageVfx {
       const material = particle ? new THREE.PointsMaterial({size:.10,transparent:true,opacity:0,blending:THREE.AdditiveBlending,depthWrite:false,depthTest:true,toneMapped:false}) : new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, blending: THREE.AdditiveBlending,
         depthWrite: false, depthTest: true, side: THREE.DoubleSide, toneMapped: false });
       const mesh = node.mesh = particle ? new THREE.Points(geometry,material) : new THREE.Mesh(geometry, material); mesh.name = source.name;
+      if (!particle && source.uvSpeed?.some(value => value !== 0)) {
+        node.uvOffset = new THREE.Vector2();
+        // Per-material uniform: keep shared textures/IFL frames immutable and
+        // avoid per-frame vertex-buffer uploads or duplicate GPU textures.
+        material.customProgramCacheKey = () => 'native-effect-uv-scroll-v1';
+        material.onBeforeCompile = shader => {
+          shader.uniforms.nativeUvOffset = { value: node.uvOffset };
+          shader.vertexShader = 'uniform vec2 nativeUvOffset;\n' + shader.vertexShader.replace('#include <uv_vertex>',
+            '#include <uv_vertex>\n#ifdef USE_MAP\n vMapUv += nativeUvOffset;\n#endif');
+        };
+      }
       effect.visualEnd = Math.max(effect.visualEnd, source.keys.at(-1)?.[0] || 0);
       mesh.matrixAutoUpdate = false; mesh.frustumCulled = false; mesh.visible = false; group.add(mesh);
     }
@@ -202,6 +213,14 @@ export class NativeRageVfx {
           mesh.matrix.compose(p, camera.quaternion, s);
         }
         mesh.material.map = texture;
+        if (node.uvOffset) {
+          // 00582460 accumulates UV only while the node is active. The Web
+          // adapter integrates that interval continuously; 00585130 instead
+          // applies sphere U at float32(.4)*effect age, V at effect age.
+          const age = source.type === 'SPHERE' ? effect.time : Math.max(0, effect.time - keys[0][0]);
+          const uGain = source.type === 'SPHERE' ? Math.fround(.4) : 1;
+          node.uvOffset.set((source.uvSpeed[0] * age * uGain) % 1, (source.uvSpeed[1] * age) % 1);
+        }
         mesh.material.color.setRGB(...node.key.slice(11, 14).map(v => THREE.MathUtils.clamp(v, 0, 1) * RAGE_VFX_ADAPTER.colorGain));
         mesh.material.opacity = THREE.MathUtils.clamp(node.key[24], 0, 1) * RAGE_VFX_ADAPTER.brightness;
         mesh.visible = mesh.material.opacity > .001;

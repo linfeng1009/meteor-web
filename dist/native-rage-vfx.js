@@ -75,7 +75,7 @@ export class NativeRageVfx {
       for(const effect of [...this.active])if(effect.actor===actor&&!effect.persistAfterDeath)this._remove(effect);
       this.trails.clearActor(actor);return null;
     }
-    if (actor.combat?.reacting) {
+    if (actor.combat?.reacting || actor.networkReactionPhase) {
       const live = this.actors.get(actor); if (live) this._remove(live);
       this.trails.clearActor(actor); return null;
     }

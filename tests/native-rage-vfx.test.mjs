@@ -7,6 +7,7 @@ import { NativeRageVfx, loadNativeRageVfx, sampleEffectKeys, RAGE_VFX_ADAPTER } 
 import { NATIVE_MOVE_CATALOG } from '../dist/native-move-catalog.js';
 import { NativeCombatController, decodeNativeText, parsePos, parseAct } from '../dist/native-combat.js';
 import { WEAPON_TRAIL_ADAPTER } from '../dist/native-weapon-trails.js';
+import {NetworkGame} from '../dist/network-game.js';
 
 const packRoot = new URL('../dist/assets/original/rage-vfx/', import.meta.url);
 const manifest = JSON.parse(await readFile(new URL('manifest.json', packRoot), 'utf8'));
@@ -239,6 +240,29 @@ test('one large update preserves intermediate EF stages and cancels only the act
   assert.ok(vfx.active.every(e => !e.live), 'being struck cancels the currently casting stage');
   assert.ok(vfx.active.includes(detached), 'previously completed stages retain their visual tails');
   vfx.dispose();
+});
+
+test('客人按权威受击阶段中断当前攻击特效，保留已完成阶段并在退出时清理状态',()=>{
+ for(const phase of ['hit','guard','down','recover']){
+  const {actor,vfx}=fixture('qiankun');let session;try{
+   actor.character.getAttachment=()=>actor.character.nativeSpace;
+   actor.character.setPoseFrame=(source,frame)=>Object.assign(actor.character,{source,frame});actor.networkId='guest';
+   const retired=vfx.sample(actor,state(452,.25,{poseId:452},1)),live=vfx.sample(actor,state(453,.25,{poseId:452},2));
+   assert.equal(retired.live,false);assert.equal(live.live,true);
+   const trailPose=data.poses.get(279),drag=trailPose.drags[0];
+   vfx.trails.sample(actor,{pose:trailPose,source:trailPose.source,serial:2,frameIntervals:[{from:drag.start,to:drag.start+2,timeFrom:0,timeTo:1/30}]});assert.equal(vfx.trails.strips.length,1);
+   const game={hero:actor,enemies:[],rageVfx:vfx,pause(){},_hud(){},_soundDefinition(){},_clearDroppedWeapons(){}};
+   session=new NetworkGame(game,{host:false,playerId:'guest',send(){}},{players:[{id:'guest'}]});session.active=true;
+   const pose=data.poses.get(90),packet={id:'guest',position:[0,0,0],angle:0,hp:900,maxHp:1000,rage:100,dead:false,grounded:true,guard:phase==='guard',reactionPhase:phase,pose:90,source:pose.source,frame:pose.start,serial:3,effectTime:0};
+   session.apply({sequence:1,time:1,players:[packet]});
+   assert.equal(actor.combat.reacting,false,'客人不运行受击逻辑，仅反映权威阶段');assert.equal(actor.networkReactionPhase,phase);
+   assert.equal(vfx.active.includes(live),false);assert.equal(vfx.active.includes(retired),true);assert.equal(vfx.trails.strips.length,0);
+   session.apply({sequence:2,time:1.1,players:[packet]});assert.equal(vfx.active.includes(retired),true);
+   const next=data.poses.get(453);session.apply({sequence:3,time:1.2,players:[{...packet,reactionPhase:null,guard:false,pose:453,source:next.source,frame:next.start+1,serial:4,context:{poseId:453}}]});
+   assert.equal(actor.networkReactionPhase,null);assert.ok(vfx.actors.has(actor));assert.notEqual(vfx.actors.get(actor),live);
+   actor.networkReactionPhase=phase;session.dispose();session=null;assert.equal('networkReactionPhase' in actor,false);
+  }finally{session?.dispose();vfx.dispose();}
+ }
 });
 
 test('retired dart effects keep animated internal parents while freezing external cast anchors', () => {

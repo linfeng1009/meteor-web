@@ -60,6 +60,18 @@ test('HTTP integration shares authoritative frame between two independent room i
 });
 
 function playing(){const f=room();f.call(f.a,'ready',{ready:true});f.call(f.b,'ready',{ready:true});f.call(f.a,'start');f.call(f.a,'loaded');f.call(f.b,'loaded');return f;}
+
+test('受击倒地起身阶段随权威快照传递，无效阶段原子拒绝且兼容旧快照',()=>{
+ const {a,b,call}=playing();let sequence=0;
+ for(const phase of [undefined,null,'hit','guard','down','recover']){
+  const state=frame(a,b,++sequence);if(phase!==undefined)state.players[0].reactionPhase=phase;
+  call(a,'sync',{frame:state});assert.equal(call(b,'sync').frame.players[0].reactionPhase,phase);
+ }
+ for(const phase of ['',true,3,{},[],'attack','recovering']){
+  const state=frame(a,b,sequence+1);state.players[0].reactionPhase=phase;
+  assert.throws(()=>call(a,'sync',{frame:state}),/无效/);assert.equal(call(b,'sync').frame.sequence,sequence);
+ }
+});
 test('relay retains delivery until host confirmation, accepts repeat confirmation, and rejects guest or future acknowledgements',()=>{
   const {rooms,a,b,call}=playing(),input={action:'attack',active:true,sequence:1,angle:0};
   call(b,'sync',{input:[input]});const first=call(a,'sync');assert.deepEqual(call(a,'sync').input,first.input);

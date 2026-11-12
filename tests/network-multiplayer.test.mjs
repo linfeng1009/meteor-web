@@ -59,6 +59,12 @@ test('四名战斗玩家控制独立，第三人击杀不记给房主，环境�
  const {g,actors,session}=game();session.inputs([{playerId:'1',action:'forward',active:true,angle:1,time:1},{playerId:'2',action:'left',active:true,angle:2,time:2}]);assert.ok(session.controls.get('1').keys.has('forward'));assert.ok(session.controls.get('2').keys.has('left'));assert.equal(session.controls.get('3').keys.size,0);
  g._kill(actors[1],{attacker:actors[2]});assert.equal(session.scores.get('2').kills,1);assert.equal(session.scores.get('0').kills,0);g._kill(actors[1],{attacker:actors[2]});assert.equal(session.scores.get('2').kills,1);g._kill(actors[3],{awardKill:false});assert.equal(session.scores.get('2').kills,1);assert.equal(session.snapshot().players.length,4);session.dispose();
 });
+
+test('房主发布实际受击阶段，正常和结束后的角色发布空阶段',()=>{
+ const {actors,session}=game();actors[1].combat.reactionPhase='down';
+ assert.equal(session.snapshot().players[1].reactionPhase,'down');assert.equal(session.snapshot().players[0].reactionPhase,null);
+ actors[1].combat.reactionPhase=null;assert.equal(session.snapshot().players[1].reactionPhase,null);session.dispose();
+});
 test('死斗队友近战不造成伤害，死亡不自动复活，清空敌队后冻结结算',()=>{
  const {g,actors,session}=game('deathmatch');assert.equal(MeteorGame.prototype._applyNativeHit.call(g,actors[0],actors[2],{}, {},new T.Vector3()),false);
  g._kill(actors[1],{attacker:actors[0]});assert.equal(actors[1].respawn,Infinity);g._stepWorld(1/60);assert.equal(session.result,null);g._kill(actors[3],{attacker:actors[2]});g._stepWorld(1/60);assert.equal(session.result.winnerTeam,1);assert.deepEqual(session.result.winnerIds,['0','2']);const time=g.matchElapsed;g._stepWorld(1);assert.equal(g.matchElapsed,time);session.dispose();

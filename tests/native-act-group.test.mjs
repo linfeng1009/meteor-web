@@ -109,3 +109,18 @@ test('同一次更新跨过换招时，各段保留自己的起手朝向',()=>{
  const combat=new NativeCombatController(data,{weapon:'sword'});let facing=0;combat.attack({poseId:262});combat.attack({poseId:263,onStart:()=>{facing=Math.PI/2;}});const segments=[];for(let i=0;i<12;i++){const state=combat.update(.2,{grounded:true,getFacing:()=>facing});segments.push(...state.segments);if(segments.some(s=>s.poseId===263&&!s.blend))break;}
  assert.ok(segments.some(s=>s.poseId===262));assert.ok(segments.some(s=>s.poseId===263));for(const segment of segments)assert.equal(segment.facing,segment.poseId===262?0:Math.PI/2);
 });
+
+
+test('原引导段可保留一条后续输入，必须走完自动衔接和前段攻击窗才出下一招',()=>{
+ const combat=new NativeCombatController(data,{weapon:'qiankun'}),windup=NATIVE_MOVE_CATALOG.find(m=>m.poseId===521),follow=NATIVE_MOVE_CATALOG.find(m=>m.poseId===523);let starts=0;
+ combat.play(521,{force:true,attack:true,context:windup});
+ assert.equal(combat.attack({poseId:523,context:follow,onStart:()=>starts++}),true);const queued=combat._queuedRequest;
+ assert.equal(queued.waitForPose,522);assert.equal(starts,0);
+ for(let i=0;i<3;i++){combat.attack({poseId:523,context:follow});assert.equal(combat._queuedRequest,queued);}
+ const segments=[];for(let i=0;i<180;i++){const state=combat.update(1/60,{grounded:true});segments.push(...state.segments);if(segments.some(s=>s.poseId===523&&!s.blend))break;}
+ const firstHit=segments.findIndex(s=>s.poseId===522&&s.attacks.length),next=segments.findIndex(s=>s.poseId===523);
+ assert.ok(firstHit>=0&&next>firstHit);assert.ok(segments.filter(s=>s.poseId===522).at(-1).frame>=12647);assert.equal(starts,1);
+ const interrupted=new NativeCombatController(data,{weapon:'qiankun'});interrupted.play(521,{force:true,attack:true,context:windup});interrupted.attack({poseId:523,context:follow,onStart:()=>{throw Error('interrupted command fired');}});interrupted.react(90);
+ for(let i=0;i<180;i++)assert.notEqual(interrupted.update(1/60,{grounded:true}).poseId,523);
+ assert.equal(interrupted.queuedMove,null);
+});

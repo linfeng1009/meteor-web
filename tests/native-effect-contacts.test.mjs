@@ -624,3 +624,21 @@ test('忍法隐身 completes535→536, charges50, refreshes120 seconds and remai
  const second=await fixture([v(0,0,1.5)]);await second.game._equip(second.game.hero,'sword');const target=second.game.enemies[0];useNativeScriptItem(target,data.itemRecords.get(36));second.game.action('attack');for(let i=0;i<120;i++)tick(second.game);
  assert.ok(target.hp<10000,'actual original attack contacts still damage an invisible actor');
 });
+
+
+test('乾坤刀第三次攻击跨原引导段接出弧月，不跳过贪噬突刺',async()=>{
+ const {game,events}=await fixture([v(0,0,6)]);await game._equip(game.hero,'qiankun');manual(game,['back','back']);settle(game);
+ manual(game,[]);while(!game.hero.combat.timeline.canCancel&&!game.hero.combat.timeline.finished)tick(game);manual(game,[]);
+ for(let i=0;i<180&&game.hero.combat.currentMove?.poseId!==521;i++)tick(game);
+ manual(game,[]);assert.equal(game.hero.combat.queuedMove?.poseId,523);
+ const seen=new Set();let sampled=0,maxDistance=0;const original=game._resolveContacts.bind(game);
+ game._resolveContacts=(actor,state,volumes)=>{
+  if(state.poseId===523){for(const model of actor.weaponModels){const socket=actor.character.getAttachment(/r$/i.test(model.name)?'d_wpnR':'d_wpnL');assert.equal(model.parent,socket);assert.ok(model.getWorldPosition(v()).distanceTo(socket.getWorldPosition(v()))<1e-8);maxDistance=Math.max(maxDistance,model.getWorldPosition(v()).distanceTo(actor.root.position));}sampled++;}
+  return original(actor,state,volumes);
+ };
+ for(let i=0;i<300;i++){tick(game);seen.add(game.hero.combat.timeline.pose.id);}
+ assert.ok(seen.has(522));assert.ok(seen.has(523));assert.ok(seen.has(485));assert.equal(game.hero.combat.busy,false);assert.ok(sampled>0&&maxDistance>2);
+ assert.deepEqual(events.filter(e=>e.type==='hit').map(e=>e.poseId),[520,522,523]);
+ assert.deepEqual(events.filter(e=>e.type==='move').map(e=>e.poseId),[431,520,521,523]);
+ const left=game.hero.character.getAttachment('d_wpnLP');assert.ok(game.hero.weaponModels.every(model=>model.parent===left),'normal grip is restored after the authored return');
+});

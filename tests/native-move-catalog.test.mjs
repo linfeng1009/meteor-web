@@ -24,8 +24,9 @@ test('every advertised manual command addresses preserved native animation and R
     assert.equal(move.input.at(-1), 'attack');
     assert.ok(move.input.every(key => ['up', 'down', 'left', 'right', 'attack'].includes(key)));
     for (const from of move.continuationOf || []) {
-      assert.ok(actions.canLink(from, move.poseId) || poses.get(from)?.link === move.poseId,
-        `${from} → ${move.poseId}: claimed follow-up must exist in ACT or automatic POS Link`);
+      let source=poses.get(from),linked=false;const visited=new Set();
+      while(source&&!visited.has(source.id)){visited.add(source.id);linked ||= actions.canLink(source.id,move.poseId)||source.link===move.poseId;source=poses.get(source.link);}
+      assert.ok(linked,`${from} → ${move.poseId}: claimed follow-up must exist in its original ACT/POS chain`);
     }
     // Some native entry phases are a wind-up without attacks (e.g. sword 265).
     // Require a real attack in its local automatic chain instead of inventing one.
@@ -88,7 +89,7 @@ test('catalog scope and unresolved projectile commands are explicit rather than 
   assert.equal(NATIVE_WEAPON_FAMILIES.length, 12);
   assert.deepEqual(NATIVE_WEAPON_FAMILIES.filter(weapon => weapon.available).map(weapon => weapon.id).sort(), ['blade', 'dagger', 'dart', 'dual', 'hammer', 'knuckle', 'musket', 'ninja', 'qiankun', 'spear', 'sword', 'wheel']);
   const pending = NATIVE_MOVE_CATALOG.filter(move => move.pending);
-  assert.equal(NATIVE_MOVE_CATALOG.length, 196); assert.equal(pending.length, 13);
+  assert.equal(NATIVE_MOVE_CATALOG.length, 197); assert.equal(pending.length, 13);
   assert.equal(byPose('dual',557).pending,undefined);
   for (const [weapon, ids] of [['hammer', [567, 325]], ['musket', [215, 216]], ['wheel', [552, 224, 554]], ['knuckle', [416, 489]], ['qiankun', [570]]])
     for (const id of ids) assert.equal(byPose(weapon, id).pending, undefined, `${weapon}-${id}`);

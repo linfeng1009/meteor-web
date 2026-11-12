@@ -213,7 +213,8 @@ qmove('spear', 570, 'DUA', '勾魂锁', { rage: 60, help: '先用←A切至持�
 qmove('sheath', 447, 'RA', '持刀式', { changesMode: 'blade' });
 qmove('sheath', 448, 'LA', '持枪式', { changesMode: 'spear' });
 qmove('sheath', 520, 'A', '破喉击');
-qmove('sheath', 521, 'A', '贪噬·弧月', { continuationOf: [520], command: 'AA', help: '后续弧月自动接出；飞出刀鞘的远端命中待补。' });
+qmove('sheath', 521, 'A', '贪噬', { continuationOf: [520], command: 'AA', help: '突刺后可再按攻击接弧月；未接招时自动收鞘。' });
+qmove('sheath', 523, 'A', '弧月', { continuationOf: [521], command: 'AAA', help: '接贪噬的突刺后段施展，刀鞘随原动作飞出，再自动收鞘。' });
 qmove('sheath', 449, 'DUA', '一闪');
 qmove('sheath', 450, 'UDA', '一灭');
 qmove('sheath', 451, 'DDUA', '死斗', { rage: 100, help: '先用↓↓A收刀入鞘，进入拔刀式后再输入↓↓↑A；整套连斩自动衔接，命中削减敌人20怒气。' });

@@ -133,7 +133,7 @@ export const NATIVE_WEAPONS = Object.freeze({
   hammer: { weaponId: 9, model: 'w4_0', stance: 9, guard: 19, basic: [315], air: [338], special: [325, 566, 567], family: [315, 328] },
   knuckle: { weaponId: 51, model: 'w10_0r', stance: 400, guard: 480, basic: [407, 408, 409], air: [405, 406], special: [416, 421, 489], family: [405, 426] },
   qiankun: { weaponId: 47, model: 'w9_0r', stance: 401, guard: 481, basic: [432, 433, 434], air: [458], special: [451, 568, 570], family: [430, 456],
-    modes: { blade: { stance: 401, basic: [432, 433, 434] }, spear: { stance: 402, basic: [442] }, sheath: { stance: 403, basic: [520, 521] } } },
+    modes: { blade: { stance: 401, basic: [432, 433, 434] }, spear: { stance: 402, basic: [442] }, sheath: { stance: 403, basic: [520, 521, 523] } } },
   ninja: { weaponId: 55, model: 'w11_0', stance: 404, guard: 482, basic: [461, 462], air: [478, 479], special: [468, 473, 474, 535, 540], family: [461, 479] }
 });
 export const NATIVE_LOCOMOTION = Object.freeze({ idle: 0, walk: 140, run: 144, jumpStart: 151, jumpAir: 152, fall: 180, hit: 90, dead: 117 });
@@ -349,7 +349,13 @@ export class NativeCombatController {
     for (let candidate = Math.ceil(armed - 1e-6); candidate < pose.end; candidate++) if (this.timeline.isBlendFrame(candidate)) return candidate;
     return pose.end;
   }
-  _canCancelFor(request) { return !this._transition && this.timeline.frame >= request.transitionFrame - 1e-6; }
+  _canCancelFor(request) {
+    if(request.waitForPose!=null){
+      if(this.timeline.pose.id!==request.waitForPose)return false;
+      request.waitForPose=null;request.transitionFrame=this._queueFrame();
+    }
+    return !this._transition && this.timeline.frame >= request.transitionFrame - 1e-6;
+  }
   _start(request, { linked = false } = {}) {
     const pose = this.data.poses.get(request.id); if (!pose?.valid) return false;
     // Queued requests reserve no resource. Re-check and pay only when the
@@ -358,7 +364,8 @@ export class NativeCombatController {
     this.timeline = new NativePoseTimeline(pose, { fps: this.fps, loop: request.loop, sampleRoot: this.sampleRoot, scale: this.scale, frameTable: this.frameTable });
     this._effectElapsed = 0;
     this._transition = null;
-    this.serial++; this.queued = null; this._queuedRequest = null;
+    const deferred=linked&&this._queuedRequest?.waitForPose!=null?this._queuedRequest:null;
+    this.serial++; this.queued = deferred?.id??null; this._queuedRequest = deferred;
     if (!linked) {
       this._reaction = null;
       this._activeMove = request.context ?? null;
@@ -392,7 +399,17 @@ export class NativeCombatController {
       // 340 can still receive the second air strike 261). No link is invented.
       const recovery = !current.attacks.length && Number.isFinite(current.loopStart);
       const from = recovery && !this.data.actions.links.has(current.id) ? this._inputPose : current.id;
-      const resolved = this.data.actions.resolveTransition ? this.data.actions.resolveTransition(from, id) : this.data.actions.canLink(from, id) ? id : null;
+      let resolved = this.data.actions.resolveTransition ? this.data.actions.resolveTransition(from, id) : this.data.actions.canLink(from, id) ? id : null;
+      // A listed continuation may become legal only after an automatic
+      // wind-up link (521→522, then ACT→523). Keep one command until that
+      // authored phase; never cancel or skip the intervening animation.
+      if(resolved==null&&attack&&context?.continuationOf?.includes(this._inputPose)){
+        let future=current;const visited=new Set();
+        while(future&&!future.attacks.length&&future.link!=null&&!visited.has(future.id)){
+          visited.add(future.id);future=this.data.poses.get(future.link);
+          if(future&&this.data.actions.resolveTransition?.(future.id,id)===id){resolved=id;request.waitForPose=future.id;break;}
+        }
+      }
       if (resolved == null) return false;
       request.id = resolved;
       const queued=this._queuedRequest;
@@ -404,7 +421,7 @@ export class NativeCombatController {
         const deliberate=move=>!!move&&(move.input?.length>1||(move.rage||0)>0);
         if(same||deliberate(queued.context)&&!deliberate(request.context))return true;
       }
-      request.transitionFrame = recovery ? this.timeline.frame : this._queueFrame();
+      request.transitionFrame = request.waitForPose!=null?Infinity:recovery ? this.timeline.frame : this._queueFrame();
       if (!this._canCancelFor(request)) { this.queued = request.id; this._queuedRequest = request; return true; }
       return this._startTransition(request);
     }
@@ -478,7 +495,7 @@ export class NativeCombatController {
       if (this.weapon === 'wheel' && pose.id === 219) timeline.loop = !projectileReady;
       const timedReaction = ['hit', 'guard'].includes(this._reaction?.phase) && Number.isFinite(pose.loopStart) && Number.isFinite(pose.loopEnd);
       if (timedReaction) timeline.loop = this._reaction.remainingDuration > 1e-7;
-      if (this._queuedRequest && (this._canCancelFor(this._queuedRequest) || timeline.finished)) {
+      if (this._queuedRequest && (this._canCancelFor(this._queuedRequest) || timeline.finished&&this._queuedRequest.waitForPose==null)) {
         const request = this._queuedRequest; this._queuedRequest = null; this.queued = null;
         if (this._startTransition(request)) continue;
       }
@@ -490,7 +507,7 @@ export class NativeCombatController {
       remaining -= state.consumed;
       if (timedReaction) this._reaction.remainingDuration = Math.max(0, this._reaction.remainingDuration - state.consumed);
       if(getFacing)state.facing=getFacing();this._stampEffectTime(state); segments.push(state);
-      if (this._queuedRequest && (this._canCancelFor(this._queuedRequest) || timeline.finished)) {
+      if (this._queuedRequest && (this._canCancelFor(this._queuedRequest) || timeline.finished&&this._queuedRequest.waitForPose==null)) {
         const request = this._queuedRequest; this._queuedRequest = null; this.queued = null;
         if (this._startTransition(request)) continue;
       }

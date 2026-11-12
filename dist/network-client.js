@@ -11,7 +11,16 @@ export class NetworkClient{
     if(this.room?.round!==room.round)this.resetInput();this.room=room;for(const id of this.processed.keys())if(!room.players.some(p=>p.id===id))this.processed.delete(id);this.onRoom(room);return true;
   }
   fail(message){if(this.closed)return;this.closed=true;clearInterval(this.timer);this.resetInput();this.onError(message);}
-  async api(path,data={},auth=false){const response=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json',...(auth?{Authorization:'Bearer '+this.token}:{})},body:JSON.stringify(data),signal:AbortSignal.timeout(6000)});if(!response.headers.get('Content-Type')?.includes('application/json'))throw Error('当前服务未启用联机，请重启开发服务后刷新。');const result=await response.json();if(!response.ok)throw Error(result.error||'联机请求失败');return result;}
+  async api(path,data={},auth=false){
+    const controller=typeof AbortController==='function'?new AbortController():null;let timer;
+    const deadline=new Promise((_,reject)=>{timer=setTimeout(()=>{reject(Error('连接超时，请确认使用同一个局域网游戏地址后重试。'));controller?.abort();},6000);});
+    try{return await Promise.race([deadline,(async()=>{
+      const response=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json',...(auth?{Authorization:'Bearer '+this.token}:{})},body:JSON.stringify(data),...(controller?{signal:controller.signal}:{})});
+      if(!response.headers.get('Content-Type')?.includes('application/json'))throw Error('当前服务未启用联机，请重启开发服务后刷新。');
+      const result=await response.json();if(!response.ok)throw Error(result.error||'联机请求失败');return result;
+    })()]);}catch(error){if(error instanceof TypeError)throw Error('无法连接联机服务，请确认大家使用同一个局域网游戏地址。');throw error;}finally{clearTimeout(timer);}
+  }
+
   async connect(kind,data){
     const result=await this.api('/api/rooms/'+kind,data);
     Object.assign(this,{token:result.token,playerId:result.playerId,code:result.room.code});

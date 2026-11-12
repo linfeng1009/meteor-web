@@ -125,8 +125,8 @@ test('unseen training enemies cannot discover through real collision triangles a
 test('original四方阵 geometry and normal start preserve discovery-gated live AI rather than an opening three-enemy rush', async t => {
   const { game } = await fixture({ originalMap: true });
   assert.ok(game.currentMap.colliders.length > 0); assert.ok(game.currentMap.props);
-  assert.equal(game.hero.character.appearance, 'hutao');
-  assert.equal(game.hero.name, 'YS-胡桃');
+  assert.equal(game.hero.character.appearance, 'liuchao');
+  assert.equal(game.hero.name, '琉潮');
   assert.equal(new Set(game.enemies.map(actor => actor.character.appearance)).size, 3);
   assert.ok(game.enemies.every(actor => FEATURED_APPEARANCES.includes(actor.character.appearance)));
 
@@ -139,12 +139,12 @@ test('original四方阵 geometry and normal start preserve discovery-gated live 
   t.diagnostic(`Originalsn06 model/colliders/spawns plus live AI: displacement=${moved.map(n => n.toFixed(3))}; one enemy discovers the player, two remain unaware. CPU; no browser rendering.`);
 });
 
-test('an old default or retired character migrates to Hu Tao, while explicit original choices persist', () => {
-  const defaultChoice = { character: 0, characterAppearance: 'hutao' };
+test('an old default or retired character migrates to Liu Chao, while explicit original choices persist', () => {
+  const defaultChoice = { character: 0, characterAppearance: 'liuchao' };
   assert.deepEqual(savedBattleCharacterSelection({ character: 0, characterAppearance: 'original' }), defaultChoice);
   assert.deepEqual(savedBattleCharacterSelection({ character: 0, characterAppearance: 'hd', characterSelected: true }), defaultChoice);
   assert.deepEqual(savedBattleCharacterSelection({ character: 0, characterAppearance: 'original', characterSelected: true }), { character: 0, characterAppearance: 'original' });
-  assert.deepEqual(savedBattleCharacterSelection({ character: 1, characterAppearance: 'original' }), { character: 1, characterAppearance: 'original' });
+  assert.deepEqual(savedBattleCharacterSelection({ character: 1, characterAppearance: 'original', characterSelected: true }), { character: 1, characterAppearance: 'original' });
 });
 
 test('a manually picked original fighter remains selected when opening a battlefield with featured NPCs', async () => {

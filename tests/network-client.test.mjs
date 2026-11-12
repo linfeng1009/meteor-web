@@ -145,3 +145,12 @@ test('input retries preserve capture timestamps rather than the later resend clo
   await f.client.sync();time=105;await f.client.sync();
   const batch=f.request(f.host,'sync').input;assert.deepEqual(batch.map(x=>x.time),[100,100.03,100.12,100.12]);
 });
+
+test('不支持AbortSignal.timeout的浏览器仍可请求房间列表',async()=>{
+ const original=AbortSignal.timeout,server=createNetworkServer();await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+ try{AbortSignal.timeout=undefined;const client=new NetworkClient(),result=await client.api(`http://127.0.0.1:${server.address().port}/api/rooms/list`);assert.deepEqual(result.rooms,[]);}finally{AbortSignal.timeout=original;await new Promise(resolve=>server.close(resolve));}
+});
+test('网络请求长期无响应时仍在六秒后超时，不永久挂起',async()=>{
+ const previous=globalThis.fetch;globalThis.fetch=()=>new Promise(()=>{});
+ try{await assert.rejects(new NetworkClient().api('/api/rooms/list'),/连接超时/);}finally{globalThis.fetch=previous;}
+});

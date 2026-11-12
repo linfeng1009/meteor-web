@@ -53,7 +53,15 @@ test('cancelled fighter creation disposes late assets and never installs gamepla
     async _equip(){if(++equips===2){entered.resolve();await equip.promise;}},async _createFighter(...args){selected=args;return peer;}};
   const selectionRoom=room();selectionRoom.players[1].selection={character:0,characterAppearance:'raiden'};
   const creating=NetworkGame.create(game,{playerId:'host',host:true},selectionRoom,{isCurrent:()=>current});await entered.promise;
-  assert.deepEqual(selected,[0,undefined,false,2,'raiden']);
+  assert.deepEqual(selected,[0,undefined,false,null,'raiden']);
   assert.equal(peer.root.parent,game.scene);current=false;equip.resolve();assert.equal(await creating,null);
   assert.equal(disposed,1);assert.equal(placed,0);assert.equal(peer.root.parent,null);assert.deepEqual(game.enemies,[]);assert.equal(game.action,action);
+});
+
+test('连接失败清除等待状态并保留可见错误，能够立即重新连接',async()=>{
+ let attempts=0;const states=[];
+ const lobby=new NetworkLobby({getGame(){},onStart(){},onStop(){},onNotice(){},createClient:()=>({closed:false,async connect(){if(++attempts===1)throw Error('房间不存在或房主已离开');this.room=room();},async leave(){this.closed=true;}})});
+ lobby.render=()=>states.push({connecting:lobby.connecting,error:lobby.error,client:!!lobby.client});
+ await assert.rejects(lobby.connect('join',{code:'AAAAAA'}),/房间不存在/);assert.equal(states.at(-1).connecting,false);assert.equal(states.at(-1).client,false);assert.match(states.at(-1).error,/房间不存在/);
+ await lobby.connect('join',{code:'ABCDEF'});assert.equal(lobby.client.room.code,'ABCDEF');assert.equal(lobby.connecting,false);assert.equal(lobby.error,'');
 });

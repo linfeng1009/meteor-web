@@ -1376,6 +1376,9 @@ export class MeteorGame {
   _updateLoot(){if(this.running&&!this.paused&&!this.lootReplica)for(const actor of [this.hero,...this.enemies])if(actor&&this._controlFor(actor)&&actor.grounded)this._tryPickupActor(actor);}
   _frame(timestamp) {
     if (this.disposed) return; this.raf = requestAnimationFrame(this._frame);
+    // Static menu shell needs no world updates or WebGL submissions. Reset the
+    // clocks so returning to combat never accumulates menu time as catch-up work.
+    if (this.menuIdle) { this.clock.getDelta(); this.simulationClock.reset(); return; }
     const started = performance.now();
     const seconds = this.clock.getDelta(), dt = Number.isFinite(seconds) ? Math.max(0, Math.min(.05, seconds)) : 0;
     this._advanceWorld(seconds);

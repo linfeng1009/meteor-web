@@ -7,6 +7,7 @@ import * as THREE from '../dist/vendor/three.module.js';
 import { MeteorGame } from '../dist/engine.js';
 import {NetworkGame} from '../dist/network-game.js';
 import {createPlayerControl} from '../dist/player-control.js';
+import {nativeWallJumpVelocity} from '../dist/native-wall-traversal.js';
 import { NativeCombatController, decodeNativeText, parsePos, parseAct } from '../dist/native-combat.js';
 import {NATIVE_AIR_PHYSICS,NATIVE_DASH_POSES,NATIVE_CROUCH_POSES,NATIVE_GROUND_MOVE_POSES,NATIVE_JUMP_POSES,nativeTraversalDirection} from '../dist/native-traversal.js';
 import { createNativeCharacter, parseNativeSkin, parseNativeBones, parseNativeAnimation, parseNativePoses } from '../dist/native-character.js';
@@ -37,19 +38,65 @@ function wallFixture(side='front',height=2){
 
 test('three native wall families enter, animate, kick away and follow their real POS air links',()=>{
   for(const [side,entry,exit,air] of [['front',161,157,158],['right',162,159,156],['left',163,160,154]]){
-    const state=wallFixture(side);try{
+    const state=wallFixture(side,20);try{
       const {game,hero}=state;game._updateFighter(hero,1/60);
       assert.equal(hero.wallRun?.side,side);assert.equal(hero.combat.timeline.pose.id,entry);
       const before=hero.character.bones[15].quaternion.toArray();
       for(let i=0;i<12;i++)game._updateFighter(hero,1/60);
       assert.notDeepEqual(hero.character.bones[15].quaternion.toArray(),before,'use original animated bones');
       const start=hero.root.position.clone();game.action('jump');game.action('jump',false);
-      assert.equal(hero.wallRun,null);assert.equal(hero.combat.timeline.pose.id,exit);assert.equal(hero.nativeJump.pose.id,exit);
+      assert.equal(hero.wallRun,null);assert.equal(hero.combat.timeline.pose.id,exit);assert.equal(hero.nativeJump,null);assert.equal(hero.jumpSequence.ballistic,true);
       const seen=new Set();let escaped;
       for(let i=0;i<100;i++){game._updateFighter(hero,1/60);if(i===14)escaped=hero.root.position.clone();seen.add(hero.combat.timeline.pose.id);assert.ok(hero.root.position.toArray().every(Number.isFinite));}
       assert.ok(seen.has(air));assert.ok(seen.has(180));assert.equal(hero.grounded,true);assert.equal(hero.wallEntries,0);
       if(side==='front')assert.ok(escaped.z>start.z+.5);
       else assert.ok((escaped.x-start.x)*(side==='right'?-1:1)>.5);
+    }finally{state.dispose();}
+  }
+});
+
+test('蹬墙大小跳采用原法线加向上方向的初速度，并以物理高度对齐蒙皮',()=>{
+  for(const side of ['front','right','left'])for(const large of [false,true]){
+    const state=wallFixture(side,20);try{
+      const {game,hero}=state;game._updateFighter(hero,1/60);
+      const normal=hero.wallRun.planeNormal.clone(),speed=large?30:22.56,start=hero.root.position.y;
+      assert.equal(game._beginWallJump(hero,{large}),true);
+      assert.ok(Math.abs(hero.vy-speed/Math.SQRT2)<1e-5);
+      assert.ok(Math.abs(hero.velocity.length()-speed/Math.SQRT2)<1e-5);
+      assert.ok(hero.velocity.dot(normal)>0);assert.equal(hero.nativeJump,null);
+      assert.equal(hero.jumpSequence.ballistic,true);
+      let top=start;
+      for(let i=0;i<120;i++){
+        game._updateFighter(hero,1/60);top=Math.max(top,hero.root.position.y);
+        assert.ok(Math.abs(hero.character.getAttachment('d_base').getWorldPosition(v()).y-hero.root.position.y)<.01);
+      }
+      assert.ok(top-start>(large?2.7:1.4)&&top-start<(large?3.3:1.9),`${side}/${large}: ${top-start}`);
+      assert.equal(hero.grounded,true);
+    }finally{state.dispose();}
+  }
+  for(const normal of [v(0,.2,Math.sqrt(.96)),v(0,-.2,Math.sqrt(.96))]){
+    const result=nativeWallJumpVelocity(normal),expected=normal.clone().add(v(0,1,0)).normalize().multiplyScalar(22.56);
+    assert.ok(v(result.x,result.y,result.z).distanceTo(expected)<1e-5,'保留真实三维法线，不能先抹平墙面斜度');
+  }
+});
+
+test('本地和远端蹬墙短按小跳，长按大跳，并使用各自的操作时钟',()=>{
+  for(const remote of [false,true])for(const large of [false,true]){
+    const state=wallFixture('front',30);try{
+      const {game,hero}=state;
+      if(remote){hero.playerControl=createPlayerControl({lookLocked:true});hero.playerControl.keys.add('forward');hero.playerControl.inputTime=10;}
+      const control=remote?hero.playerControl:game.localControl;
+      game._updateFighter(hero,1/60);
+      const begin=game._beginWallJump;let received;
+      game._beginWallJump=function(actor,options){received=options.large;return begin.call(this,actor,options);};
+      const act=(active)=>remote?game._actionFighter(hero,control,'jump',active):game.action('jump',active);
+      act(true);
+      if(remote){
+        for(let i=0;i<15;i++)game._updateFighter(hero,1/60);
+        assert.equal(received,undefined,'主机等待不能代替客人按住时长');
+        control.inputTime=large?10.11:10.04;
+      }else if(large){for(let i=0;i<7;i++)game._updateFighter(hero,1/60);}
+      act(false);assert.equal(received,large);assert.equal(hero.wallRun,null);
     }finally{state.dispose();}
   }
 });

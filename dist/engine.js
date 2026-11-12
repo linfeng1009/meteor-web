@@ -3,7 +3,7 @@ import {validCombatTarget,acquireCombatTarget} from './combat-targeting.js';
 import {nativeStrideSpeed} from './native-movement-profile.js';
 import { traversalTap, NATIVE_AIR_PHYSICS, NATIVE_JUMP_HOLD_SECONDS, nativeAirVerticalVelocity, NATIVE_ROLL_POSES, nativeDashPose, NATIVE_CROUCH_POSES, NATIVE_GROUND_MOVE_POSES, NATIVE_JUMP_POSES, nativeTraversalDirection } from './native-traversal.js';
 import { FixedStepClock } from './fixed-step.js';
-import { NATIVE_WALL_POSES, NATIVE_WALL_PHYSICS, nativeWallVerticalVelocity, WALL_TRAVERSAL_ADAPTER as WALL } from './native-wall-traversal.js';
+import { NATIVE_WALL_POSES, NATIVE_WALL_PHYSICS, nativeWallVerticalVelocity, nativeWallJumpVelocity, WALL_TRAVERSAL_ADAPTER as WALL } from './native-wall-traversal.js';
 import { FrameMeter, RenderScaleController, createFrameOverlay } from './frame-meter.js';
 import { StaticColliderIndex } from './collision-index.js';
 import { bindLocalPlayerControl, clearPlayerCommands } from './player-control.js';
@@ -520,16 +520,20 @@ export class MeteorGame {
       return;
     }
   }
-  _beginWallJump(actor) {
+  _beginWallJump(actor,{large=false}={}) {
     const wall=actor.wallRun;if(!wall||!this.running||this.paused||actor.dead||actor.scriptInputBlocked||actor.guard||actor.combat.busy)return false;
     const hit=this._wallContact(actor,wall.side,wall.facing);
     if(!hit||hit.planeNormal.dot(wall.planeNormal)<.95||Math.abs(wall.planeNormal.dot(hit.point.clone().sub(wall.point)))>.15){this._endWallTraversal(actor);return false;}
     const id=NATIVE_WALL_POSES[wall.side].exit,pose=actor.combat.data.poses.get(id);
-    if(!pose?.valid||!Number.isFinite(pose.link)||!actor.character.sampleSceneMotion)return false;
-    actor.wallRun=null;actor.grounded=false;actor.vy=this.hostPhysics.jumpVelocity;
-    actor.jumpSequence={start:id,air:pose.link,direction:wall.side,facing:wall.facing};
-    actor.nativeJump={pose,fps:actor.combat.fps,elapsed:0,height:0,duration:(pose.end-pose.start)/actor.combat.fps,origin:actor.character.sampleSceneMotion(pose.source,pose.start).z};
-    actor.wallKick={velocity:wall.normal.clone().multiplyScalar(WALL.kickSpeed),remaining:WALL.kickDuration};
+    if(!pose?.valid||!Number.isFinite(pose.link))return false;
+    const velocity=nativeWallJumpVelocity(wall.planeNormal,{large});if(!velocity)return false;
+    actor.wallRun=null;actor.grounded=false;actor.vy=velocity.y;
+    actor.jumpSequence={start:id,air:pose.link,direction:wall.side,facing:wall.facing,ballistic:true};
+    actor.nativeJump=null;
+    // The initial vector is native; horizontal steering duration is still
+    // the explicitly labelled Web adapter pending full air-force recovery.
+    actor.wallKick={velocity:v3(velocity.x,0,velocity.z),remaining:WALL.kickDuration};
+    actor.velocity.copy(actor.wallKick.velocity);
     actor.combat.play(id,{force:true});actor.heldPose='jump';return true;
   }
   _ceilingBlocked(position,rise) {
@@ -566,13 +570,6 @@ export class MeteorGame {
       if(f.wallRun){f.nativeJump=null;f.vy=nativeWallVerticalVelocity(f.vy,dt,this.hostPhysics.gravity);p.y+=f.vy*dt;}
       else if (authoredVertical) {
         f.nativeJump = null; f.vy = motion.y / dt; p.y += motion.y;
-      } else if (f.nativeJump && !f.combat.busy) {
-        const jump = f.nativeJump, before = jump.height;
-        jump.elapsed = Math.min(jump.duration, jump.elapsed + dt);
-        const frame = jump.pose.start + jump.elapsed * jump.fps;
-        jump.height = (f.character.sampleSceneMotion(jump.pose.source, frame).z - jump.origin) * SCALE;
-        const dy = jump.height - before; p.y += dy; f.vy = dy / dt;
-        if (jump.elapsed >= jump.duration - 1e-8) f.nativeJump = null;
       } else {
         f.nativeJump = null;
         f.vy=f.combat.busy?f.vy-this.hostPhysics.gravity*dt:nativeAirVerticalVelocity(f.vy,Math.hypot(f.velocity.x,f.velocity.z),dt,this.hostPhysics.gravity);
@@ -861,7 +858,8 @@ export class MeteorGame {
     if(charge.actor!==actor||!this.running||this.paused||actor.dead||actor.disposed||actor.scriptInputBlocked||actor.combat.busy||actor.guard)return false;
     const duration=actor.playerControl?Math.max(0,(control.inputTime??charge.time)-charge.time):Math.max(charge.elapsed,(this.elapsed??charge.time)-charge.time);
     control.directionBuffer=[];
-    return actor.grounded?this._beginJump(actor,{large:duration+1e-9>=NATIVE_JUMP_HOLD_SECONDS}):this._beginWallJump(actor);
+    const options={large:duration+1e-9>=NATIVE_JUMP_HOLD_SECONDS};
+    return actor.grounded?this._beginJump(actor,options):this._beginWallJump(actor,options);
   }
   _updateJumpCharge(actor,control,dt){
     const charge=control?.jumpCharge;if(!charge)return;

@@ -17,8 +17,10 @@ function effectGeometry(node) {
   if (node.type === 'BOX') return new THREE.BoxGeometry(...d.map(Math.abs)).translate(0, 0, node.flags[0] === 1 ? d[1] / 2 : 0);
   if (node.type === 'CYLINDER') {
     const start = THREE.MathUtils.degToRad(d[3]), arc = THREE.MathUtils.degToRad(THREE.MathUtils.clamp(d[4] - d[3], 1, 360));
-    // 00588ed0: common flag0=1 anchors the cylinder's base at Z=0.
-    return new THREE.CylinderGeometry(Math.abs(d[0]), Math.abs(d[1]), Math.abs(d[2]), 24, 1, true, start, arc).rotateX(Math.PI / 2)
+    // 0047cdb0 emits (cos(angle)*radius, sin(angle)*radius, +/-height/2).
+    // Three's Y-axis cylinder needs the additional quarter turn to keep the
+    // original sector and texture seam; 00588ed0 then applies the base offset.
+    return new THREE.CylinderGeometry(Math.abs(d[0]), Math.abs(d[1]), Math.abs(d[2]), 24, 1, true, start, arc).rotateX(Math.PI / 2).rotateZ(Math.PI / 2)
       .translate(0, 0, node.flags[0] === 1 ? d[2] / 2 : 0);
   }
   if (node.type === 'SPHERE') {

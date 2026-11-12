@@ -378,3 +378,38 @@ test('完整加载器合并同源攻击定义时保留已存在的普通招式�
   assert.ok(effect.nodes.some(n=>n.mesh?.isPoints&&n.mesh.visible),'importing contact bounds must not remove the existing lightweight visual');
  }finally{loaded?.dispose();f.vfx.dispose();globalThis.fetch=beforeFetch;THREE.TextureLoader.prototype.load=beforeLoad;}
 });
+
+
+test('圆柱特效遵循原网格圆周方向，虬龙扫暴阵半圆位于原生负Y侧', async () => {
+  const combat = JSON.parse(await readFile(new URL('../dist/assets/original/combat-vfx.json', import.meta.url), 'utf8'));
+  const items = JSON.parse(await readFile(new URL('../dist/assets/original/item-vfx.json', import.meta.url), 'utf8'));
+  const combined = { ...manifest, effects: { ...combat.effects, ...manifest.effects, ...items.effects } };
+  const f = fixture('spear'); let checked = 0;
+  try {
+    f.vfx.manifest = combined;
+    for (const [id, definition] of Object.entries(combined.effects)) {
+      if (!definition.nodes.some(n => n.type === 'CYLINDER' && n.texture && n.dimensions?.length === 5)) continue;
+      assert.equal(createHash('sha256').update(await readFile(new URL(`../dist/assets/original/${definition.source}`, import.meta.url))).digest('hex'), definition.sha256);
+      const effect = f.vfx._create(f.actor, { serial: checked + 1 }, id);
+      for (const node of effect.nodes) {
+        if (node.source.type !== 'CYLINDER' || !node.mesh) continue;
+        const d = node.source.dimensions, p = node.mesh.geometry.attributes.position, uv = node.mesh.geometry.attributes.uv;
+        const offset = node.source.flags[0] === 1 ? d[2] / 2 : 0;
+        for (let i = 0; i < p.count; i++) {
+          const u = uv.getX(i), v = uv.getY(i), angle = (d[3] + (d[4] - d[3]) * u) * Math.PI / 180;
+          const radius = Math.abs(v > .5 ? d[0] : d[1]);
+          const expected = new THREE.Vector3(Math.cos(angle) * radius, Math.sin(angle) * radius, (v - .5) * Math.abs(d[2]) + offset);
+          const actual = new THREE.Vector3().fromBufferAttribute(p, i);
+          assert.ok(actual.distanceTo(expected) < 2e-5, `${id}/${node.source.name} vertex${i} native angle/UV: ${actual.toArray()} versus ${expected.toArray()}`);
+        }
+        if (id === 'pos291' && node.source.name === 'Cylinder_8') {
+          assert.deepEqual(d.slice(3), [180, 360]);
+          for (let i = 0; i < p.count; i++) assert.ok(p.getY(i) <= 1e-6, 'original 180..360 sector stays on native negative Y');
+        }
+        checked++;
+      }
+      f.vfx._remove(effect);
+    }
+    assert.ok(checked > 20, `checked ${checked} original cylinder nodes`);
+  } finally { f.vfx.dispose(); }
+});

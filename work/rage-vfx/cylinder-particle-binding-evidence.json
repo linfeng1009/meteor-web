@@ -1,0 +1,46 @@
+{
+  "sourceSha256": "2479bc4bdf916d4a6386ed6352cfa9c5446708de9c1b5e859d4a674a3b42da94",
+  "executed": false,
+  "functions": {
+    "0047cdb0": {
+      "bytes": 582,
+      "sha256": "9801bdfc8c595f03a03ae1078e678f65d8e454c7486e37250226c5026049df3f"
+    },
+    "00588ed0": {
+      "bytes": 330,
+      "sha256": "6d02d8cfd74fc6e171d473b2f94beccf369b0e842cebcb08a06665f8796c931b"
+    },
+    "0056db90": {
+      "bytes": 182,
+      "sha256": "dc4b2c327cf32ca8ff40b26b7bba3ef842236ff8b18bd43c3fb9fddd0c48c583"
+    },
+    "005838f0": {
+      "bytes": 271,
+      "sha256": "babdceb68d6e3efe9472f1c2e5fad5a8c897f3bb24075b3415f41a020977c52c"
+    },
+    "00582a90": {
+      "bytes": 70,
+      "sha256": "5b37fdba26379119ee18013dbd1d80fda622b6a7a845e4e01b85a43c8a3f5c8f"
+    }
+  },
+  "cylinder": {
+    "builder": "0047cdb0",
+    "initializer": "00588ed0",
+    "radiusAtNegativeZ": "dimensions[1]",
+    "radiusAtPositiveZ": "dimensions[0]",
+    "angleDegrees": "dimensions[3] + (dimensions[4] - dimensions[3]) * u",
+    "point": [
+      "cos(angle) * radius",
+      "sin(angle) * radius",
+      "(v - 0.5) * dimensions[2] + baseOffset"
+    ],
+    "baseOffset": "flags[0] == 1 ? dimensions[2] / 2 : 0"
+  },
+  "characterProxy": {
+    "ownerConstructor": "0056db90",
+    "proxyConstructor": "005838f0",
+    "vtable": "005b0ea0",
+    "slot5c": "00582a90",
+    "sampling": "matrix at object + 0x58, row3; no random surface sampling"
+  }
+}

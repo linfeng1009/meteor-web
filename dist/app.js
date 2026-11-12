@@ -1,3 +1,4 @@
+import {sceneryImage, SceneryCarousel} from './menu-scenery.js';
 import {MenuSnapshots} from './menu-snapshots.js';
 import { NetworkLobby } from './network-lobby.js';
 import { NETWORK_MODES } from './network-rules.js';
@@ -53,15 +54,27 @@ let dialogueTimer=null,dialogueQueue=[];
 let loadingMatch=false,characterSelectionBusy=false;
 let mapSelectionRequest=0;
 let game,running=false,paused=false,ended=false,modalKind='',toastTimer,announcementTimer,hitTimer,lastCombo=0,lastHp=100;
-let nativeCombat=null,menuSnapshots,mapPreviewRequest=0,weaponPreviewRequest=0;
-function releaseMenuSnapshots(){mapPreviewRequest++;weaponPreviewRequest++;menuSnapshots?.clear();$('#lobby').style.removeProperty('--selected-map-image');const image=$('#weapon-preview-image');image.hidden=true;image.removeAttribute('src');}
+let nativeCombat=null,menuSnapshots,mapPreviewRequest=0,weaponPreviewRequest=0,characterPreviewRequest=0;
+const mapPictures=new Map();
+function displayScenery(id){
+  const selected=canonicalMap(prefs.map),image=mapPictures.get(id)||sceneryImage(id);
+  if(image)$('#lobby').style.setProperty('--selected-map-image',`url("${image}")`);else $('#lobby').style.removeProperty('--selected-map-image');
+  const info=maps[id]||maps[prefs.map];$('#menu-map-name').textContent=info.name;$('#menu-map-poem').textContent='';
+  $('#menu-map-state').textContent=id===selected?'当前战场':'江湖巡游';
+  $$('.scenery-dot').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.scenery===id)));
+}
+const scenery=new SceneryCarousel({show:displayScenery,active:()=>!running&&lobbyPage==='home'&&!document.hidden&&!modal.open});
+function syncScenery(){scenery.stop();if(running||document.hidden)return;if(lobbyPage==='home')scenery.start(canonicalMap(prefs.map));else displayScenery(canonicalMap(prefs.map));}
+async function refreshCharacterPreview(){const request=++characterPreviewRequest;if(!menuSnapshots||running)return;const image=$('#character-preview');image.hidden=true;try{const url=await menuSnapshots.character([prefs.character,prefs.characterAppearance,prefs.weapon,prefs.swordStyle,prefs.spearStyle].join(':'));if(request!==characterPreviewRequest||running||!url)return;image.src=url;image.alt=appearanceCharacterName(prefs.character,prefs.characterAppearance);image.hidden=false;}catch(error){console.warn(error);}}
+
+function releaseMenuSnapshots(){scenery.stop();mapPictures.clear();characterPreviewRequest++;const portrait=$('#character-preview');portrait.hidden=true;portrait.removeAttribute('src');mapPreviewRequest++;weaponPreviewRequest++;menuSnapshots?.clear();$('#lobby').style.removeProperty('--selected-map-image');const image=$('#weapon-preview-image');image.hidden=true;image.removeAttribute('src');}
 async function refreshMapPreview(){
-  const request=++mapPreviewRequest,key=canonicalMap(prefs.map);$('#lobby').style.removeProperty('--selected-map-image');$('#menu-map-state').textContent='正在绘制场景预览…';
-  try{const url=await menuSnapshots?.map(key);if(request!==mapPreviewRequest||running)return;if(!url){$('#menu-map-state').textContent='场景预览暂不可用';return;}$('#lobby').style.setProperty('--selected-map-image',`url("${url}")`);$('#menu-map-state').textContent='实景截图 · '+maps[prefs.map].name;}catch(error){if(request===mapPreviewRequest&&!running)$('#menu-map-state').textContent='场景预览未能生成，可继续入场';console.warn(error);}
+  const request=++mapPreviewRequest,key=canonicalMap(prefs.map);displayScenery(key);
+  try{const url=await menuSnapshots?.map(key);if(request!==mapPreviewRequest||running||!url)return;mapPictures.clear();mapPictures.set(key,url);if(lobbyPage!=='home'||scenery.id===key)displayScenery(key);}catch(error){console.warn(error);}
 }
 async function refreshWeaponPreview(){
  const request=++weaponPreviewRequest,key=[prefs.weapon,prefs.swordStyle,prefs.spearStyle].join(':');const image=$('#weapon-preview-image');image.hidden=true;image.removeAttribute('src');$('#weapon-preview-status').textContent='正在绘制模型预览…';
- try{const result=await menuSnapshots?.weapon(key);if(request!==weaponPreviewRequest||running)return;if(!result){$('#weapon-preview-status').textContent='模型预览暂不可用，可继续入场';return;}const name=prefs.weapon==='sword'?swordStyleNames[result.style]:prefs.weapon==='spear'?(result.style==='phoenix'?'霜翎凤鸣枪':'原版长枪'):weapons[prefs.weapon].sourceName;image.src=result.url;image.alt=name+'模型预览';image.hidden=false;$('#weapon-preview-title').textContent=name;const expected=prefs.weapon==='sword'?prefs.swordStyle:prefs.weapon==='spear'?prefs.spearStyle:'original';$('#weapon-preview-status').textContent=result.style===expected?'模型实拍 · 选中时更新':'所选外观暂未就绪，显示原版模型';}catch(error){if(request===weaponPreviewRequest&&!running)$('#weapon-preview-status').textContent='模型预览未能生成，可继续入场';console.warn(error);}
+ try{const result=await menuSnapshots?.weapon(key);if(request!==weaponPreviewRequest||running)return;if(!result){$('#weapon-preview-status').textContent='模型预览暂不可用，可继续入场';return;}const name=prefs.weapon==='sword'?swordStyleNames[result.style]:prefs.weapon==='spear'?(result.style==='phoenix'?'霜翎凤鸣枪':'原版长枪'):weapons[prefs.weapon].sourceName;image.src=result.url;image.alt=name+'模型预览';image.hidden=false;$('#weapon-preview-title').textContent=name;refreshCharacterPreview();const expected=prefs.weapon==='sword'?prefs.swordStyle:prefs.weapon==='spear'?prefs.spearStyle:'original';$('#weapon-preview-status').textContent=result.style===expected?'模型实拍 · 选中时更新':'所选外观暂未就绪，显示原版模型';}catch(error){if(request===weaponPreviewRequest&&!running)$('#weapon-preview-status').textContent='模型预览未能生成，可继续入场';console.warn(error);}
 }
 async function selectMenuWeapon(name){if(running||!game)return;const request=++weaponPreviewRequest;prefs.weapon=name;save();updateSelection();$('#weapon-preview-image').hidden=true;$('#weapon-preview-status').textContent='正在载入兵器…';try{await game.setWeapon(name);if(request===weaponPreviewRequest&&!running)await refreshWeaponPreview();}catch(error){if(request===weaponPreviewRequest)$('#weapon-preview-status').textContent='兵器未能载入，请重试';console.warn(error);}}
 
@@ -87,6 +100,9 @@ const music=new Audio();music.loop=true;music.volume=.18;music.preload='none';le
 function syncMusic(){const mapId=({sifang:'sn06',cave:'sn01',forge:'sn10'}[prefs.map]||prefs.map);const mission=currentMode==='story'?getNativeMission(currentMissionId):null;const track=running?(mission?.music||(mapId==='sn01'?'s1.mp3':mapId==='sn10'?'s10.mp3':'s6.mp3')):'menu.mp3';if(musicTrack!==track){musicTrack=track;music.src='./assets/original/sounds/music/'+track;}if(prefs.muted||document.hidden)music.pause();else music.play().catch(()=>{});}
 let priorFocus=null;
 const modal=$('#modal');
+modal.addEventListener('close',syncScenery);
+scenery.setPaused(window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+if(scenery.paused){const control=$('[data-scenery-action="pause"]');control.setAttribute('aria-pressed','true');control.setAttribute('aria-label','播放背景轮换');control.textContent='▶';}
 const toast=text=>{clearTimeout(toastTimer);$('#toast').textContent=text;$('#toast').classList.add('show');toastTimer=setTimeout(()=>$('#toast').classList.remove('show'),2800);};
 const announce=(text,ms=2300)=>{clearTimeout(announcementTimer);$('#game-announcement').textContent=text;$('#game-announcement').style.opacity=1;announcementTimer=setTimeout(()=>$('#game-announcement').style.opacity=0,ms);};
 function clearDialogue(){clearTimeout(dialogueTimer);dialogueTimer=null;dialogueQueue=[];$('#mission-dialogue').classList.add('hidden');}
@@ -123,7 +139,7 @@ function updateSelection(){
   $('#spear-appearance-section').hidden=prefs.weapon!=='spear';
   $('#sword-wardrobe-current').textContent=prefs.weapon==='sword'?'演武装备 · '+swordStyleNames[prefs.swordStyle]:'演武装备 · '+(prefs.weapon==='spear'?(prefs.spearStyle==='phoenix'?'霜翎凤鸣枪':'原版长枪'):weapons[prefs.weapon].name);
   $('#difficulty-label').textContent=prefs.difficulty==='hard'?'江湖高手':'江湖新手';
-  $('#menu-map-name').textContent=maps[prefs.map].name;$('#menu-map-poem').textContent=maps[prefs.map].poem;
+  if(lobbyPage!=='home')displayScenery(canonicalMap(prefs.map));
   $('#scene-name').textContent=maps[prefs.map].name;$('#scene-english').textContent=maps[prefs.map].english;$('#scene-poem').textContent=maps[prefs.map].poem;
   $('#start-game small').textContent=prefs.map===QIYUN_MAP.id?'全新战场 · 招式演武':'原版场景 · 招式演武';
   $$('.sound-toggle').forEach(el=>{el.innerHTML=icon(prefs.muted?'muted':'volume');el.setAttribute('aria-label',prefs.muted?'开启音效':'关闭音效');el.title=prefs.muted?'开启音效':'关闭音效';});
@@ -175,11 +191,11 @@ async function selectCharacter(id,appearance){
     updateSelection();toast('人物未能载入，已保留当前人物');
   }finally{
     characterSelectionBusy=false;$('#start-game').disabled=loadingMatch||Boolean($('#scene-load-status').textContent);
-    if(modal.open&&modalKind==='characters')openModal('characters');
+    refreshCharacterPreview();if(modal.open&&modalKind==='characters')openModal('characters');
   }
 }
-function mapsHTML(){return header('CHOOSE YOUR BATTLEGROUND','选择战场','选一处江湖，再执剑入场。')+`<input id="map-search" class="setting-select map-search" aria-label="搜索战场" placeholder="搜索战场名称或编号"><div class="original-map-grid">${[QIYUN_MAP,...(originalManifest?.maps||[])].map(map=>`<button class="original-map-option ${map.id===canonicalMap(prefs.map)?'selected':''}" data-map="${map.id}" ${map.available===false?'disabled':''}><small>${map.id===QIYUN_MAP.id?'全新战场':map.id.toUpperCase()}</small><strong>${map.name||'未命名地图'}</strong><span>${map.id===QIYUN_MAP.id?'山间古庭 · 演武':map.available===false?'原文件数据异常':map.name?'原版场景':'名称待核实'}</span></button>`).join('')}</div>`;}
-async function selectMap(id){const request=++mapSelectionRequest,previous=prefs.map;prefs.map=id;mapPreviewRequest++;$('#lobby').style.removeProperty('--selected-map-image');$('#menu-map-state').textContent='正在读取战场…';save();updateSelection();if(modal.open){modal.close();modalKind='';priorFocus?.focus?.();}$('#start-game').disabled=true;$('#scene-load-status').textContent='正在读取战场…';try{await game?.menu(id);if(request===mapSelectionRequest&&!running)await refreshMapPreview();}catch(error){console.error(error);if(request===mapSelectionRequest){prefs.map=previous;save();updateSelection();refreshMapPreview();toast('这张战场暂未能载入，请重试');}}finally{if(request===mapSelectionRequest){$('#start-game').disabled=false;$('#scene-load-status').textContent='';}}}
+function mapsHTML(){return header('CHOOSE YOUR BATTLEGROUND','选择战场','选一处江湖，再执剑入场。')+`<input id="map-search" class="setting-select map-search" aria-label="搜索战场" placeholder="搜索战场名称或编号"><div class="original-map-grid">${[QIYUN_MAP,...(originalManifest?.maps||[])].map(map=>`<button class="original-map-option ${map.id===canonicalMap(prefs.map)?'selected':''}" data-map="${map.id}" ${map.available===false?'disabled':''}>${sceneryImage(map.id)?`<img class="map-card-image" src="${sceneryImage(map.id)}" alt="" loading="lazy">`:`<span class="map-card-placeholder" aria-hidden="true">${map.id.toUpperCase()}</span>`}<small>${map.id===QIYUN_MAP.id?'古庭':map.id.toUpperCase()}</small><strong>${map.name||'未命名地图'}</strong><span>${map.id===QIYUN_MAP.id?'山间古庭 · 演武':map.available===false?'原文件数据异常':map.name?'原版场景':'名称待核实'}</span></button>`).join('')}</div>`;}
+async function selectMap(id){const request=++mapSelectionRequest,previous=prefs.map;prefs.map=id;mapPreviewRequest++;scenery.stop();displayScenery(canonicalMap(id));save();updateSelection();if(modal.open){modal.close();modalKind='';priorFocus?.focus?.();}$('#start-game').disabled=true;$('#scene-load-status').textContent='正在读取战场…';try{await game?.menu(id);if(request===mapSelectionRequest&&!running)await refreshMapPreview();}catch(error){console.error(error);if(request===mapSelectionRequest){prefs.map=previous;save();updateSelection();refreshMapPreview();toast('这张战场暂未能载入，请重试');}}finally{if(request===mapSelectionRequest){$('#start-game').disabled=false;$('#scene-load-status').textContent='';syncScenery();}}}
 const pageKinds=new Set(['network','mission','guide','resources','settings']);
 function showLobbyPage(page){
   if(running)return;
@@ -188,7 +204,7 @@ function showLobbyPage(page){
   $('#home-page').hidden=page!=='home';$('#prep-page').hidden=page!=='prep';$('#page-content').hidden=['home','prep'].includes(page);
   $$('[data-route], .side-nav [data-open]').forEach(button=>{const active=(button.dataset.route||button.dataset.open)===page;if(active)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});
   $('#active-room').hidden=!networkLobby?.client;
-  window.scrollTo(0,0);
+  window.scrollTo(0,0);syncScenery();
 }
 function openModal(kind){
   disposeKeySettings?.();disposeKeySettings=null;
@@ -229,7 +245,7 @@ async function startMatch(mode='training',missionId=currentMissionId,isCurrent=(
   catch(e){if(isCurrent()){if(currentMode==='network')throw e;console.error(e);returnLobby();toast('战场加载失败，请刷新重试');}}
   finally{matchLoading(false);}
 }
-function returnLobby(){if(game)game.menuIdle=true;if(networkLobby?.client){networkLobby.leave();return;}if(modal.open)modal.close();running=false;paused=false;ended=false;clearDialogue();clearCombatFeedback();game?.pause(false);game?.menu(prefs.map, battleCharacterSelection(prefs)).then(async()=>{if(!running){await game.setWeapon(prefs.weapon);if(!running){refreshMapPreview();refreshWeaponPreview();}}}).catch(error=>{console.error(error);toast('返回战场失败，请刷新重试');});syncMusic();$('#lobby').classList.remove('hidden');$('#game-hud').classList.add('hidden');document.body.classList.remove('playing');$$('.nav-link').forEach(el=>el.classList.toggle('active',el.dataset.panel==='home'));showLobbyPage('home');$('.mode-primary').focus();}
+function returnLobby(){if(game)game.menuIdle=true;if(networkLobby?.client){networkLobby.leave();return;}if(modal.open)modal.close();running=false;paused=false;ended=false;clearDialogue();clearCombatFeedback();game?.pause(false);game?.menu(prefs.map, battleCharacterSelection(prefs)).then(async()=>{if(!running){await game.setWeapon(prefs.weapon);if(!running){refreshMapPreview();refreshWeaponPreview();refreshCharacterPreview();syncScenery();}}}).catch(error=>{console.error(error);toast('返回战场失败，请刷新重试');});syncMusic();$('#lobby').classList.remove('hidden');$('#game-hud').classList.add('hidden');document.body.classList.remove('playing');$$('.nav-link').forEach(el=>el.classList.toggle('active',el.dataset.panel==='home'));showLobbyPage('home');$('.mode-primary').focus();}
 
 function updateHUD(s){if(!running)return;
   const avatarId=game?.hero?.modelId??prefs.character,avatarAppearance=s.characterAppearance?.appearance||'original';$('#player-name').textContent=networkLobby?.session?game.hero.name:appearanceCharacterName(avatarId,avatarAppearance);$('.player-seal').textContent=appearanceCharacterSeal(avatarId,avatarAppearance);
@@ -271,6 +287,7 @@ function handleEnd(r){
 function toggleSound(){prefs.muted=!prefs.muted;game?.setMuted(prefs.muted);syncMusic();save();updateSelection();if(modalKind==='settings'||!running&&lobbyPage==='settings')openModal('settings');}
 document.addEventListener('click',e=>{
   if(characterSelectionBusy)return;
+  const sceneryButton=e.target.closest('[data-scenery]');if(sceneryButton){scenery.choose(sceneryButton.dataset.scenery);return;}const sceneryAction=e.target.closest('[data-scenery-action]');if(sceneryAction){const action=sceneryAction.dataset.sceneryAction;if(action==='pause'){scenery.setPaused(!scenery.paused);sceneryAction.setAttribute('aria-pressed',String(scenery.paused));sceneryAction.setAttribute('aria-label',scenery.paused?'播放背景轮换':'暂停背景轮换');sceneryAction.textContent=scenery.paused?'▶':'Ⅱ';}else scenery.step(action==='previous'?-1:1);return;}
   const route=e.target.closest('[data-route]');if(route){e.preventDefault();showLobbyPage(route.dataset.route);return;}
   const settingsChoice=e.target.closest('[data-settings-tab]');if(settingsChoice){settingsTab=settingsChoice.dataset.settingsTab;openModal('settings');return;}
   const missionChoice=e.target.closest('[data-select-mission]');if(missionChoice){currentMissionId=missionChoice.dataset.selectMission;openModal('mission');return;}
@@ -301,10 +318,11 @@ $$('[data-action]').filter(button=>button.id!=='pickup-hint').forEach(button=>{b
 networkLobby=new NetworkLobby({getGame:()=>game,getSelection:()=>battleCharacterSelection(prefs),onStart:(isCurrent,selection)=>startMatch('network',undefined,isCurrent,selection),onNotice:text=>toast(text),onResult:()=>openModal('network'),onStop:text=>{returnLobby();toast(text);}});
 updateSelection();
 try{
-  const {MeteorGame}=await import('./engine.js');game=new MeteorGame($('#world'),{onUpdate:updateHUD,onEvent:handleEvent,onEnd:handleEnd});game.menuIdle=true;menuSnapshots=new MenuSnapshots(game);game.setKeyBindings(keyBindings);window.__game=game;game.frameOverlay.setVisible(prefs.showFps);await game.ready;game.setSwordStyle(prefs.swordStyle);game.setSpearStyle(prefs.spearStyle);game.setInfiniteRage(prefs.infiniteRage);game.setMuted(prefs.muted);game.setQuality(prefs.quality);await game.setWeapon(prefs.weapon);await game.menu(prefs.map, battleCharacterSelection(prefs));if (Object.hasOwn(NATIVE_APPEARANCES, linkedAppearance)) save();refreshMapPreview();refreshWeaponPreview();
+  const {MeteorGame}=await import('./engine.js');game=new MeteorGame($('#world'),{onUpdate:updateHUD,onEvent:handleEvent,onEnd:handleEnd});game.menuIdle=true;menuSnapshots=new MenuSnapshots(game);game.setKeyBindings(keyBindings);window.__game=game;game.frameOverlay.setVisible(prefs.showFps);await game.ready;game.setSwordStyle(prefs.swordStyle);game.setSpearStyle(prefs.spearStyle);game.setInfiniteRage(prefs.infiniteRage);game.setMuted(prefs.muted);game.setQuality(prefs.quality);await game.setWeapon(prefs.weapon);await game.menu(prefs.map, battleCharacterSelection(prefs));if (Object.hasOwn(NATIVE_APPEARANCES, linkedAppearance)) save();refreshMapPreview();refreshWeaponPreview();refreshCharacterPreview();syncScenery();
 
   $('#load-status').textContent='江湖已就绪';$('#load-screen').style.opacity=0;setTimeout(()=>$('#load-screen').classList.add('hidden'),650);
 }catch(error){console.error(error);$('#load-screen').classList.add('hidden');const el=document.createElement('div');el.className='fatal-error';const text=document.createElement('p');text.textContent='江湖画卷未能展开。请使用支持 WebGL 的新版浏览器，并通过本地服务器打开。';const btn=document.createElement('button');btn.textContent='重新加载';btn.addEventListener('click',()=>location.reload());el.append(text,btn);document.body.append(el);}
 
-window.addEventListener('pagehide',()=>menuSnapshots?.clear());
-window.addEventListener('pageshow',event=>{if(event.persisted&&!running){refreshMapPreview();refreshWeaponPreview();}});
+window.addEventListener('pagehide',()=>{scenery.stop();mapPictures.clear();menuSnapshots?.clear();});
+document.addEventListener('visibilitychange',syncScenery);
+window.addEventListener('pageshow',event=>{if(event.persisted&&!running){refreshMapPreview();refreshWeaponPreview();refreshCharacterPreview();syncScenery();}});

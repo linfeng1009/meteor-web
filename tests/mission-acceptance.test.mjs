@@ -1,3 +1,4 @@
+import {NATIVE_AIR_PHYSICS} from '../dist/native-traversal.js';
 import test, { after } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -24,7 +25,7 @@ const combat = await loadNativeCombat();
 const vector = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z);
 const games = [];
 
-async function cave() {
+async function cave({combatRandom}={}) {
   const game = Object.create(MeteorGame.prototype), events = [], endings = [];
   Object.assign(game, {
     manifest, combatData: combat, weaponManifest,
@@ -33,13 +34,13 @@ async function cave() {
     weaponCache: new Map(), effectDefinitions: new Map(), waveFiles: new Map(), effects: [],
     scene: new THREE.Scene(), camera: new THREE.PerspectiveCamera(), cameraTarget: vector(),
     raycaster: new THREE.Raycaster(), collisionMaterial: new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }),
-    hostPhysics: { speed: 8, gravity: 34, jumpVelocity: 12, radius: .4, step: .55 },
+    hostPhysics: { speed: 8, gravity: NATIVE_AIR_PHYSICS.gravity, jumpVelocity: NATIVE_AIR_PHYSICS.jumpVelocity, radius: .4, step: .55 },
     map: 'sn01', mode: 'training', weapon: 'sword', characterId: 0, actorSerial: 0,
     enemies: [], keys: new Set(), directionBuffer: [], sessionRequest: 0, characterRequest: 0,
     mapRequest: 0, running: false, paused: false, elapsed: 0, difficulty: 'normal',
     kills: 0, deaths: 0, totalDamage: 0, contactHits: 0, matchElapsed: 0, time: 0,
     cameraAngle: 0, cameraPitch: .4, cameraDistance: 8,
-    onUpdate() {}, onEvent: event => events.push(event), onEnd: result => endings.push(result),
+    combatRandom,onUpdate() {}, onEvent: event => events.push(event), onEnd: result => endings.push(result),
     _nameplate() {}, _unlockAudio() {}, _soundDefinition() {}
   });
   game._initializeProjectiles();
@@ -192,13 +193,23 @@ test('real native attacks defeat source NPC HP and produce one story win, then r
   assert.equal(game.kills, 0); assert.equal(game.deaths, 0); assert.equal(game.storyResult, null);
 });
 
+test('战斗随机流不受 Three.js 资源分配和冷暖缓存影响',async()=>{
+  const stream=()=>{let value=7;return()=>{value=(Math.imul(value,214013)+2531011)>>>0;return ((value>>>16)&32767)/32768;};};
+  const first=await cave({combatRandom:stream()});
+  const initial=first.game.enemies.map(actor=>[actor.scriptId,actor.npcCombat.baseDelay,actor.npcCombat.draw()]);
+  for(let i=0;i<100;i++)new THREE.Object3D();
+  const second=await cave({combatRandom:stream()});
+  assert.deepEqual(second.game.enemies.map(actor=>[actor.scriptId,actor.npcCombat.baseDelay,actor.npcCombat.draw()]),initial);
+});
+
 for (const seed of [1, 2, 3, 4]) test(`walking normally into the source enemies causes player death and one failure, and restart resets accumulated state (jitter seed ${seed})`, async t => {
   // Control browser AI cooldown jitter so failures can be replayed. This is
   // test input, not recovery of the original process-wide random sequence.
-  const priorRandom = Math.random; let randomState = seed;
-  Math.random = () => { randomState = (Math.imul(randomState, 214013) + 2531011) >>> 0; return ((randomState >>> 16) & 32767) / 32768; };
-  t.after(() => { Math.random = priorRandom; });
-  const { game, endings, events } = await cave();
+  // Three.js UUIDs also consume Math.random. Give combat its own stream so
+  // asset-cache warmth and image/material allocations cannot change the seed.
+  let randomState = seed;
+  const combatRandom=()=>{randomState=(Math.imul(randomState,214013)+2531011)>>>0;return ((randomState>>>16)&32767)/32768;};
+  const { game, endings, events } = await cave({combatRandom});
   const host = game.missionHost;
   const recent = [];
   for (const id of host.route(9, 53)) {
@@ -221,9 +232,9 @@ for (const seed of [1, 2, 3, 4]) test(`walking normally into the source enemies 
     const visible=game.enemies.filter(actor=>!actor.dead&&!actor.disposed&&game.hasScriptLineOfSight(game.hero,actor))
       .sort((a,b)=>a.root.position.distanceToSquared(game.hero.root.position)-b.root.position.distanceToSquared(game.hero.root.position));
     const enemy = visible[0]||game._nearest();
-    const goal=visible.length?enemy.root.position:host.moveViaWaypoint(game.hero,host.closestWaypoint(enemy.root.position)?.id)||enemy.root.position;
+    const goal=visible.length?enemy.root.position:host.moveViaWaypoint(game.hero,host.closestWaypoint(enemy.root.position,{visible:true})?.id)||enemy.root.position;
     const delta = goal.clone().sub(game.hero.root.position);
-    if (frame % 300 === 0) recent.push({ time: game.matchElapsed, hp: game.hero.hp, position: game.hero.root.position.toArray(),
+    if (frame % 300 === 0) recent.push({ time: game.matchElapsed, hp: game.hero.hp, position: game.hero.root.position.toArray(),goal:goal.toArray(),path:game.hero.scriptPath?{...game.hero.scriptPath,ids:[...game.hero.scriptPath.ids]}:null,
       enemies: game.enemies.map(actor => ({ id: actor.scriptId, position: actor.root.position.toArray(), intent: actor.scriptIntent?.mode,
         paused: actor.scriptControl?.paused, canAttack: actor.scriptControl?.canAttack, distance: actor.root.position.distanceTo(game.hero.root.position),
         lineOfSight: game.hasScriptLineOfSight(actor, game.hero), pose: actor.combat.timeline?.pose.id })) });

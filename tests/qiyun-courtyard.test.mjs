@@ -1,3 +1,4 @@
+import {NATIVE_AIR_PHYSICS} from '../dist/native-traversal.js';
 import test, { after } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -17,7 +18,7 @@ THREE.TextureLoader.prototype.load = function(url, done) { const texture = new T
 const v = (x=0,y=0,z=0) => new THREE.Vector3(x,y,z);
 const game = Object.create(MeteorGame.prototype);
 Object.assign(game, { collisionMaterial: new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }), raycaster: new THREE.Raycaster(),
-  hostPhysics: { radius:.4,step:.55,gravity:34 }, mode:'training', scene:new THREE.Scene(),
+  hostPhysics: { radius:.4,step:.55,gravity:NATIVE_AIR_PHYSICS.gravity }, mode:'training', scene:new THREE.Scene(),
   renderer:{shadowMap:{},toneMapping:THREE.NoToneMapping}, baseLights:[new THREE.HemisphereLight(),new THREE.DirectionalLight()] });
 game.scene.background = new THREE.Color();
 game.currentMap = await game._readMap('qiyun');

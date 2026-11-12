@@ -6,7 +6,7 @@ import { readFile } from 'node:fs/promises';
 import * as THREE from '../dist/vendor/three.module.js';
 import { MeteorGame } from '../dist/engine.js';
 import { NativeCombatController, decodeNativeText, parsePos, parseAct } from '../dist/native-combat.js';
-import {NATIVE_DASH_POSES,NATIVE_CROUCH_POSES,NATIVE_GROUND_MOVE_POSES,NATIVE_JUMP_POSES,nativeTraversalDirection} from '../dist/native-traversal.js';
+import {NATIVE_AIR_PHYSICS,NATIVE_DASH_POSES,NATIVE_CROUCH_POSES,NATIVE_GROUND_MOVE_POSES,NATIVE_JUMP_POSES,nativeTraversalDirection} from '../dist/native-traversal.js';
 import { createNativeCharacter, parseNativeSkin, parseNativeBones, parseNativeAnimation, parseNativePoses } from '../dist/native-character.js';
 
 // Use the supplied native skin, skeleton and every original jump frame. A
@@ -169,7 +169,7 @@ function fixture({ locked = false, wall = false } = {}) {
   hero.combat.play(9, { force: true, loop: true });
   const opponent = { root: new THREE.Group(), dead: false, disposed: false }; opponent.root.position.set(0, .015, -8);
   Object.assign(game, { hero, locked: locked ? opponent : null, enemies: [opponent], keys: new Set(), directionBuffer: [], elapsed: 10, running: true, paused: false, mode: 'training',
-    currentMap: { bounds: new THREE.Box3(v(-100, -1, -100), v(100, 20, 100)), colliders }, hostPhysics: { speed: 8, gravity: 34, jumpVelocity: 12, radius: .4, step: .55 },
+    currentMap: { bounds: new THREE.Box3(v(-100, -1, -100), v(100, 20, 100)), colliders }, hostPhysics: { speed: 8, gravity: NATIVE_AIR_PHYSICS.gravity, jumpVelocity: NATIVE_AIR_PHYSICS.jumpVelocity, radius: .4, step: .55 },
     camera: new THREE.PerspectiveCamera(48, 16 / 9, .1, 1000), cameraTarget: v(0, 1.665, 0), cameraAngle: 0, cameraPitch: .4, cameraDistance: 8,
     cameraManualUntil: 0, raycaster: new THREE.Raycaster(), _unlockAudio() {} });
   game.camera.position.set(0, 5, 8);
@@ -429,6 +429,28 @@ test('authored non-in-place jump remains available with its original d_base disp
     assert.ok(Math.abs(character.getAttachment('d_base').position.z - 72.97940063476562) < 1e-5);
     assert.ok(character.getAttachment('d_base').getWorldPosition(v()).y > 5.8);
   } finally { character.dispose(); }
+});
+
+test('原重力控制离台自由下落，两个固定步长均正常落地并保持蒙皮对齐',()=>{
+  for(const dt of [1/60,1/120]){
+    const state=fixture();try{
+      const {game,hero}=state;hero.weapon='sword';hero.combat.sampleRoot=hero.character.sampleSceneMotion;hero.combat.setWeapon('sword');hero.combat.play(6,{force:true});
+      assert.equal(NATIVE_AIR_PHYSICS.gravity,70.56);assert.equal(NATIVE_AIR_PHYSICS.jumpVelocity,22.56);
+      const floor=hero.root.position.y;game.action('jump');assert.equal(hero.vy,22.56);
+      // A fall has no casting/reaction d_base vertical override. Keep the real
+      // native fall pose and ground collision, starting20m above that floor.
+      hero.root.position.y=floor+20;hero.vy=0;hero.nativeJump=null;hero.jumpSequence=null;
+      let elapsed=0;
+      while(!hero.grounded&&elapsed<1){
+        game._updateFighter(hero,dt);elapsed+=dt;
+        if(elapsed===dt){assert.ok(Math.abs(hero.vy+70.56*dt)<1e-9);assert.ok(Math.abs(hero.root.position.y-(floor+20-70.56*dt*dt))<1e-9);}
+        assert.ok(Math.abs(hero.character.getAttachment('d_base').getWorldPosition(v()).y-hero.root.position.y)<.01);
+      }
+      // Free fall20m under source gravity takes sqrt(40/70.56)=.7529s.
+      assert.ok(elapsed>.73&&elapsed<.78,`flight=${elapsed}`);
+      assert.equal(hero.grounded,true);assert.equal(hero.vy,0);assert.ok(Math.abs(hero.root.position.y-floor)<1e-5);
+    }finally{state.dispose();}
+  }
 });
 
 test('normal L takeoff moves the collision root by the original d_base curve without adding it twice to the skin', () => {

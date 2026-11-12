@@ -1,3 +1,4 @@
+import {NATIVE_AIR_PHYSICS} from '../dist/native-traversal.js';
 import {nativeStrideSpeed} from '../dist/native-movement-profile.js';
 import test, { after } from 'node:test';
 import assert from 'node:assert/strict';
@@ -26,7 +27,7 @@ async function fixture(positions = [v(3.5, 0, 0), v(-3.5, 0, 0), v(0, 0, -3.5)])
   Object.assign(game, { combatData: data, weaponManifest: weapons,
     weaponItems: new Map(weapons.items.map(item => [Number(item.itemId), item])), weaponModels: new Map(weapons.models.map(model => [model.modelId.toLowerCase(), model])), weaponCache: new Map(),
     scene: new THREE.Scene(), camera: new THREE.PerspectiveCamera(), raycaster: new THREE.Raycaster(), effectDefinitions: new Map(), waveFiles: new Map(), effects: [],
-    hostPhysics: { speed: 8, gravity: 34, jumpVelocity: 12, radius: .4, step: .55 },
+    hostPhysics: { speed: 8, gravity: NATIVE_AIR_PHYSICS.gravity, jumpVelocity: NATIVE_AIR_PHYSICS.jumpVelocity, radius: .4, step: .55 },
     currentMap: { colliders: [floor], bounds: new THREE.Box3(v(-150, -1, -150), v(150, 60, 150)), metadata: {}, spawns: [{ position: v(0, .015, 0) }] },
     weapon: 'spear', actorSerial: 0, enemies: [], keys: new Set(), directionBuffer: [], cameraAngle: 0,
     running: true, paused: false, mode: 'training', elapsed: 0, matchElapsed: 0, kills: 0, deaths: 0, totalDamage: 0, contactHits: 0,

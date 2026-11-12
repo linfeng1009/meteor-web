@@ -1,3 +1,4 @@
+import {NATIVE_AIR_PHYSICS} from '../dist/native-traversal.js';
 import test, { after } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -62,7 +63,7 @@ async function fixture({ originalMap = false } = {}) {
     weaponModels: new Map(weapons.models.map(model => [model.modelId.toLowerCase(), model])), weaponCache: new Map(),
     scene: new THREE.Scene(), camera: new THREE.PerspectiveCamera(), cameraTarget: v(), raycaster: new THREE.Raycaster(),
     effectDefinitions: new Map(), waveFiles: new Map(), effects: [], keys: new Set(), directionBuffer: [],
-    hostPhysics: { speed: 8, gravity: 34, jumpVelocity: 12, radius: .4, step: .55 },
+    hostPhysics: { speed: 8, gravity: NATIVE_AIR_PHYSICS.gravity, jumpVelocity: NATIVE_AIR_PHYSICS.jumpVelocity, radius: .4, step: .55 },
     currentMap: { id: 'sn06', entry: { name: '四方阵' }, metadata: {}, spawns: sourceSpawns, colliders: [floor], bounds: new THREE.Box3(v(-125, -1, -125), v(125, 60, 125)) },
     weapon: 'sword', elapsed: 0, mode: 'training', running: true, paused: false,
     onEvent: event => events.push(event), onUpdate() {}, _nameplate() {}, _unlockAudio() {}, _soundDefinition() {}, _hud() {}, _tickCamera() {} });

@@ -148,14 +148,19 @@ test('sn15 injured VIP physically follows all escape stages to WP116 and origina
 test('sn15 real guard damage triggers the conditional friendly ally, source嗜战, and a friendly HUD marker exactly once', async () => {
   const { game, host, events } = await mission('sn15'); waitIntro(game);
   const guard = host.findActor('左护法'); near(game, guard); game.locked = null;
+  const arenaAnchor=guard.root.position.clone();
   // Contact-only incoming-damage fixture. Only the original left guard acts;
   // Keep contact range between recoveries as movement/weapon speeds change;
   // no player HP, result or source trigger/global is assigned.
   for (let frame = 0; frame < 6000 && game.running && !host.levelVm.getGlobal('trg8'); frame++) {
-    if(!game.hero.combat.busy)game.hero.root.position.copy(guard.root.position).add(v(0,0,-1.1));
+    if(!game.hero.combat.busy){
+      const inward=arenaAnchor.clone().sub(guard.root.position);inward.y=0;
+      if(inward.lengthSq()<.01)inward.set(0,0,-1);else inward.normalize();
+      game.hero.root.position.copy(guard.root.position).addScaledVector(inward,1.1);
+    }
     tick(game, 1 / 30, { enemies:false }); game._updateFighter(guard, 1 / 30);
   }
-  assert.ok(game.hero.hp > 0 && game.hero.hp < 2500/3); await host.flushPending(); host.update(.1);
+  assert.ok(game.hero.hp > 0 && game.hero.hp < 2500/3,`HP=${game.hero.hp},trg8=${host.levelVm.getGlobal('trg8')},time=${game.matchElapsed},hero=${game.hero.root.position.toArray()},guard=${guard.root.position.toArray()}`); await host.flushPending(); host.update(.1);
   const ally = host.findActor('无名'); assert.ok(ally); assert.equal(ally.modelId, 10); assert.equal(ally.team, 1);
   assert.equal(ally.hp, 9999); assert.equal(ally.weaponId, 23); assert.equal(ally.scriptIntent.targetRef, 'vip');
   // Recoil can bring the player within the source dialogue radius. In that

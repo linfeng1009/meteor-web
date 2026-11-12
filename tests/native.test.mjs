@@ -1,3 +1,4 @@
+import {NATIVE_AIR_PHYSICS} from '../dist/native-traversal.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -47,7 +48,7 @@ async function nativeMap(id) {
   const user = des.objects.find(o => o.name === 'D_user01');
   const game = Object.create(MeteorGame.prototype);
   Object.assign(game, { currentMap: { colliders, metadata, bounds: new THREE.Box3().setFromObject(model) },
-    raycaster: new THREE.Raycaster(), hostPhysics: { radius: .4, step: .55, gravity: 34 } });
+    raycaster: new THREE.Raycaster(), hostPhysics: { radius: .4, step: .55, gravity: NATIVE_AIR_PHYSICS.gravity } });
   return { game, model, metadata, des, user, bytes };
 }
 

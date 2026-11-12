@@ -1,7 +1,7 @@
 import {NativeStealthFeedback} from './native-stealth-feedback.js';
 import {validCombatTarget,acquireCombatTarget} from './combat-targeting.js';
 import {nativeStrideSpeed} from './native-movement-profile.js';
-import { traversalTap, NATIVE_ROLL_POSES, nativeDashPose, NATIVE_CROUCH_POSES, NATIVE_GROUND_MOVE_POSES, NATIVE_JUMP_POSES, nativeTraversalDirection } from './native-traversal.js';
+import { traversalTap, NATIVE_AIR_PHYSICS, NATIVE_ROLL_POSES, nativeDashPose, NATIVE_CROUCH_POSES, NATIVE_GROUND_MOVE_POSES, NATIVE_JUMP_POSES, nativeTraversalDirection } from './native-traversal.js';
 import { FixedStepClock } from './fixed-step.js';
 import { NATIVE_WALL_POSES, WALL_TRAVERSAL_ADAPTER as WALL } from './native-wall-traversal.js';
 import { FrameMeter, RenderScaleController, createFrameOverlay } from './frame-meter.js';
@@ -61,8 +61,9 @@ export function getNativeAttackAttachment(character, name) {
 // follows the recovered PE functions; contact volumes, physics and perception
 // are explicit browser adapters pending complete native reconstruction.
 export class MeteorGame {
-  constructor(canvas, { onUpdate = () => {}, onEvent = () => {}, onEnd = () => {}, damageResolver = null, sceneDamageResolver = null } = {}) {
+  constructor(canvas, { onUpdate = () => {}, onEvent = () => {}, onEnd = () => {}, damageResolver = null, sceneDamageResolver = null, combatRandom = Math.random } = {}) {
     this.canvas = canvas; this.onUpdate = onUpdate; this.onEvent = onEvent; this.onEnd = onEnd; this.damageResolver = damageResolver; this.sceneDamageResolver = sceneDamageResolver;
+    this.combatRandom=combatRandom;
     this.scene = new THREE.Scene(); this.scene.background = new THREE.Color(0x101718);
     this.camera = new THREE.PerspectiveCamera(48, 1, .1, 2500);
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
@@ -81,7 +82,7 @@ export class MeteorGame {
     this.kills = 0; this.deaths = 0; this.totalDamage = 0; this.contactHits = 0; this.time = 0; this.matchElapsed = 0;
     bindLocalPlayerControl(this);
     // Adapter constants are explicit and provisional until recovered from Meteor.exe.
-    this.hostPhysics = { speed: 100 * SCALE, gravity: 34, jumpVelocity: 12, radius: .4, step: .55, projectile: NATIVE_DART_PROFILE };
+    this.hostPhysics = { speed: 100 * SCALE, gravity: NATIVE_AIR_PHYSICS.gravity, jumpVelocity: NATIVE_AIR_PHYSICS.jumpVelocity, radius: .4, step: .55, projectile: NATIVE_DART_PROFILE };
     this.impactFeedback = new NativeImpactFeedback(this.scene);
     this.bloodFeedback = new NativeBloodFeedback(this.scene);
     this.stealthFeedback = new NativeStealthFeedback();
@@ -330,7 +331,7 @@ export class MeteorGame {
     // consumes that scene-motion delta independently of skin deformation.
     f.combat = new NativeCombatController(combatData, { weapon: this.weapon, sampleRoot: character.sampleSceneMotion, scale: SCALE });
     f.combat.play(NATIVE_WEAPONS[this.weapon].stance, { loop: true, force: true });
-    if (!hero) { if (this.combatData.npcAi) f.npcCombat = new NativeNpcCombat(this.combatData.npcAi); this._nameplate(f); } return f;
+    if (!hero) { if (this.combatData.npcAi) f.npcCombat = new NativeNpcCombat(this.combatData.npcAi,{random:this.combatRandom||Math.random}); this._nameplate(f); } return f;
   }
   _placeFighter(f, spawn) {
     f.weapon2Id=f.scriptConfig?Number(f.scriptConfig.weapon2Id??f.weapon2Id)||0:0;
@@ -1236,7 +1237,7 @@ export class MeteorGame {
       this._emit(guarded ? '格挡' : String(Math.round(damage)), 'hit', damage, contact, { poseId: state.poseId, raw, guarded, guardBypassed, knockdown: knockdown && !target.dead, attackerHero: !!attacker.hero, targetHero: !!target.hero, targetName: target.name, ...extra });
     } else { const name = raw.moveRecord?.name || state.pose.label || '兵刃交锋'; this._emit(attacker.hero ? `${name} · 命中` : `${name} · 对手命中`, 'hit', undefined, contact, { poseId: state.poseId, raw, guarded, guardBypassed, damagePending: true, ...extra }); }
     target.musketAim=false;
-    const displayedReaction = guarded ? nativeGuardPose(target.weapon, selection.direction) : reactionPose;
+    const displayedReaction = guarded ? nativeGuardPose(target.weapon, selection.direction,this.combatRandom||Math.random) : reactionPose;
     if (!target.dead && displayedReaction != null && target.combat?.react(displayedReaction, {
       ...nativeReactionParameters(attack, { guarded }), guarded, fromPose: target.character?.capturePose?.()
     })) {

@@ -1,3 +1,4 @@
+import {NATIVE_AIR_PHYSICS} from '../dist/native-traversal.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -136,7 +137,7 @@ test('actual SKC/BNC/AMB, d_wpnR, W3_0 and original cave triangles launch and da
     Object.assign(game, { manifest, combatData: data, weaponManifest: wm,
       weaponItems: new Map(wm.items.map(item => [item.itemId, item])), weaponModels: new Map(wm.models.map(model => [model.modelId, model])), weaponCache: new Map(),
       scene: new THREE.Scene(), camera: new THREE.PerspectiveCamera(), raycaster: new THREE.Raycaster(), collisionMaterial: new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }),
-      hostPhysics: { speed: 8, gravity: 34, jumpVelocity: 12, radius: .4, step: .55 }, weapon: 'dart', actorSerial: 0, enemies: [], running: true, paused: false, mode: 'story',
+      hostPhysics: { speed: 8, gravity: NATIVE_AIR_PHYSICS.gravity, jumpVelocity: NATIVE_AIR_PHYSICS.jumpVelocity, radius: .4, step: .55 }, weapon: 'dart', actorSerial: 0, enemies: [], running: true, paused: false, mode: 'story',
       cameraAngle: 0, keys: new Set(), directionBuffer: [], elapsed: 0, difficulty: 'normal', kills: 0, deaths: 0, totalDamage: 0, contactHits: 0,
       _nameplate() {}, _soundDefinition() {}, _hud() {}, _emit() {}, onEvent() {} });
     game.damageResolver = createNativeDamageResolver(data);

@@ -155,10 +155,13 @@ export class NativeMissionHost {
   async flushPending() { while (this.pending.size) await Promise.all([...this.pending]); }
   addNpc(script) {
     const file = normalizePstPath(`level/${String(script).replace(/\.pst$/i, '')}.pst`), scriptId = this.nextScriptId++;
-    const task = this.instantiateNpc(file, scriptId).catch(error => {
+    // AddNPC returns its source ID synchronously, but asset IO is asynchronous.
+    // Preserve request order for brain startup draws and OnInit/OnStart; model
+    // download completion must not reorder the mission's logical actors.
+    const task = (this.npcInstantiationTail||Promise.resolve()).then(()=>this.disposed?null:this.instantiateNpc(file,scriptId)).catch(error => {
       if (!this.disposed) this.diagnostic('NPC_LOAD_FAILED', `原角色载入失败：${script}`, { file, message: error.message });
       throw error;
-    }); this.pending.add(task);
+    }); this.npcInstantiationTail=task.catch(()=>{}); this.pending.add(task);
     task.finally(() => this.pending.delete(task)).catch(() => {}); return scriptId;
   }
   async instantiateNpc(file, scriptId) {
@@ -307,10 +310,20 @@ export class NativeMissionHost {
       }
     }
   }
-  closestWaypoint(point) {
+  closestWaypoint(point,{visible=false}={}) {
+    const origin={root:{position:point}},clear=waypoint=>this.lineOfSight(origin,{root:{position:waypoint.navigationPosition}});
+    const cached=visible&&this.waypointConnections?.get(point);
+    if(cached&&Number.isFinite(this.clock)&&this.clock-cached.time<.2&&cached.origin.distanceToSquared(point)<1&&
+      (!cached.waypoint||clear(cached.waypoint)))return cached.waypoint;
     let nearest = null, distance = Infinity;
     for (const waypoint of this.points.values()) { const current = waypoint.navigationPosition.distanceToSquared(point); if (current < distance) { nearest = waypoint; distance = current; } }
-    return nearest;
+    if(!visible||!nearest)return nearest;
+    const remember=waypoint=>{if(Number.isFinite(this.clock)){this.waypointConnections||=new WeakMap();this.waypointConnections.set(point,{origin:point.clone(),waypoint,time:this.clock});}return waypoint;};
+    if(clear(nearest))return remember(nearest);
+    // Euclidean proximity can select a point across a cave wall. Only pay for
+    // the alternative search when the nearest connection is actually blocked.
+    return remember([...this.points.values()].filter(waypoint=>waypoint!==nearest)
+      .sort((a,b)=>a.navigationPosition.distanceToSquared(point)-b.navigationPosition.distanceToSquared(point)).find(clear)||null);
   }
   route(fromId, toId) {
     if (!this.points.has(fromId) || !this.points.has(toId)) return [];
@@ -329,10 +342,13 @@ export class NativeMissionHost {
   }
   moveViaWaypoint(actor, goalId) {
     const goal = this.points.get(goalId); if (!goal) return null;
+    if(actor.scriptPath?.goal===goalId&&actor.scriptPath.cursor>=actor.scriptPath.ids.length&&
+      !this.lineOfSight(actor,{root:{position:goal.navigationPosition}}))actor.scriptPath=null;
     if (!actor.scriptPath || actor.scriptPath.goal !== goalId) actor.scriptPath = {
-      goal: goalId, ids: this.route(this.closestWaypoint(actor.root.position)?.id, goalId), cursor: 0
+      goal: goalId, ids: this.route(this.closestWaypoint(actor.root.position,{visible:true})?.id, goalId), cursor: 0
     };
     const path = actor.scriptPath;
+    if(!path.ids.length)return null;
     while (path.cursor < path.ids.length) {
       const point = this.points.get(path.ids[path.cursor]);
       if (actor.root.position.distanceTo(point.navigationPosition) > Math.max(.65, (point.size || 40) * SCALE * .25)) return point.navigationPosition;
@@ -367,8 +383,8 @@ export class NativeMissionHost {
         const target = typeof ref === 'string' && !/^[-+]?\d+$/.test(ref) ? this.findActor(ref) : this.actor(ref, false);
         if (target) {
           if (target.team !== actor.team) { attackTarget = target; canAttack = true; }
-          const nearest = this.closestWaypoint(target.root.position);
-          moveTarget = this.lineOfSight(actor, target) ? target.root.position : this.moveViaWaypoint(actor, nearest?.id);
+          moveTarget = this.lineOfSight(actor, target) ? target.root.position :
+            this.moveViaWaypoint(actor,this.closestWaypoint(target.root.position,{visible:true})?.id);
         }
       } else if (intent.mode === 'attacktarget') {
         // SetTarget slots are also reused for Distance queries. Capture the

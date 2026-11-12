@@ -9,6 +9,7 @@ import { NATIVE_MOVE_CATALOG } from '../dist/native-move-catalog.js';
 import { NATIVE_WEAPON_MENU } from '../dist/native-weapon-menu.js';
 import { createHash } from 'node:crypto';
 import { loadNativeRageVfx } from '../dist/native-rage-vfx.js';
+import {NetworkGame} from '../dist/network-game.js';
 
 // Exercise production action(), native SKC/BNC/AMB, original GMC weapons,
 // POS attack windows and recovered RES/EXE damage math. Only textures/audio,
@@ -133,7 +134,34 @@ function checkSeatedBlade(hero) {
   assert.ok(blade.visible&&mesh.visible,'seating must not be faked by hiding the whole knife');
 }
 
-test('qiankun keeps the raised grip and seats the visible blade inside all four original sheaths', async () => {
+test('客人乾坤在通用跑步片段按权威形态收刀入鞘，切回刀枪形态时恢复持法',async()=>{
+ const {game,hero,target}=await fixture('qiankun');hero.networkId='guest';target.networkId='host';
+ const session=new NetworkGame(game,{host:false,playerId:'guest',send(){}},{players:[{id:'host'},{id:'guest'}]});session.active=true;
+ try{
+  const pose=combat.poses.get(144);let sequence=0;
+  for(const mode of ['sheath','blade','spear','sheath']){
+   const serial=++sequence;session.apply({sequence,time:sequence/15,players:[{id:'guest',position:[0,.015,0],angle:0,hp:1000,maxHp:1000,rage:0,grounded:true,dead:false,weaponId:hero.weaponId,weaponMode:mode,pose:144,source:pose.source,frame:pose.start+sequence,serial,effectTime:0}]});
+   assert.equal(hero.combat.weaponMode,mode);assert.equal(hero.qiankunSheathWeight,mode==='sheath'?1:0);
+   if(mode==='sheath')checkSeatedBlade(hero);
+   assert.equal(hero.combat.timeline.pose.id,144);
+  }
+ }finally{session.dispose();}
+});
+
+test('首次火铳快照的瞄准标志不被装备初始化清除，异步模型加载不覆盖后续开火动作',async()=>{
+ const {game,hero,target}=await fixture('sword');hero.networkId='guest';target.networkId='host';
+ const session=new NetworkGame(game,{host:false,playerId:'guest',send(){}},{players:[{id:'host'},{id:'guest'}]});session.active=true;
+ const equip=game._equip;let pending,count=0;game._equip=function(...args){count++;pending=equip.apply(this,args);return pending;};
+ try{
+  const ready=combat.poses.get(212),shot=combat.poses.get(206),packet={id:'guest',position:[0,.015,0],angle:.7,hp:1000,maxHp:1000,rage:0,grounded:true,dead:false,weaponId:3,weaponMode:'blade',musketAim:true,aimPitch:.3,pose:212,source:ready.source,frame:ready.end,serial:20,effectTime:0};
+  session.apply({sequence:1,time:1,players:[packet]});assert.equal(hero.weapon,'musket');assert.equal(hero.musketAim,true);assert.equal(hero.combat.timeline.pose.id,212);assert.equal(game.cameraAngle,.7-Math.PI);
+  session.apply({sequence:2,time:1.1,players:[{...packet,pose:206,source:shot.source,frame:shot.start+1,serial:21,context:{poseId:206}}]});
+  assert.equal(hero.combat.timeline.pose.id,206);assert.equal(hero.musketAim,true);await pending;
+  assert.equal(count,1);assert.equal(hero.combat.timeline.pose.id,206);assert.equal(hero.musketAim,true);assert.ok(hero.weaponModel);
+ }finally{await pending;session.dispose();}
+});
+
+  test('qiankun keeps the raised grip and seats the visible blade inside all four original sheaths', async () => {
   const { game, hero } = await fixture('qiankun');
   const checkGrip = () => {
     for (const model of hero.weaponModels) {

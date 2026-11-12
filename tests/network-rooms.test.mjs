@@ -72,6 +72,18 @@ test('受击倒地起身阶段随权威快照传递，无效阶段原子拒绝�
   assert.throws(()=>call(a,'sync',{frame:state}),/无效/);assert.equal(call(b,'sync').frame.sequence,sequence);
  }
 });
+
+test('乾坤三种形态可同步，未知形态不会覆盖上一份快照',()=>{
+ const {a,b,call}=playing();let sequence=0;
+ for(const mode of [undefined,null,'blade','spear','sheath']){
+  const state=frame(a,b,++sequence);if(mode!==undefined)state.players[0].weaponMode=mode;
+  call(a,'sync',{frame:state});assert.equal(call(b,'sync').frame.players[0].weaponMode,mode);
+ }
+ for(const mode of ['',true,2,{},[],'gun']){
+  const state=frame(a,b,sequence+1);state.players[0].weaponMode=mode;
+  assert.throws(()=>call(a,'sync',{frame:state}),/无效/);assert.equal(call(b,'sync').frame.sequence,sequence);
+ }
+});
 test('relay retains delivery until host confirmation, accepts repeat confirmation, and rejects guest or future acknowledgements',()=>{
   const {rooms,a,b,call}=playing(),input={action:'attack',active:true,sequence:1,angle:0};
   call(b,'sync',{input:[input]});const first=call(a,'sync');assert.deepEqual(call(a,'sync').input,first.input);

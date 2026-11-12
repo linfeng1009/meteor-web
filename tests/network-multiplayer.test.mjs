@@ -71,6 +71,13 @@ test('房主快照保留乾坤三形态，未设形态的旧角色使用刀形�
  for(const mode of ['blade','spear','sheath']){actors[1].combat.weaponMode=mode;assert.equal(session.snapshot().players[1].weaponMode,mode);}
  session.dispose();
 });
+
+test('玩家离开后房主移除其飞镖飞轮，其他玩家的在途攻击继续保留',()=>{
+ const {g,actors,session}=game(),gone=actors[1],staying=actors[2];
+ const system=()=>({active:[{owner:gone},{owner:staying}],remove(shot){this.active.splice(this.active.indexOf(shot),1);}});
+ g.projectiles=system();g.wheels=system();session.reconcile({players:actors.filter(a=>a!==gone).map(a=>({id:a.networkId}))});
+ assert.equal(gone.disposed,true);for(const value of [g.projectiles,g.wheels]){assert.equal(value.active.length,1);assert.equal(value.active[0].owner,staying);}session.dispose();
+});
 test('死斗队友近战不造成伤害，死亡不自动复活，清空敌队后冻结结算',()=>{
  const {g,actors,session}=game('deathmatch');assert.equal(MeteorGame.prototype._applyNativeHit.call(g,actors[0],actors[2],{}, {},new T.Vector3()),false);
  g._kill(actors[1],{attacker:actors[0]});assert.equal(actors[1].respawn,Infinity);g._stepWorld(1/60);assert.equal(session.result,null);g._kill(actors[3],{attacker:actors[2]});g._stepWorld(1/60);assert.equal(session.result.winnerTeam,1);assert.deepEqual(session.result.winnerIds,['0','2']);const time=g.matchElapsed;g._stepWorld(1);assert.equal(g.matchElapsed,time);session.dispose();

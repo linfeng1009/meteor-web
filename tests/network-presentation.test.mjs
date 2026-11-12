@@ -48,6 +48,22 @@ function blending(){
  return {...f,calls,blend:{from:{source:0,frame:10},to:{source:0,frame:20},weight:.2,duration:.3}};
 }
 
+test('客人完整快照入口显示飞轮并按渲染帧插值，收回及退出恢复手中模型',async()=>{
+ const {actor}=fixture(),template=new THREE.Mesh(new THREE.BoxGeometry(1,1,1),new THREE.MeshBasicMaterial()),pose={id:6,start:0,end:100,attacks:[]};
+ Object.assign(actor,{networkId:'guest',weapon:'wheel',weaponId:2,weaponModel:template.clone()});actor.combat.data={poses:new Map([[6,pose]])};actor.combat.play=()=>{actor.combat.timeline.pose=pose;};
+ const game={hero:actor,enemies:[],scene:new THREE.Scene(),_prepareWeapon:async()=>[template],pause(){},_hud(){},_updateFighter(){throw Error('客人不得模拟战斗');},_updatePresentation(){}};
+ const session=new NetworkGame(game,{host:false,playerId:'guest',send(){}},{players:[{id:'guest'}]});session.active=true;
+ try{
+  const player={id:'guest',position:[0,0,0],angle:0,hp:1000,maxHp:1000,rage:0,pose:6,source:0,frame:10,serial:1,effectTime:0};
+  const shot={kind:'wheel',id:1,ownerId:'guest',weaponId:2,position:[0,1,0],quaternion:[0,0,0,1],spin:0,phase:'outbound'};
+  session.apply({sequence:1,time:1,players:[player],projectiles:[shot]});const sample=session.projectilePresentation.samples.get('wheel:1');await sample.ready;
+  assert.ok(sample.visual);assert.equal(actor.weaponModel.visible,false);
+  session.apply({sequence:2,time:1.1,players:[player],projectiles:[{...shot,position:[2,1,0],phase:'return'}]});game._updateFighter(actor,1/60);game._updatePresentation(.05);
+  assert.ok(Math.abs(sample.root.position.x-1)<1e-9);assert.equal(sample.phase,'return');assert.equal(actor.hp,1000);
+  session.apply({sequence:3,time:1.2,players:[player],projectiles:[]});assert.equal(session.projectilePresentation.samples.size,0);assert.equal(actor.weaponModel.visible,true);
+ }finally{session.dispose();assert.equal(session.projectilePresentation.group.parent,null);template.geometry.dispose();template.material.dispose();}
+});
+
 test('联机过渡只传帧描述和权重，不发送受击姿势的骨骼数组',()=>{
  const wire=networkPoseBlend({from:{source:0,frame:10,snapshot:{id:1,transforms:Array(100).fill({position:[1,2,3]})}},to:{source:0,frame:20},weight:.5,duration:.3});
  assert.equal(wire.fromSnapshot,true);assert.equal('snapshot' in wire.from,false);assert.ok(JSON.stringify(wire).length<200);assert.equal(networkPoseBlend(null),null);

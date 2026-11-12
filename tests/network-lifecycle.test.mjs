@@ -47,12 +47,14 @@ test('normal loading acknowledges and starts exactly one session despite repeate
   await lobby.roomChanged(client.room);await lobby.roomChanged(client.room);assert.deepEqual({creates,loaded,plays},{creates:1,loaded:1,plays:1});
 });
 test('cancelled fighter creation disposes late assets and never installs gameplay hooks',async()=>{
-  const equip=deferred(),entered=deferred();let current=true,disposed=0,placed=0,equips=0,selected;
+  const equip=deferred(),entered=deferred(),cleared=[];let current=true,disposed=0,placed=0,equips=0,selected;
   const peer={root:new THREE.Group(),character:{dispose(){disposed++;}}},action=()=>{};
   const game={hero:{},enemies:[],scene:new THREE.Scene(),action,pause(){},setInfiniteRage(){},_disposeNameplate(){},_nameplate(){},_placeFighter(){placed++;},
+    projectiles:{clear(reason){cleared.push(['dart',reason]);}},muskets:{clear(){cleared.push(['musket']);}},wheels:{clear(){cleared.push(['wheel']);}},
     async _equip(){if(++equips===2){entered.resolve();await equip.promise;}},async _createFighter(...args){selected=args;return peer;}};
   const selectionRoom=room();selectionRoom.players[1].selection={character:0,characterAppearance:'raiden'};
   const creating=NetworkGame.create(game,{playerId:'host',host:true},selectionRoom,{isCurrent:()=>current});await entered.promise;
+  assert.deepEqual(cleared,[['dart','network-start'],['musket'],['wheel']],'新联机不能携带上一场本地投射物');
   assert.deepEqual(selected,[0,undefined,false,null,'raiden']);
   assert.equal(peer.root.parent,game.scene);current=false;equip.resolve();assert.equal(await creating,null);
   assert.equal(disposed,1);assert.equal(placed,0);assert.equal(peer.root.parent,null);assert.deepEqual(game.enemies,[]);assert.equal(game.action,action);

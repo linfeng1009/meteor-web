@@ -84,6 +84,16 @@ test('乾坤三种形态可同步，未知形态不会覆盖上一份快照',()=
   assert.throws(()=>call(a,'sync',{frame:state}),/无效/);assert.equal(call(b,'sync').frame.sequence,sequence);
  }
 });
+
+test('飞镖飞轮快照可传输，重复标识、越界坐标及无效旋转被原子拒绝',()=>{
+ const {a,b,call}=playing(),state=frame(a,b),shot={kind:'dart',id:1,ownerId:a.playerId,weaponId:1,position:[0,1,2],quaternion:[0,0,0,1],spin:2,phase:'outbound'};
+ state.projectiles=[shot,{...shot,kind:'wheel',weaponId:2,phase:'return'}];call(a,'sync',{frame:state});assert.deepEqual(call(b,'sync').frame.projectiles,state.projectiles);
+ for(const patch of [{kind:'musket'},{id:0},{ownerId:'missing'},{weaponId:-1},{position:[Infinity,0,0]},{position:[5000,0,0]},{quaternion:[0,0,0,0]},{quaternion:[0,0,1]},{spin:NaN},{phase:'return'}]){
+  const invalid={...state,sequence:2,projectiles:[{...shot,...patch}]};assert.throws(()=>call(a,'sync',{frame:invalid}),/无效/);assert.equal(call(b,'sync').frame.sequence,1);
+ }
+ for(const shots of [[shot,shot],Array.from({length:81},(_,i)=>({...shot,id:i+1}))])assert.throws(()=>call(a,'sync',{frame:{...state,sequence:2,projectiles:shots}}),/无效/);
+ call(a,'sync',{frame:{...state,sequence:2,projectiles:[]}});assert.deepEqual(call(b,'sync').frame.projectiles,[]);
+});
 test('relay retains delivery until host confirmation, accepts repeat confirmation, and rejects guest or future acknowledgements',()=>{
   const {rooms,a,b,call}=playing(),input={action:'attack',active:true,sequence:1,angle:0};
   call(b,'sync',{input:[input]});const first=call(a,'sync');assert.deepEqual(call(a,'sync').input,first.input);

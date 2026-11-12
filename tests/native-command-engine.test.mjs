@@ -10,6 +10,7 @@ import { NATIVE_WEAPON_MENU } from '../dist/native-weapon-menu.js';
 import { createHash } from 'node:crypto';
 import { loadNativeRageVfx } from '../dist/native-rage-vfx.js';
 import {NetworkGame} from '../dist/network-game.js';
+import {NetworkProjectileMotion} from '../dist/network-projectiles.js';
 
 // Exercise production action(), native SKC/BNC/AMB, original GMC weapons,
 // POS attack windows and recovered RES/EXE damage math. Only textures/audio,
@@ -133,6 +134,19 @@ function checkSeatedBlade(hero) {
   assert.ok(box.distanceToPoint(hilt)>.15,'the handle stays outside the sheath');
   assert.ok(blade.visible&&mesh.visible,'seating must not be faked by hiding the whole knife');
 }
+
+test('客人飞镖飞轮复用对应原GMC变体，正确缩放并在退出时保留共享几何',async()=>{
+ const {game,hero}=await fixture('dart');hero.networkId='guest';const motion=new NetworkProjectileMotion(game,new Map([['guest',hero]]));
+ try{
+  motion.receive([{kind:'dart',id:1,ownerId:'guest',weaponId:10,position:[1,2,3],quaternion:[0,0,0,1],spin:.5,phase:'outbound'},
+   {kind:'wheel',id:1,ownerId:'guest',weaponId:11,position:[2,3,4],quaternion:[0,0,0,1],spin:1,phase:'return'}]);
+  await Promise.all([...motion.samples.values()].map(s=>s.ready));
+  for(const [key,name] of [['dart:1','w3_1'],['wheel:1','w6_1']]){
+   const sample=motion.samples.get(key);assert.ok(sample.visual);assert.equal(sample.visual.name,name);assert.equal(sample.visual.scale.x,.08);
+   const mesh=sample.visual.getObjectByProperty('isMesh',true);assert.ok(mesh.geometry.attributes.position.count>0);const template=(await game._prepareWeapon(sample.weaponId))[0].getObjectByProperty('isMesh',true);assert.equal(mesh.geometry,template.geometry);
+  }
+ }finally{motion.dispose();}
+});
 
 test('客人乾坤在通用跑步片段按权威形态收刀入鞘，切回刀枪形态时恢复持法',async()=>{
  const {game,hero,target}=await fixture('qiankun');hero.networkId='guest';target.networkId='host';

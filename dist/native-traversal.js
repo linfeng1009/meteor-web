@@ -9,6 +9,19 @@ export const NATIVE_TRAVERSAL_WINDOW=.3;
 // comparing against float64(.11) at005aa8e8.004cd3a0 auto-releases after it.
 // Collision shape, horizontal steering and wall traversal remain Web adapters.
 export const NATIVE_JUMP_HOLD_SECONDS=.11;
+// 004cd3a0 calls004cf7c0 only below float32(-40) native vertical
+// speed. The initializer preserves existing air/fall clips, otherwise maps
+// directional takeoff153/155/157 to154/156/158, default152.
+export function nativeAirPose(current,vertical){
+  if(!(Math.fround(vertical/.08)<-40))return current;
+  switch(current){
+    case 152:case 154:case 156:case 158:case 180:return current;
+    case 153:return 154;
+    case 155:return 156;
+    case 157:return 158;
+    default:return 152;
+  }
+}
 export const NATIVE_AIR_PHYSICS=Object.freeze({gravity:882*.08,jumpVelocity:282*.08,largeJumpVelocity:375*.08,
   provenance:'Reference Meteor.exe constructor004cb083 immc45c8000;004cf5a0 uses005aa93c float282 or005aa940 float375.004cf530 hold threshold float64(.11) at005aa8e8. Native units×.08.'});
 // 004cd3a0 state0 applies linear drag(.1*200) before gravity, then

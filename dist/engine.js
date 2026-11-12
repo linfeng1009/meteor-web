@@ -1,7 +1,7 @@
 import {NativeStealthFeedback} from './native-stealth-feedback.js';
 import {validCombatTarget,acquireCombatTarget} from './combat-targeting.js';
 import {nativeStrideSpeed} from './native-movement-profile.js';
-import { traversalTap, NATIVE_AIR_PHYSICS, NATIVE_JUMP_HOLD_SECONDS, nativeAirVerticalVelocity, NATIVE_ROLL_POSES, nativeDashPose, NATIVE_CROUCH_POSES, NATIVE_GROUND_MOVE_POSES, NATIVE_JUMP_POSES, nativeTraversalDirection } from './native-traversal.js';
+import { traversalTap, NATIVE_AIR_PHYSICS, NATIVE_JUMP_HOLD_SECONDS, nativeAirPose, nativeAirVerticalVelocity, NATIVE_ROLL_POSES, nativeDashPose, NATIVE_CROUCH_POSES, NATIVE_GROUND_MOVE_POSES, NATIVE_JUMP_POSES, nativeTraversalDirection } from './native-traversal.js';
 import { FixedStepClock } from './fixed-step.js';
 import { NATIVE_WALL_POSES, NATIVE_WALL_PHYSICS, nativeWallVerticalVelocity, nativeWallJumpVelocity, WALL_TRAVERSAL_ADAPTER as WALL } from './native-wall-traversal.js';
 import { FrameMeter, RenderScaleController, createFrameOverlay } from './frame-meter.js';
@@ -1098,13 +1098,12 @@ export class MeteorGame {
         if(current!==f.wallRun.pose)f.combat.play(f.wallRun.pose,{loop:true,force:true});
         f.heldPose=f.wallRun.pose;
       }else if(!f.grounded&&(!f.guard||startingJump)){
-        // POS owns start -> directional air -> 180. 004cf7d0 accepts all
-        // five air/fall poses; do not restart or loop the short air clip.
-        // 180's authored one-frame loop holds falling until physical landing.
-        const inFlight=current===NATIVE_LOCOMOTION.fall||!!sequence&&(current===sequence.start||current===sequence.air);
-        const pose=inFlight?current:sequence?.air??NATIVE_LOCOMOTION.fall;
-        if(current!==pose)f.combat.play(pose,{loop:pose===NATIVE_LOCOMOTION.fall,force:true});
-        else f.combat.timeline.loop=pose===NATIVE_LOCOMOTION.fall;
+        // Native free-flight keeps the current clip until descent<-40
+        // native units/s, then initializes directional air. Existing air
+        // clips keep their POS clock/link; a ledge is not immediately180.
+        const pose=nativeAirPose(current,f.vy);
+        if(current!==pose)f.combat.play(pose,{loop:false,force:true});
+        else if([152,154,156,158,180].includes(pose))f.combat.timeline.loop=pose===NATIVE_LOCOMOTION.fall;
         f.heldPose=pose;
       }else{
         const moving=direction.lengthSq()>0;

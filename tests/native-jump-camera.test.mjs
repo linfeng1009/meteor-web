@@ -9,7 +9,7 @@ import {NetworkGame} from '../dist/network-game.js';
 import {createPlayerControl} from '../dist/player-control.js';
 import {nativeWallJumpVelocity} from '../dist/native-wall-traversal.js';
 import { NativeCombatController, decodeNativeText, parsePos, parseAct } from '../dist/native-combat.js';
-import {NATIVE_AIR_PHYSICS,NATIVE_DASH_POSES,NATIVE_CROUCH_POSES,NATIVE_GROUND_MOVE_POSES,NATIVE_JUMP_POSES,nativeTraversalDirection} from '../dist/native-traversal.js';
+import {NATIVE_AIR_PHYSICS,NATIVE_DASH_POSES,NATIVE_CROUCH_POSES,NATIVE_GROUND_MOVE_POSES,NATIVE_JUMP_POSES,nativeTraversalDirection,nativeAirPose} from '../dist/native-traversal.js';
 import { createNativeCharacter, parseNativeSkin, parseNativeBones, parseNativeAnimation, parseNativePoses } from '../dist/native-character.js';
 
 // Use the supplied native skin, skeleton and every original jump frame. A
@@ -36,8 +36,8 @@ function wallFixture(side='front',height=2){
   return {...state,wall};
 }
 
-test('three native wall families enter, animate, kick away and follow their real POS air links',()=>{
-  for(const [side,entry,exit,air] of [['front',161,157,158],['right',162,159,156],['left',163,160,154]]){
+test('three native wall families enter, animate, kick away and apply the source descent initializer',()=>{
+  for(const [side,entry,exit,air] of [['front',161,157,158],['right',162,159,152],['left',163,160,152]]){
     const state=wallFixture(side,20);try{
       const {game,hero}=state;game._updateFighter(hero,1/60);
       assert.equal(hero.wallRun?.side,side);assert.equal(hero.combat.timeline.pose.id,entry);
@@ -129,7 +129,7 @@ test('空中按住防御不能开始格挡，落地后才进入防御',()=>{
   }
 });
 
-test('走壁继承入墙竖直速度，按原阻尼减速，脱墙后继续升空并衔接原152',()=>{
+test('走壁继承入墙竖直速度，脱墙继续升空，达到原下降速度门限后进入152',()=>{
   for(const side of ['front','right','left'])for(const dt of [1/60,1/120]){
     const state=wallFixture(side,30);try{
       const {game,hero}=state;hero.vy=12;
@@ -140,7 +140,9 @@ test('走壁继承入墙竖直速度，按原阻尼减速，脱墙后继续升�
       assert.ok(hero.root.position.y>33.6&&hero.root.position.y<33.9);
       const before=hero.root.position.y;game.action('forward',false);game._updateFighter(hero,dt);
       assert.equal(hero.wallRun,null);assert.ok(hero.vy>0);assert.ok(hero.root.position.y>before);
-      assert.equal(hero.combat.timeline.pose.id,152);assert.equal(hero.combat.timeline.loop,false);
+      assert.equal(hero.combat.timeline.pose.id,{front:161,right:162,left:163}[side]);
+      for(let i=0;i<120&&hero.vy>=-3.2;i++)game._updateFighter(hero,dt);
+      game._updateFighter(hero,dt);assert.equal(hero.combat.timeline.pose.id,152);assert.equal(hero.combat.timeline.loop,false);
       for(let i=0;i<300;i++)game._updateFighter(hero,dt);assert.equal(hero.grounded,true);
     }finally{state.dispose();}
   }
@@ -399,12 +401,32 @@ test('every directional jump follows its authored air-to-fall link without resta
   }
 });
 
-test('walking off a ledge enters the authored falling hold instead of replaying a jump',()=>{
+test('原下降初始化严格使用负40门限和方向映射，不重播已有空中片段',()=>{
+  const mappings=[[151,152],[153,154],[155,156],[157,158],[159,152],[160,152],[161,152],[162,152],[163,152],[5,152]];
+  for(const [current,next] of mappings){
+    assert.equal(nativeAirPose(current,0),current);assert.equal(nativeAirPose(current,-3.2),current);
+    assert.equal(nativeAirPose(current,-3.2001),next);
+    const state=fixture();try{
+      const {game,hero}=state;hero.root.position.y=20;hero.grounded=false;hero.vy=-4;
+      hero.combat.play(current,{force:true});const serial=hero.combat.serial;
+      game._updateFighter(hero,1/60);assert.equal(hero.combat.timeline.pose.id,next);
+      assert.ok(hero.combat.serial>serial);const airSerial=hero.combat.serial;
+      game._updateFighter(hero,1/60);assert.equal(hero.combat.timeline.pose.id,next);assert.equal(hero.combat.serial,airSerial);
+    }finally{state.dispose();}
+  }
+  for(const current of [152,154,156,158,180])assert.equal(nativeAirPose(current,-100),current);
+});
+
+test('walking off a ledge waits for native downward speed then enters152 and follows its falling link',()=>{
   const state=fixture();
   try{
     const {game,hero}=state;hero.root.position.y=20;hero.grounded=false;hero.vy=0;hero.nativeJump=null;hero.jumpSequence=null;
-    for(let i=0;i<20;i++){game._updateFighter(hero,1/60);assert.equal(hero.combat.timeline.pose.id,180);assert.equal(hero.nativeJump,null);}
-    assert.ok(hero.root.position.y<20);assert.equal(hero.combat.timeline.frame,combatData.poses.get(180).loopStart);
+    const initial=hero.combat.timeline.pose.id;
+    for(let i=0;i<3;i++){game._updateFighter(hero,1/60);assert.equal(hero.combat.timeline.pose.id,initial);assert.equal(hero.nativeJump,null);}
+    game._updateFighter(hero,1/60);assert.equal(hero.combat.timeline.pose.id,152);
+    const serial=hero.combat.serial;
+    for(let i=0;i<5;i++){game._updateFighter(hero,1/60);assert.equal(hero.combat.timeline.pose.id,152);assert.equal(hero.combat.serial,serial);}
+    assert.ok(hero.root.position.y<20);
     for(let i=0;i<120;i++)game._updateFighter(hero,1/60);
     assert.equal(hero.grounded,true);assert.notEqual(hero.combat.timeline.pose.id,180);
   }finally{state.dispose();}

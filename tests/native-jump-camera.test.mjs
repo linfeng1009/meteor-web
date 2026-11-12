@@ -9,7 +9,7 @@ import {NetworkGame} from '../dist/network-game.js';
 import {createPlayerControl} from '../dist/player-control.js';
 import {nativeWallJumpVelocity} from '../dist/native-wall-traversal.js';
 import { NativeCombatController, decodeNativeText, parsePos, parseAct } from '../dist/native-combat.js';
-import {NATIVE_AIR_PHYSICS,NATIVE_DASH_POSES,NATIVE_CROUCH_POSES,NATIVE_GROUND_MOVE_POSES,NATIVE_JUMP_POSES,nativeTraversalDirection,nativeAirPose} from '../dist/native-traversal.js';
+import {NATIVE_AIR_PHYSICS,NATIVE_DASH_POSES,NATIVE_CROUCH_POSES,NATIVE_GROUND_MOVE_POSES,NATIVE_JUMP_POSES,nativeTraversalDirection,nativeAirPose,nativeActionMomentum} from '../dist/native-traversal.js';
 import { createNativeCharacter, parseNativeSkin, parseNativeBones, parseNativeAnimation, parseNativePoses } from '../dist/native-character.js';
 
 // Use the supplied native skin, skeleton and every original jump frame. A
@@ -750,6 +750,57 @@ test('all twenty supplied characters share the scene dummy hierarchy used by the
   }
 });
 
+
+test('跑动出招继承实际速度，地面与空中按原9和0.2阻尼衰减，碰撞清掉受阻分量',()=>{
+  for(const grounded of [false,true]){
+    const state=fixture();try{
+      const {game,hero}=state;hero.grounded=grounded;hero.root.position.y=grounded?.015:20;
+      game._move(hero,v(1,0,1).normalize(),8,1/60);
+      const incoming=hero.motionVelocity.clone();assert.ok(incoming.length()>7.9);
+      assert.equal(game._beginAttack(hero),true);assert.ok(hero.actionMomentum.distanceTo(incoming)<1e-5);
+      const before=hero.root.position.clone(),factor=grounded?.85:1-.2/60;
+      game._move(hero,v(),0,1/60);
+      assert.ok(Math.abs(hero.actionMomentum.x-incoming.x*factor)<1e-5);
+      assert.ok(Math.abs(hero.root.position.x-before.x-incoming.x*factor/60)<1e-6);
+      const wall=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshBasicMaterial({side:THREE.DoubleSide}));
+      wall.rotation.y=Math.PI/2;wall.position.set(hero.root.position.x+.41,hero.root.position.y,0);wall.updateMatrixWorld(true);state.colliders.push(wall);
+      const blocked=hero.root.position.x;game._move(hero,v(),0,1/60);
+      assert.equal(hero.root.position.x,blocked);assert.equal(hero.actionMomentum.x,0);assert.ok(hero.actionMomentum.z>0);
+      assert.equal(hero.motionVelocity.x,0);
+    }finally{state.dispose();}
+  }
+  assert.ok(Math.abs(nativeActionMomentum(8,1/60,true)-6.8)<1e-6);
+  assert.ok(Math.abs(nativeActionMomentum(8,1/60,false)-7.9733333333)<1e-6);
+});
+
+test('忍刀出招只缩放继承的水平惯性，不缩放竖直起跳速度或重复处理早期连点',()=>{
+  for(const weapon of ['dagger','ninja']){
+    const state=fixture();try{
+      const {game,hero}=state;hero.weapon=weapon;hero.combat.setWeapon(weapon);
+      hero.root.position.y=20;hero.grounded=false;hero.vy=5;
+      game._move(hero,v(1,0,0),8,1/60);const incoming=hero.motionVelocity.x,vertical=hero.vy;
+      assert.equal(game._beginAttack(hero),true);
+      assert.ok(Math.abs(hero.actionMomentum.x-incoming*(weapon==='ninja'?.67:1))<1e-5);assert.equal(hero.vy,vertical);
+      const serial=hero.combat.serial,before=hero.actionMomentum.clone();
+      game._beginAttack(hero);game._beginAttack(hero);
+      assert.equal(hero.combat.serial,serial);assert.ok(hero.actionMomentum.distanceTo(before)<1e-8);
+    }finally{state.dispose();}
+  }
+});
+
+test('跑动闪身与蹲滚继承入招速度，原动作位移不会变成下一帧的第二份惯性',()=>{
+  for(const crouched of [false,true]){
+    const state=fixture();try{
+      const {game,hero}=state;hero.weapon='sword';hero.combat.setWeapon('sword');hero.combat.play(6,{force:true});
+      game._move(hero,v(1,0,0),8,1/60);if(crouched)game.action('crouch');
+      const accepted=crouched?game._beginRoll('forward',176):game._beginDash('forward',165);
+      assert.equal(accepted,true);assert.ok(Math.abs(hero.actionMomentum.x-8)<1e-6);
+      const start=hero.root.position.x;game._move(hero,v(),0,1/60,v(1,0,0));
+      assert.ok(Math.abs(hero.root.position.x-start-(1+6.8/60))<1e-6);
+      game._move(hero,v(),0,1/60);assert.ok(Math.abs(hero.actionMomentum.x-5.78)<1e-5);
+    }finally{state.dispose();}
+  }
+});
 
 test('stride-calibrated ground movement stops on release and attack without inertial sliding',()=>{
  for(const [direction,pose] of Object.entries(NATIVE_GROUND_MOVE_POSES)){

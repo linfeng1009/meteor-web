@@ -345,8 +345,10 @@ function settle(game, seen = new Set()) {
   return seen;
 }
 
-test('qiankun ultimate renders every final slash after pose456 ends without changing original hits or rage', async t => {
-  const { game, events } = await fixture([v(0, .015, 12)]), actor = game.hero;
+test('uninterrupted qiankun ultimate renders every final slash after pose456 ends and charges rage once', async t => {
+  // Test the complete visual lifetime without a hit victim's native body
+  // attack interrupting it. Contact/interruption has a separate case.
+  const { game, events } = await fixture([]), actor = game.hero;
   await game._equip(actor, 'qiankun'); manual(game, ['back', 'back']); settle(game);
   const textures = new Map(Object.entries(manifest.textures).filter(([, record]) => record.url).map(([id]) => [id, new THREE.Texture()]));
   game.rageVfx = new NativeRageVfx({ scene: game.scene, manifest, textures });
@@ -367,9 +369,26 @@ test('qiankun ultimate renders every final slash after pose456 ends without chan
   assert.equal(late.size, 12, 'the actual POS animation ends before the source slash keys begin');
   assert.ok(endTime > 2.6); assert.ok(trails, 'the original red weapon Drag is visible during the cast');
   assert.equal(actor.rage, 0); assert.equal(events.slice(start).filter(e => e.type === 'move').length, 1);
-  assert.ok(events.slice(start).some(e => e.type === 'hit' && e.contactSource === 'effect'));
   assert.equal(actor.combat.busy, false); assert.equal(game.rageVfx.active.length, 0);
   t.diagnostic(`Public ↓↓A → ↓↓↑A; final shapes=${seen.size}, after456=${late.size}, last EF sample=${endTime.toFixed(3)}s; one100-rage command.`);
+});
+
+test('乾坤连斩保留原命中，目标受击106的原身体攻击能打断后续活特效',async()=>{
+  const {game,events}=await fixture([v(0,.015,12)]),actor=game.hero;
+  await game._equip(actor,'qiankun');manual(game,['back','back']);settle(game);
+  const textures=new Map(Object.entries(manifest.textures).filter(([,record])=>record.url).map(([id])=>[id,new THREE.Texture()]));
+  game.rageVfx=new NativeRageVfx({scene:game.scene,manifest,textures});actor.rage=100;
+  const start=events.length;manual(game,['back','back','forward']);assert.equal(actor.rage,0);let interrupted=false;
+  for(let frame=0;frame<470;frame++){
+    tick(game);game.rageVfx.update(1/60);
+    if(events.slice(start).some(e=>e.type==='hit'&&e.targetHero&&e.poseId===106)){
+      assert.equal(actor.combat.reacting,true);assert.ok(!game.rageVfx.active.some(e=>e.actor===actor&&e.id==='pos456'));
+      interrupted=true;break;
+    }
+  }
+  assert.ok(events.slice(start).some(e=>e.type==='hit'&&e.attackerHero&&e.contactSource==='effect'));
+  assert.equal(interrupted,true);assert.ok(actor.rage>0,'受击按原伤害结算获得怒气，不是重复扣除绝招消耗');
+  assert.equal(events.slice(start).filter(e=>e.type==='move').length,1);
 });
 
 test('reported weapon specials use public inputs, original attack contacts, one rage charge and complete recovery', async t => {

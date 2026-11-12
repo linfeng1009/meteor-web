@@ -1,7 +1,7 @@
 import {NativeStealthFeedback} from './native-stealth-feedback.js';
 import {validCombatTarget,acquireCombatTarget} from './combat-targeting.js';
 import {nativeStrideSpeed} from './native-movement-profile.js';
-import { traversalTap, NATIVE_AIR_PHYSICS, NATIVE_JUMP_HOLD_SECONDS, nativeAirPose, nativeAirVerticalVelocity, NATIVE_ROLL_POSES, nativeDashPose, NATIVE_CROUCH_POSES, NATIVE_GROUND_MOVE_POSES, NATIVE_JUMP_POSES, nativeTraversalDirection } from './native-traversal.js';
+import { traversalTap, NATIVE_AIR_PHYSICS, NATIVE_ACTION_MOTION, nativeActionMomentum, NATIVE_JUMP_HOLD_SECONDS, nativeAirPose, nativeAirVerticalVelocity, NATIVE_ROLL_POSES, nativeDashPose, NATIVE_CROUCH_POSES, NATIVE_GROUND_MOVE_POSES, NATIVE_JUMP_POSES, nativeTraversalDirection } from './native-traversal.js';
 import { FixedStepClock } from './fixed-step.js';
 import { NATIVE_WALL_POSES, NATIVE_WALL_PHYSICS, nativeWallVerticalVelocity, nativeWallJumpVelocity, WALL_TRAVERSAL_ADAPTER as WALL } from './native-wall-traversal.js';
 import { FrameMeter, RenderScaleController, createFrameOverlay } from './frame-meter.js';
@@ -339,6 +339,7 @@ export class MeteorGame {
     this.effectContacts?.clearActor(f);
     clearNativeScriptItems(f);
     f.musketAim=false; f.nativeJump = null; f.jumpSequence = null; f.wallRun = null; f.wallKick = null; f.wallEntries = 0;
+    f.actionMomentum=null;f.motionVelocity?.set(0,0,0);
     const p = spawn?.position || this.currentMap.spawns[0].position; f.root.position.copy(p);
     // D_user DES quaternions use wxyz in the native Z-up coordinates.
     // Project their facing onto the walking plane instead of facing the player.
@@ -552,12 +553,17 @@ export class MeteorGame {
     if(f.combat.reacting)f.wallKick=null;
     const desired = f.wallRun?f.wallRun.velocity:direction.clone().multiplyScalar(speed); if(this._controlFor(f))f.velocity.copy(desired);else f.velocity.lerp(desired,1-Math.exp(-dt*14));
     let dx = f.velocity.x * dt + (motion?.x || 0), dz = f.velocity.z * dt + (motion?.z || 0), p = f.root.position;
+    const momentum=f.combat.busy&&f.actionMomentum;
+    if(momentum){
+      momentum.x=nativeActionMomentum(momentum.x,dt,f.grounded);momentum.z=nativeActionMomentum(momentum.z,dt,f.grounded);
+      dx+=momentum.x*dt;dz+=momentum.z*dt;
+    }else f.actionMomentum=null;
     // The short exit impulse must win over held forward input, or it cancels
     // itself against the same movement speed and the actor sticks to the wall.
     if(f.wallKick){const step=Math.min(dt,f.wallKick.remaining);dx=f.wallKick.velocity.x*step;dz=f.wallKick.velocity.z*step;f.velocity.copy(f.wallKick.velocity);f.wallKick.remaining-=step;if(f.wallKick.remaining<=1e-8)f.wallKick=null;}
     const from = p.clone();
-    if (!this._horizontalBlocked(p, dx, 0)) p.x += dx;
-    if (!this._horizontalBlocked(p, 0, dz)) p.z += dz;
+    if (!this._horizontalBlocked(p, dx, 0)) p.x += dx;else if(momentum)momentum.x=0;
+    if (!this._horizontalBlocked(p, 0, dz)) p.z += dz;else if(momentum)momentum.z=0;
     const ground = this._ground(p.x, p.z, p.y + this.hostPhysics.step);
     // Native 004ce850 overrides vertical velocity when the authored d_base
     // velocity has |trunc(native units/sec)|>=float0.1; otherwise gravity
@@ -588,7 +594,13 @@ export class MeteorGame {
       this.onEvent({ type: 'environment-death', text: f.hero ? '坠入险地' : `${f.name}坠入险地`, actorId: f.scriptId ?? f.id, objectName: hazard.name, provenance: hazard.provenance });
       return;
     }
+    f.motionVelocity??=v3();if(dt>0)f.motionVelocity.set((p.x-from.x)/dt,0,(p.z-from.z)/dt);
     if (p.y < this.currentMap.bounds.min.y - 20 || Math.abs(p.x) > 3000 || Math.abs(p.z) > 3000) { if (this.mode === 'story'||this.networkCombat) { f.hp = 0; this._kill(f,{awardKill:false}); } else this._placeFighter(f, this.currentMap.spawns[f.hero ? 0 : (f.spawnIndex || 1) % this.currentMap.spawns.length]); }
+  }
+  _captureActionMomentum(actor,{ninja=false}={}){
+    const velocity=actor.motionVelocity||actor.velocity,scale=ninja?NATIVE_ACTION_MOTION.ninjaScale:1;
+    actor.actionMomentum??=v3();actor.actionMomentum.set(Math.fround((velocity?.x||0)/SCALE*scale)*SCALE,0,Math.fround((velocity?.z||0)/SCALE*scale)*SCALE);
+    actor.wallKick=null;
   }
   _moveDirection(control = this) {
     const x = Number(control.keys.has('right')) - Number(control.keys.has('left')), z = Number(control.keys.has('forward')) - Number(control.keys.has('back')), a = control.cameraAngle;
@@ -875,12 +887,14 @@ export class MeteorGame {
     if(!this.running||this.paused||!actor||actor.dead||!actor.grounded||actor.scriptInputBlocked||actor.combat.busy||!control?.keys.has('crouch')||poseId!==NATIVE_ROLL_POSES[direction])return false;
     if(!actor.combat.data.poses.get(poseId)?.valid)return false;
     if(!actor.combat.play(poseId,{motion:true,context:{kind:'roll',direction,poseId,name:({forward:'向前翻滚',back:'向后翻滚',left:'向左翻滚',right:'向右翻滚'})[direction]}}))return false;
+    this._captureActionMomentum(actor);
     actor.root.rotation.y=control.cameraAngle+Math.PI;actor.velocity.set(0,0,0);actor.guard=false;actor.heldPose=null;clearPlayerCommands(control,{preserveJump:true});
     return true;
   }
   _beginDash(direction,poseId,actor=this.hero,control=this._controlFor(actor)) {
     if(!this.running||this.paused||!actor||actor.dead||!actor.grounded||actor.scriptInputBlocked||actor.guard||actor.combat.busy||!control||control.keys.has('crouch')||poseId!==nativeDashPose(actor.weapon,direction))return false;
     if(!actor.combat.play(poseId,{motion:true,context:{kind:'dash',direction,poseId,name:'闪避'}}))return false;
+    this._captureActionMomentum(actor);
     actor.root.rotation.y=control.cameraAngle+Math.PI;actor.velocity.set(0,0,0);actor.guard=false;actor.heldPose=null;control.recoveryAttack=null;
     return true;
   }
@@ -970,6 +984,7 @@ export class MeteorGame {
       canStart: command => !f.dead && !f.disposed && !f.scriptRemoved && (!command || (f.hero && this.infiniteRage || (f.rage || 0) >= command.rage) &&
         ((command.stance === 'air') === !f.grounded || f.combat.busy && command.continuationOf?.includes(f.combat.currentMove?.poseId))),
       onStart: command => {
+        this._captureActionMomentum(f,{ninja:f.weapon==='ninja'});
         // Queued ACT transitions start later than the click: use the target's
         // current position at the actual start, rather than a captured position.
         if(control&&!f.musketAim){const current=this._attackTarget(f,control);if(current)this._face(f,current.root.position);}
@@ -1262,6 +1277,7 @@ export class MeteorGame {
       ...nativeReactionParameters(attack, { guarded }), guarded, fromPose: target.character?.capturePose?.()
     })) {
       if (!guarded) target.guard = false;
+      this._captureActionMomentum(target);
       this.effectContacts?.clearActor(target);
       target.heldPose = 'reaction'; target.velocity?.set(0, 0, 0);
       // Native forced hits blend from the currently displayed transforms.

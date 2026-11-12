@@ -9,6 +9,13 @@ export const NATIVE_TRAVERSAL_WINDOW=.3;
 // comparing against float64(.11) at005aa8e8.004cd3a0 auto-releases after it.
 // Collision shape, horizontal steering and wall traversal remain Web adapters.
 export const NATIVE_JUMP_HOLD_SECONDS=.11;
+// 004ce840 damps actor+3b8/+3bc by1-(grounded?9:.2)*dt.
+// Ninja004e34e0 scales those fields byfloat32(.67) on an accepted attack.
+export const NATIVE_ACTION_MOTION=Object.freeze({groundDamping:9,airDamping:Math.fround(.2),ninjaScale:Math.fround(.67)});
+export function nativeActionMomentum(velocity,dt,grounded){
+  const factor=1-(grounded?NATIVE_ACTION_MOTION.groundDamping:NATIVE_ACTION_MOTION.airDamping)*dt;
+  return Math.fround(velocity/.08*factor)*.08;
+}
 // 004cd3a0 calls004cf7c0 only below float32(-40) native vertical
 // speed. The initializer preserves existing air/fall clips, otherwise maps
 // directional takeoff153/155/157 to154/156/158, default152.

@@ -1,4 +1,4 @@
-import {NETWORK_MODES} from './network-rules.js';
+import {NETWORK_MODES,MAX_NETWORK_PLAYERS} from './network-rules.js';
 import {NetworkClient} from './network-client.js';
 import {NetworkGame} from './network-game.js';
 export class NetworkLobby{
@@ -16,10 +16,10 @@ export class NetworkLobby{
     if(this.error)node('p',this.error).setAttribute('role','alert');
     if(this.connecting&&!this.client?.room){node('p','正在连接房间…','room-status').setAttribute('role','status');button('取消连接',()=>this.leave());return;}
     if(!this.client){
-      const draft=this.draft||={name:'江湖来客',mode:'leader',maxPlayers:4,scoreLimit:10,timeLimit:600,code:''};
+      const draft=this.draft||={name:'江湖来客',mode:'leader',maxPlayers:MAX_NETWORK_PLAYERS,scoreLimit:10,timeLimit:600,code:''};
       const layout=node('div',undefined,'room-browser'),main=node('section',undefined,'room-browser-main',layout),aside=node('section',undefined,'room-create',layout);
       const tools=node('div',undefined,'room-tools',main);node('h3','局域网房间','',tools);button(this.listLoading?'正在读取…':'刷新列表',()=>this.refreshRooms(),tools).disabled=!!this.listLoading;
-      node('p','同一服务 · 2～4 人 · 四方阵','',main);
+      node('p','同一服务 · 2～16 人 · 四方阵','',main);
       const filters=node('div',undefined,'room-filters',main);for(const [value,label] of [['all','全部'],...Object.entries(NETWORK_MODES)]){const choice=button(label,()=>{this.roomFilter=value;this.render();},filters);choice.setAttribute('aria-pressed',String((this.roomFilter||'all')===value));}
       if(this.listError)node('p',this.listError,'',main).setAttribute('role','alert');
       else if(!this.listLoading&&!(this.availableRooms||[]).length)node('p','尚无房间。创建一间，邀请朋友加入；请确认大家使用同一个局域网游戏地址。','',main);
@@ -29,18 +29,18 @@ export class NetworkLobby{
       const input=(label,key,max)=>{const field=node('input',undefined,'setting-select',aside);field.value=draft[key];field.maxLength=max;field.setAttribute('aria-label',label);field.placeholder=label;field.addEventListener('input',()=>draft[key]=field.value);return field;};
       input('联机玩家名字','name',16);
       const select=(label,key,options)=>{const box=node('label',label,'',aside),field=node('select',undefined,'setting-select',box);field.setAttribute('aria-label',label);for(const [value,text] of options){const option=node('option',text,'',field);option.value=value;}field.value=draft[key];field.addEventListener('change',()=>{draft[key]=field.value;if(key==='mode')this.render();});return field;};
-      select('模式','mode',Object.entries(NETWORK_MODES));select('人数上限','maxPlayers',[[4,'4人'],[3,'3人'],[2,'2人']]);
+      select('模式','mode',Object.entries(NETWORK_MODES));select('人数上限','maxPlayers',Array.from({length:MAX_NETWORK_PLAYERS-1},(_,i)=>[MAX_NETWORK_PLAYERS-i,`${MAX_NETWORK_PLAYERS-i}人`]));
       if(draft.mode==='leader')select('盟主击杀上限','scoreLimit',[[10,'10杀'],[5,'5杀'],[20,'20杀']]);
       select('时限','timeLimit',[[600,'10分钟'],[300,'5分钟'],[900,'15分钟']]);
       button('创建房间',()=>this.connect('create',{name:draft.name,mode:draft.mode,maxPlayers:Number(draft.maxPlayers),scoreLimit:Number(draft.scoreLimit),timeLimit:Number(draft.timeLimit)}),aside,'create-primary');
       node('p','已有房间号？','',aside);input('房间号','code',6);button('加入房间',()=>this.connect('join',{name:draft.name,code:draft.code.trim().toUpperCase()}),aside);
       node('p','房主需保持游戏窗口运行。房间号仅用于当前服务。','',aside);return;
     }
-    const room=this.client.room,heading=node('div',undefined,'room-heading');node('h3',`房间 ${room.code} · ${NETWORK_MODES[room.mode]||'盟主'} · ${room.players.length}/${room.maxPlayers||4}人`,'',heading);
+    const room=this.client.room,heading=node('div',undefined,'room-heading');node('h3',`房间 ${room.code} · ${NETWORK_MODES[room.mode]||'盟主'} · ${room.players.length}/${room.maxPlayers||MAX_NETWORK_PLAYERS}人`,'',heading);
     button('复制邀请',async()=>{const url=new URL(location.href);url.hash='';url.search='';if(['localhost','127.0.0.1','::1'].includes(url.hostname)){this.onNotice('请复制朋友可访问的局域网地址，并告知房间号 '+room.code);return;}try{await navigator.clipboard.writeText(url.href+' 房间号：'+room.code);this.onNotice('邀请已复制');}catch{this.onNotice('请复制当前游戏地址，房间号：'+room.code);}},heading);
     node('p',room.mode==='deathmatch'?`四方阵 · 红蓝两队 · 队友免伤 · 阵亡后本局不复活 · ${room.timeLimit/60}分钟超时平局`:`四方阵 · 自由混战 · ${room.scoreLimit}杀或${room.timeLimit/60}分钟结算`,'room-status');
     const seats=node('div',undefined,'room-seats');for(const p of room.players){const row=node('div',`${p.name}${p.id===room.hostId?'（房主）':''}${p.id===this.client.playerId?'（你）':''}\n${room.mode==='deathmatch'?(p.team===1?'红队 · ':'蓝队 · '):''}${p.ready?'已准备':'未准备'}${room.phase==='loading'?(p.loaded?' · 载入完成':' · 载入中'):''}`,'room-seat',seats);if(room.mode==='deathmatch')row.dataset.team=p.team;}
-    for(let i=room.players.length;i<(room.maxPlayers||4);i++)node('div','等待同道加入','room-seat empty',seats);
+    for(let i=room.players.length;i<(room.maxPlayers||MAX_NETWORK_PLAYERS);i++)node('div','等待同道加入','room-seat empty',seats);
     const rules=node('section',undefined,'room-rules');node('h3','本局说明','',rules);node('p','联机固定四方阵、房间选定人物与长剑。所有人准备后，由房主开局。','',rules);
     if(room.phase==='loading')node('p','正在等待：'+room.players.filter(p=>!p.loaded).map(p=>p.name).join('、')+' 载入战场','room-wait').setAttribute('role','status');
     const actions=node('div',undefined,'room-actions');button('退出房间',()=>this.leave(),actions);

@@ -1,3 +1,4 @@
+import {validCombatTarget,acquireCombatTarget} from './combat-targeting.js';
 import {nativeStrideSpeed} from './native-movement-profile.js';
 import { traversalTap, NATIVE_ROLL_POSES, nativeDashPose, NATIVE_CROUCH_POSES, NATIVE_GROUND_MOVE_POSES, NATIVE_JUMP_POSES, nativeTraversalDirection } from './native-traversal.js';
 import { FixedStepClock } from './fixed-step.js';
@@ -629,7 +630,7 @@ export class MeteorGame {
     this.difficulty = difficulty;
     for (const f of this.enemies) { f.disposed = true; this._disposeNameplate(f); f.character.dispose(); f.root.removeFromParent(); } this.enemies = [];
     this.hero.scriptConfig = null; this.hero.scriptControl = null; this.hero.scriptInputBlocked = false; this.hero.team = this.hero.teamMask = 1;
-    this.kills = 0; this.deaths = 0; this.totalDamage = 0; this.contactHits = 0; this.matchElapsed = 0; this.time = 0; this.locked = null;
+    this.kills = 0; this.deaths = 0; this.totalDamage = 0; this.contactHits = 0; this.matchElapsed = 0; this.time = 0; this.locked = null;if(this.localControl)this.localControl.autoLockEnabled=true;
     if (this.mode === 'story') {
       this._loadStatus('正在执行原版关卡脚本与载入原 NPC…');
       const host = await NativeMissionHost.create(this, { mapId: this.currentMap.id });
@@ -868,7 +869,7 @@ export class MeteorGame {
     else if (name === 'jump' && !actor.combat.busy) {
       control.directionBuffer = []; if(actor.grounded)this._beginJump(actor);else this._beginWallJump(actor);
     }
-    else if (name === 'lock' && !actor.musketAim) { control.locked = control.locked ? null : this._nearest(Infinity,actor); if(actor===this.hero){this.cameraManualUntil = 0;this._hud();} }
+    else if (name === 'lock' && !actor.musketAim) { this._toggleCombatLock(actor,control); if(actor===this.hero){this.cameraManualUntil = 0;this._hud();} }
   }
   action(name, active = true) {
     if(['switch','drop','pickup'].includes(name)){if(active){if(name==='switch')return this.switchWeapon();if(name==='drop')return this.dropWeapon();this._tryPickupActor(this.hero);this._hud();}return;}
@@ -892,7 +893,7 @@ export class MeteorGame {
     if(control&&f.musketAim&&f.combat.timeline?.pose.id===212&&!f.combat.timeline.finished)return false;
     // Free attacks retain the player's chosen facing. An unlocked opponent
     // behind the player must not turn an intended gate/front attack around.
-    const target = control ? control.locked : f.scriptControl?.attackTarget || this.hero;
+    const target = control ? this._attackTarget(f,control) : f.scriptControl?.attackTarget || this.hero;
     const move = control ? selectNativeMove(NATIVE_MOVE_CATALOG, { weapon: f.weapon, weaponMode: f.combat.weaponMode, includeOtherModes: true, air: !f.grounded, buffer: savedInput?.buffer ?? control.directionBuffer,
       held: (savedInput?.held ?? [...control.keys]).map(key => ({ forward: 'up', back: 'down', left: 'left', right: 'right' }[key])).filter(Boolean),
       time: savedInput?.time ?? control?.inputTime ?? this.elapsed, poseId: f.combat.timeline?.pose.id, movePoseId: f.combat.currentMove?.poseId, busy: f.combat.busy }) : savedInput?.npcMove ?? null;
@@ -912,6 +913,9 @@ export class MeteorGame {
       canStart: command => !f.dead && !f.disposed && !f.scriptRemoved && (!command || (f.hero && this.infiniteRage || (f.rage || 0) >= command.rage) &&
         ((command.stance === 'air') === !f.grounded || f.combat.busy && command.continuationOf?.includes(f.combat.currentMove?.poseId))),
       onStart: command => {
+        // Queued ACT transitions start later than the click: use the target's
+        // current position at the actual start, rather than a captured position.
+        if(control&&!f.musketAim){const current=this._attackTarget(f,control);if(current)this._face(f,current.root.position);}
         if (!command) return;
         f.rage = f.hero && this.infiniteRage ? 100 : Math.max(0, (f.rage || 0) - command.rage);
         if (f.hero) this.onEvent?.({ type: 'move', text: command.name, moveId: command.id, poseId: command.poseId, command: command.command, rageCost: command.rage });
@@ -922,6 +926,16 @@ export class MeteorGame {
       if (control) { control.directionBuffer = []; control.recoveryAttack = null; }
     }
     return accepted;
+  }
+  _toggleCombatLock(actor,control){
+    if(control.locked){control.locked=null;control.autoLockEnabled=false;}
+    else{control.autoLockEnabled=true;control.locked=acquireCombatTarget(actor,[this.hero,...this.enemies],{angle:control.cameraAngle+Math.PI,range:24,minDot:-1,lineOfSight:(a,b)=>this.hasScriptLineOfSight(a,b)});}
+    if(actor===this.hero)this._emit(control.locked?'锁定 · '+control.locked.name:control.autoLockEnabled?'自动锁定已开启 · 攻击前方对手':'自由攻击 · Q 重新锁定','info');
+  }
+  _attackTarget(actor,control){
+    if(control.locked&&!validCombatTarget(actor,control.locked))control.locked=null;
+    if(!control.locked&&control.autoLockEnabled!==false&&!actor.musketAim&&!['musket','dart','wheel'].includes(actor.weapon))control.locked=acquireCombatTarget(actor,[this.hero,...this.enemies],{angle:control.cameraAngle+Math.PI,lineOfSight:(a,b)=>this.hasScriptLineOfSight(a,b)});
+    return control.locked;
   }
   _nearest(range = Infinity, actor = this.hero) { let best = null; for (const f of [this.hero,...this.enemies]) { if(!f||f===actor)continue; const d = flatDistance(f.root.position, actor.root.position); if (!f.dead && !f.disposed && !f.scriptRemoved && f.team !== actor.team && d < range) { range = d; best = f; } } return best; }
   _npcCombatAction(f, target, due, { requested = false, allowed = true, reach = 0 } = {}) {
@@ -971,7 +985,7 @@ export class MeteorGame {
       direction = f.scriptInputBlocked ? v3() : this._moveDirection(control);
       if(f.wallRun&&!f.combat.busy)f.root.rotation.y=f.wallRun.facing;
       else if(!f.grounded&&f.jumpSequence&&!f.combat.busy)f.root.rotation.y=f.jumpSequence.facing;
-      else if (control.locked && !control.locked.dead) this._face(f, control.locked.root.position, dt);
+      else if (control.locked && validCombatTarget(f,control.locked)) this._face(f, control.locked.root.position, dt);
       else if (!f.combat.busy && (control.keys.has('crouch') || control.lookLocked || control.mouseLook?.locked)) this._face(f, f.root.position.clone().add(v3(-Math.sin(control.cameraAngle),0,-Math.cos(control.cameraAngle))),dt);
       else if (direction.lengthSq() > 0 && !f.combat.busy) this._face(f, f.root.position.clone().add(direction), dt);
     } else if (f.scriptControlled) {

@@ -215,6 +215,7 @@ export class MeteorGame {
       getInstances: () => [...(this.currentMap?.props?.instances.values() || []),...(this.droppedWeapons?.values()||[])],
       canReach: (actor, item) => this._canReachItem(actor, item),
       onPickup: result => {
+        if(result.kind==='weapon')this._prepareWeapon(result.actor.weapon2Id).catch(()=>{});
         result.actor.pickupSerial=(result.actor.pickupSerial||0)+1;
         if(this.droppedWeapons.has(result.objectName)){result.instance.root.removeFromParent();this.droppedWeapons.delete(result.objectName);this.items.visuals.delete(result.instance);}
         const callback = `${result.objectName}_OnPickUp`;
@@ -373,7 +374,7 @@ export class MeteorGame {
       return null;
     });
   }
-  async _equip(f, selection) {
+  async _equip(f, selection, { preserveCombat = false } = {}) {
     this.rageVfx?.clearActor(f);
     this.effectContacts?.clearActor(f);
     const request = f.equipRequest = (f.equipRequest || 0) + 1;
@@ -381,10 +382,15 @@ export class MeteorGame {
     if (!item || !item.available) throw new Error(`Original weapon item ${selection} unavailable`);
     const prefix = item.modelId.toLowerCase().split('_')[0], name = Object.keys(NATIVE_WEAPONS).find(key => NATIVE_WEAPONS[key].model.split('_')[0] === prefix);
     if (!name) throw new Error(`Original weapon action family ${item.modelId} has not been ported`);
+    const retained=preserveCombat?{weapon:f.weapon,weaponId:f.weaponId,weaponName:f.weaponName,weaponRecord:f.weaponRecord,weaponReach:f.weaponReach,
+      mode:f.combat.weaponMode,models:(f.weaponModels||[]).map(model=>({model,parent:model.parent}))}:null;
     this.stealthFeedback?.clearActor(f);
     f.weaponPoseUnsubscribe?.(); f.weaponPoseUnsubscribe = null;
     f.weapon = name; f.weaponId = Number(item.itemId); f.weaponName = item.name; f.weaponRecord = this.combatData.weaponRecords.get(item.modelId.toLowerCase());
-    f.musketAim=false; f.combat.setWeapon(name); f.combat.play(NATIVE_WEAPONS[name].stance, { loop: true, force: true }); f.heldPose = NATIVE_WEAPONS[name].stance;
+    if(name==='knuckle'&&this.weaponItems.get(f.weapon2Id)?.available)this._prepareWeapon(f.weapon2Id).catch(()=>{});
+    f.musketAim=false;
+    if(preserveCombat){f.combat.weapon=name;f.combat.weaponMode='blade';}
+    else{f.combat.setWeapon(name);f.combat.play(NATIVE_WEAPONS[name].stance,{loop:true,force:true});f.heldPose=NATIVE_WEAPONS[name].stance;}
     if (f.hero) { this.directionBuffer = []; this.recoveryAttack = null; }
     if (f.butterflySword) { disposeButterflySword(f.butterflySword); if (f.hero) this.butterflyVfx?.bind(null); }
     f.raidenSword?.removeFromParent(); f.raidenSword = null;
@@ -434,7 +440,17 @@ export class MeteorGame {
         f.character.getAttachment('d_wpnR').add(variant); f.character.registerVisualAttachment?.(variant,'d_wpnR'); f.phoenixSpear = variant;
         this._syncSpearStyle(f);
       }
-    } catch (error) { this._emit(`原版兵器读取失败：${name}`, 'info'); console.error(error); }
+    } catch (error) {
+      if(retained&&!this.disposed&&!f.disposed&&request===f.equipRequest){
+        Object.assign(f,{weapon:retained.weapon,weaponId:retained.weaponId,weaponName:retained.weaponName,weaponRecord:retained.weaponRecord,weaponReach:retained.weaponReach});
+        f.weaponModels=retained.models.map(entry=>entry.model);f.weaponModel=f.weaponModels[0];
+        for(const {model,parent} of retained.models)parent?.add(model);
+        if(f.combat.currentMove?.weapon!==retained.weapon&&!f.combat.currentMove?.switchesWeapon){f.combat.setWeapon(retained.weapon);f.combat.play(f.combat.stance,{force:true,loop:true});}
+        else{f.combat.weapon=retained.weapon;f.combat.weaponMode=retained.mode;}
+      }
+      this._emit(`原版兵器读取失败：${name}`, 'info'); console.error(error);return false;
+    }
+    return true;
   }
   _ground(x, z, ceiling) {
     if (!this.currentMap) return null;
@@ -764,6 +780,19 @@ export class MeteorGame {
       await this._equip(actor,next);actor.weapon2Id=previous;if(actor===this.hero)this.weapon=actor.weapon;this._hud();
     }catch(error){this._emit('兵器载入失败，保留原装备','info');console.warn(error);}finally{actor.switchingWeapon=false;}
   }
+  _switchWeaponForMove(actor){
+    const item=this.weaponItems.get(actor.weapon2Id);
+    if(actor.weapon!=='knuckle'||!item?.available)return;
+    // 004e3d20 emits actor command0x2c for groups110/111 (412/413).
+    // Keep the authored side-step/cancel graph while changing the inventory.
+    const previous=actor.weaponId,next=actor.weapon2Id;
+    actor.weapon2Id=previous;
+    const loading=this._equip(actor,next,{preserveCombat:true}).then(ok=>{
+      if(ok===false&&actor.weaponId===previous){actor.weapon2Id=next;if(actor===this.hero)this.weapon=actor.weapon;}
+    }).catch(error=>{console.warn('换兵招式的兵器未能载入',error);});
+    if(actor===this.hero)this.weapon=actor.weapon;
+    return loading;
+  }
   _clearDroppedWeapons(){for(const drop of this.droppedWeapons?.values()||[])drop.root.removeFromParent();this.droppedWeapons?.clear();this.replicaLootDesired=new Map();this.combatFeedbackEvents=[];this.bloodFeedback?.clear();this.poisonFeedback?.clear();this.slowFeedback?.clear();}
   _lootSnapshot(){return {consumed:[...(this.items?.consumedNames||[])],drops:[...(this.droppedWeapons?.values()||[])].filter(drop=>drop.attributes.active).map(drop=>({name:drop.name,weaponId:drop.weaponId,position:drop.root.position.toArray()}))};}
   _combatFeedbackSnapshot(){return (this.combatFeedbackEvents||[]).filter(event=>(this.matchElapsed||0)-event.time<=.6);}
@@ -922,6 +951,7 @@ export class MeteorGame {
         // current position at the actual start, rather than a captured position.
         if(control&&!f.musketAim){const current=this._attackTarget(f,control);if(current)this._face(f,current.root.position);}
         if (!command) return;
+        if(command.switchesWeapon)this._switchWeaponForMove(f);
         f.rage = f.hero && this.infiniteRage ? 100 : Math.max(0, (f.rage || 0) - command.rage);
         if (f.hero) this.onEvent?.({ type: 'move', text: command.name, moveId: command.id, poseId: command.poseId, command: command.command, rageCost: command.rage });
       }

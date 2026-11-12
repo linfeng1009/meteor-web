@@ -764,3 +764,33 @@ test('压制挥空会自动收刀，起手期间乱按不扣第二次怒气',asy
  const seen=settle(game);assert.ok(seen.has(541));assert.ok(seen.has(543));assert.equal(seen.has(542),false);
  assert.equal(game.hero.combat.busy,false);assert.equal(events.filter(e=>e.type==='move').length,1);assert.equal(events.filter(e=>e.type==='hit').length,0);
 });
+
+test('指虎左右打虎在原动作内自动换副兵器并接其原招式',async t=>{
+ for(const [id,key] of [[412,'left'],[413,'right']])await t.test(String(id),async()=>{
+  const {game,events}=await fixture([]);await game._equip(game.hero,'knuckle');game.hero.weapon2Id=8;
+  await game._prepareWeapon(8);manual(game,[key,key]);await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(game.hero.combat.timeline.pose.id,id);assert.equal(game.hero.weapon,'blade');assert.equal(game.hero.weapon2Id,51);
+  game.action('attack',false);game.action('attack');assert.equal(game.hero.combat.queuedMove?.poseId,295);
+  const seen=settle(game);assert.ok(seen.has(295));assert.equal(game.hero.combat.busy,false);
+  assert.deepEqual(events.filter(e=>e.type==='move').map(e=>e.poseId),[id,295]);
+ });
+});
+
+test('指虎换兵排队不提前交换装备，重复输入只在实际起手交换一次',async()=>{
+ const {game}=await fixture([]);await game._equip(game.hero,'knuckle');game.hero.weapon2Id=8;await game._prepareWeapon(8);
+ game.action('attack');manual(game,['right','right']);assert.equal(game.hero.combat.queued,413);assert.equal(game.hero.weapon,'knuckle');
+ manual(game,['right','right']);assert.equal(game.hero.weapon2Id,8);
+ for(let i=0;i<180&&game.hero.combat.timeline.pose.id!==413;i++)tick(game);
+ await new Promise(resolve=>setImmediate(resolve));assert.equal(game.hero.combat.timeline.pose.id,413);assert.equal(game.hero.weapon,'blade');assert.equal(game.hero.weapon2Id,51);
+ settle(game);assert.equal(game.hero.weaponId,8);assert.equal(game.hero.weapon2Id,51);
+ const bare=await fixture([]);await bare.game._equip(bare.game.hero,'knuckle');manual(bare.game,['left','left']);settle(bare.game);
+ assert.equal(bare.game.hero.weapon,'knuckle');assert.equal(bare.game.hero.weaponId,51);assert.equal(bare.game.hero.combat.busy,false);
+});
+
+test('换兵招式加载副兵器失败时恢复原兵器、模型和副兵器槽',async()=>{
+ const {game}=await fixture([]);await game._equip(game.hero,'knuckle');const models=[...game.hero.weaponModels];game.hero.weapon2Id=8;
+ game._readWeapon=async()=>{throw Error('测试副兵器缺失');};const prior=console.error;console.error=()=>{};
+ try{manual(game,['right','right']);await new Promise(resolve=>setImmediate(resolve));}finally{console.error=prior;}
+ assert.equal(game.hero.weaponId,51);assert.equal(game.hero.weapon2Id,8);assert.equal(game.hero.combat.weapon,'knuckle');assert.equal(game.weapon,'knuckle');
+ assert.deepEqual(game.hero.weaponModels,models);assert.ok(models.every(model=>model.parent));settle(game);assert.equal(game.hero.combat.busy,false);
+});

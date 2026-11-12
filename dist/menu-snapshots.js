@@ -30,9 +30,9 @@ export function weaponPreviewSource(hero, swordStyle, spearStyle) {
 }
 
 export class MenuSnapshots {
-  constructor(game){this.game=game;this.maps=new SnapshotCache(3);this.weapons=new SnapshotCache(6);}
+  constructor(game){this.game=game;this.maps=new SnapshotCache(3);this.weapons=new SnapshotCache(6);this.characters=new SnapshotCache(1);}
   allowed(){return !this.game.disposed&&this.game.menuIdle&&!this.game.running;}
-  clear(){this.maps.clear();this.weapons.clear();}
+  clear(){this.maps.clear();this.weapons.clear();this.characters.clear();}
   async map(key){
     if(!this.allowed())return null;
     return this.maps.get(key,async()=>{
@@ -44,6 +44,18 @@ export class MenuSnapshots {
       const actors=[game.hero,...game.enemies].map(actor=>[actor.root,actor.root.visible]);
       try{for(const [root] of actors)root.visible=false;return this.render(game.scene,camera,960,540);}
       finally{for(const [root,visible] of actors)root.visible=visible;}
+    });
+  }
+  async character(key){
+    if(!this.allowed())return null;
+    return this.characters.get(key,async()=>{
+      if(!this.allowed())return null;
+      const root=this.game.hero.root,parent=root.parent,index=parent?.children.indexOf(root),scene=new THREE.Scene();
+      const light=new THREE.DirectionalLight(0xffefd9,3);light.position.set(3,6,5);scene.add(light,new THREE.HemisphereLight(0xf1f5ff,0x425858,3));
+      const position=root.position.clone(),camera=new THREE.PerspectiveCamera(32,3/4,.1,100);
+      camera.position.copy(position).add(new THREE.Vector3(0,1.5,5.8));camera.lookAt(position.clone().add(new THREE.Vector3(0,1.25,0)));
+      try{scene.add(root);return this.render(scene,camera,360,480);}
+      finally{scene.remove(root);if(parent){parent.add(root);parent.children.splice(parent.children.indexOf(root),1);parent.children.splice(index,0,root);}scene.clear();}
     });
   }
   async weapon(key){

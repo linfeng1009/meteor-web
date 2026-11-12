@@ -50,3 +50,11 @@ test('GPU截图失败仍恢复渲染目标、视口、裁切和清屏状态',asy
   assert.throws(()=>snapshots.render({}, {}, 32,32),/GPU failure/);
   assert.equal(state.target,null);assert.equal(state.scissor,true);assert.equal(state.alpha,.7);assert.equal(state.color.getHex(),0x334455);assert.equal(renderer.autoClear,false);assert.deepEqual(state.viewport.toArray(),[3,4,800,600]);assert.deepEqual(state.crop.toArray(),[8,9,70,60]);
 });
+
+test('人物截图编码前恢复原父节点和子节点顺序，战斗期间禁止截图',async()=>{
+  const parent=new THREE.Group(),before=new THREE.Group(),root=new THREE.Group(),after=new THREE.Group();parent.add(before,root,after);root.position.set(3,0,5);
+  const game={menuIdle:true,running:false,hero:{root}},shots=new MenuSnapshots(game);let finish;
+  shots.render=()=>{assert.notEqual(root.parent,parent);return new Promise(resolve=>finish=resolve);};
+  const pending=shots.character('hero');assert.equal(root.parent,parent);assert.deepEqual(parent.children,[before,root,after]);assert.deepEqual(root.position.toArray(),[3,0,5]);finish(null);await pending;
+  game.running=true;assert.equal(await shots.character('other'),null);
+});

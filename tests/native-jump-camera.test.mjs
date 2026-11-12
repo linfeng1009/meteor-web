@@ -452,6 +452,55 @@ test('directional jumps preserve original takeoff and air families through landi
   }
 });
 
+test('四向跳跃可随鼠标转向，不重启动画、不改变竖直速度，空中出招后停止自由转身',()=>{
+  for(const [direction,locked] of ['forward','right','left','back'].flatMap(direction=>[[direction,false],[direction,true]])){
+    const state=fixture();try{
+      const {game,hero}=state;game.enemies=[];game.mouseLook={locked};game.action(direction);game._beginJump(hero,{large:true});
+      const serial=hero.combat.serial,pose=hero.combat.timeline.pose.id,vertical=hero.vy,position=hero.root.position.clone();
+      turnMouseCamera(game,60,0);assert.ok(Math.abs(game.cameraAngle+.3)<1e-9);
+      assert.equal(hero.combat.serial,serial);assert.equal(hero.combat.timeline.pose.id,pose);assert.equal(hero.vy,vertical);assert.ok(hero.root.position.equals(position));
+      game._updateFighter(hero,1/60);assert.ok(Math.abs(hero.root.rotation.y-(Math.PI-.3))<1e-9);
+      game._updateFighter(hero,1/60);assert.ok(Math.abs(hero.root.rotation.y-(Math.PI-.3))<1e-9,'单次视角输入消费后也不能回弹到起跳方向');
+      turnMouseCamera(game,40,0);assert.equal(game._beginAttack(hero),true);
+      assert.ok(Math.abs(hero.root.rotation.y-(Math.PI-.5))<1e-9);const attackFacing=hero.root.rotation.y;
+      turnMouseCamera(game,80,0);game._updateFighter(hero,1/60);assert.equal(hero.root.rotation.y,attackFacing);
+    }finally{state.dispose();}
+  }
+});
+
+test('腾空蹬离后用鼠标转身可在同次飞行中接上对面墙，走壁中不被鼠标直接扭转',()=>{
+  const state=wallFixture('front',20);try{
+    const {game,hero}=state;game.action('forward',false);assert.equal(game._beginAirWallJump(hero),true);
+    const opposite=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshBasicMaterial({side:THREE.DoubleSide}));
+    opposite.position.set(0,20,.9);opposite.updateMatrixWorld(true);state.colliders.push(opposite);
+    turnMouseCamera(game,-Math.PI/.005,0);game.action('forward');
+    for(let i=0;i<10&&!hero.wallRun;i++)game._updateFighter(hero,1/60);
+    assert.equal(hero.wallRun?.side,'front');assert.equal(hero.wallEntries,1);const facing=hero.root.rotation.y;
+    turnMouseCamera(game,20,0);game._updateFighter(hero,1/60);assert.ok(hero.wallRun);assert.equal(hero.root.rotation.y,facing);
+  }finally{state.dispose();}
+});
+
+test('客人同批转向和空中攻击在主机按顺序处理，不等下一个物理步才更新朝向',()=>{
+  const state=fixture();try{
+    const {game,hero}=state;game.enemies=[];hero.hero=false;hero.networkId='guest';hero.playerControl=createPlayerControl({lookLocked:true});
+    game._beginJump(hero,{large:true});const position=hero.root.position.clone(),vertical=hero.vy;
+    const session=Object.create(NetworkGame.prototype);Object.assign(session,{client:{host:true},active:true,game,actors:new Map([['guest',hero]]),controls:new Map([['guest',hero.playerControl]])});
+    session.inputs([{playerId:'guest',action:'look',angle:.8,time:10,held:[]},{playerId:'guest',action:'attack',angle:.8,time:10.01,active:true}]);
+    assert.ok(Math.abs(hero.root.rotation.y-(Math.PI+.8))<1e-9);assert.equal(hero.combat.attacking,true);
+    assert.ok(hero.root.position.equals(position));assert.equal(hero.vy,vertical);
+  }finally{state.dispose();}
+});
+
+test('自由防御时鼠标可转镜头但不扭转身体，松开防御后的逻辑步恢复跟随',()=>{
+  const state=fixture();try{
+    const {game,hero}=state;game.enemies=[];game.mouseLook={locked:true};hero.root.rotation.y=Math.PI;
+    game.action('guard');game.action('forward');const position=hero.root.position.clone();
+    turnMouseCamera(game,60,0);game._updateFighter(hero,1/60);
+    assert.equal(hero.guard,true);assert.equal(hero.root.rotation.y,Math.PI);assert.ok(hero.root.position.equals(position));
+    game.action('guard',false);game._updateFighter(hero,1/60);assert.ok(Math.abs(hero.root.rotation.y-(Math.PI-.3))<1e-9);
+  }finally{state.dispose();}
+});
+
 test('every directional jump follows its authored air-to-fall link without restarting the short air clip',()=>{
   for(const direction of ['forward','right','left','back']){
     const state=fixture();

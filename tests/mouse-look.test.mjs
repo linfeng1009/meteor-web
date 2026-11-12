@@ -61,3 +61,20 @@ test('free camera rotates but combat lock rejects mouse override, including vert
   const angle=game.cameraAngle,pitch=game.cameraPitch;game.locked={dead:false,disposed:false};assert.equal(turnMouseCamera(game,100,100),false);assert.equal(game.cameraAngle,angle);assert.equal(game.cameraPitch,pitch);
   game.locked.dead=true;assert.equal(turnMouseCamera(game,20,0),true);
 });
+
+test('原始鼠标事件只更新镜头，模型朝向留给固定步或动作入口消费',()=>{
+  for(const flags of [{grounded:true},{grounded:false},{combat:{busy:true}},{wallRun:{}},{guard:true},{scriptInputBlocked:true}]){
+    const hero={root:{rotation:{y:.7}},combat:{busy:false},...flags},game={hero,elapsed:10,cameraAngle:0,cameraPitch:.4,locked:null};
+    assert.equal(turnMouseCamera(game,20,0),true);assert.equal(game.cameraAngle,-.1);
+    assert.equal(hero.root.rotation.y,.7);
+  }
+});
+
+test('失效与转为同伴的锁定不再卡住镜头，客人镜头转动不预测覆盖权威角色朝向',()=>{
+  for(const target of [{scriptRemoved:true},{teamMask:3}]){
+    const hero={teamMask:1,root:{rotation:{y:0}},combat:{busy:false}},game={hero,elapsed:10,cameraAngle:0,cameraPitch:.4,locked:target};
+    assert.equal(turnMouseCamera(game,20,0),true);assert.equal(game.locked,null);assert.equal(hero.root.rotation.y,0);
+  }
+  const hero={root:{rotation:{y:.7}},combat:{busy:false}},game={hero,elapsed:10,cameraAngle:0,cameraPitch:.4,locked:null,lootReplica:true};
+  turnMouseCamera(game,20,0);assert.equal(game.cameraAngle,-.1);assert.equal(hero.root.rotation.y,.7);
+});

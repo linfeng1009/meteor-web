@@ -1,11 +1,16 @@
 import { bindingMap, defaultBindings } from './keybindings.js';
+import {validCombatTarget} from './combat-targeting.js';
 export function turnMouseCamera(game, dx, dy) {
   if(game.hero?.musketAim){if(!Number.isFinite(dx)||!Number.isFinite(dy))return false;game.cameraAngle-=dx*.003;const c=game.localControl||game;c.aimPitch=Math.max(-1.2,Math.min(1.2,(c.aimPitch||0)-dy*.003));return true;}
-  if(game.locked&&!game.locked.dead&&!game.locked.disposed)return false;
+  if(validCombatTarget(game.hero,game.locked))return false;
   if(!Number.isFinite(dx)||!Number.isFinite(dy))return false;
+  if(game.locked)game.locked=null;
   game.cameraManualUntil=game.elapsed+2;
   game.cameraAngle-=dx*.005;
   game.cameraPitch=Math.max(.15,Math.min(.95,game.cameraPitch+dy*.003));
+  (game.localControl||game).lookPending=true;
+  // Raw mouse events update the camera only. Fixed steps and action entry
+  // consume this angle, avoiding model/quaternion work at sensor frequency.
   return true;
 }
 // Pointer Lock must be requested synchronously from a user gesture, before scene loading.

@@ -7,7 +7,7 @@ import { FixedStepClock } from './fixed-step.js';
 import { NATIVE_WALL_POSES, NATIVE_WALL_PHYSICS, NATIVE_AIR_WALL_PHYSICS, nativeWallVerticalVelocity, nativeWallJumpVelocity, nativeAirWallJumpVelocity, WALL_TRAVERSAL_ADAPTER as WALL } from './native-wall-traversal.js';
 import { FrameMeter, RenderScaleController, createFrameOverlay } from './frame-meter.js';
 import { StaticColliderIndex } from './collision-index.js';
-import { bindLocalPlayerControl, clearPlayerCommands } from './player-control.js';
+import { bindLocalPlayerControl, clearPlayerCommands, applyPlayerLook, usesPlayerLook } from './player-control.js';
 import { createMouseLook, turnMouseCamera } from './mouse-look.js';
 import { bindKeyboard, defaultBindings } from './keybindings.js';
 import * as THREE from './vendor/three.module.js';
@@ -896,6 +896,7 @@ export class MeteorGame {
   _finishJumpCharge(actor,control){
     const charge=control?.jumpCharge;if(!charge)return false;control.jumpCharge=null;
     if(charge.actor!==actor||!this.running||this.paused||actor.dead||actor.disposed||actor.scriptInputBlocked||actor.combat.busy||actor.guard)return false;
+    if(usesPlayerLook(control))applyPlayerLook(actor,control);
     const duration=actor.playerControl?Math.max(0,(control.inputTime??charge.time)-charge.time):Math.max(charge.elapsed,(this.elapsed??charge.time)-charge.time);
     control.directionBuffer=[];
     const options={large:duration+1e-9>=NATIVE_JUMP_HOLD_SECONDS};
@@ -939,6 +940,7 @@ export class MeteorGame {
     }
     if (name === 'guard') {
       const held = active && this.running && !this.paused && !actor.dead;
+      if(held&&usesPlayerLook(control))applyPlayerLook(actor,control);
       if (held) control.keys.add('guard'); else control.keys.delete('guard');
       if(held)actor.musketAim=false;
       actor.guard = held && !actor.scriptInputBlocked && !actor.wallRun && (actor.grounded||actor.combat.reactionPhase==='guard') && (!actor.combat.busy || actor.combat.reactionPhase === 'guard');
@@ -980,6 +982,7 @@ export class MeteorGame {
     const control=this._controlFor(f);
     // 004cff30 accepts actor states0/1/3/6, excluding wall state2.
     if (f.dead || f.disposed || f.scriptRemoved || f.scriptCrouched || f.wallRun || f.combat.reacting || control && f.scriptInputBlocked) return false;
+    if(usesPlayerLook(control))applyPlayerLook(f,control);
     // Native musket state 004deca0: first ground attack enters ready pose212;
     // crouch/aim blocks movement (004ded10). Subsequent attacks use POS/ACT.
     if(control&&f.weapon==='musket'&&!f.musketAim){
@@ -1089,10 +1092,13 @@ export class MeteorGame {
       if (f.scriptInputBlocked) f.guard = false;
       direction = f.scriptInputBlocked ? v3() : this._moveDirection(control);
       if(f.wallRun&&!f.combat.busy)f.root.rotation.y=f.wallRun.facing;
-      else if(!f.grounded&&f.jumpSequence&&!f.combat.busy)f.root.rotation.y=f.jumpSequence.facing;
       else if (control.locked && validCombatTarget(f,control.locked)) this._face(f, control.locked.root.position, dt);
-      else if (!f.combat.busy && (control.keys.has('crouch') || control.lookLocked || control.mouseLook?.locked)) this._face(f, f.root.position.clone().add(v3(-Math.sin(control.cameraAngle),0,-Math.cos(control.cameraAngle))),dt);
-      else if (direction.lengthSq() > 0 && !f.combat.busy) this._face(f, f.root.position.clone().add(direction), dt);
+      else if(!f.grounded&&f.jumpSequence&&!f.combat.busy&&!f.guard){if(usesPlayerLook(control))applyPlayerLook(f,control);}
+      else if (!f.combat.busy && !f.guard && (control.keys.has('crouch') || usesPlayerLook(control))) {
+        if(usesPlayerLook(control))applyPlayerLook(f,control);
+        else this._face(f, f.root.position.clone().add(v3(-Math.sin(control.cameraAngle),0,-Math.cos(control.cameraAngle))),dt);
+      }
+      else if (direction.lengthSq() > 0 && !f.combat.busy && !f.guard) this._face(f, f.root.position.clone().add(direction), dt);
     } else if (f.scriptControlled) {
       const control = f.scriptControl;
       f.guard = !!(control?.guard || !control?.paused && f.npcCombat?.guard) && f.grounded && !f.wallRun && !f.combat.busy; speed *= Number(control?.speedScale ?? 1) * .68;

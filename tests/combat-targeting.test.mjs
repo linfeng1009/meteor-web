@@ -11,4 +11,11 @@ test('原阵营位掩码重叠即为同伴，显式掩码优先，零掩码不�
  hero.team=0;compound.team=0;compound.teamMask=0;assert.equal(acquireCombatTarget(hero,[compound]),compound);
 });
 test('锁定保持同一目标，Q解除后连续攻击保持自由朝向，再按恢复锁定',()=>{const {g,hero,front,control}=fixture();assert.equal(g._attackTarget(hero,control),front);g.enemies.push(actor(0,2));assert.equal(g._attackTarget(hero,control),front);g._toggleCombatLock(hero,control);assert.equal(g._attackTarget(hero,control),null);assert.equal(control.autoLockEnabled,false);g._toggleCombatLock(hero,control);assert.ok(control.locked);});
-test('排队连招在实际起手时重新对准移动后的锁定目标，远程瞄准不强制锁人',()=>{const {g,hero,front,control}=fixture();let start;hero.combat.attack=options=>(start=options.onStart,true);assert.equal(g._beginAttack(hero),true);front.root.position.set(4,0,1);start(null);assert.ok(Math.abs(hero.root.rotation.y-Math.atan2(4,1))<1e-9);control.locked=null;hero.weapon='musket';assert.equal(g._attackTarget(hero,control),null);});
+
+test('未锁鼠且没有新视角输入时自由攻击保留自身朝向，新视角在攻击入口消费',()=>{
+ const {g,hero,control}=fixture();g.enemies=[];hero.root.rotation.y=.7;
+ assert.equal(g._beginAttack(hero),true);assert.equal(hero.root.rotation.y,.7);
+ control.cameraAngle=.2;control.lookPending=true;assert.equal(g._beginAttack(hero),true);
+ assert.ok(Math.abs(hero.root.rotation.y-(Math.PI+.2))<1e-9);assert.equal(control.lookPending,false);
+});
+test('排队连招在实际起手时重新对准移动后的锁定目标，远程瞄准不强制锁人',()=>{const {g,hero,front,control}=fixture();let start;hero.combat.attack=options=>(start=options.onStart,true);assert.equal(g._beginAttack(hero),true);front.root.position.set(4,0,1);start(null);assert.ok(Math.abs(Math.atan2(Math.sin(hero.root.rotation.y-Math.atan2(4,1)),Math.cos(hero.root.rotation.y-Math.atan2(4,1))))<1e-9);control.locked=null;hero.weapon='musket';assert.equal(g._attackTarget(hero,control),null);});

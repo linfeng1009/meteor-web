@@ -10,7 +10,7 @@ import { NativeEffectContacts, nativeEffectBounds, intersectsEffectBody } from '
 import { NativeRageVfx } from '../dist/native-rage-vfx.js';
 import { NativeImpactFeedback } from '../dist/native-impact-feedback.js';
 import { nativeEffectiveStat } from '../dist/native-combat.js';
-import { nativeMovementScale, useNativeScriptItem, updateNativeScriptItems, clearNativeScriptItems } from '../dist/native-items.js';
+import { nativeMovementScale, useNativeScriptItem, updateNativeScriptItems, clearNativeScriptItems, nativeIsInvisible } from '../dist/native-items.js';
 
 const dist = new URL('../dist/', import.meta.url), v = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z);
 const oldFetch = globalThis.fetch, oldTextureLoad = THREE.TextureLoader.prototype.load;
@@ -612,4 +612,15 @@ test('plane and donut bounds match the recovered native constructors, including 
  assert.deepEqual(nativeEffectBounds({type:'PLANE',dimensions:[32,20],flags:[1]}).center.toArray(),[0,0,10]);
  assert.deepEqual(nativeEffectBounds({type:'DONUT',dimensions:[3,5,0,360,0,360],flags:[0]}).half.toArray(),[5,5,1]);
  assert.deepEqual(nativeEffectBounds({type:'DONUT',dimensions:[3,5,0,360,0,360],flags:[1]}).center.toArray(),[0,0,1]);
+});
+
+
+test('忍法隐身 completes535→536, charges50, refreshes120 seconds and remains hittable',async()=>{
+ const {game,events}=await fixture([]);await game._equip(game.hero,'ninja');game.hero.rage=100;manual(game,['left','right','back']);assert.equal(game.hero.combat.currentMove.poseId,535);assert.equal(game.hero.rage,50);assert.equal(nativeIsInvisible(game.hero),false);
+ const seen=settle(game);assert.ok(seen.has(536));assert.equal(game.hero.scriptItems[0].id,36);assert.ok(game.hero.scriptItems[0].remaining>119);assert.equal(nativeIsInvisible(game.hero),true);
+ game.hero.rage=100;manual(game,['left','right','back']);settle(game);assert.equal(game.hero.scriptItems.length,1);assert.equal(events.filter(e=>e.type==='self-item').at(-1).refreshed,true);
+ updateNativeScriptItems(game.hero,121);assert.equal(nativeIsInvisible(game.hero),false);
+ game.hero.rage=100;manual(game,['left','right','back']);game.hero.combat.react(103);settle(game);assert.equal(nativeIsInvisible(game.hero),false);
+ const second=await fixture([v(0,0,1.5)]);await second.game._equip(second.game.hero,'sword');const target=second.game.enemies[0];useNativeScriptItem(target,data.itemRecords.get(36));second.game.action('attack');for(let i=0;i<120;i++)tick(second.game);
+ assert.ok(target.hp<10000,'actual original attack contacts still damage an invisible actor');
 });

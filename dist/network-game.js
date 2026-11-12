@@ -1,3 +1,4 @@
+import {nativeIsInvisible} from './native-items.js';
 import {networkSpawns} from './network-spawns.js';
 import {roomRules,matchResult,NETWORK_MODES} from './network-rules.js';
 import { battleCharacterSelection } from './character-appearances.js';
@@ -107,8 +108,8 @@ export class NetworkGame{
     const result=matchResult(this.rules,players,this.game.matchElapsed);if(result)this.finish(result);
   }
   updateNameplates(){
-    const hero=this.game.hero,near=[...this.actors.values()].filter(f=>f!==hero&&!f.dead&&!f.disposed).sort((a,b)=>a.root.position.distanceToSquared(hero.root.position)-b.root.position.distanceToSquared(hero.root.position));
-    const visible=new Set(near.slice(0,3));if(this.game.locked&&!this.game.locked.dead)visible.add(this.game.locked);
+    const hero=this.game.hero,near=[...this.actors.values()].filter(f=>f!==hero&&!f.dead&&!f.disposed&&(!nativeIsInvisible(f)||f.team===hero.team)).sort((a,b)=>a.root.position.distanceToSquared(hero.root.position)-b.root.position.distanceToSquared(hero.root.position));
+    const visible=new Set(near.slice(0,3));if(this.game.locked&&!this.game.locked.dead&&!nativeIsInvisible(this.game.locked))visible.add(this.game.locked);
     for(const actor of this.actors.values())if(actor.nameplate)actor.nameplate.visible=visible.has(actor);
   }
   updateBoard(){
@@ -158,5 +159,5 @@ export class NetworkGame{
       g._playCombatFeedback?.(event,event.attackerId===this.client.playerId||event.targetId===this.client.playerId);}
     if(frame.result){for(const actor of this.actors.values())this.presentation.update(actor,.15);this.finish(frame.result);}this.updateBoard();if(g.locked?.dead)g.locked=null;g._hud();
   }
-  dispose(){this.active=false;if(this.matchSpawns&&this.game.currentMap?.spawns===this.matchSpawns)this.game.currentMap.spawns=this.previousSpawns;this.board?.remove();this.game.lootReplica=this.previousLootReplica;this.game.networkCombat=this.previousNetworkCombat;for(const actor of this.actors.values()){delete actor.networkItemStatuses;delete actor.networkQueuedMoveName;if(actor.nameplate)actor.nameplate.visible=true;}this.game._clearDroppedWeapons?.();for(const [actor,previous] of this.previousControls){const control=this.controls.get(actor.networkId);control?.keys.clear();clearPlayerCommands(control);if(actor.playerControl===control){if(previous)actor.playerControl=previous;else delete actor.playerControl;}}for(const [key,value] of Object.entries(this.original))this.game[key]=value;this.original.pause.call(this.game,true);}
+  dispose(){this.active=false;if(this.matchSpawns&&this.game.currentMap?.spawns===this.matchSpawns)this.game.currentMap.spawns=this.previousSpawns;this.board?.remove();this.game.lootReplica=this.previousLootReplica;this.game.networkCombat=this.previousNetworkCombat;for(const actor of this.actors.values()){this.game.stealthFeedback?.clearActor(actor);delete actor.networkItemStatuses;delete actor.networkQueuedMoveName;if(actor.nameplate)actor.nameplate.visible=true;}this.game._clearDroppedWeapons?.();for(const [actor,previous] of this.previousControls){const control=this.controls.get(actor.networkId);control?.keys.clear();clearPlayerCommands(control);if(actor.playerControl===control){if(previous)actor.playerControl=previous;else delete actor.playerControl;}}for(const [key,value] of Object.entries(this.original))this.game[key]=value;this.original.pause.call(this.game,true);}
 }

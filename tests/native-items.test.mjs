@@ -55,9 +55,10 @@ test('hidden, noninteractive, distant, vertically separate, blocked and dead-pla
 });
 
 test('source model identity controls effects; names and arbitrary health-item models cannot grant meatbun healing', () => {
-  const { system } = fixture([item('Item01', '"Item02"'), item('肉包', '"Item07"'), item('Item01', '')]);
+  const seven=item('肉包','"Item07"');seven.root.position.x=1;
+  const { system } = fixture([item('Item01', '"Item02"'), seven, item('Item01', '')]);
   const hero=actor(),result=system.tryPickup(hero);assert.equal(result.ok,true);assert.equal(result.itemId,2);assert.equal(result.healed,0);assert.equal(hero.hp,1000);assert.equal(hero.maxHp,2000);
-  assert.equal(system.tryPickup(hero).ok,false,'unsupported Item07 cannot become a heal merely by its display name');
+  const stealth=system.tryPickup(hero);assert.equal(stealth.ok,true);assert.equal(stealth.itemId,7);assert.equal(stealth.healed,0);assert.equal(hero.hp,1000);assert.equal(hero.scriptItems.at(-1).statKey,10);
 });
 
 test('ground pickups apply native attack, defense and movement modifiers even at full HP and expire',()=>{
@@ -80,7 +81,7 @@ test('world buff duplicate refreshes without stacking and source poison buns act
   const poison=fixture([item('poison','Item0103')]);assert.equal(poison.system.tryPickup(hero).itemId,18);updateNativeScriptItems(hero,5.2);assert.equal(hero.hp,990);
 });
 test('unsupported effects stay unconsumed and full HP buns do not block a nearby usable buff',()=>{
-  for(const id of [6,7,9,32,33,39])assert.equal(nativeWorldItemEffect(itemRecords.get(id)),null);
+  for(const id of [6,9,32,33,39])assert.equal(nativeWorldItemEffect(itemRecords.get(id)),null);
   const {system,instances}=fixture([item('bun','Item01'),item('buff','Item03')]),hero=actor(1500);instances[1].root.position.x=1;
   assert.equal(system.tryPickup(hero).itemId,3);assert.equal(instances[0].attributes.active,1);
   const changed=structuredClone(itemRecords.get(3));changed.effects[0].words[6]=999;assert.equal(nativeWorldItemEffect(changed),null);

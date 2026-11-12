@@ -387,7 +387,7 @@ test('every listed ready command has a public-input route from the ground or a n
       assert.equal(hero.rage, 100 - move.rage - (move.continuationOf?.length ? NATIVE_MOVE_CATALOG.find(candidate=>candidate.weapon===move.weapon&&candidate.poseId===move.continuationOf[0]).rage : 0), `${move.id}: consume each prerequisite and command rage once on actual start`);
     }
   }
-  assert.equal(ready, 182); assert.equal(pending, 14);
+  assert.equal(ready, 183); assert.equal(pending, 13);
 });
 
 test('POS attack bone names resolve the actual original BNC bones without renaming the skeleton or inventing effect attachments', async () => {

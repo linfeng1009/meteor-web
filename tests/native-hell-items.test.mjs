@@ -21,5 +21,6 @@ test('original maxHP boost20 changes the clamp used by subsequent healing; clear
   useNativeScriptItem(target,item(20));assert.equal(target.maxHp,9999);assert.equal(target.activeItems.length,1);
   clearNativeScriptItems(target);assert.equal(target.maxHp,3000);assert.equal(target.hp,9999);assert.equal(target.activeItems.length,0);
   useNativeScriptItem(target,item(15));assert.equal(target.hp,3000,'native HP adjustment clamps to the restored effective maximum');
-  assert.equal(nativeScriptItemEffect(item(7)),null,'unrecovered stat10 consumer remains explicit instead of a fabricated invulnerability/rage buff');
+  assert.equal(nativeScriptItemEffect(item(7)).statKey,10,'recovered stat10 is invisibility, not invulnerability or rage');
+  assert.equal(nativeScriptItemEffect(item(7)).duration,60);
 });

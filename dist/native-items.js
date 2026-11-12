@@ -8,7 +8,7 @@ export const NATIVE_ITEM_PICKUP_PROFILE = Object.freeze({
     effect: 'Meteor.res type2/id1 Item01 肉包: stat2 mode0 value300, valueOffset53204; 004d4d30 clamps current HP to 0..effective maxHP.',
     interaction: 'Browser adapter: grounded automatic proximity pickup plus optional manual assist, horizontal radius1.8 world units, vertical tolerance2; exact EXE range/state gates remain unverified.',
     fullHp: 'Browser adapter: keep positive immediate HP/rage items when that resource is full; original full-HP consumption and item respawn timing remain unverified.',
-    scope: 'Verified world RES records1/2/3/4/5/8/16/17/18/27/28/29/30/31 and available original weapon-manifest records. Unsupported effects remain unconsumed; no automatic respawn.'
+    scope: 'Verified world RES records1/2/3/4/5/7/8/16/17/18/27/28/29/30/31 and available original weapon-manifest records. Unsupported effects remain unconsumed; no automatic respawn.'
   })
 });
 
@@ -33,11 +33,14 @@ export const NATIVE_SCRIPT_ITEM_PROVENANCE = Object.freeze({
   rageSkills: 'Original type2/id21 immediate rage-10; id41 stat5 mode1 value150 for900/10 seconds; id34 attack+40 for900/10 seconds; id40 defense+20 for1200/10 seconds; id37 immediate rage-5; id13 stat5 mode1 value30 for600/10 seconds. Stat5 scales Web movement using a100-point basis; exact native movement/network consumer remains unverified.',
   timing: '004b1e16 server and0048af49 client pass float32(.2). Each step expires before applying periodic effects;004d4e30 tests the old integer counter before adding trunc(counter+10*dt), applies at most once and resets to0. Web elapsed frames bridge to this source cadence; original wall-clock phase/network scheduling remain unverified.',
   maxHp: '004d5e30 stat1 adds the active modifier; removal restores maxHP without an invented immediate current-HP adjustment. 004d4d30 clamps the next HP adjustment.',
-  pending: 'id7 stat10+1 for600/10 seconds is not implemented until its native consumer is recovered; none of ids4/7/14/15/19/20 is an immediate rage effect. Poison removal is not inferred from item names.',
+  invisibility: 'Stat10: item7 for60s, item36 for120s;004c0020 serializes it,004fc980 rejects discovery,0048aeb0 invokes005591b0 with model default alpha0.1. Cached enemy retention remains independent.',
+  pending: 'None of ids4/7/14/15/19/20 is an immediate rage effect. Poison removal is not inferred from item names.',
   visuals: 'Original item EF presentation is pending; HUD status identifies the applied gameplay effect.'
 });
 
 const scriptItemSpecs = new Map([
+  [7, { statKey:10,value:1,lifetime:600,rate:10,effectType:-1,period:0,kind:'modifier' }],
+  [36, { statKey:10,value:1,lifetime:1200,rate:10,effectType:-1,period:0,kind:'modifier' }],
   [10, { statKey:5,mode:1,value:50,lifetime:150,rate:10,effectType:-1,period:0,kind:'modifier' }],
   [2, { statKey:1,value:500,lifetime:6000,rate:10,effectType:-1,period:0,kind:'modifier' }],
   [3, { statKey:4,value:20,lifetime:900,rate:10,effectType:-1,period:0,kind:'modifier' }],
@@ -82,6 +85,12 @@ export function nativeScriptItemEffect(record) {
 
 export function nativeRageMaximum(actor) {
   return nativeEffectiveStat(7, actor.nativeStats?.[7] ?? 100, [actor.weaponRecord, ...(actor.activeItems || [])]);
+}
+
+export function nativeIsInvisible(actor) {
+  if(!actor)return false;
+  if(actor.networkItemStatuses)return actor.networkItemStatuses.some(item=>item.statKey===10&&item.value!==0&&item.remaining>0);
+  return nativeEffectiveStat(10,actor.nativeStats?.[10]??0,[actor.weaponRecord,...(actor.activeItems||[])])!==0;
 }
 
 // Apply original weapon and active-item stat5 modifiers once to the host's
@@ -182,15 +191,15 @@ export function nativeMeatbunEffect(record) {
   return { itemId: record.id, name: record.name, model: normalizedModel(record.model), heal: effect.value, recordOffset: record.offset, valueOffset: effect.valueOffset };
 }
 
-const worldItemIds=new Set([2,3,4,5,8,16,17,18,27,28,29,30,31]);
+const worldItemIds=new Set([2,3,4,5,7,8,16,17,18,27,28,29,30,31]);
 export function nativeWorldItemEffect(record){
   const bun=nativeMeatbunEffect(record);
   if(bun)return {...bun,record,kind:'immediate',statKey:2,value:bun.heal,duration:0,description:`气血 +${bun.heal}`};
   if(!worldItemIds.has(record?.id)||!/^item\d+$/i.test(normalizedModel(record.model)))return null;
   const effect=nativeScriptItemEffect(record);if(!effect)return null;
   const heal=effect.kind==='immediate'&&effect.statKey===2&&effect.value>0?effect.value:0;
-  const stat={1:'气血上限',2:'气血',3:'攻击',4:'防御',5:'移速',6:'怒气'}[effect.statKey];
-  const value=effect.statKey===5?`${effect.value}%`:`${effect.value>0?'+':''}${effect.value}`;
+  const stat={1:'气血上限',2:'气血',3:'攻击',4:'防御',5:'移速',6:'怒气',10:'隐身'}[effect.statKey];
+  const value=effect.statKey===10?'生效':effect.statKey===5?`${effect.value}%`:`${effect.value>0?'+':''}${effect.value}`;
   const description=effect.period?`每${effect.period}秒${stat} ${value} · ${effect.duration}秒`:`${stat} ${value}${effect.duration?` · ${effect.duration}秒`:''}`;
   return {...effect,itemId:record.id,model:normalizedModel(record.model),heal,recordOffset:record.offset,valueOffset:record.effects[0].valueOffset,description};
 }

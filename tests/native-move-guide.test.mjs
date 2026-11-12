@@ -60,7 +60,7 @@ test('rage costs and unavailable projectile specials remain visible next to thei
   assert.match(guide('dagger'), /17 项指令/);
   assert.doesNotMatch(row('dagger', 259), /暂不可用/);
   assert.match(row('dagger', 343), /向后刺击，再接推开动作/);
-  assert.equal(NATIVE_WEAPON_FAMILIES.filter(family => family.available).reduce((sum, family) => sum + (guide(family.id).match(/暂不可用/g) || []).length, 0), 14);
+  assert.equal(NATIVE_WEAPON_FAMILIES.filter(family => family.available).reduce((sum, family) => sum + (guide(family.id).match(/暂不可用/g) || []).length, 0), 13);
   assert.match(row('hammer', 567), /增加20防御.*120秒/);
   assert.match(row('knuckle', 489), /增加40攻击.*90秒/);
   assert.match(row('qiankun', 451), /先用.*↓↓A.*拔刀式/);

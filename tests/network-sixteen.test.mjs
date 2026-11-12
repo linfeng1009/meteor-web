@@ -22,3 +22,11 @@ test('16人携带道具状态的有效大帧可经HTTP传输，不被旧32KB上�
 
 import {NetworkGame} from '../dist/network-game.js';
 test('16人混战只显示附近三人及锁定目标姓名牌，退出恢复可见性',()=>{const actors=Array.from({length:16},(_,i)=>{const root=new T.Group();root.position.x=i*2;return {networkId:String(i),root,nameplate:{visible:true}};});const game={hero:actors[0],enemies:actors.slice(1),locked:actors[15],pause(){},_clearDroppedWeapons(){}};const session=new NetworkGame(game,{host:true,playerId:'0'},{players:actors.map(a=>({id:a.networkId}))});session.updateNameplates();assert.equal(actors.filter(a=>a.nameplate.visible).length,4);assert.equal(actors[15].nameplate.visible,true);assert.equal(actors[8].nameplate.visible,false);session.dispose();assert.ok(actors.every(a=>a.nameplate.visible));});
+
+
+test('联机姓名牌不暴露隐身敌人，保留同队提示并在状态结束后恢复',()=>{
+ const actors=Array.from({length:4},(_,i)=>({networkId:String(i),root:new T.Group(),team:i===1?1:2,nameplate:{visible:true}}));actors[0].team=1;actors[1].nativeStats={10:1};actors[2].nativeStats={10:1};
+ const game={hero:actors[0],enemies:actors.slice(1),locked:actors[2],pause(){},_clearDroppedWeapons(){}};
+ const session=new NetworkGame(game,{host:true,playerId:'0'},{players:actors.map(a=>({id:a.networkId}))});
+ try{session.updateNameplates();assert.equal(actors[1].nameplate.visible,true);assert.equal(actors[2].nameplate.visible,false);actors[2].nativeStats[10]=0;session.updateNameplates();assert.equal(actors[2].nameplate.visible,true);}finally{session.dispose();}
+});

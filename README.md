@@ -1,5 +1,7 @@
 # 流星蝴蝶剑.net Web 原版移植
 
+**试玩地址：** [https://linfengya.cn/lx/](https://linfengya.cn/lx/)
+
 ![试玩截图 1](https://linfengya.cn/files/2026/11/ed177cce7c275e8f72b5c43a.png)
 
 ![试玩截图 2](https://linfengya.cn/files/2026/11/fc476100d4ceb443491372c6.png)

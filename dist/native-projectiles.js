@@ -94,10 +94,10 @@ export class NativeProjectileSystem {
     const blocked = sourcePosition && this.worldContact(sourcePosition, position, profile.radius);
     if (blocked) { shot.position.copy(blocked.center); shot.removed = true; this.onWorldHit(shot, blocked); return null; }
     while (this.active.length >= profile.maxActive) this.remove(this.active[0], 'capacity');
-    this.group.add(root); this.active.push(shot); return shot;
+    this.group.add(root); this.active.push(shot);this.onFlightSample?.(shot,'spawn'); return shot;
   }
   remove(shot, reason = 'removed') {
-    if (!shot || shot.removed) return; shot.removed = true; shot.removalReason = reason; shot.root.removeFromParent();
+    if (!shot || shot.removed) return;this.onFlightSample?.(shot,reason); shot.removed = true; shot.removalReason = reason; shot.root.removeFromParent();
     const index = this.active.indexOf(shot); if (index >= 0) this.active.splice(index, 1);
     // Original model geometry/material/textures are shared with the weapon cache.
     // Ownership remains there; deleting a shot must never dispose those assets.
@@ -126,6 +126,7 @@ export class NativeProjectileSystem {
         shot.position.copy(to); shot.velocity.y -= shot.profile.gravity * step; shot.root.position.copy(to); if (shot.visual) shot.visual.rotation.y += shot.profile.spin * step;
         if (shot.age >= shot.profile.lifetime) this.remove(shot, 'expired');
       }
+      if(!shot.removed)this.onFlightSample?.(shot,'update');
     }
   }
   clear(reason = 'clear') { for (const shot of [...this.active]) this.remove(shot, reason); }
@@ -203,7 +204,7 @@ export class NativeWheelSystem {
       phase: 'outbound', age: 0, travelled: 0, removed: false, profile: NATIVE_WHEEL_PROFILE };
     const wall = sourcePosition && worldSegmentContact(this, sourcePosition, position, shot.profile.radius);
     if (wall) { shot.position.copy(wall.center); root.position.copy(shot.position); shot.phase = 'return'; this.onWorldHit(shot, wall); }
-    this.active.push(shot); this.scene?.add(root); return shot;
+    this.active.push(shot); this.scene?.add(root);this.onFlightSample?.(shot,'spawn'); return shot;
   }
   update(dt) {
     if (this.disposed || this.paused || !(dt > 0) || !Number.isFinite(dt)) return;
@@ -226,10 +227,10 @@ export class NativeWheelSystem {
         else if (target) { shot.position.lerp(to, targetT); shot.phase = 'return'; this.onActorHit(shot, target, shot.position.clone()); }
         else { shot.position.copy(to); shot.travelled += distance; if (shot.travelled >= profile.distance - 1e-7) shot.phase = 'return'; }
       } else shot.position.copy(to);
-      shot.root.position.copy(shot.position); if (shot.visual) shot.visual.rotation.y += profile.spin * dt;
+      shot.root.position.copy(shot.position); if (shot.visual) shot.visual.rotation.y += profile.spin * dt;this.onFlightSample?.(shot,'update');
     }
   }
-  remove(shot) { shot.removed = true; shot.root.removeFromParent(); const i = this.active.indexOf(shot); if (i >= 0) this.active.splice(i, 1); if (shot.owner.weapon === 'wheel' && shot.owner.weaponModel) shot.owner.weaponModel.visible = true; }
-  clear() { for (const shot of [...this.active]) this.remove(shot); }
-  dispose() { this.clear(); this.disposed = true; }
+  remove(shot,reason='removed') { if(!shot||shot.removed)return;this.onFlightSample?.(shot,reason);shot.removed = true; shot.root.removeFromParent(); const i = this.active.indexOf(shot); if (i >= 0) this.active.splice(i, 1); if (shot.owner.weapon === 'wheel' && shot.owner.weaponModel) shot.owner.weaponModel.visible = true; }
+  clear(reason='clear') { for (const shot of [...this.active]) this.remove(shot,reason); }
+  dispose() { this.clear('dispose'); this.disposed = true; }
 }

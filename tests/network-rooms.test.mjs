@@ -94,6 +94,23 @@ test('飞镖飞轮快照可传输，重复标识、越界坐标及无效旋转�
  for(const shots of [[shot,shot],Array.from({length:81},(_,i)=>({...shot,id:i+1}))])assert.throws(()=>call(a,'sync',{frame:{...state,sequence:2,projectiles:shots}}),/无效/);
  call(a,'sync',{frame:{...state,sequence:2,projectiles:[]}});assert.deepEqual(call(b,'sync').frame.projectiles,[]);
 });
+
+test('真实短飞行历史可跨快照传递，乱序时间及超限路径被整体拒绝',()=>{
+ const {a,b,call}=playing(),state=frame(a,b),flight={kind:'dart',id:1,ownerId:a.playerId,weaponId:1,quaternion:[0,0,0,1],startTime:.9,endTime:.95,points:[{time:.9,position:[0,1,0],spin:0},{time:.95,position:[0,1,2],spin:1}]};
+ state.projectileFlights=[flight];call(a,'sync',{frame:state});assert.deepEqual(call(b,'sync').frame.projectileFlights,[flight]);
+ for(const patch of [{startTime:-1},{endTime:1.1},{endTime:.9},{startTime:.1},{points:[]},{points:[flight.points[0],flight.points[0]]},{points:[flight.points[1],flight.points[0]]},{points:[flight.points[0],{...flight.points[1],time:.94}]},{points:[flight.points[0],{...flight.points[1],position:[NaN,0,0]}]}]){
+  assert.throws(()=>call(a,'sync',{frame:{...state,sequence:2,projectileFlights:[{...flight,...patch}]}}),/无效/);assert.equal(call(b,'sync').frame.sequence,1);
+ }
+ assert.throws(()=>call(a,'sync',{frame:{...state,sequence:2,projectileFlights:[flight,flight]}}),/无效/);
+});
+
+test('远程命中关联投射物只接受有效种类序号及已发生时间',()=>{
+ const {a,b,call}=playing(),state=frame(a,b),event={id:1,time:1,point:[0,1,2],direction:[0,0,1],guarded:false,knockdown:false,blood:true,projectile:{kind:'dart',id:1}};
+ state.impacts=[event];call(a,'sync',{frame:state});assert.deepEqual(call(b,'sync').frame.impacts[0].projectile,event.projectile);
+ for(const patch of [{time:1.01},{projectile:{kind:'musket',id:1}},{projectile:{kind:'dart',id:0}},{projectile:{kind:'wheel',id:NaN}}])assert.throws(()=>call(a,'sync',{frame:{...state,sequence:2,impacts:[{...event,...patch}]}}),/无效/);
+ assert.throws(()=>call(a,'sync',{frame:{...state,sequence:2,time:.5,impacts:[{...event,time:.5}]}}),/无效/);
+ assert.equal(call(b,'sync').frame.sequence,1);
+});
 test('relay retains delivery until host confirmation, accepts repeat confirmation, and rejects guest or future acknowledgements',()=>{
   const {rooms,a,b,call}=playing(),input={action:'attack',active:true,sequence:1,angle:0};
   call(b,'sync',{input:[input]});const first=call(a,'sync');assert.deepEqual(call(a,'sync').input,first.input);

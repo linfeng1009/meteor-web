@@ -148,6 +148,16 @@ test('客人飞镖飞轮复用对应原GMC变体，正确缩放并在退出时�
  }finally{motion.dispose();}
 });
 
+test('房主固定步内发射并命中的短飞镖进入结束快照，记录从该逻辑步起点计时',async()=>{
+ const {game,hero,target}=await fixture('dart');hero.networkId='host';target.networkId='guest';target.root.position.set(0,.015,2.5);game.projectiles.onActorHit=()=>{};
+ let launched=false;game._stepWorld=function(dt){this.matchElapsed+=dt;if(!launched){launched=true;this.projectiles.spawn({owner:hero,position:v(0,1.35,0),direction:v(0,0,1),context:{weaponId:1}});}this.projectiles.update(dt);};
+ const before=game.projectiles.onFlightSample,session=new NetworkGame(game,{host:true,playerId:'host',send(){}},{players:[{id:'host'},{id:'guest'}]});session.active=true;
+ try{
+  for(let i=0;i<6;i++)game._stepWorld(1/60);const snapshot=session.snapshot();assert.equal(snapshot.projectiles.length,0);assert.equal(snapshot.projectileFlights.length,1);
+  const flight=snapshot.projectileFlights[0];assert.equal(flight.startTime,0);assert.ok(flight.endTime>0&&flight.endTime<snapshot.time);assert.equal(flight.points[0].time,0);assert.equal(flight.points.at(-1).time,flight.endTime);
+ }finally{session.dispose();assert.equal(game.projectiles.onFlightSample,before);}
+});
+
 test('客人乾坤在通用跑步片段按权威形态收刀入鞘，切回刀枪形态时恢复持法',async()=>{
  const {game,hero,target}=await fixture('qiankun');hero.networkId='guest';target.networkId='host';
  const session=new NetworkGame(game,{host:false,playerId:'guest',send(){}},{players:[{id:'host'},{id:'guest'}]});session.active=true;

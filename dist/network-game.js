@@ -7,7 +7,7 @@ import { battleCharacterSelection } from './character-appearances.js';
 const continuous=['forward','back','left','right','guard','crouch'];
 import {createPlayerControl,clearPlayerCommands,applyPlayerLook,PLAYER_LOOK_YAW_SCALE} from './player-control.js';
 import {nativeSameTeam} from './native-teams.js';
-import {networkProjectileSnapshot,NetworkProjectileMotion} from './network-projectiles.js';
+import {networkProjectileSnapshot,NetworkProjectileMotion,NetworkShortFlights} from './network-projectiles.js';
 export function networkPoseBlend(blend){
   if(!blend)return null;
   // Interrupted-hit snapshots stay local: transmit two frame descriptors,
@@ -88,7 +88,7 @@ export class NetworkGame{
   constructor(game,client,room){
     Object.assign(this,{game,client,room,active:false,sequence:0,lastFrame:0,actors:new Map([game.hero,...game.enemies].map(f=>[f.networkId,f]))});
     this.rules=roomRules(room);this.result=null;this.scores=new Map(room.players.map(p=>[p.id,{kills:0,deaths:0}]));
-    this.presentation=new NetworkReplicaMotion();this.projectilePresentation=client.host?null:new NetworkProjectileMotion(game,this.actors);
+    this.shortFlights=client.host?new NetworkShortFlights(game):null;this.presentation=new NetworkReplicaMotion();this.projectilePresentation=client.host?null:new NetworkProjectileMotion(game,this.actors);
     this.lastImpactId=0;game.combatFeedbackEvents=[];
     this.previousLootReplica=game.lootReplica;game.lootReplica=!client.host;
     this.controls=new Map();this.previousControls=new Map();
@@ -109,7 +109,7 @@ export class NetworkGame{
     game._updateFighter=function(f,dt){if(session.active&&client.host&&!session.result){if(session.rules.mode==='deathmatch'&&f.dead){const state=f.combat?.update(dt);if(state)f.character?.setPoseFrame(state.source,state.frame);return;}return session.original._updateFighter.call(game,f,dt);}};
     game._separateCharacters=function(dt){if(session.active&&client.host)return session.original._separateCharacters.call(game,dt);};
     game._updatePresentation=function(dt){if(session.active&&!client.host)for(const actor of session.actors.values())session.presentation.update(actor,dt);if(session.active&&!client.host)session.projectilePresentation.update(dt);session.original._updatePresentation.call(game,dt);session.boardTime=(session.boardTime||0)+dt;if(session.boardTime>.15){session.boardTime=0;session.updateBoard();session.updateNameplates();}};
-    game._stepWorld=function(dt){if(session.result)return;session.original._stepWorld?.call(game,dt);if(client.host&&session.active)session.checkFinished();};
+    game._stepWorld=function(dt){if(session.result)return;if(session.shortFlights)session.shortFlights.stepStart=game.matchElapsed;try{session.original._stepWorld?.call(game,dt);}finally{if(session.shortFlights)session.shortFlights.stepStart=null;}if(client.host&&session.active)session.checkFinished();};
     game._kill=function(target,options={}){
       const wasDead=target.dead;session.original._kill.call(game,target,options);
       if(!wasDead&&target.dead){
@@ -163,8 +163,8 @@ export class NetworkGame{
       this.game._actionFighter(actor,control,input.action,input.active);
     }
   }
-  snapshot(){if(!this.active||!this.client.host)return null;const g=this.game;return {sequence:++this.sequence,time:g.matchElapsed,result:this.result,loot:g._lootSnapshot?.(),projectiles:networkProjectileSnapshot(g),impacts:g._combatFeedbackSnapshot?.(),players:[...this.actors.values()].map(f=>({id:f.networkId,team:f.team,lockTargetId:this.game._controlFor?.(f)?.locked?.networkId??null,autoLockEnabled:this.game._controlFor?.(f)?.autoLockEnabled!==false,weaponId:f.weaponId,weaponMode:f.combat.weaponMode??'blade',weapon2Id:f.weapon2Id??null,pickupSerial:f.pickupSerial||0,statuses:(f.scriptItems||[]).map(item=>({id:item.id,name:item.name,statKey:item.statKey,remaining:item.remaining,value:item.value,period:item.period||0})),position:f.root.position.toArray(),angle:f.root.rotation.y,hp:f.hp,maxHp:f.maxHp,rage:f.rage,dead:f.dead,grounded:f.grounded,guard:f.guard,reactionPhase:f.combat.reactionPhase??null,queuedMoveName:f.combat.queuedMove?.name??null,musketAim:!!f.musketAim,aimPitch:this.game._controlFor?.(f)?.aimPitch||0,pose:f.combat.timeline?.pose.id||0,source:f.character.source??0,frame:f.character.frame??0,serial:f.combat.serial,effectTime:f.combat._effectElapsed||0,blend:networkPoseBlend(f.combat.poseBlend),context:f.combat.currentMove?{name:f.combat.currentMove.name||'',rage:f.combat.currentMove.rage||0,poseId:f.combat.currentMove.poseId,command:f.combat.currentMove.command||'',...(Number.isFinite(f.combat.currentMove.deathEffectTime)?{deathEffectTime:f.combat.currentMove.deathEffectTime,deathEffectAt:f.combat.currentMove.deathEffectAt}:{})}:null,...this.scores.get(f.networkId)}))};}
-  apply(frame){if(this.client.host||!this.active||frame.sequence<=this.lastFrame)return;this.lastFrame=frame.sequence;const g=this.game,duration=frame.time-this.presentationTime;this.presentationTime=frame.time;g.matchElapsed=frame.time;
+  snapshot(){if(!this.active||!this.client.host)return null;const g=this.game;return {sequence:++this.sequence,time:g.matchElapsed,result:this.result,loot:g._lootSnapshot?.(),projectiles:networkProjectileSnapshot(g),projectileFlights:this.shortFlights?.snapshot(this.actors)||[],impacts:g._combatFeedbackSnapshot?.(),players:[...this.actors.values()].map(f=>({id:f.networkId,team:f.team,lockTargetId:this.game._controlFor?.(f)?.locked?.networkId??null,autoLockEnabled:this.game._controlFor?.(f)?.autoLockEnabled!==false,weaponId:f.weaponId,weaponMode:f.combat.weaponMode??'blade',weapon2Id:f.weapon2Id??null,pickupSerial:f.pickupSerial||0,statuses:(f.scriptItems||[]).map(item=>({id:item.id,name:item.name,statKey:item.statKey,remaining:item.remaining,value:item.value,period:item.period||0})),position:f.root.position.toArray(),angle:f.root.rotation.y,hp:f.hp,maxHp:f.maxHp,rage:f.rage,dead:f.dead,grounded:f.grounded,guard:f.guard,reactionPhase:f.combat.reactionPhase??null,queuedMoveName:f.combat.queuedMove?.name??null,musketAim:!!f.musketAim,aimPitch:this.game._controlFor?.(f)?.aimPitch||0,pose:f.combat.timeline?.pose.id||0,source:f.character.source??0,frame:f.character.frame??0,serial:f.combat.serial,effectTime:f.combat._effectElapsed||0,blend:networkPoseBlend(f.combat.poseBlend),context:f.combat.currentMove?{name:f.combat.currentMove.name||'',rage:f.combat.currentMove.rage||0,poseId:f.combat.currentMove.poseId,command:f.combat.currentMove.command||'',...(Number.isFinite(f.combat.currentMove.deathEffectTime)?{deathEffectTime:f.combat.currentMove.deathEffectTime,deathEffectAt:f.combat.currentMove.deathEffectAt}:{})}:null,...this.scores.get(f.networkId)}))};}
+  apply(frame){if(this.client.host||!this.active||frame.sequence<=this.lastFrame||Number.isFinite(this.presentationTime)&&frame.time<this.presentationTime)return;this.lastFrame=frame.sequence;const g=this.game,duration=frame.time-this.presentationTime;this.presentationTime=frame.time;g.matchElapsed=frame.time;
     g._applyLootState?.(frame.loot);
     for(const state of frame.players){const f=this.actors.get(state.id);if(!f||!f.combat.data.poses.has(state.pose))continue;
       const previousFrame=f.character.frame,previousSerial=f.networkSerial;
@@ -190,11 +190,12 @@ export class NetworkGame{
       if(serial&&state.context)g._soundDefinition?.(pose.raw?.fields.effectid);
       if(f===g.hero){g.kills=state.kills;g.deaths=state.deaths;}
     }
-    this.projectilePresentation?.receive(frame.projectiles,duration);
+    this.projectilePresentation?.receive(frame.projectiles,duration,frame.projectileFlights,frame.time);
     const self=frame.players.find(state=>state.id===this.client.playerId);if(self&&Object.hasOwn(self,'lockTargetId')){const control=g.localControl||g;control.locked=self.lockTargetId?this.actors.get(self.lockTargetId)||null:null;control.autoLockEnabled=self.autoLockEnabled!==false;}
     for(const event of frame.impacts||[]){if(event.id<=this.lastImpactId)continue;this.lastImpactId=event.id;if(frame.time-event.time>.4)continue;
-      g._playCombatFeedback?.(event,event.attackerId===this.client.playerId||event.targetId===this.client.playerId);}
+      const local=event.attackerId===this.client.playerId||event.targetId===this.client.playerId;
+      if(event.projectile)this.projectilePresentation.scheduleFeedback(event,local);else g._playCombatFeedback?.(event,local);}
     if(frame.result){for(const actor of this.actors.values())this.presentation.update(actor,.15);this.projectilePresentation?.update(.15);this.finish(frame.result);}this.updateBoard();if(g.locked?.dead)g.locked=null;g._hud();
   }
-  dispose(){this.active=false;this.projectilePresentation?.dispose();if(this.matchSpawns&&this.game.currentMap?.spawns===this.matchSpawns)this.game.currentMap.spawns=this.previousSpawns;this.board?.remove();this.game.lootReplica=this.previousLootReplica;this.game.networkCombat=this.previousNetworkCombat;for(const actor of this.actors.values()){this.game.stealthFeedback?.clearActor(actor);delete actor.networkItemStatuses;delete actor.networkQueuedMoveName;delete actor.networkReactionPhase;if(actor.nameplate)actor.nameplate.visible=true;}this.game._clearDroppedWeapons?.();for(const [actor,previous] of this.previousControls){const control=this.controls.get(actor.networkId);control?.keys.clear();clearPlayerCommands(control);if(actor.playerControl===control){if(previous)actor.playerControl=previous;else delete actor.playerControl;}}for(const [key,value] of Object.entries(this.original))this.game[key]=value;this.original.pause.call(this.game,true);}
+  dispose(){this.active=false;this.projectilePresentation?.dispose();this.shortFlights?.dispose();if(this.matchSpawns&&this.game.currentMap?.spawns===this.matchSpawns)this.game.currentMap.spawns=this.previousSpawns;this.board?.remove();this.game.lootReplica=this.previousLootReplica;this.game.networkCombat=this.previousNetworkCombat;for(const actor of this.actors.values()){this.game.stealthFeedback?.clearActor(actor);delete actor.networkItemStatuses;delete actor.networkQueuedMoveName;delete actor.networkReactionPhase;if(actor.nameplate)actor.nameplate.visible=true;}this.game._clearDroppedWeapons?.();for(const [actor,previous] of this.previousControls){const control=this.controls.get(actor.networkId);control?.keys.clear();clearPlayerCommands(control);if(actor.playerControl===control){if(previous)actor.playerControl=previous;else delete actor.playerControl;}}for(const [key,value] of Object.entries(this.original))this.game[key]=value;this.original.pause.call(this.game,true);}
 }

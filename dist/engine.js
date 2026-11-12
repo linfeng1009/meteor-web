@@ -1364,7 +1364,7 @@ export class MeteorGame {
     this.combatFeedbackSerial=(this.combatFeedbackSerial||0)+1;
     const actors=[this.hero,...(this.enemies||[])];
     (this.combatFeedbackEvents||=[]).push({id:this.combatFeedbackSerial,time:this.matchElapsed||0,point:contact.toArray(),direction:direction.normalize().toArray(),guarded,knockdown,blood:!guarded&&confirmedDamage>0,bloodStyle:!guarded&&confirmedDamage>0?bloodStyle:undefined,
-      attackerId:actors.find(actor=>actor?.root===attacker.root)?.networkId,targetId:target.networkId,sound:prefix&&Number.isInteger(reactionPose)?`${prefix}${guarded?'GD':'BL'}${String(reactionPose).padStart(3,'0')}`:null});
+      attackerId:actors.find(actor=>actor?.root===attacker.root)?.networkId,targetId:target.networkId,projectile:Number.isInteger(extra.projectileId)?{kind:'dart',id:extra.projectileId}:Number.isInteger(extra.wheelId)?{kind:'wheel',id:extra.wheelId}:undefined,sound:prefix&&Number.isInteger(reactionPose)?`${prefix}${guarded?'GD':'BL'}${String(reactionPose).padStart(3,'0')}`:null});
     if(this.combatFeedbackEvents.length>32)this.combatFeedbackEvents.shift();
     if (attacker.hero && this.swordStyle === 'butterfly') this.butterflyVfx?.burst(contact, { guarded, knockdown, camera: this.camera });
     if (feedback) {

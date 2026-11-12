@@ -1,3 +1,4 @@
+import {networkSpawns} from './network-spawns.js';
 import {roomRules,matchResult,NETWORK_MODES} from './network-rules.js';
 import { battleCharacterSelection } from './character-appearances.js';
 // Listen-host simulation adapter: guests submit inputs, never HP/damage.
@@ -36,7 +37,7 @@ export class NetworkGame{
     game.pause(true);
     for(const f of game.enemies){game._disposeNameplate(f);f.character.dispose();f.root.removeFromParent();}
     game.enemies=[];await game._equip(game.hero,'sword');if(!valid())return null;game.setInfiniteRage(false);
-    const self=room.players.find(p=>p.id===client.playerId),created=[];let retained=false;
+    const self=room.players.find(p=>p.id===client.playerId),created=[];let retained=false,previousSpawns,matchSpawns;
     game.hero.name=self.name;game.hero.networkId=self.id;
     try{
       for(const player of room.players.filter(p=>p.id!==client.playerId)){
@@ -44,14 +45,16 @@ export class NetworkGame{
         const peer=await game._createFighter(selection.character,player.name,false,null,selection.characterAppearance);created.push(peer);
         if(!valid())return null;peer.networkId=player.id;game.scene.add(peer.root);game.enemies.push(peer);await game._equip(peer,'sword');if(!valid())return null;
       }
+      previousSpawns=game.currentMap.spawns;matchSpawns=networkSpawns(game,room.players.length);game.currentMap.spawns=matchSpawns;
       for(const player of room.players){
         const actor=player.id===self.id?game.hero:created.find(f=>f.networkId===player.id),index=room.players.indexOf(player);
         actor.team=actor.teamMask=room.mode==='deathmatch'?(player.team||index%2+1):1<<index;actor.spawnIndex=index;
         game._placeFighter(actor,game.currentMap.spawns[index%game.currentMap.spawns.length]);
         if(actor!==game.hero){game._disposeNameplate(actor);game._nameplate(actor);}
       }
-      const session=new NetworkGame(game,client,room);retained=true;return session;
-    }finally{if(!retained)for(const peer of created){game.enemies=game.enemies.filter(actor=>actor!==peer);game._disposeNameplate(peer);peer.disposed=true;peer.character.dispose();peer.root.removeFromParent();}}
+      if(game.localControl){game.localControl.locked=null;game.localControl.autoLockEnabled=true;}
+      const session=new NetworkGame(game,client,room);session.previousSpawns=previousSpawns;session.matchSpawns=matchSpawns;retained=true;return session;
+    }finally{if(!retained&&previousSpawns&&game.currentMap.spawns===matchSpawns)game.currentMap.spawns=previousSpawns;if(!retained)for(const peer of created){game.enemies=game.enemies.filter(actor=>actor!==peer);game._disposeNameplate(peer);peer.disposed=true;peer.character.dispose();peer.root.removeFromParent();}}
   }
 
   constructor(game,client,room){
@@ -66,18 +69,18 @@ export class NetworkGame{
     this.previousNetworkCombat=game.networkCombat;game.networkCombat=true;
     this.original={};for(const key of ['action','pause','releaseInput','_updateFighter','_updatePresentation','_separateCharacters','_kill','_stepWorld'])this.original[key]=game[key];
     const session=this;
-    if(typeof document!=='undefined'&&game.renderer?.domElement?.parentElement){this.board=document.createElement('aside');this.board.className='network-match-board';this.board.setAttribute('aria-label','联机比分');this.board.style.cssText='position:absolute;right:20px;top:110px;padding:12px 16px;background:#101818cc;border:1px solid #a88b5880;color:#eee7cf;white-space:pre-line;pointer-events:none;z-index:5;font:14px/1.7 system-ui';game.renderer.domElement.parentElement.append(this.board);}
+    if(typeof document!=='undefined'&&game.renderer?.domElement?.parentElement){this.board=document.createElement('aside');this.board.className='network-match-board';this.board.setAttribute('aria-label','联机比分');this.board.style.cssText='position:absolute;right:20px;top:110px;padding:12px 16px;background:#101818cc;border:1px solid #a88b5880;color:#eee7cf;white-space:pre-line;pointer-events:none;z-index:5;max-height:52vh;overflow:auto;font:12px/1.45 system-ui';game.renderer.domElement.parentElement.append(this.board);}
 
     game.action=function(name,down=true){
       if(!session.active||session.result||session.inputSuspended&&down)return;if(/^weapon/.test(name))return;
-      if(!client.host){if(name==='lock'&&down){game.locked=game.locked?null:game._nearest?.(Infinity,game.hero);game.cameraManualUntil=0;}client.send(name,down);return;}
+      if(!client.host){if(name==='lock'&&down){game._toggleCombatLock?.(game.hero,game.localControl||game);game.cameraManualUntil=0;}client.send(name,down);return;}
       return session.original.action.call(game,name,down);
     };
     game.releaseInput=function(options={}){if(options.releaseMouse!==false)session.inputSuspended=true;client.send('clear',false);session.original.releaseInput.call(game,options);};
     game.pause=function(value=true){session.inputSuspended=!!value;session.original.pause.call(game,session.result?true:session.active?false:value);if(value)game.mouseLook?.release();};
     game._updateFighter=function(f,dt){if(session.active&&client.host&&!session.result){if(session.rules.mode==='deathmatch'&&f.dead){const state=f.combat?.update(dt);if(state)f.character?.setPoseFrame(state.source,state.frame);return;}return session.original._updateFighter.call(game,f,dt);}};
     game._separateCharacters=function(dt){if(session.active&&client.host)return session.original._separateCharacters.call(game,dt);};
-    game._updatePresentation=function(dt){if(session.active&&!client.host)for(const actor of session.actors.values())session.presentation.update(actor,dt);session.original._updatePresentation.call(game,dt);session.boardTime=(session.boardTime||0)+dt;if(session.boardTime>.15){session.boardTime=0;session.updateBoard();}};
+    game._updatePresentation=function(dt){if(session.active&&!client.host)for(const actor of session.actors.values())session.presentation.update(actor,dt);session.original._updatePresentation.call(game,dt);session.boardTime=(session.boardTime||0)+dt;if(session.boardTime>.15){session.boardTime=0;session.updateBoard();session.updateNameplates();}};
     game._stepWorld=function(dt){if(session.result)return;session.original._stepWorld?.call(game,dt);if(client.host&&session.active)session.checkFinished();};
     game._kill=function(target,options={}){
       const wasDead=target.dead;session.original._kill.call(game,target,options);
@@ -103,6 +106,11 @@ export class NetworkGame{
     const players=[...this.actors].map(([id,f])=>({id,team:f.team,dead:f.dead,...this.scores.get(id)}));
     const result=matchResult(this.rules,players,this.game.matchElapsed);if(result)this.finish(result);
   }
+  updateNameplates(){
+    const hero=this.game.hero,near=[...this.actors.values()].filter(f=>f!==hero&&!f.dead&&!f.disposed).sort((a,b)=>a.root.position.distanceToSquared(hero.root.position)-b.root.position.distanceToSquared(hero.root.position));
+    const visible=new Set(near.slice(0,3));if(this.game.locked&&!this.game.locked.dead)visible.add(this.game.locked);
+    for(const actor of this.actors.values())if(actor.nameplate)actor.nameplate.visible=visible.has(actor);
+  }
   updateBoard(){
     if(!this.board)return;
     const rows=[`${NETWORK_MODES[this.rules.mode]} · 击杀 / 阵亡`];
@@ -123,7 +131,7 @@ export class NetworkGame{
       this.game._actionFighter(actor,control,input.action,input.active);
     }
   }
-  snapshot(){if(!this.active||!this.client.host)return null;const g=this.game;return {sequence:++this.sequence,time:g.matchElapsed,result:this.result,loot:g._lootSnapshot?.(),impacts:g._combatFeedbackSnapshot?.(),players:[...this.actors.values()].map(f=>({id:f.networkId,team:f.team,weaponId:f.weaponId,weapon2Id:f.weapon2Id??null,pickupSerial:f.pickupSerial||0,statuses:(f.scriptItems||[]).map(item=>({id:item.id,name:item.name,statKey:item.statKey,remaining:item.remaining,value:item.value,period:item.period||0})),position:f.root.position.toArray(),angle:f.root.rotation.y,hp:f.hp,maxHp:f.maxHp,rage:f.rage,dead:f.dead,grounded:f.grounded,guard:f.guard,musketAim:!!f.musketAim,aimPitch:this.game._controlFor?.(f)?.aimPitch||0,pose:f.combat.timeline?.pose.id||0,source:f.character.source??0,frame:f.character.frame??0,serial:f.combat.serial,effectTime:f.combat._effectElapsed||0,context:f.combat.currentMove?{name:f.combat.currentMove.name||'',rage:f.combat.currentMove.rage||0,poseId:f.combat.currentMove.poseId,command:f.combat.currentMove.command||''}:null,...this.scores.get(f.networkId)}))};}
+  snapshot(){if(!this.active||!this.client.host)return null;const g=this.game;return {sequence:++this.sequence,time:g.matchElapsed,result:this.result,loot:g._lootSnapshot?.(),impacts:g._combatFeedbackSnapshot?.(),players:[...this.actors.values()].map(f=>({id:f.networkId,team:f.team,lockTargetId:this.game._controlFor?.(f)?.locked?.networkId??null,autoLockEnabled:this.game._controlFor?.(f)?.autoLockEnabled!==false,weaponId:f.weaponId,weapon2Id:f.weapon2Id??null,pickupSerial:f.pickupSerial||0,statuses:(f.scriptItems||[]).map(item=>({id:item.id,name:item.name,statKey:item.statKey,remaining:item.remaining,value:item.value,period:item.period||0})),position:f.root.position.toArray(),angle:f.root.rotation.y,hp:f.hp,maxHp:f.maxHp,rage:f.rage,dead:f.dead,grounded:f.grounded,guard:f.guard,musketAim:!!f.musketAim,aimPitch:this.game._controlFor?.(f)?.aimPitch||0,pose:f.combat.timeline?.pose.id||0,source:f.character.source??0,frame:f.character.frame??0,serial:f.combat.serial,effectTime:f.combat._effectElapsed||0,context:f.combat.currentMove?{name:f.combat.currentMove.name||'',rage:f.combat.currentMove.rage||0,poseId:f.combat.currentMove.poseId,command:f.combat.currentMove.command||''}:null,...this.scores.get(f.networkId)}))};}
   apply(frame){if(this.client.host||!this.active||frame.sequence<=this.lastFrame)return;this.lastFrame=frame.sequence;const g=this.game,duration=frame.time-this.presentationTime;this.presentationTime=frame.time;g.matchElapsed=frame.time;
     g._applyLootState?.(frame.loot);
     for(const state of frame.players){const f=this.actors.get(state.id);if(!f||!f.combat.data.poses.has(state.pose))continue;
@@ -145,9 +153,10 @@ export class NetworkGame{
       if(serial&&state.context)g._soundDefinition?.(pose.raw?.fields.effectid);
       if(f===g.hero){g.kills=state.kills;g.deaths=state.deaths;}
     }
+    const self=frame.players.find(state=>state.id===this.client.playerId);if(self&&Object.hasOwn(self,'lockTargetId')){const control=g.localControl||g;control.locked=self.lockTargetId?this.actors.get(self.lockTargetId)||null:null;control.autoLockEnabled=self.autoLockEnabled!==false;}
     for(const event of frame.impacts||[]){if(event.id<=this.lastImpactId)continue;this.lastImpactId=event.id;if(frame.time-event.time>.4)continue;
       g._playCombatFeedback?.(event,event.attackerId===this.client.playerId||event.targetId===this.client.playerId);}
     if(frame.result){for(const actor of this.actors.values())this.presentation.update(actor,.15);this.finish(frame.result);}this.updateBoard();if(g.locked?.dead)g.locked=null;g._hud();
   }
-  dispose(){this.active=false;this.board?.remove();this.game.lootReplica=this.previousLootReplica;this.game.networkCombat=this.previousNetworkCombat;for(const actor of this.actors.values())delete actor.networkItemStatuses;this.game._clearDroppedWeapons?.();for(const [actor,previous] of this.previousControls){const control=this.controls.get(actor.networkId);control?.keys.clear();clearPlayerCommands(control);if(actor.playerControl===control){if(previous)actor.playerControl=previous;else delete actor.playerControl;}}for(const [key,value] of Object.entries(this.original))this.game[key]=value;this.original.pause.call(this.game,true);}
+  dispose(){this.active=false;if(this.matchSpawns&&this.game.currentMap?.spawns===this.matchSpawns)this.game.currentMap.spawns=this.previousSpawns;this.board?.remove();this.game.lootReplica=this.previousLootReplica;this.game.networkCombat=this.previousNetworkCombat;for(const actor of this.actors.values()){delete actor.networkItemStatuses;if(actor.nameplate)actor.nameplate.visible=true;}this.game._clearDroppedWeapons?.();for(const [actor,previous] of this.previousControls){const control=this.controls.get(actor.networkId);control?.keys.clear();clearPlayerCommands(control);if(actor.playerControl===control){if(previous)actor.playerControl=previous;else delete actor.playerControl;}}for(const [key,value] of Object.entries(this.original))this.game[key]=value;this.original.pause.call(this.game,true);}
 }

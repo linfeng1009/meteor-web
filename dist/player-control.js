@@ -1,6 +1,6 @@
 // Per-player gameplay input. Camera rendering and HUD stay on the local game.
 export function createPlayerControl({cameraAngle=0,lookLocked=false}={}) {
-  return {keys:new Set(),directionBuffer:[],recoveryAttack:null,traversalTap:null,locked:null,cameraAngle,aimPitch:0,lookLocked};
+  return {keys:new Set(),directionBuffer:[],recoveryAttack:null,traversalTap:null,locked:null,autoLockEnabled:true,cameraAngle,aimPitch:0,lookLocked};
 }
 export function clearPlayerCommands(control) {
   if(!control)return;

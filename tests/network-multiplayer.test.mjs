@@ -9,7 +9,7 @@ import {createPlayerControl} from '../dist/player-control.js';
 import * as T from '../dist/vendor/three.module.js';
 
 function room(mode='leader'){
- const rooms=new NetworkRooms(),host=rooms.create('房主',{mode}),players=[host,...['甲','乙','丙'].map(name=>rooms.join(host.room.code,name))];
+ const rooms=new NetworkRooms(),host=rooms.create('房主',{mode,maxPlayers:4}),players=[host,...['甲','乙','丙'].map(name=>rooms.join(host.room.code,name))];
  const call=(p,op,data={})=>rooms.request(host.room.code,p.token,op,{round:rooms.rooms.get(host.room.code)?.round||0,...data});
  const start=()=>{for(const p of players)call(p,'ready',{ready:true});call(host,'start');for(const p of players)call(p,'loaded');};
  const frame=(sequence=1)=>({sequence,time:1,players:players.map(p=>({id:p.playerId,position:[0,0,0],angle:0,hp:1000,maxHp:1000,rage:0,pose:6,source:0,frame:7400,serial:1,effectTime:0,kills:0,deaths:0}))});

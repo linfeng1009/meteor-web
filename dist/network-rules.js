@@ -1,8 +1,9 @@
-export const NETWORK_PROTOCOL=4;
+export const NETWORK_PROTOCOL=5;
+export const MAX_NETWORK_PLAYERS=16;
 export const NETWORK_MODES=Object.freeze({leader:'盟主',deathmatch:'死斗'});
 export function roomRules(input={}){
- const rules={mode:input.mode??'leader',maxPlayers:input.maxPlayers??4,scoreLimit:input.scoreLimit??10,timeLimit:input.timeLimit??600};
- if(!Object.hasOwn(NETWORK_MODES,rules.mode)||![2,3,4].includes(rules.maxPlayers)||![5,10,20].includes(rules.scoreLimit)||![300,600,900].includes(rules.timeLimit))throw Error('房间规则无效');
+ const rules={mode:input.mode??'leader',maxPlayers:input.maxPlayers??MAX_NETWORK_PLAYERS,scoreLimit:input.scoreLimit??10,timeLimit:input.timeLimit??600};
+ if(!Object.hasOwn(NETWORK_MODES,rules.mode)||(!Number.isInteger(rules.maxPlayers)||rules.maxPlayers<2||rules.maxPlayers>MAX_NETWORK_PLAYERS)||![5,10,20].includes(rules.scoreLimit)||![300,600,900].includes(rules.timeLimit))throw Error('房间规则无效');
  return rules;
 }
 export function matchResult(rules,players,time){

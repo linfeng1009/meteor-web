@@ -387,7 +387,7 @@ test('every listed ready command has a public-input route from the ground or a n
       assert.equal(hero.rage, 100 - move.rage, `${move.id}: consume rage once on actual start`);
     }
   }
-  assert.equal(ready, 179); assert.equal(pending, 17);
+  assert.equal(ready, 180); assert.equal(pending, 16);
 });
 
 test('POS attack bone names resolve the actual original BNC bones without renaming the skeleton or inventing effect attachments', async () => {

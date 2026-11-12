@@ -92,6 +92,6 @@ test('NPC direction programs use actual catalog roots, prerequisites and existin
   const spear = actor('spear'); assert.equal(nativeNpcMove(spear, 'bff').poseId, 293); assert.equal(nativeNpcMove(spear, 'fff').poseId, 571);
   assert.equal(nativeNpcMove(actor('hammer'), 'bff').poseId, 567);
   assert.equal(nativeNpcMove(actor('hammer'), 'bff').pending, undefined);
-  assert.ok(nativeNpcMove(actor('dual'), 'bbf').pending, 'unrecovered乘风 still reaches its resource gate');
+  assert.equal(nativeNpcMove(actor('dual'), 'bbf').pending, undefined, '乘风 is available to the same NPC resource gate');
   assert.equal(nativeNpcMove(f, 'invented-program'), null);
 });

@@ -61,7 +61,7 @@ test('long specials preserve their selected command and its actual readiness ins
   const golden = select({ weapon: 'hammer', ...taps(['down', 'up', 'up']) });
   assert.equal(golden.poseId, 567); assert.equal(golden.pending, undefined);
   const pending = select({ weapon: 'dual', ...taps(['down', 'down', 'up']) });
-  assert.equal(pending.poseId, 557); assert.ok(pending.pending, 'unimplemented乘风 still requires explicit rejection');
+  assert.equal(pending.poseId, 557); assert.equal(pending.pending,undefined,'乘风 now uses its original deferred speed item');
 });
 
 test('wrong-mode recognition preserves a full qiankun special and prioritizes the current mode on identical inputs', () => {

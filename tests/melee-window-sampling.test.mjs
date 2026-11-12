@@ -8,3 +8,12 @@ test('高速挥击两端未接触而中间帧经过目标时命中一次，相�
 test('效果独立时钟与远程投射物不重复按近战动作帧采样',()=>{const game=Object.create(MeteorGame.prototype);let samples=0;game._launchNativeProjectiles=()=>samples++;game._resolveContacts=()=>{};const actor={weapon:'dart',character:{setPoseFrame(){}}},state={source:0,frame:2,frameIntervals:[{from:0,to:2}]},attack={index:0,start:0,end:2,bones:['d_wpnR']};game._resolveAttackWindow(actor,state,attack);assert.equal(samples,1);actor.weapon='sword';game._resolveAttackWindow(actor,state,{...attack,bones:['effect']});assert.equal(samples,2);});
 
 test('POS最后一帧的小数区间保持有效，但不延长到下一源帧',()=>{assert.deepEqual(nativeAttackFrames({frame:7.8,frameIntervals:[{from:7.3,to:7.8}]},{start:5,end:7}),[7]);assert.deepEqual(nativeAttackFrames({frame:8.1,frameIntervals:[{from:8,to:8.1}]},{start:5,end:7}),[]);});
+
+
+test('混合骨骼与特效攻击补查近战中间帧，但原特效时钟只查询一次',()=>{
+ const game=Object.create(MeteorGame.prototype),target={id:2,root:new T.Group(),team:2},attacker={id:1,hero:true,root:new T.Group(),weapon:'sword',team:1,attackHits:new Set()};let frame=0,queries=0;const hits=[];
+ attacker.character={setPoseFrame(source,value){frame=value;},getAttachment:name=>name==='effect'?null:{getWorldPosition:r=>r.set(-2+frame*2,1.35,0)}};
+ Object.assign(game,{running:true,hero:attacker,enemies:[target],effectContacts:{sample(a,state){queries++;assert.equal(state.frameIntervals[0].to,2);return [];},contact(){return null;}},_resolveSceneContacts(){},_launchNativeProjectiles(){},_applyNativeHit(a,b,state){hits.push(state.frame);}});
+ game._resolveAttackWindow(attacker,{source:0,frame:2,frameIntervals:[{from:0,to:2}]},{index:0,start:0,end:2,bones:['d_wpnR','effect']});
+ assert.deepEqual(hits,[1]);assert.equal(queries,1);
+});

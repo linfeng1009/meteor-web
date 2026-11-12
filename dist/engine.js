@@ -1117,11 +1117,15 @@ export class MeteorGame {
   }
   _resolveAttackWindow(actor,segment,attack){
     // Projectile release and independent EF clocks retain their existing path.
-    const melee=!['dart','musket','wheel'].includes(actor.weapon)&&!attack.bones.includes('effect');
+    const melee=!['dart','musket','wheel'].includes(actor.weapon)&&attack.bones.some(bone=>bone!=='effect');
     const frames=melee?nativeAttackFrames(segment,attack):[clamp(segment.frame,attack.start,attack.end)];
-    for(const frame of frames){actor.character.setPoseFrame(segment.source,frame);const state={...segment,frame,attacks:[attack]};this._launchNativeProjectiles(actor,state);this._resolveContacts(actor,state);}
+    // Mixed bone/effect windows need crossed bone frames too. Their separate
+    // EF clock is queried once, rather than once per bone sample.
+    const effectVolumes=melee&&attack.bones.includes('effect')&&frames.length
+      ?this.effectContacts?.sample(actor,segment,attack,actor.combat?.fps)||[]:undefined;
+    for(const frame of frames){actor.character.setPoseFrame(segment.source,frame);const state={...segment,frame,attacks:[attack]};this._launchNativeProjectiles(actor,state);this._resolveContacts(actor,state,effectVolumes);}
   }
-  _resolveContacts(attacker, state) {
+  _resolveContacts(attacker, state, sampledEffectVolumes) {
     if (!this.running) return;
     const targets = attacker.playerControl ? [this.hero,...this.enemies].filter(f=>f!==attacker&&f.team!==attacker.team) : attacker.hero ? this.enemies.filter(f=>!this.networkCombat||f.team!==attacker.team) : this.mode === 'story' ? [this.hero, ...this.enemies].filter(f => f !== attacker && f.team !== attacker.team) : [this.hero];
     for (const attack of state.attacks) this._resolveSceneContacts(attacker, state, attack);
@@ -1131,7 +1135,7 @@ export class MeteorGame {
         if (name === 'weapon' && attacker.weaponModel) { for (const model of attacker.weaponModels?.length ? attacker.weaponModels : [attacker.weaponModel]) { const box = new THREE.Box3().setFromObject(model); points.push(box.getCenter(v3()), box.min.clone(), box.max.clone()); } }
         else { const bone = getNativeAttackAttachment(attacker.character, name); if (bone) points.push(bone.getWorldPosition(v3())); }
       }
-      const effectVolumes = this.effectContacts?.sample(attacker, state, attack, attacker.combat.fps) || [];
+      const effectVolumes = sampledEffectVolumes ?? (this.effectContacts?.sample(attacker, state, attack, attacker.combat.fps) || []);
       for (const target of targets) {
         const key = `${attack.index}:${target.id}`; if (!this.running || target.dead || target.disposed || target.scriptRemoved || attacker.attackHits.has(key)) continue;
         const center = target.root.position.clone().add(v3(0, 1.35, 0));

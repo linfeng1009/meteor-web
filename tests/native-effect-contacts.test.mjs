@@ -527,3 +527,52 @@ test('专诸鱼肠 second effect stage respects guard and disappears when interr
     if(!interrupt){assert.equal(hits[1].contactSource,'effect');assert.equal(hits[1].raw.defenseMove,3);}
   }
 });
+
+
+test('乘风 grants its original90-second movement item only after completion, refreshes and expires', async () => {
+  const {game,events}=await fixture([]),actor=game.hero;await game._equip(actor,'dual');
+  const base=nativeMovementScale(actor);
+  const walk=()=>{const start=actor.root.position.clone();game.action('forward');for(let i=0;i<30;i++)tick(game);game.action('forward',false);return actor.root.position.distanceTo(start);};
+  const before=walk();game._placeFighter(actor,{position:v(0,.015,0)});
+  actor.rage=99;manual(game,['back','back','forward']);assert.equal(actor.combat._attackChain,false);assert.equal(actor.scriptItems.length,0);
+  actor.rage=100;manual(game,['back','back','forward']);assert.equal(actor.combat.currentMove.poseId,557);assert.equal(actor.rage,0);
+  assert.equal(actor.scriptItems.length,0);settle(game);
+  assert.equal(actor.scriptItems[0].id,41);assert.ok(actor.scriptItems[0].remaining>89);
+  const buffed=nativeMovementScale(actor);assert.ok(Math.abs(buffed-base-.49)<1e-10);
+  const after=walk();assert.ok(Math.abs(after/before-buffed/base)<.03,'real travel follows the stat modifier, not only HUD text');
+  actor.rage=100;manual(game,['back','back','forward']);settle(game);
+  assert.equal(actor.scriptItems.length,1);assert.equal(actor.activeItems.filter(r=>r.id===41).length,1);
+  assert.equal(events.filter(e=>e.type==='self-item').at(-1).refreshed,true);
+  assert.equal(nativeMovementScale(actor),buffed);
+  updateNativeScriptItems(actor,91);assert.equal(actor.scriptItems.length,0);assert.equal(nativeMovementScale(actor),base);
+  actor.rage=100;manual(game,['back','back','forward']);actor.combat.react(103);settle(game);
+  assert.equal(actor.scriptItems.length,0,'interruption cannot grant a deferred buff');
+});
+
+test('合太极 and 凤凰羽 apply original item21 after victim gain and retain source guard bypass', async t => {
+  for(const [weapon,keys,pose] of [['dual',['back','left','right'],244],['sword',['left','right','forward'],368]]){
+    const position=v(0,0,weapon==='dual'?-3.2:1.5);
+    const {game,events}=await fixture([position]),target=game.enemies[0];await game._equip(game.hero,weapon);
+    target.rage=100;game.hero.rage=100;manual(game,keys);
+    for(let i=0;i<120&&!events.some(e=>e.type==='attack-item');i++)tick(game);
+    const hit=events.find(e=>e.type==='hit'&&e.poseId===pose);
+    assert.ok(hit);assert.equal(hit.raw.attackItem.id,21);assert.equal(hit.raw.attackItem.rageBefore,100);assert.equal(hit.raw.attackItem.rageAfter,90);
+    const guarded=await fixture([position]);await guarded.game._equip(guarded.game.hero,weapon);guarded.game.enemies[0].scriptControl.guard=true;guarded.game.hero.rage=100;
+    manual(guarded.game,keys);for(let i=0;i<120;i++)tick(guarded.game);
+    const block=guarded.events.find(e=>e.type==='hit'&&e.poseId===pose);assert.ok(block?.guardBypassed);assert.equal(block.guarded,false);assert.equal(block.raw.attackItem.id,21);
+  }
+});
+
+
+test('凤凰羽 original369 wave hits a distant target while leaving rear and off-path actors untouched',async()=>{
+ const {game,events}=await fixture([v(0,0,14),v(0,0,-14),v(20,0,14)]);await game._equip(game.hero,'sword');
+ game.hero.rage=100;manual(game,['left','right','forward']);assert.equal(game.hero.combat.timeline.pose.id,368);assert.equal(game.hero.rage,0);
+ const seen=new Set();for(let i=0;i<240;i++){tick(game);seen.add(game.hero.combat.timeline.pose.id);}
+ const hits=events.filter(e=>e.type==='hit'&&[368,369].includes(e.poseId));
+ assert.equal(hits.length,1);assert.equal(hits[0].poseId,369);assert.equal(hits[0].contactSource,'effect');assert.equal(hits[0].effectNode,'AttackWaveBox');
+ assert.ok(game.enemies[0].hp<10000);assert.equal(game.enemies[1].hp,10000);assert.equal(game.enemies[2].hp,10000);
+ assert.ok(game.hero.root.position.length()<.1,'the distant contact is not a character lunge or enlarged weapon');
+ assert.ok(seen.has(369));assert.equal(game.hero.combat.busy,false);assert.equal(events.filter(e=>e.type==='move').length,1);
+ const definition=manifest.effects.pos369,bytes=await readFile(new URL(`assets/original/${definition.source}`,dist));
+ assert.equal(createHash('sha256').update(bytes).digest('hex'),definition.sha256);
+});

@@ -34,6 +34,13 @@ export async function loadNativeRageVfx(scene) {
   const itemEffects=await fetch(new URL('./assets/original/item-vfx.json',import.meta.url)).then(r=>r.ok?r.json():{effects:{}}).catch(()=>({effects:{}}));
   const combatEffects=await fetch(new URL('./assets/original/combat-vfx.json',import.meta.url)).then(r=>r.ok?r.json():{effects:{}}).catch(()=>({effects:{}}));
   const manifest={...base,effects:{...combatEffects.effects,...base.effects,...itemEffects.effects}}, textures = new Map(), loader = new THREE.TextureLoader();
+  // A contact definition can share the exact EF with an ordinary visual.
+  // Preserve its bounded particle presentation when promoting it to the
+  // contact manifest; never transfer adapters between different source files.
+  for (const [id, visual] of Object.entries(combatEffects.effects || {})) {
+    if (visual.particleAdapter && manifest.effects[id]?.sha256 === visual.sha256)
+      manifest.effects[id] = {...manifest.effects[id], particleAdapter:true};
+  }
   try {
     await Promise.all(Object.entries(manifest.textures).filter(([, record]) => record.url).map(async ([name, record]) => {
       // Loading failures keep that visual hidden rather than drawing an opaque
@@ -65,9 +72,10 @@ export class NativeRageVfx {
     const hasEffect = this.actors.has(actor) || segments.some(s => this.manifest.effects[String(s.pose?.raw?.fields.effectid || '').toLowerCase()]);
     const hasDrag = segments.some(s => !s.blend && s.pose?.drags?.some(d => s.frameIntervals?.some(r => r.to >= d.start && r.from < d.end + 1)));
     if (!hasEffect && !hasDrag) return null;
-    const saved = { source: character.source, frame: character.frame }; let offset = 0, result = null;
+    const saved = { source: character.source, frame: character.frame, facing: actor.root.rotation.y }; let offset = 0, result = null;
     try {
       for (const segment of segments) {
+        if (Number.isFinite(segment.facing)) actor.root.rotation.y = segment.facing;
         // A single update can traverse several automatic POS links. Capture
         // every stage on its own skeleton, including native dummy reparenting.
         if (segment.blend && character.setPoseBlend) character.setPoseBlend(segment.blend.from, segment.blend.to, segment.blend.weight);
@@ -77,6 +85,7 @@ export class NativeRageVfx {
         offset += Math.max(0, segment.consumed || 0);
       }
     } finally {
+      actor.root.rotation.y = saved.facing;
       if (state.blend && character.setPoseBlend) character.setPoseBlend(state.blend.from, state.blend.to, state.blend.weight);
       else if (saved.source != null && saved.frame != null) character.setPoseFrame?.(saved.source, saved.frame);
       else character.setPoseFrame?.(state.source ?? state.pose?.source, state.frame);

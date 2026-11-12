@@ -190,13 +190,14 @@ test('NPC Attack2 chooses the original spear forward program and damages through
   assert.equal(actor.weapon, 'spear');
 });
 
-test('NPC long commands retain pending and rage gates, then pay once across the original293→294 link', async () => {
+test('NPC long commands use restored buffs and retain rage gates, then pay once across the original293→294 link', async () => {
   const { game, events } = await fixture();
   const stream = (...values) => { let index = 0; return () => (values[Math.min(index++, values.length - 1)] || 0) / 32768; };
   const config = { Think: 100, Guard: 0, Attack1: 0, Attack2: 0, Attack3: 100 };
   const actor = await opponent(game, 'dual', config, stream(0, 0, 0, 1, 3)); actor.rage = 100;
   game._npcCombatAction(actor, game.hero, true, { reach: 10 });
-  assert.ok(events.some(event => event.type === 'npc-decision' && event.poseId === 557 && !event.accepted)); assert.equal(actor.combat.busy, false); assert.equal(actor.rage, 100);
+  assert.ok(events.some(event => event.type === 'npc-decision' && event.poseId === 557 && event.accepted)); assert.equal(actor.combat.busy, true); assert.equal(actor.rage, 0);
+  game._placeFighter(actor,{position:actor.root.position.clone()});
   await game._equip(actor, 'spear'); actor.rage = 0; actor.npcCombat = new NativeNpcCombat(game.combatData.npcAi, { random: stream(0, 0, 0, 1, 7) });
   game._npcCombatAction(actor, game.hero, true, { reach: 10 });
   assert.ok(events.some(event => event.type === 'npc-decision' && event.poseId === 293 && !event.accepted)); assert.equal(actor.combat.busy, false);

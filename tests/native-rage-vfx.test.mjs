@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import * as THREE from '../dist/vendor/three.module.js';
-import { NativeRageVfx, sampleEffectKeys, RAGE_VFX_ADAPTER } from '../dist/native-rage-vfx.js';
+import { NativeRageVfx, loadNativeRageVfx, sampleEffectKeys, RAGE_VFX_ADAPTER } from '../dist/native-rage-vfx.js';
 import { NATIVE_MOVE_CATALOG } from '../dist/native-move-catalog.js';
 import { NativeCombatController, decodeNativeText, parsePos, parseAct } from '../dist/native-combat.js';
 import { WEAPON_TRAIL_ADAPTER } from '../dist/native-weapon-trails.js';
@@ -257,4 +257,33 @@ test('rapid casts never join separate trail windows, preserve pose blends and ke
   vfx.sample(actor, { pose, source: 0, frame: drag.start + 1, serial: 72, frameIntervals: [{ from: drag.start, to: drag.start + 1, timeFrom: 0, timeTo: .01 }] });
   assert.equal(vfx.trails.strips.length, 0, 'skins hiding native geometry retain their own weapon VFX');
   vfx.dispose();
+});
+
+
+test('同一逻辑步换招时特效与刀光使用各自历史朝向，结束及异常时恢复角色朝向',()=>{
+ const f=fixture();try{
+  f.actor.root.rotation.y=1.1;const sampled=[],trails=[];
+  f.vfx._sampleSegment=(actor,segment)=>{sampled.push(actor.root.rotation.y);};
+  f.vfx.trails.sample=actor=>trails.push(actor.root.rotation.y);
+  const first={...state(293,.1,null,1),facing:.2},second={...state(293,.2,null,2),facing:1.1};
+  f.vfx.sample(f.actor,{...second,segments:[first,second]});
+  assert.deepEqual(sampled,[.2,1.1]);assert.deepEqual(trails,[.2,1.1]);assert.equal(f.actor.root.rotation.y,1.1);
+  f.vfx.trails.sample=()=>{throw Error('interrupted sampling');};
+  assert.throws(()=>f.vfx.sample(f.actor,{...second,segments:[first]}),/interrupted sampling/);
+  assert.equal(f.actor.root.rotation.y,1.1);
+ }finally{f.vfx.dispose();}
+});
+
+
+test('完整加载器合并同源攻击定义时保留已存在的普通招式粒子表现',async()=>{
+ const f=fixture(),beforeFetch=globalThis.fetch,beforeLoad=THREE.TextureLoader.prototype.load;let loaded;
+ try{
+  globalThis.fetch=async input=>{try{return new Response(await readFile(new URL(input)));}catch{return new Response('',{status:404});}};
+  THREE.TextureLoader.prototype.load=function(url,done){const texture=new THREE.Texture();done(texture);return texture;};
+  loaded=await loadNativeRageVfx(f.scene);
+  assert.equal(loaded.manifest.effects.pos343.sha256,manifest.effects.pos343.sha256);
+  assert.equal(loaded.manifest.effects.pos343.particleAdapter,true);
+  const effect=loaded.sample(f.actor,state(343,.3,null));loaded.update(0);
+  assert.ok(effect.nodes.some(n=>n.mesh?.isPoints&&n.mesh.visible),'importing contact bounds must not remove the existing lightweight visual');
+ }finally{loaded?.dispose();f.vfx.dispose();globalThis.fetch=beforeFetch;THREE.TextureLoader.prototype.load=beforeLoad;}
 });

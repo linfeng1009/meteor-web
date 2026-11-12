@@ -96,7 +96,7 @@ test('catalog scope and unresolved projectile commands are explicit rather than 
   for (const move of pending) assert.ok(move.rage > 0 || move.kind === 'movement' || ['knuckle-412', 'knuckle-413', 'ninja-470'].includes(move.id), move.id);
   assert.deepEqual(poses.get(259).attacks.map(attack => attack.bones), [['effect']], '阎罗 cannot damage through a fabricated weapon hit');
   assert.equal(byPose('dagger', 259).pending, undefined);
-  assert.match(byPose('dagger', 343).notes, /第二段.*尚未恢复/);
+  assert.match(byPose('dagger', 343).notes, /第二段.*effect窗推开/);
   assert.equal(getNativeMoves('dart').some(move => move.stance === 'air' && move.input.join() === 'down,attack'), false,
     'the original dart table has no air down-A stab');
   const starters = new Set();
@@ -121,5 +121,5 @@ test('every usable command has a source bone, projectile or supported original e
   }
   assert.ok(poses.get(343).attacks[0].bones.some(bone => bone === 'weapon'));
   assert.deepEqual(poses.get(343).attacks[1].bones, ['effect']);
-  assert.match(byPose('dagger', 343).notes, /第一段.*可用.*第二段.*尚未恢复/);
+  assert.ok(effectManifest.effects.pos343.nodes.some(node => node.name === 'AttackBox' && nativeEffectBounds(node)), 'the second pure-effect window requires its actual source bound');
 });

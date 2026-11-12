@@ -45,7 +45,7 @@ move('dagger', 251, 'UA', '旱魃', { continuationOf: [250], command: '↑A↑A'
 move('dagger', 253, 'UUA', '曹沫举顶');
 move('dagger', 370, 'LA', '荆轲现匕', { notes: '原版 POS 自动衔接 371 回踢' });
 move('dagger', 255, 'RA', '聂政屠犬');
-move('dagger', 343, 'DA', '专诸鱼肠', { notes: '第一段骨骼攻击可用；第二段仅特效攻击窗，尚未恢复' });
+move('dagger', 343, 'DA', '专诸鱼肠', { notes: '原骨骼与AttackBox共同判定第一段，第二段按独立effect窗推开；原粒子发射器仍待恢复' });
 move('dagger', 257, 'DUA', '豫让三伏', { notes: '原版 POS 自动衔接 258 血祭' });
 move('dagger', 558, 'DDA', '暗犽', { rage: 60 });
 move('dagger', 259, 'DUUA', '阎罗', { rage: 100, notes: '原effect攻击盒命中，进入109受击；自动接349收招。粒子视觉与精确人物接触体仍待恢复。' });

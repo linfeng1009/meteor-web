@@ -476,3 +476,54 @@ test('雷神锥真实飞镖命中施加原钝筋，刷新不叠加且移动恢�
  assert.ok(guarded.events.some(e=>e.type==='hit'&&e.poseId===209&&e.guarded));
  assert.equal(guarded.game.enemies[0].scriptItems.length,0);assert.equal(nativeMovementScale(guarded.game.enemies[0]),1);
 });
+
+
+test('dagger 专诸鱼肠 resolves its two original windows independently through public input', async () => {
+  const {game,events}=await fixture([v(.4,0,-2.8)]),target=game.enemies[0];
+  await game._equip(game.hero,'dagger');
+  const textures=new Map(Object.entries(manifest.textures).filter(([,r])=>r.url).map(([id])=>[id,new THREE.Texture()]));
+  game.rageVfx=new NativeRageVfx({scene:game.scene,manifest,textures});const visible=new Set();
+  game.action('back');game.action('back',false);game.action('attack');
+  assert.equal(game.hero.combat.timeline.pose.id,343);
+  let secondReaction=false;
+  for(let i=0;i<150;i++){
+    tick(game);game.rageVfx.update(1/60);secondReaction ||= target.combat.timeline.pose.id===97;
+    for(const effect of game.rageVfx.active)for(const node of effect.nodes)if(node.mesh?.visible){visible.add(node.source.name);assert.ok(node.mesh.matrix.elements.every(Number.isFinite));}
+  }
+  const hits=events.filter(e=>e.type==='hit'&&e.poseId===343);
+  assert.equal(hits.length,2,'one contact per independent POS window, never per sampled frame');
+  assert.deepEqual(hits.map(e=>e.raw.targetValue),[.5,0]);
+  assert.ok(hits[0].amount>0);assert.equal(hits[1].amount,hits[0].amount);
+  assert.equal(target.hp,10000-hits[0].amount-hits[1].amount);
+  assert.deepEqual(hits.map(e=>e.raw.selectedTargetPose),[110,97]);
+  assert.equal(hits[1].contactSource,'effect');assert.equal(hits[1].effectNode,'AttackBox');
+  assert.ok(secondReaction,'second stage applies its authored knockback reaction');
+  assert.equal(game.hero.combat.busy,false);
+  assert.ok(visible.has('Board_8'));assert.ok(visible.has('Waves01'));
+  assert.equal(visible.has('AttackBox'),false,'invisible attack geometry never becomes an opaque visual box');
+  assert.equal(game.rageVfx.active.length,0);
+});
+
+test('专诸鱼肠 preserves original attack bounds, keys and source windows', async () => {
+  const effect=manifest.effects.pos343,bytes=await readFile(new URL(`assets/original/${effect.source}`,dist));
+  assert.equal(createHash('sha256').update(bytes).digest('hex'),effect.sha256);
+  const node=effect.nodes.find(n=>n.name==='AttackBox');
+  assert.deepEqual(node.dimensions,[5,5,20]);assert.deepEqual(node.bindings,['Character','Character']);
+  assert.deepEqual(data.poses.get(343).attacks.map(a=>[a.start,a.end]),[[9590,9591],[9602,9603]]);
+  assert.deepEqual(data.poses.get(343).attacks[1].bones,['effect']);
+});
+
+test('专诸鱼肠 second effect stage respects guard and disappears when interrupted', async () => {
+  for(const interrupt of [false,true]){
+    const {game,events}=await fixture([v(.4,0,-2.8)]),target=game.enemies[0];
+    await game._equip(game.hero,'dagger');target.scriptControl.guard=true;
+    game.action('back');game.action('back',false);game.action('attack');
+    while(game.hero.combat.timeline.pose.id===343&&game.hero.combat.timeline.frame<9595)tick(game);
+    if(interrupt)game.hero.combat.react(110,{duration:.5});
+    for(let i=0;i<150;i++)tick(game);
+    const hits=events.filter(e=>e.type==='hit'&&e.poseId===343);
+    assert.equal(hits.length,interrupt?1:2);assert.ok(hits.every(e=>e.guarded));
+    assert.equal(target.hp,10000);
+    if(!interrupt){assert.equal(hits[1].contactSource,'effect');assert.equal(hits[1].raw.defenseMove,3);}
+  }
+});

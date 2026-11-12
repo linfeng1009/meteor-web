@@ -49,7 +49,11 @@ def read_effect(path):
     return dict(id=path.stem.lower(),source=f'sounds/definitions/{path.name}',sha256=hashlib.sha256(data).hexdigest(),nodes=nodes)
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--source',type=Path,default=Path('/Users/dulinfeng/Downloads/流星86726/lxhdj_'));parser.add_argument('--include-pose',type=int,action='append',default=[],help='Import an additional original pose/link chain for inspection without enabling its command');args=parser.parse_args()
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--source',type=Path,default=Path('/Users/dulinfeng/Downloads/流星86726/lxhdj_'))
+    parser.add_argument('--include-pose',type=int,action='append',default=[],help='Import an additional original pose/link chain for inspection without enabling its command')
+    parser.add_argument('--extend-existing',action='store_true',help='Merge requested EF definitions using only textures already imported')
+    args=parser.parse_args()
     source=args.source; output=ROOT/'dist/assets/original/rage-vfx';output.mkdir(parents=True,exist_ok=True)
     # Discover enabled rage commands from the same runtime catalog, retaining
     # every automatic POS link. This also tracks newly ported weapon families.
@@ -60,6 +64,24 @@ const poses=parsePos(decodeNativeText(readFileSync('dist/assets/native/combat/P0
 for(const move of [...NATIVE_MOVE_CATALOG.filter(m=>m.rage&&!m.pending),...process.argv.slice(1).map(id=>({poseId:Number(id),weapon:'asset-inspection'}))]){let id=move.poseId,seen=new Set();while(!seen.has(id)&&poses.has(id)){seen.add(id);const p=poses.get(id),effectId=p.raw.fields.effectid;if(effectId)effects.set(effectId.toLowerCase(),{id:effectId.toLowerCase(),poseId:id,weapon:move.weapon,start:p.start,end:p.end});id=p.link;}}
 process.stdout.write(JSON.stringify([...effects.values()]));'''
     requested=json.loads(subprocess.run(['node','--input-type=module','-e',code,*map(str,args.include_pose)],cwd=ROOT,check=True,capture_output=True,text=True).stdout)
+    if args.extend_existing:
+        # Preserve prior explicitly imported poses and extracted texture records.
+        # Validate the complete batch before writing; never silently omit images.
+        manifest_path=output/'manifest.json'
+        manifest=json.loads(manifest_path.read_text(encoding='utf-8'))
+        added={}
+        for request in requested:
+            if request['id'] in manifest['effects']: continue
+            effect=read_effect(ROOT/f'dist/assets/original/sounds/definitions/{request["id"]}.ef')
+            for node in effect['nodes']:
+                texture=node['texture']
+                if node['type']!='AUDIO' and texture and texture not in manifest['textures']:
+                    raise ValueError(f'Texture requires full archive extraction: {texture}')
+            added[effect['id']]=effect
+        manifest['effects'].update(added)
+        manifest_path.write_text(json.dumps(manifest,ensure_ascii=False,separators=(',',':'))+'\n',encoding='utf-8')
+        print(json.dumps(dict(added=list(added),sourceHashes={k:v['sha256'] for k,v in added.items()})))
+        return
     evidence_dir=ROOT/'work/rage-vfx';evidence_dir.mkdir(parents=True,exist_ok=True)
     (evidence_dir/'requested-effects.json').write_text(json.dumps(requested,ensure_ascii=False,indent=2)+'\n')
     archives=[]

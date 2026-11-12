@@ -24,9 +24,10 @@ function effectGeometry(node) {
       .translate(0, 0, node.flags[0] === 1 ? d[2] / 2 : 0);
   }
   if (node.type === 'SPHERE') {
-    const start = THREE.MathUtils.degToRad(d[3]), arc = THREE.MathUtils.degToRad(THREE.MathUtils.clamp(d[4] - d[3], 1, 360));
-    const polar = THREE.MathUtils.degToRad(90 - d[2]), span = THREE.MathUtils.degToRad(THREE.MathUtils.clamp(d[2] - d[1], 1, 180));
-    return new THREE.SphereGeometry(Math.abs(d[0]), 24, 12, start, arc, polar, span).rotateX(Math.PI / 2);
+    // 00584e50/00585130 draw a shared full unit sphere scaled by radius;
+    // the authored angle limits belong to 00584f70 particle point sampling.
+    // 0047d2c0/0047d000 map U to longitude90..450 and V to latitude-90..90.
+    return new THREE.SphereGeometry(Math.abs(d[0]), 24, 12).rotateX(Math.PI / 2).rotateZ(-Math.PI / 2);
   }
   return null;
 }

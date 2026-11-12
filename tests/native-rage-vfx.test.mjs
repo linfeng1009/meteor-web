@@ -413,3 +413,36 @@ test('圆柱特效遵循原网格圆周方向，虬龙扫暴阵半圆位于原�
     assert.ok(checked > 20, `checked ${checked} original cylinder nodes`);
   } finally { f.vfx.dispose(); }
 });
+
+
+test('原球形特效显示完整共享球面，发射角度只约束粒子取点而不裁切显示', async () => {
+  const combat = JSON.parse(await readFile(new URL('../dist/assets/original/combat-vfx.json', import.meta.url), 'utf8'));
+  const combined = { ...manifest, effects: { ...combat.effects, ...manifest.effects } }, f = fixture(); let checked = 0;
+  try {
+    f.vfx.manifest = combined;
+    for (const [id, definition] of Object.entries(combined.effects)) {
+      if (!definition.nodes.some(n => n.type === 'SPHERE' && n.texture && n.dimensions?.length === 5)) continue;
+      assert.equal(createHash('sha256').update(await readFile(new URL(`../dist/assets/original/${definition.source}`, import.meta.url))).digest('hex'), definition.sha256);
+      const effect = f.vfx._create(f.actor, { serial: checked + 1 }, id);
+      for (const node of effect.nodes) {
+        if (node.source.type !== 'SPHERE' || !node.mesh) continue;
+        const radius = Math.abs(node.source.dimensions[0]), geometry = node.mesh.geometry;
+        const p = geometry.attributes.position, uv = geometry.attributes.uv;
+        for (let i = 0; i < p.count; i++) {
+          const longitude = (90 + 360 * uv.getX(i)) * Math.PI / 180, latitude = (-90 + 180 * uv.getY(i)) * Math.PI / 180;
+          const expected = new THREE.Vector3(Math.cos(longitude) * Math.cos(latitude), Math.sin(longitude) * Math.cos(latitude), Math.sin(latitude)).multiplyScalar(radius);
+          const actual = new THREE.Vector3().fromBufferAttribute(p, i);
+          assert.ok(actual.distanceTo(expected) < 3e-5, `${id}/${node.source.name} native sphere vertex${i}: ${actual.toArray()} versus ${expected.toArray()}`);
+        }
+        geometry.computeBoundingBox();
+        for (const axis of ['x', 'y', 'z']) {
+          assert.ok(Math.abs(geometry.boundingBox.min[axis] + radius) < 1e-5, `${id} full negative ${axis}`);
+          assert.ok(Math.abs(geometry.boundingBox.max[axis] - radius) < 1e-5, `${id} full positive ${axis}`);
+        }
+        checked++;
+      }
+      f.vfx._remove(effect);
+    }
+    assert.ok(checked >= 178);
+  } finally { f.vfx.dispose(); }
+});

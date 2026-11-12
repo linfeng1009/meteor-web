@@ -214,7 +214,15 @@ for (const seed of [1, 2, 3, 4]) test(`walking normally into the source enemies 
   // player need not be chased forever, so use ordinary movement to approach
   // the living enemies rather than overriding that original script intent.
   for (let frame = 0; frame < 3600 && game.running; frame++) {
-    const enemy = game._nearest(), delta = enemy.root.position.clone().sub(game.hero.root.position);
+    // A changed defense draw can move a guard behind a wall. The test player
+    // approaches visible opponents first and uses the already-verified source
+    // waypoint route when sight is blocked, rather than walking into that wall
+    // forever and expecting attacks to pass through it.
+    const visible=game.enemies.filter(actor=>!actor.dead&&!actor.disposed&&game.hasScriptLineOfSight(game.hero,actor))
+      .sort((a,b)=>a.root.position.distanceToSquared(game.hero.root.position)-b.root.position.distanceToSquared(game.hero.root.position));
+    const enemy = visible[0]||game._nearest();
+    const goal=visible.length?enemy.root.position:host.moveViaWaypoint(game.hero,host.closestWaypoint(enemy.root.position)?.id)||enemy.root.position;
+    const delta = goal.clone().sub(game.hero.root.position);
     if (frame % 300 === 0) recent.push({ time: game.matchElapsed, hp: game.hero.hp, position: game.hero.root.position.toArray(),
       enemies: game.enemies.map(actor => ({ id: actor.scriptId, position: actor.root.position.toArray(), intent: actor.scriptIntent?.mode,
         paused: actor.scriptControl?.paused, canAttack: actor.scriptControl?.canAttack, distance: actor.root.position.distanceTo(game.hero.root.position),

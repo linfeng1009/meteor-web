@@ -216,6 +216,20 @@ test('crouch walking plays each original directional loop and resumes crouch idl
   }
 });
 
+test('NPC 蹲下决策播放原蹲姿并按步幅行走，格挡和受击仍优先',()=>{
+  const state=fixture();try{
+    const {game,hero}=state;hero.hero=false;hero.npcCombat={crouch:true,guard:false,advance:()=>false};
+    hero.scriptControlled=true;hero.scriptControl={moveTarget:v(0,.015,-20),speedScale:1};
+    game.hasScriptLineOfSight=()=>true;game._npcCombatAction=()=>{};
+    for(let i=0;i<30;i++)game._updateFighter(hero,1/60);
+    const start=hero.root.position.clone();for(let i=0;i<30;i++)game._updateFighter(hero,1/60);
+    assert.equal(hero.combat.timeline.pose.id,NATIVE_CROUCH_POSES.forward);
+    assert.ok(Math.abs(hero.root.position.distanceTo(start)-nativeStrideSpeed(0,NATIVE_CROUCH_POSES.forward)*.68*.5)<.03);
+    hero.npcCombat.guard=true;game._updateFighter(hero,1/60);assert.equal(hero.combat.timeline.pose.id,15);
+    hero.combat.react(103);game._updateFighter(hero,1/60);assert.equal(hero.combat.timeline.pose.id,103);
+  }finally{state.dispose();}
+});
+
 test('mouse-facing movement uses native side/back steps instead of playing forward run backwards',()=>{
   for(const [direction,poseId] of Object.entries(NATIVE_GROUND_MOVE_POSES)){
     const state=fixture();

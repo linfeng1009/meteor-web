@@ -168,7 +168,7 @@ async function opponent(game, weapon, config, random) {
 }
 
 test('NPC source Guard weight drives real guard reactions instead of always restarting a basic attack', async () => {
-  const { game, events } = await fixture(), actor = await opponent(game, 'sword', { Think: 100, Guard: 100, Attack1: 0, Attack2: 0, Attack3: 0 }, () => 0);
+  const { game, events } = await fixture(), actor = await opponent(game, 'sword', { Think: 100, Guard: 100, Attack1: 0, Attack2: 0, Attack3: 0 }, () => 1 / 32768);
   await game._equip(game.hero, 'spear');
   for (let frame = 0; frame < 120 && !actor.guard; frame++) tick(game);
   assert.equal(actor.guard, true);
@@ -178,6 +178,18 @@ test('NPC source Guard weight drives real guard reactions instead of always rest
   assert.ok(hit?.guarded); assert.equal(actor.hp, actor.maxHp);
   assert.ok(events.some(event => event.type === 'npc-decision' && event.kind === 'guard'));
   assert.equal(events.some(event => event.type === 'npc-decision' && event.kind === 'attack'), false);
+});
+
+test('NPC 原防御抽样的蹲守分支使用真实蹲姿，不伪装成格挡或攻击',async()=>{
+  const {game,events}=await fixture(),actor=await opponent(game,'sword',{Think:100,Guard:100,Attack1:0,Attack2:0,Attack3:0},()=>0);
+  for(let frame=0;frame<120&&!actor.npcCombat.crouch;frame++)tick(game);
+  assert.equal(actor.npcCombat.crouch,true);assert.equal(actor.guard,false);
+  tick(game);assert.ok([10,145,146,147,148].includes(actor.combat.timeline.pose.id));
+  assert.ok(events.some(event=>event.type==='npc-decision'&&event.kind==='guard'&&event.defense==='crouch'));
+  assert.equal(events.some(event=>event.type==='npc-decision'&&event.kind==='attack'),false);
+  actor.scriptConfig={Think:100,Guard:0,Attack1:0,Attack2:0,Attack3:0};
+  for(let frame=0;frame<120&&actor.npcCombat.crouch;frame++)tick(game);
+  assert.equal(actor.npcCombat.crouch,false);assert.equal(actor.guard,false);
 });
 
 test('NPC Attack2 chooses the original spear forward program and damages through its real285 pose', async t => {

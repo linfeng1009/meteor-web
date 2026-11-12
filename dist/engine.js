@@ -986,14 +986,14 @@ export class MeteorGame {
     }
     if (!due || !f.npcCombat) return;
     const profile = f.npcCombat.data.profiles[f.weapon];
-    if (!nativeNpcInRange(f, target, profile)) { f.npcCombat.guard = false; f.guard = false; return; }
+    if (!nativeNpcInRange(f, target, profile)) { f.npcCombat.guard = false; f.npcCombat.crouch = false; f.guard = false; return; }
     const choice = f.npcCombat.choose(f, { canAttack: () => nativeNpcFacing(f, target, profile) });
     if (choice.kind === 'attack' && choice.program != null) {
       const move = nativeNpcMove(f, choice.program, this.elapsed);
       const accepted = !!move && this._beginAttack(f, { npcMove: move });
       this.onEvent?.({ type: 'npc-decision', actorId: f.scriptId ?? f.id, kind: 'attack', category: choice.category,
         program: choice.program, poseId: move?.poseId, accepted });
-    } else this.onEvent?.({ type: 'npc-decision', actorId: f.scriptId ?? f.id, kind: choice.kind });
+    } else this.onEvent?.({ type: 'npc-decision', actorId: f.scriptId ?? f.id, kind: choice.kind, defense: choice.defense });
     f.guard = f.npcCombat.guard && !f.combat.busy;
   }
   _updateFighter(f, dt) {
@@ -1089,7 +1089,7 @@ export class MeteorGame {
         const facingMove=control&&(control.lookLocked||control.mouseLook?.locked||control.locked&&!control.locked.dead&&!control.locked.disposed);
         const groundMove=facingMove?(NATIVE_GROUND_MOVE_POSES[nativeTraversalDirection(control.keys)]??(f.heldPose>=141&&f.heldPose<=143?f.heldPose:NATIVE_LOCOMOTION.run)):NATIVE_LOCOMOTION.run;
         let pose=f.musketAim?212:f.guard?NATIVE_WEAPONS[f.weapon].guard:moving?groundMove:f.combat.stance??NATIVE_WEAPONS[f.weapon].stance;
-        const crouching=(f.scriptCrouched||control&&control.keys.has('crouch'))&&f.grounded&&!f.musketAim&&!f.guard;
+        const crouching=(f.scriptCrouched||f.npcCombat?.crouch||control&&control.keys.has('crouch'))&&f.grounded&&!f.musketAim&&!f.guard;
         if(crouching){
           const walking=direction.lengthSq()>0,requested=nativeTraversalDirection(control?.keys);
           const movingPose=NATIVE_CROUCH_POSES[requested]??(f.heldPose>=145&&f.heldPose<=148?f.heldPose:NATIVE_CROUCH_POSES.forward);
@@ -1101,7 +1101,7 @@ export class MeteorGame {
     const locomotion=f.combat.timeline?.pose.id;
     if(f.grounded&&!f.combat.busy&&!f.guard&&!f.musketAim){
       const stride=nativeStrideSpeed(f.character.nativeCharacterId??0,locomotion);
-      if(stride>0){const rate=speed/this.hostPhysics.speed;if(control)speed=nativeStrideSpeed(0,locomotion)*rate;f.combat.timeline.playbackRate=speed/stride;}
+      if(stride>0){const rate=speed/this.hostPhysics.speed;if(control||locomotion>=145&&locomotion<=148)speed=nativeStrideSpeed(0,locomotion)*rate;f.combat.timeline.playbackRate=speed/stride;}
     }
     const queuedRequest=f.combat._queuedRequest;
     const queuedCastSerial=queuedRequest&&queuedRequest.canStart?.(queuedRequest.context)!==false?f.combat.serial:null;

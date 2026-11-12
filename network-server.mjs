@@ -1,6 +1,7 @@
 import {NETWORK_PROTOCOL,roomRules} from './dist/network-rules.js';
 const validBloodStyle=s=>!!s&&['slash','thrust','impact','launch','shot'].includes(s.kind)&&Number.isInteger(s.level)&&s.level>=0&&s.level<=2;
 import http from 'node:http';
+import { battleCharacterSelection } from './dist/character-appearances.js';
 import {randomBytes} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import {resolve,extname,sep} from 'node:path';
@@ -15,15 +16,15 @@ const validLoot=loot=>loot===undefined||!!loot&&Array.isArray(loot.consumed)&&lo
 const fail=(message,status=400)=>{throw Object.assign(Error(message),{status});};
 export class NetworkRooms{
   constructor({now=()=>Date.now()}={}){this.rooms=new Map();this.now=now;}
-  public(room){return {code:room.code,revision:room.revision||0,round:room.round||0,protocol:NETWORK_PROTOCOL,...room.rules,phase:room.phase,hostId:room.hostId,map:'sifang',result:room.result||null,scores:(room.frame?.players||[]).map(p=>({id:p.id,kills:p.kills||0,deaths:p.deaths||0,dead:!!p.dead})),players:room.players.map(p=>({id:p.id,name:p.name,ready:p.ready,loaded:p.loaded,team:p.team}))};}
+  public(room){return {code:room.code,revision:room.revision||0,round:room.round||0,protocol:NETWORK_PROTOCOL,...room.rules,phase:room.phase,hostId:room.hostId,map:'sifang',result:room.result||null,scores:(room.frame?.players||[]).map(p=>({id:p.id,kills:p.kills||0,deaths:p.deaths||0,dead:!!p.dead})),players:room.players.map(p=>({id:p.id,name:p.name,ready:p.ready,loaded:p.loaded,team:p.team,selection:p.selection}))};}
   remove(room,player){
     (room.removedIds||=new Set()).add(player.id);room.players=room.players.filter(p=>p!==player);if(room.phase!=='finished')room.frame=null;room.revision=(room.revision||0)+1;
     if(room.phase==='loading'||room.phase==='waiting'){room.phase='waiting';for(const p of room.players){p.ready=false;p.loaded=false;}}
   }
   sweep(){for(const [code,r] of this.rooms){if(this.now()-r.players[0].seen>20000)this.rooms.delete(code);else for(const p of [...r.players].slice(1))if(this.now()-p.seen>20000)this.remove(r,p);}}
-  player(name){return {id:token().slice(0,12),token:token(),name:String(name||'江湖来客').trim().slice(0,16)||'江湖来客',seen:this.now(),ready:false,loaded:false,input:[],lastSequence:0,deliveredSequence:0,ackSequence:0};}
-  create(name,options={}){this.sweep();if(this.rooms.size>=32)fail('房间数量已达上限');let rules;try{rules=roomRules(options);}catch{fail('房间规则无效');}const p=this.player(name);p.team=1;let code;do{code=randomBytes(3).toString('hex').toUpperCase();}while(this.rooms.has(code));const r={code,hostId:p.id,phase:'waiting',rules,players:[p],frame:null,frameSequence:0};this.rooms.set(code,r);return {room:this.public(r),playerId:p.id,token:p.token};}
-  join(code,name){this.sweep();const r=this.rooms.get(code);if(!r)fail('房间不存在或房主已离开',404);if(r.phase!=='waiting'||r.players.length>=r.rules.maxPlayers)fail('房间已满或已经开局',409);const p=this.player(name);p.team=r.players.filter(x=>x.team===1).length<=r.players.filter(x=>x.team===2).length?1:2;r.players.push(p);for(const x of r.players)x.ready=false;r.revision=(r.revision||0)+1;return {room:this.public(r),playerId:p.id,token:p.token};}
+  player(name,selection){return {id:token().slice(0,12),token:token(),name:String(name||'江湖来客').trim().slice(0,16)||'江湖来客',selection:battleCharacterSelection(selection),seen:this.now(),ready:false,loaded:false,input:[],lastSequence:0,deliveredSequence:0,ackSequence:0};}
+  create(name,options={}){this.sweep();if(this.rooms.size>=32)fail('房间数量已达上限');let rules;try{rules=roomRules(options);}catch{fail('房间规则无效');}const p=this.player(name,options.selection);p.team=1;let code;do{code=randomBytes(3).toString('hex').toUpperCase();}while(this.rooms.has(code));const r={code,hostId:p.id,phase:'waiting',rules,players:[p],frame:null,frameSequence:0};this.rooms.set(code,r);return {room:this.public(r),playerId:p.id,token:p.token};}
+  join(code,name,selection){this.sweep();const r=this.rooms.get(code);if(!r)fail('房间不存在或房主已离开',404);if(r.phase!=='waiting'||r.players.length>=r.rules.maxPlayers)fail('房间已满或已经开局',409);const p=this.player(name,selection);p.team=r.players.filter(x=>x.team===1).length<=r.players.filter(x=>x.team===2).length?1:2;r.players.push(p);for(const x of r.players)x.ready=false;r.revision=(r.revision||0)+1;return {room:this.public(r),playerId:p.id,token:p.token};}
   request(code,credential,operation,data={}){
     this.sweep();const r=this.rooms.get(code);if(!r)fail('房间已关闭',404);const p=r.players.find(p=>p.token===credential);if(!p)fail('房间身份无效',403);p.seen=this.now();
     const host=p.id===r.hostId;
@@ -84,7 +85,7 @@ export function createNetworkServer({rooms=new NetworkRooms(),root=fileURLToPath
       if(url.pathname.startsWith('/api/')){
         if(req.method!=='POST')fail('只接受POST',405);if(req.headers.origin&&new URL(req.headers.origin).host!==req.headers.host)fail('不允许跨站请求',403);
         let raw='',size=0;for await(const chunk of req){size+=chunk.length;if(size>32000)fail('请求过大',413);raw+=chunk;}let data;try{data=JSON.parse(raw||'{}');}catch{fail('JSON无效');}
-        let result;if(url.pathname==='/api/rooms/create')result=rooms.create(data.name,data);else if(url.pathname==='/api/rooms/join')result=rooms.join(String(data.code||'').toUpperCase(),data.name);else{const match=url.pathname.match(/^\/api\/rooms\/([A-F0-9]{6})\/(ready|start|loaded|sync|leave|team|rematch)$/);if(!match)fail('接口不存在',404);result=rooms.request(match[1],req.headers.authorization?.replace(/^Bearer /,''),match[2],data);}json(200,result);return;
+        let result;if(url.pathname==='/api/rooms/create')result=rooms.create(data.name,data);else if(url.pathname==='/api/rooms/join')result=rooms.join(String(data.code||'').toUpperCase(),data.name,data.selection);else{const match=url.pathname.match(/^\/api\/rooms\/([A-F0-9]{6})\/(ready|start|loaded|sync|leave|team|rematch)$/);if(!match)fail('接口不存在',404);result=rooms.request(match[1],req.headers.authorization?.replace(/^Bearer /,''),match[2],data);}json(200,result);return;
       }
       if(!['GET','HEAD'].includes(req.method))fail('方法不允许',405);
       const target=resolve(root,'.'+decodeURIComponent(url.pathname==='/'?'/index.html':url.pathname));if(!target.startsWith(root.endsWith(sep)?root:root+sep))fail('禁止访问',403);

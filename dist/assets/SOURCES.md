@@ -37,7 +37,6 @@
 
 ## 本地人物工坊（2026-10-28）
 
-- `enhanced/p0/`：原孟星魂模型的Blender几何与材质改良试版，脸部贴图使用AI辅助细化；不是完整手工重制。
 - `enhanced/hutao/`：用户提供的完整「胡桃喵1.0.pmx」转换，源目录标注摸鱼大水怪，PMX内嵌说明署名模型提供 miHoYo、模型改造观海。保留完整模型造型，本地适配《流星》骨架。来源与完整说明见本地 `work/hutao-pmx-quality/source-audit.json`。
 - 先前 `HuTaoMod4K` GIMI包不包含脸部几何，且UV与此PMX不同；未与PMX拼接，不作为当前可玩角色素材。
 

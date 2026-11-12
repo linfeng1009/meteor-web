@@ -116,6 +116,6 @@ test('Keqing display rig follows the original moves without changing limb length
 test('Keqing is selectable in the workshop with its own identity',async()=>{
   assert.ok(WORKSHOP_APPEARANCES.includes('keqing'));
   assert.equal(appearanceCharacterName(0,'keqing'),'刻晴');
-  assert.equal(NATIVE_APPEARANCES.ganyu.characterId,0);
-  assert.equal(Object.isFrozen(NATIVE_APPEARANCES.ganyu),true);
+  assert.equal(NATIVE_APPEARANCES.keqing.characterId,0);
+  assert.equal(Object.isFrozen(NATIVE_APPEARANCES.keqing),true);
 });

@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "characterId": 0,
+  "appearance": "liuchao",
+  "label": "琉潮 · 原创角色",
+  "mesh": "mesh.json",
+  "complete": true,
+  "completeness": {
+    "bodyGeometry": true,
+    "headHairGeometry": true,
+    "eyes": true,
+    "faceGeometry": true,
+    "sourcePmxSkeleton": false,
+    "originalSourceGameSkeleton": false
+  },
+  "stats": {
+    "vertices": 110535,
+    "triangles": 215064,
+    "sourceBones": 434,
+    "bones": 30,
+    "dummies": 6,
+    "secondaryBones": 0,
+    "materials": 20,
+    "textures": 4
+  },
+  "retarget": {
+    "method": "Source-length skeleton with native animation rotations; evaluated Blender objects, uniform scale and reduced body mesh.",
+    "provisional": true,
+    "hairPhysics": false,
+    "clothPhysics": false
+  },
+  "provenance": {
+    "sourceArchive": "assets/source/liuchao/琉潮.blend",
+    "limits": [
+      "Body mesh reduced for runtime; Blender procedural materials approximated.",
+      "Hair and clothing follow bones; no secondary physics or expression morphs."
+    ]
+  },
+  "sourceFiles": [
+    {
+      "file": "琉潮.blend",
+      "bytes": 66152316,
+      "sha256": "e0328115778c4dcbbd910102515dc42ef72f19306425a075858c2ffe1d9fcaa5"
+    }
+  ]
+}

@@ -14,7 +14,7 @@ test('Emilia has a separate p0 bundle; a missing resource preserves the live Rai
   assert.equal(Object.isFrozen(NATIVE_APPEARANCES.emilia), true);
   assert.equal(NATIVE_APPEARANCES.emilia.characterId, 0);
   assert.match(NATIVE_APPEARANCES.emilia.label, /RE0-爱蜜莉雅/);
-  assert.equal(new Set(['hd', 'hutao', 'raiden', 'emilia'].map(id => NATIVE_APPEARANCES[id].assetPath)).size, 4);
+  assert.equal(new Set(['hutao', 'raiden', 'emilia'].map(id => NATIVE_APPEARANCES[id].assetPath)).size, 3);
   const actor = createNativeCharacter(data, { loadTextures: false }), before = globalThis.fetch;
   globalThis.fetch = async url => new URL(url).pathname.includes('/enhanced/emilia/') ? new Response('', { status: 404 }) : fileFetch(url);
   try {
@@ -48,13 +48,13 @@ test('Emilia loads the supplied complete face, costume and mapped PNG textures r
   assert.ok(influences.size >= 12, 'imported body must articulate on the native skeleton');
 }));
 
-test('all five appearances keep independent cached meshes on one live skeleton and weapon attachment', async () => withFetch(async () => {
+test('four appearances keep independent cached meshes on one live skeleton and weapon attachment', async () => withFetch(async () => {
   const actor = createNativeCharacter(data, { loadTextures: false });
   try {
     actor.group.position.set(3, 4, -5); actor.group.rotation.y = .7; actor.setPoseFrame(0, data.poses[262].start + 5.5);
     const hand = actor.getAttachment('d_wpnR'), weapon = new THREE.Group(); hand.add(weapon); actor.group.updateMatrixWorld(true);
     const skeleton = actor.skeleton, joints = matrices(actor), bind = actor.mesh.bindMatrix.toArray(), frame = actor.frame, weaponMatrix = weapon.matrixWorld.toArray(), meshes = new Map([['original', actor.mesh]]);
-    for (const appearance of ['hd', 'hutao', 'raiden', 'emilia', 'raiden', 'emilia', 'hutao', 'original']) {
+    for (const appearance of ['hutao', 'raiden', 'emilia', 'raiden', 'emilia', 'hutao', 'original']) {
       const result = await actor.setAppearance(appearance);
       assert.equal(result.available, true); assert.equal(result.complete, true); assert.equal(result.appearance, appearance);
       if (meshes.has(appearance)) assert.equal(actor.mesh, meshes.get(appearance)); else meshes.set(appearance, actor.mesh);
@@ -62,7 +62,7 @@ test('all five appearances keep independent cached meshes on one live skeleton a
       assert.equal(actor.getAttachment('d_wpnR'), hand); assert.equal(weapon.parent, hand); assert.deepEqual(weapon.matrixWorld.toArray(), weaponMatrix);
       assert.equal(actor.nativeSpace.children.filter(child => child.isSkinnedMesh).length, 1);
     }
-    assert.equal(new Set(meshes.values()).size, 5);
+    assert.equal(new Set(meshes.values()).size, 4);
   } finally { actor.dispose(); }
 }));
 

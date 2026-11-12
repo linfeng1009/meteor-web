@@ -66,21 +66,21 @@ test('Springfield face stays rigid while authored hair retains separate head-roo
   for(const v of hairVertices)for(let j=0;j<4;j++)if(skin.skinWeights[v*4+j]>.00001)assert.ok(headBones.has(skin.skinIndices[v*4+j]),'long hair cannot stretch between torso and head');
 }));
 
-test('all seven appearance variants retain native joints, cached meshes and weapon anchors',async()=>withFetch(async()=>{
+test('six appearance variants retain native joints, cached meshes and weapon anchors',async()=>withFetch(async()=>{
   assert.ok(WORKSHOP_APPEARANCES.includes('springfield'));assert.equal(appearanceCharacterName(0,'springfield'),'春田');assert.equal(NATIVE_APPEARANCES.springfield.characterId,0);
   const actor=createNativeCharacter(data,{loadTextures:false});
   try{
     actor.group.position.set(2,3,-4);actor.group.rotation.y=.7;actor.setPoseFrame(0,data.poses[262].start+3.5);
     const attachment=actor.getAttachment('d_wpnR'),weapon=new THREE.Group();attachment.add(weapon);actor.group.updateMatrixWorld(true);
     const skeleton=actor.skeleton,joints=matrices(actor),weaponTransform=weapon.matrixWorld.toArray(),frame=actor.frame,meshes=new Map();
-    for(const appearance of ['original','hd','hutao','raiden','emilia','doubao','springfield','original','springfield']){
+    for(const appearance of ['original','hutao','raiden','emilia','doubao','springfield','original','springfield']){
       const status=await actor.setAppearance(appearance);assert.equal(status.available,true);assert.equal(status.complete,true);
       if(meshes.has(appearance))assert.equal(actor.mesh===meshes.get(appearance),true);else meshes.set(appearance,actor.mesh);
       assert.equal(actor.skeleton===skeleton,true);assert.equal(actor.skeleton.bones.length,30);assert.equal(actor.mesh.skeleton.bones.slice(0,30).every((b,i)=>b===actor.bones[i]),!['springfield','doubao'].includes(appearance));
       assert.deepEqual(matrices(actor),joints);assert.equal(actor.frame,frame);assert.deepEqual(weapon.matrixWorld.toArray(),weaponTransform);assert.equal(weapon.parent===attachment,true);
       assert.equal(actor.nativeSpace.children.filter(c=>c.isSkinnedMesh).length,1);
     }
-    assert.equal(meshes.size,7);
+    assert.equal(new Set(meshes.values()).size,6);
   }finally{actor.dispose();}
 }));
 

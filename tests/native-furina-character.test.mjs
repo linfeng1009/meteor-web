@@ -107,6 +107,6 @@ test('Furina display rig follows the original moves without changing limb length
 test('Furina is selectable in the workshop with its own identity',async()=>{
   assert.ok(WORKSHOP_APPEARANCES.includes('furina'));
   assert.equal(appearanceCharacterName(0,'furina'),'芙宁娜');
-  assert.equal(NATIVE_APPEARANCES.ganyu.characterId,0);
-  assert.equal(Object.isFrozen(NATIVE_APPEARANCES.ganyu),true);
+  assert.equal(NATIVE_APPEARANCES.furina.characterId,0);
+  assert.equal(Object.isFrozen(NATIVE_APPEARANCES.furina),true);
 });

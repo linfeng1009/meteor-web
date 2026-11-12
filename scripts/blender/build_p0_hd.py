@@ -11,7 +11,7 @@ from mathutils.kdtree import KDTree
 
 ROOT=os.path.abspath(os.path.join(os.path.dirname(__file__),'../..'))
 SRC=os.path.join(ROOT,'dist/assets/original/characters/p0')
-OUT=os.path.join(ROOT,'dist/assets/enhanced/p0')
+OUT=os.path.join(ROOT,'work/character-hd/retired-assets')
 WORK=os.path.join(ROOT,'work/character-hd')
 for p in [OUT,WORK,os.path.join(OUT,'textures')]:os.makedirs(p,exist_ok=True)
 args=argparse.ArgumentParser();args.add_argument('--skip-render',action='store_true');options=args.parse_args(sys.argv[sys.argv.index('--')+1:] if '--' in sys.argv else [])
@@ -299,7 +299,7 @@ for image in bpy.data.images:
     if image.source=='FILE':
         try:image.pack()
         except:pass
-scene['README']='LEFT original 1482 tris; RIGHT enhanced Blender prototype. Same source p0 idle frame, skeleton, camera/light. Runtime exports live in dist/assets/enhanced/p0. Edit this file or rerun scripts/blender/build_p0_hd.py.'
+scene['README']='LEFT original 1482 tris; RIGHT enhanced Blender prototype. Same source p0 idle frame, skeleton, camera/light. Runtime exports live in work/character-hd/retired-assets. Edit this file or rerun scripts/blender/build_p0_hd.py.'
 bpy.ops.wm.save_as_mainfile(filepath=os.path.join(WORK,'孟星魂-高清对照.blend'))
 with open(os.path.join(WORK,'build-evidence.json'),'w')as f:json.dump(dict(blender=bpy.app.version_string,manifest=manifest,originalHashes={n:hashlib.sha256(open(os.path.join(SRC,n),'rb').read()).hexdigest()for n in['p0.skc','p0.bnc','p0.amb']},renderPose=dict(source=1,frame=1)),f,ensure_ascii=False,indent=2)
 print('DONE',flush=True)

@@ -89,7 +89,7 @@ def main():
                     if required not in included:
                         raise FileNotFoundError(f'{filename} imports missing packaged module {required}')
             characters = []
-            for family in ['hutao', 'raiden', 'emilia', 'doubao', 'springfield', 'ganyu', 'yaemiko']:
+            for family in ['hutao', 'raiden', 'emilia', 'doubao', 'springfield', 'ganyu', 'yaemiko', 'liuchao']:
                 base = f'dist/assets/enhanced/{family}'
                 manifest = json.loads(read(f'{base}/manifest.json'))
                 if manifest.get('appearance') != family:

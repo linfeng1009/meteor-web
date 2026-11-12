@@ -16,10 +16,10 @@ const fileFetch = async url => { try { return new Response(await readFile(new UR
 const withFetch = async callback => { const before = globalThis.fetch; globalThis.fetch = fileFetch; try { return await callback(); } finally { globalThis.fetch = before; } };
 const matrices = character => [...character.bones, ...character.dummies].map(node => node.matrixWorld.toArray());
 
-test('appearance registry separates native, Blender HD and HuTao bundles without adding a fake native character', () => {
-  assert.deepEqual(Object.keys(NATIVE_APPEARANCES), ['original', 'hd', 'hutao', 'raiden', 'emilia', 'doubao', 'springfield', 'ganyu', 'yaemiko', 'shogun', 'lumine', 'aether', 'furina', 'zhaojun', 'keqing']);
-  assert.equal(NATIVE_APPEARANCES.hd.characterId, 0); assert.equal(NATIVE_APPEARANCES.hutao.characterId, 0);
-  assert.notEqual(NATIVE_APPEARANCES.hd.assetPath, NATIVE_APPEARANCES.hutao.assetPath);
+test('appearance registry keeps HuTao and drops the retired HD appearance', () => {
+  assert.deepEqual(Object.keys(NATIVE_APPEARANCES), ['original', 'hutao', 'raiden', 'emilia', 'doubao', 'springfield', 'ganyu', 'yaemiko', 'shogun', 'lumine', 'aether', 'furina', 'zhaojun', 'keqing', 'haku', 'ningguang']);
+  assert.equal(NATIVE_APPEARANCES.hutao.characterId, 0);
+  assert.equal(NATIVE_APPEARANCES.hd, undefined);
   assert.equal(Object.isFrozen(NATIVE_APPEARANCES), true); assert.equal(Object.isFrozen(NATIVE_APPEARANCES.hutao), true);
 });
 
@@ -52,9 +52,9 @@ test('explicit workshop permission is required on every incomplete adoption, inc
     assert.equal(blocked.available, false); assert.equal(blocked.complete, false); assert.equal(actor.appearance, 'original');
     const preview = await actor.setAppearance('hutao', { allowIncomplete: true });
     assert.equal(preview.available, true); assert.equal(preview.complete, false); assert.equal(preview.previewOnly, true);
-    await actor.setAppearance('hd'); const current = actor.mesh;
+    await actor.setAppearance('raiden'); const current = actor.mesh;
     const cachedBlocked = await actor.setAppearance('hutao');
-    assert.equal(cachedBlocked.available, false); assert.equal(cachedBlocked.appearance, 'hd'); assert.equal(actor.mesh, current);
+    assert.equal(cachedBlocked.available, false); assert.equal(cachedBlocked.appearance, 'raiden'); assert.equal(actor.mesh, current);
     const retry = await actor.setAppearance('hutao', { allowIncomplete: true });
     assert.equal(retry.previewOnly, true); assert.equal(actor.appearance, 'hutao');
   } finally { actor.dispose(); globalThis.fetch = previous; }
@@ -78,7 +78,7 @@ test('the complete PMX HuTao mesh has real face geometry, separate textures and 
   assert.ok(dimensions.some(([width, height]) => width >= 1024 && height >= 1024), 'retain the supplied maps at a useful resolution');
 }));
 
-test('HuTao, HD and original hot switching retain distinct meshes on one live native skeleton', async () => withFetch(async () => {
+test('HuTao, Raiden and original hot switching retain distinct meshes on one live native skeleton', async () => withFetch(async () => {
   const actor = createNativeCharacter(data, { loadTextures: false });
   try {
     actor.group.position.set(7, 2, -4); actor.group.rotation.y = .6; actor.setPoseFrame(0, data.poses[262].start + 5.5);
@@ -87,8 +87,8 @@ test('HuTao, HD and original hot switching retain distinct meshes on one live na
     const hutaoStatus = await actor.setAppearance('hutao'), hutao = actor.mesh;
     assert.equal(hutaoStatus.available, true); assert.equal(actor.appearance, 'hutao'); assert.match(actor.group.name, /胡桃/);
     assert.equal(hutaoStatus.complete, true); assert.equal(hutaoStatus.previewOnly, false); assert.equal(hutaoStatus.reason, null);
-    await actor.setAppearance('hd'); const hd = actor.mesh;
-    assert.equal(actor.appearance, 'hd'); assert.notEqual(hd, hutao); assert.notEqual(hd, native);
+    await actor.setAppearance('raiden'); const raiden = actor.mesh;
+    assert.equal(actor.appearance, 'raiden'); assert.notEqual(raiden, hutao); assert.notEqual(raiden, native);
     const restored = await actor.setAppearance('hutao');
     assert.equal(restored.available, true); assert.equal(restored.complete, true); assert.equal(actor.mesh, hutao, 'each variant keeps its own cache entry');
     assert.equal(actor.skeleton, skeleton); assert.deepEqual(actor.mesh.skeleton.bones.slice(0, skeleton.bones.length), skeleton.bones); assert.deepEqual(actor.mesh.bindMatrix.toArray(), bind);
@@ -130,14 +130,14 @@ test('the game refuses an incomplete MOD and retains its current HD appearance a
   character.setPoseFrame(0, data.poses[151].start + 3); character.group.position.set(1, 4, 6);
   const position = character.group.position.toArray(), frame = character.frame;
   try {
-    await game.setCharacterAppearance('hd'); const hdMesh = character.mesh;
+    await game.setCharacterAppearance('raiden'); const priorMesh = character.mesh;
     const result = await game.setCharacterAppearance('hutao', { allowIncomplete: true }); // game API deliberately does not accept preview permission
     assert.equal(result.available, false); assert.equal(result.complete, false); assert.match(result.reason, /脸部网格|不完整/);
-    assert.equal(character.mesh, hdMesh); assert.equal(character.appearance, 'hd'); assert.equal(game.characterAppearance, 'hd'); assert.equal(game.hero, actor); assert.equal(game.characterId, 0);
+    assert.equal(character.mesh, priorMesh); assert.equal(character.appearance, 'raiden'); assert.equal(game.characterAppearance, 'raiden'); assert.equal(game.hero, actor); assert.equal(game.characterId, 0);
     assert.equal(actor.name, '孟星魂'); assert.equal(actor.scriptId, 0); assert.equal(actor.team, 1);
     assert.equal(actor.hp, 721); assert.equal(actor.maxHp, 1500); assert.equal(actor.rage, 33); assert.equal(actor.weaponId, 5); assert.equal(actor.vy, 3.2); assert.equal(actor.grounded, false);
     assert.deepEqual(character.group.position.toArray(), position); assert.equal(character.frame, frame); assert.equal(events.at(-1).type, 'appearance');
-    assert.equal(events.at(-1).requested, 'hutao'); assert.equal(events.at(-1).appearance, 'hd');
+    assert.equal(events.at(-1).requested, 'hutao'); assert.equal(events.at(-1).appearance, 'raiden');
   } finally { character.dispose(); globalThis.fetch = before; }
 });
 

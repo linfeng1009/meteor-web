@@ -2,7 +2,7 @@ import {NETWORK_MODES} from './network-rules.js';
 import {NetworkClient} from './network-client.js';
 import {NetworkGame} from './network-game.js';
 export class NetworkLobby{
-  constructor({getGame,onStart,onStop,onNotice,onResult=()=>{},createClient=options=>new NetworkClient(options),createSession=(...args)=>NetworkGame.create(...args)}){Object.assign(this,{getGame,onStart,onStop,onNotice,onResult,createClient,createSession});}
+  constructor({getGame,getSelection=()=>undefined,onStart,onStop,onNotice,createClient=options=>new NetworkClient(options),createSession=(...args)=>NetworkGame.create(...args)}){Object.assign(this,{getGame,getSelection,onStart,onStop,onNotice,createClient,createSession});}
   mount(root){this.root=root;this.render();}
   render(){
     const root=this.root;if(!root?.isConnected)return;root.replaceChildren();
@@ -40,7 +40,7 @@ export class NetworkLobby{
       onRoom:r=>{if(current())this.roomChanged(r,client).catch(error=>stop('联机状态错误：'+error.message));},
       onInput:inputs=>{if(!current())return;if(!this.session?.active)throw Error('战斗未就绪，无法应用操作');this.session.inputs(inputs);},
       onFrame:frame=>{if(current())this.session?.apply(frame);},onError:message=>stop('联机中断：'+message)});
-    try{this.client=client;this.render();await client.connect(kind,data);if(current())this.render();}
+    try{this.client=client;this.render();await client.connect(kind,{...data,selection:this.getSelection()});if(current())this.render();}
     catch(e){if(current()){this.client=null;this.render();throw e;}}
     finally{if(this.generation===generation)this.connecting=false;}
   }
@@ -53,7 +53,7 @@ export class NetworkLobby{
       const current=()=>generation===this.generation&&this.client===client&&!client.closed;
       const valid=()=>current()&&client.room.round===room.round&&client.room.phase==='loading'&&(!game||this.getGame()===game);
       try{
-        await this.onStart(valid);if(!valid()){if(current()&&client.room.phase==='waiting')this.onStop('房间已结束');return;}
+        await this.onStart(valid,room.players?.find(player=>player.id===client.playerId)?.selection);if(!valid()){if(current()&&client.room.phase==='waiting')this.onStop('房间已结束');return;}
         game=this.getGame();const session=await this.createSession(game,client,room,{isCurrent:valid});
         if(!valid()){session?.dispose();if(current()&&client.room.phase==='waiting')this.onStop('房间已结束');return;}
         if(!session)return;this.session=session;await client.command('loaded');

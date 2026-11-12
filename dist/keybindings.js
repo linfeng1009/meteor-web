@@ -36,10 +36,10 @@ export function saveBindings(storage,bindings) {
 export const bindingMap = bindings => Object.fromEntries(Object.entries(bindings).flatMap(([action,codes])=>codes.map(code=>[code,action])));
 
 // Multiple physical keys can hold the same action; releasing one must not release the other.
-export function bindKeyboard(target, { bindings=defaultBindings(), enabled, action }) {
+export function bindKeyboard(target, { bindings=defaultBindings(), enabled, action, onReset=()=>{} }) {
   let mapping=bindingMap(bindings);
   const held=new Map(), continuous=new Set(['forward','back','left','right','guard']);
-  const reset=()=>{for(const name of new Set(held.values()))action(name,false);held.clear();};
+  const reset=()=>{if(held.size)onReset();for(const name of new Set(held.values()))action(name,false);held.clear();};
   const down=e=>{
     if(!enabled()||e.metaKey||e.altKey||(e.ctrlKey&&!mapping.ControlLeft&&!mapping.ControlRight))return;
     const name=mapping[e.code];if(!name)return;e.preventDefault();

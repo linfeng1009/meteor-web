@@ -5,6 +5,8 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import * as THREE from '../dist/vendor/three.module.js';
 import { MeteorGame } from '../dist/engine.js';
+import {NetworkGame} from '../dist/network-game.js';
+import {createPlayerControl} from '../dist/player-control.js';
 import { NativeCombatController, decodeNativeText, parsePos, parseAct } from '../dist/native-combat.js';
 import {NATIVE_AIR_PHYSICS,NATIVE_DASH_POSES,NATIVE_CROUCH_POSES,NATIVE_GROUND_MOVE_POSES,NATIVE_JUMP_POSES,nativeTraversalDirection} from '../dist/native-traversal.js';
 import { createNativeCharacter, parseNativeSkin, parseNativeBones, parseNativeAnimation, parseNativePoses } from '../dist/native-character.js';
@@ -41,7 +43,7 @@ test('three native wall families enter, animate, kick away and follow their real
       const before=hero.character.bones[15].quaternion.toArray();
       for(let i=0;i<12;i++)game._updateFighter(hero,1/60);
       assert.notDeepEqual(hero.character.bones[15].quaternion.toArray(),before,'use original animated bones');
-      const start=hero.root.position.clone();game.action('jump');
+      const start=hero.root.position.clone();game.action('jump');game.action('jump',false);
       assert.equal(hero.wallRun,null);assert.equal(hero.combat.timeline.pose.id,exit);assert.equal(hero.nativeJump.pose.id,exit);
       const seen=new Set();let escaped;
       for(let i=0;i<100;i++){game._updateFighter(hero,1/60);if(i===14)escaped=hero.root.position.clone();seen.add(hero.combat.timeline.pose.id);assert.ok(hero.root.position.toArray().every(Number.isFinite));}
@@ -95,7 +97,7 @@ test('remote wall traversal uses its own input, including the wall jump action',
   const state=wallFixture('left');try{
     const {game,hero}=state;hero.hero=false;hero.playerControl={keys:new Set(['forward']),lookLocked:true,cameraAngle:0,directionBuffer:[]};game.keys.clear();
     game._updateFighter(hero,1/60);assert.equal(hero.wallRun?.side,'left');
-    game._actionFighter(hero,hero.playerControl,'jump',true);assert.equal(hero.combat.timeline.pose.id,160);assert.equal(hero.wallRun,null);
+    game._actionFighter(hero,hero.playerControl,'jump',true);game._actionFighter(hero,hero.playerControl,'jump',false);assert.equal(hero.combat.timeline.pose.id,160);assert.equal(hero.wallRun,null);
   }finally{state.dispose();}
 });
 
@@ -128,7 +130,7 @@ test('ordinary jumps cancel their takeoff sequence on ceiling contact and resume
     const {game,hero}=state;
     const roof=new THREE.Mesh(new THREE.PlaneGeometry(10,10),new THREE.MeshBasicMaterial({side:THREE.DoubleSide}));
     roof.rotation.x=Math.PI/2;roof.position.y=4.8;roof.updateMatrixWorld(true);state.colliders.push(roof);
-    game.action('jump');assert.equal(hero.grounded,false);let collided=false;
+    game.action('jump');game.action('jump',false);assert.equal(hero.grounded,false);let collided=false;
     for(let i=0;i<80;i++){
       game._updateFighter(hero,1/60);assert.ok(hero.root.position.y+2.2<=4.8+1e-6);
       if(!hero.grounded&&hero.jumpSequence===null){collided=true;assert.equal(hero.nativeJump,null);}
@@ -186,7 +188,7 @@ function projection(game, box) {
   return box.getCenter(v()).project(game.camera);
 }
 function jump(fixture, visit) {
-  const { game, hero } = fixture; game.action('jump'); assert.equal(hero.grounded, false);
+  const { game, hero } = fixture; game.action('jump');game.action('jump',false); assert.equal(hero.grounded, false);
   const frames = [];
   for (let i = 0; i < 120; i++) {
     game.elapsed += 1 / 60; game._updateFighter(hero, 1 / 60); game._tickCamera(1 / 60);
@@ -259,8 +261,8 @@ test('directional jumps preserve original takeoff and air families through landi
     const state=fixture();
     try{
       const {game,hero}=state,profile=NATIVE_JUMP_POSES[direction];game.action(direction);
-      game.action('jump');assert.equal(hero.combat.timeline.pose.id,profile.start);
-      assert.equal(hero.nativeJump.pose.id,profile.start,'vertical scene track must use the selected native jump');
+      game.action('jump');game.action('jump',false);assert.equal(hero.combat.timeline.pose.id,profile.start);
+      assert.equal(hero.jumpSequence.start,profile.start,'物理起跳保留选择的原方向动画');assert.equal(hero.nativeJump,null);
       const facing=hero.root.rotation.y,seen=new Set();
       for(let i=0;i<120;i++){
         game._updateFighter(hero,1/60);game._tickCamera(1/60);
@@ -277,7 +279,7 @@ test('every directional jump follows its authored air-to-fall link without resta
   for(const direction of ['forward','right','left','back']){
     const state=fixture();
     try{
-      const {game,hero}=state,profile=NATIVE_JUMP_POSES[direction];game.action(direction);game.action('jump');
+      const {game,hero}=state,profile=NATIVE_JUMP_POSES[direction];game.action(direction);game.action('jump');game.action('jump',false);
       const seen=[],airSerials=new Set(),fallFrames=[];
       for(let i=0;i<120;i++){
         game._updateFighter(hero,1/60);
@@ -310,7 +312,7 @@ test('falling locomotion yields to a native air attack and its ACT follow-up',()
   const state=fixture();
   try{
     const {game,hero}=state;hero.weapon='sword';hero.combat.setWeapon('sword');hero.combat.play(6,{force:true});
-    game.action('jump');for(let i=0;i<45;i++)game._updateFighter(hero,1/60);
+    game._beginJump(hero,{large:true});for(let i=0;i<45;i++)game._updateFighter(hero,1/60);
     assert.equal(hero.grounded,false);assert.equal(hero.combat.timeline.pose.id,180);
     game.action('attack');assert.equal(hero.combat.attacking,true);assert.equal(hero.combat.timeline.pose.id,260);
     for(let i=0;i<6;i++){game._updateFighter(hero,1/60);assert.notEqual(hero.combat.timeline.pose.id,180);}
@@ -431,19 +433,82 @@ test('authored non-in-place jump remains available with its original d_base disp
   } finally { character.dispose(); }
 });
 
+test('点按小跳、按住自动大跳共享原物理与方向姿态，松键不重复起跳',()=>{
+  const results=[];
+  for(const large of [false,true])for(const dt of [1/60,1/120]){
+    const state=fixture();try{
+      const {game,hero}=state;game.action('jump');assert.equal(hero.grounded,true);
+      if(!large){for(let i=0;i<Math.floor(.05/dt);i++)game._updateFighter(hero,dt);assert.equal(hero.grounded,true);game.action('jump',false);assert.equal(hero.vy,22.56);}
+      else {for(let i=0;i<Math.ceil(.12/dt);i++)game._updateFighter(hero,dt);assert.equal(hero.grounded,false);assert.ok(hero.vy>27);}
+      const serial=hero.combat.serial;game.action('jump',false);assert.equal(hero.combat.serial,serial);
+      let top=hero.root.position.y,elapsed=0;while(!hero.grounded&&elapsed<1.5){game._updateFighter(hero,dt);top=Math.max(top,hero.root.position.y);elapsed+=dt;}
+      assert.equal(hero.grounded,true);assert.equal(hero.vy,0);assert.equal(game.jumpCharge,null);
+      assert.ok(large?top>5.85&&top<6.4:top>3.3&&top<3.7,`${large}/${dt}: ${top}`);results.push({large,top});
+      for(let i=0;i<30;i++)game._updateFighter(hero,dt);assert.equal(hero.grounded,true,'持续按住的自动起跳只执行一次');
+    }finally{state.dispose();}
+  }
+  assert.ok(Math.abs(results[0].top-results[1].top)<.12);assert.ok(Math.abs(results[2].top-results[3].top)<.16);
+});
+
+test('跳跃充能在释放时读取方向，清空与暂停释放不触发意外小跳',()=>{
+  const state=fixture();try{
+    const {game,hero}=state;game.action('right');game.action('jump');game.action('right',false);game.action('left');game.action('jump',false);
+    assert.equal(hero.combat.timeline.pose.id,155);for(let i=0;i<100;i++)game._updateFighter(hero,1/60);
+    game.action('jump');assert.ok(game.jumpCharge);game.action('clear',false);game.action('jump',false);assert.equal(hero.grounded,true);
+    game.action('jump');game.keyboard={reset(){game.action('jump',false);}};game.releaseInput({releaseMouse:false});assert.equal(hero.grounded,true);assert.equal(game.jumpCharge,null);
+    game.action('jump');game.action('attack');game.action('jump',false);assert.equal(hero.grounded,true);assert.equal(game.jumpCharge,null);
+  }finally{state.dispose();}
+});
+
+test('翻滚不吞掉此前按住的跳跃计时，忙碌期间松开则取消起跳',()=>{
+  for(const release of [false,true]){
+    const state=fixture();try{
+      const {game,hero}=state;hero.combat.sampleRoot=hero.character.sampleSceneMotion;
+      game.action('jump');game.action('crouch');assert.equal(game._beginRoll('forward',176),true);assert.ok(game.jumpCharge);
+      if(release)game.action('jump',false);
+      let jumped=false;for(let i=0;i<100;i++){game._updateFighter(hero,1/60);if(hero.jumpSequence?.ballistic){jumped=true;assert.ok(hero.vy>27);break;}}
+      assert.equal(jumped,!release);assert.equal(game.jumpCharge,null);
+    }finally{state.dispose();}
+  }
+});
+
+test('联机跳跃按有序客户端时钟区分大小跳，主机延迟不放大小跳且清空可取消',()=>{
+  for(const duration of [.04,.11]){
+    const state=fixture();try{
+      const {game,hero}=state;hero.hero=false;hero.playerControl=createPlayerControl();
+      const session={client:{host:true},active:true,actors:new Map([['remote',hero]]),controls:new Map([['remote',hero.playerControl]]),game};
+      const input=(action,active,time)=>NetworkGame.prototype.inputs.call(session,[{playerId:'remote',action,active,time,angle:0}]);
+      input('jump',true,10);for(let i=0;i<30;i++)game._updateFighter(hero,1/60);assert.equal(hero.grounded,true,'没有新的客户端时钟时，轮询延迟不代表持续按住');
+      input('jump',false,10+duration);assert.equal(hero.grounded,false);assert.equal(hero.vy,duration<.11?22.56:30);
+      const serial=hero.combat.serial;input('jump',false,10+duration);assert.equal(hero.combat.serial,serial);
+      for(let i=0;i<100;i++)game._updateFighter(hero,1/60);
+      input('jump',true,20);input('clear',false,20.03);input('jump',false,20.04);assert.equal(hero.grounded,true);assert.equal(hero.playerControl.jumpCharge,null);
+      input('jump',true,30);input('look',false,30.12);game._updateFighter(hero,1/60);assert.equal(hero.grounded,false);assert.ok(hero.vy>27);
+    }finally{state.dispose();}
+  }
+});
+
+test('火铳瞄准时仍能点按跳跃收枪，不把瞄准状态当作禁止起跳',()=>{
+  const state=fixture();try{
+    const {game,hero}=state;hero.weapon='musket';hero.combat.setWeapon('musket');hero.combat.play(2,{force:true});
+    game.action('attack');assert.equal(hero.musketAim,true);game.action('jump');assert.equal(hero.grounded,true);
+    game.action('jump',false);assert.equal(hero.grounded,false);assert.equal(hero.musketAim,false);assert.equal(hero.combat.timeline.pose.id,151);
+  }finally{state.dispose();}
+});
+
 test('原重力控制离台自由下落，两个固定步长均正常落地并保持蒙皮对齐',()=>{
   for(const dt of [1/60,1/120]){
     const state=fixture();try{
       const {game,hero}=state;hero.weapon='sword';hero.combat.sampleRoot=hero.character.sampleSceneMotion;hero.combat.setWeapon('sword');hero.combat.play(6,{force:true});
       assert.equal(NATIVE_AIR_PHYSICS.gravity,70.56);assert.equal(NATIVE_AIR_PHYSICS.jumpVelocity,22.56);
-      const floor=hero.root.position.y;game.action('jump');assert.equal(hero.vy,22.56);
+      const floor=hero.root.position.y;game.action('jump');game.action('jump',false);assert.equal(hero.vy,22.56);
       // A fall has no casting/reaction d_base vertical override. Keep the real
       // native fall pose and ground collision, starting20m above that floor.
       hero.root.position.y=floor+20;hero.vy=0;hero.nativeJump=null;hero.jumpSequence=null;
       let elapsed=0;
       while(!hero.grounded&&elapsed<1){
         game._updateFighter(hero,dt);elapsed+=dt;
-        if(elapsed===dt){assert.ok(Math.abs(hero.vy+70.56*dt)<1e-9);assert.ok(Math.abs(hero.root.position.y-(floor+20-70.56*dt*dt))<1e-9);}
+        if(elapsed===dt){assert.ok(Math.abs(hero.vy+70.56*dt)<.001);assert.ok(Math.abs(hero.root.position.y-(floor+20-70.56*dt*dt))<.0001);}
         assert.ok(Math.abs(hero.character.getAttachment('d_base').getWorldPosition(v()).y-hero.root.position.y)<.01);
       }
       // Free fall20m under source gravity takes sqrt(40/70.56)=.7529s.
@@ -453,19 +518,19 @@ test('原重力控制离台自由下落，两个固定步长均正常落地并�
   }
 });
 
-test('normal L takeoff moves the collision root by the original d_base curve without adding it twice to the skin', () => {
+test('普通跳跃使用原物理初速度，不再把动画 d_base 高度充当碰撞轨迹', () => {
   const state = fixture();
   try {
     const { game, hero } = state, pose = hero.combat.data.poses.get(151), start = hero.root.position.y;
     const origin = hero.character.sampleSceneMotion(pose.source, pose.start).z;
-    game.action('jump');
+    game.action('jump');game.action('jump',false);
     for (let index = 1; index <= 27; index++) {
       game._updateFighter(hero, 1/60);
-      const expected = (hero.character.sampleSceneMotion(pose.source, pose.start + index/2).z - origin)*.08;
-      assert.ok(Math.abs(hero.root.position.y - start - expected) < 1e-5);
       assert.ok(Math.abs(hero.character.getAttachment('d_base').getWorldPosition(v()).y - hero.root.position.y) < .01);
     }
-    assert.ok(hero.root.position.y > 5.5, 'authored elevation must permit the sn09 central platform');
+    const authored=(hero.character.sampleSceneMotion(pose.source,pose.start+13.5).z-origin)*.08;
+    assert.ok(authored>5.3,'保留原动画位移数据，供攻击等独立动作使用');
+    assert.ok(hero.root.position.y-start>2&&hero.root.position.y-start<3,'普通小跳已越过顶点，没有叠加原动画约5.5m高度');
   } finally { state.dispose(); }
 });
 
@@ -573,11 +638,11 @@ test('stride-calibrated ground movement stops on release and attack without iner
  }
 });
 
-test('linked original jump descent lands without adding another host ballistic arc',()=>{
+test('四向小跳共享原初速度和重力，动画衔接不叠加第二条跳跃曲线',()=>{
  for(const direction of ['forward','right','left','back']){
-  const state=fixture();try{const {game,hero}=state;game.action(direction);game.action('jump');let ticks=0,top=0;
+  const state=fixture();try{const {game,hero}=state;game.action(direction);game.action('jump');game.action('jump',false);let ticks=0,top=0;
    for(;ticks<120;ticks++){game._updateFighter(hero,1/60);top=Math.max(top,hero.root.position.y);if(hero.grounded)break;}
-   assert.ok(ticks>20&&ticks<60,`${direction}: ${ticks} ticks`);assert.ok(top>4&&top<6.2);assert.ok(hero.root.position.length()<10);
+   assert.ok(ticks>30&&ticks<45,`${direction}: ${ticks} ticks`);assert.ok(top>3.3&&top<3.7);assert.ok(hero.root.position.length()<10);
   }finally{state.dispose();}
  }
 });

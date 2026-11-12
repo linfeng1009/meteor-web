@@ -101,7 +101,7 @@ test('mission weapon profiles keep plain-A separate from the authored directiona
 test('ordinary jump and attack inputs render the original dual, hammer and knuckle air poses and return to their source stances', async () => {
   for (const [item, family, first] of [[13, 'dual', 226], [18, 'hammer', 338], [51, 'knuckle', 405]]) {
     const { game, hero } = await fixture(item);
-    game.action('jump'); game.action('attack'); assert.equal(hero.combat.timeline.pose.id, first);
+    game.action('jump');game.action('jump',false); game.action('attack'); assert.equal(hero.combat.timeline.pose.id, first);
     let displayed = false;
     for (let frame = 0; frame < 360; frame++) {
       tick(game);

@@ -1,16 +1,16 @@
 // Per-player gameplay input. Camera rendering and HUD stay on the local game.
 export function createPlayerControl({cameraAngle=0,lookLocked=false}={}) {
-  return {keys:new Set(),directionBuffer:[],recoveryAttack:null,traversalTap:null,locked:null,autoLockEnabled:true,cameraAngle,aimPitch:0,lookLocked};
+  return {keys:new Set(),directionBuffer:[],recoveryAttack:null,traversalTap:null,jumpCharge:null,locked:null,autoLockEnabled:true,cameraAngle,aimPitch:0,lookLocked};
 }
-export function clearPlayerCommands(control) {
+export function clearPlayerCommands(control,{preserveJump=false}={}) {
   if(!control)return;
-  control.directionBuffer=[];control.recoveryAttack=null;control.traversalTap=null;
+  control.directionBuffer=[];control.recoveryAttack=null;control.traversalTap=null;if(!preserveJump)control.jumpCharge=null;
 }
 export function bindLocalPlayerControl(game) {
   const control=createPlayerControl();
   // Existing menus/camera/keyboard use these names; keep aliases while the
   // simulation consumes the explicit control object rather than the game.
-  for(const key of ['keys','directionBuffer','recoveryAttack','traversalTap','locked','cameraAngle']){
+  for(const key of ['keys','directionBuffer','recoveryAttack','traversalTap','jumpCharge','locked','cameraAngle']){
     if(game[key]!==undefined)control[key]=game[key];
     Object.defineProperty(game,key,{configurable:true,enumerable:true,get:()=>control[key],set:value=>{control[key]=value;}});
   }

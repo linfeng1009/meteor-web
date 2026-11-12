@@ -284,7 +284,7 @@ test('jump then down-A selects native down attacks, with sword wind-up held thro
     const { game, hero, target, events } = await fixture(weapon);
     // No caller-supplied position/pose override: jump is the same public action
     // used by the keyboard, followed by ordinary back-key down/up and attack.
-    game.action('jump');
+    game.action('jump');game.action('jump',false);
     // Enter on the ordinary descent, within reach of the standing target.
     // The native takeoff rises higher than the old fixed2.1m Web arc.
     for (let i = 0; i < 120 && !hero.grounded && (hero.vy >= 0 || hero.root.position.y > 3); i++) tick(game);
@@ -374,7 +374,7 @@ test('every listed ready command has a public-input route from the ground or a n
       }
     }
     if (move.stance === 'air') {
-      game.action('jump'); for (let frame = 0; frame < 12; frame++) tick(game);
+      game.action('jump');game.action('jump',false); for (let frame = 0; frame < 12; frame++) tick(game);
     }
     const beforePose = hero.combat.timeline.pose.id;
     const blockedBy = execute(game, move);
@@ -416,7 +416,7 @@ test('the requested spear left-right-up-A body attack and airborne A kick remove
   }
   for (const weapon of ['spear', 'blade']) {
     const { game, hero, target, events } = await fixture(weapon);
-    game.action('jump');
+    game.action('jump');game.action('jump',false);
     // Attack near landing on the ordinary descent, within reach of the target.
     // No hero/target position, authored pose or attachment is overridden.
     for (let frame = 0; frame < 120 && !hero.grounded && (hero.vy >= 0 || hero.root.position.y > .6); frame++) tick(game);
@@ -482,7 +482,7 @@ test('actual heavy-hit TargetMove scales the original recoil and TargetValue hol
 
 test('a natural dagger jump can reach all three original air strikes through ordinary attack inputs without altitude overrides', async () => {
   const { game, hero } = await fixture('dagger'); game.enemies = []; game.locked = null;
-  game.action('jump'); for (let frame = 0; frame < 12; frame++) tick(game);
+  game.action('jump');game.action('jump',false); for (let frame = 0; frame < 12; frame++) tick(game);
   for (const id of [245, 246, 247]) {
     assert.equal(hero.grounded, false, `landed before requesting air ${id}`); game.action('attack');
     for (let frame = 0; frame < 180 && hero.combat.timeline.pose.id !== id; frame++) tick(game);

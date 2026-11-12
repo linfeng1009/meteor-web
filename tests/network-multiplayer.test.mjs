@@ -24,6 +24,18 @@ test('四人房间逐人准备载入，队伍合法后开局，每路输入独�
  call(host,'sync',{inputAck:{[players[1].playerId]:1}});assert.equal(call(host,'sync').input.length,2);
  assert.throws(()=>call(players[2],'sync',{frame:f.frame(2)}),/房主/);
 });
+test('跳跃按下与松开重试保持时间间隔，部分确认不会吞掉松开事件',()=>{
+  const f=room();f.start();const {host,players,call}=f,guest=players[1];
+  const input=[{action:'jump',active:true,sequence:1,angle:0,time:10},{action:'jump',active:false,sequence:2,angle:0,time:10.04}];
+  call(guest,'sync',{input});const first=call(host,'sync').input;
+  assert.deepEqual(first.map(event=>[event.action,event.active,event.sequence,event.time]),[['jump',true,1,10],['jump',false,2,10.04]]);
+  call(guest,'sync',{input});assert.deepEqual(call(host,'sync').input,first);
+  call(host,'sync',{inputAck:{[guest.playerId]:1}});const release=call(host,'sync').input;
+  assert.equal(release.length,1);assert.equal(release[0].active,false);assert.equal(release[0].time,10.04);
+  call(guest,'sync',{input:[input[1]]});assert.deepEqual(call(host,'sync').input,release);
+  call(host,'sync',{inputAck:{[guest.playerId]:2}});assert.equal(call(host,'sync').input.length,0);
+});
+
 test('三人继续游戏时客人离场刷新名册，不吞旧队列，不接受幽灵帧',()=>{
  const f=room();f.start();const {host,players,call}=f;call(players[1],'leave');const stale=call(host,'sync',{frame:f.frame()});assert.equal(stale.room.phase,'playing');assert.equal(stale.room.players.length,3);assert.equal(f.rooms.rooms.get(host.room.code).frame,null);
  const frame=f.frame();frame.players=frame.players.filter(p=>p.id!==players[1].playerId);call(host,'sync',{frame});assert.equal(call(players[2],'sync').frame.players.length,3);

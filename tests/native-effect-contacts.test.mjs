@@ -727,13 +727,13 @@ test('忍刀四向地面瞬移逐一消费原场景运动轨迹，不造成攻�
 
 test('忍刀四向空中瞬移可正常起跳施展，保留下落并接空中轻斩',async t=>{
  for(const [id,key] of [[530,'forward'],[531,'right'],[532,'left'],[533,'back']])await t.test(String(id),async()=>{
-  const {game,events}=await fixture([]);await game._equip(game.hero,'ninja');game.action('jump');for(let i=0;i<12;i++)tick(game);
+  const {game,events}=await fixture([]);await game._equip(game.hero,'ninja');game.action('jump');game.action('jump',false);for(let i=0;i<12;i++)tick(game);
   assert.equal(game.hero.grounded,false);manual(game,[key,key]);assert.equal(game.hero.combat.currentMove.poseId,id);
   const origin=game.hero.root.position.clone();let lowest=origin.y;for(let i=0;i<36;i++){tick(game);lowest=Math.min(lowest,game.hero.root.position.y);}
   const distance=Math.hypot(game.hero.root.position.x-origin.x,game.hero.root.position.z-origin.z);
   assert.ok(distance>5.5&&distance<5.7,`${id}: ${distance}`);assert.ok(lowest<origin.y);
   // A fresh naturally airborne cast can immediately queue the authored ACT continuation.
-  settle(game);game.action('jump');for(let i=0;i<12;i++)tick(game);manual(game,[key,key]);game.action('attack',false);game.action('attack');
+  settle(game);game.action('jump');game.action('jump',false);for(let i=0;i<12;i++)tick(game);manual(game,[key,key]);game.action('attack',false);game.action('attack');
   assert.equal(game.hero.combat.queuedMove?.poseId,478);settle(game);
   assert.ok(events.some(e=>e.type==='move'&&e.poseId===478));assert.equal(game.hero.combat.busy,false);
  });

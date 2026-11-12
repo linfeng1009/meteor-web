@@ -9,9 +9,9 @@ export function turnMouseCamera(game, dx, dy) {
   return true;
 }
 // Pointer Lock must be requested synchronously from a user gesture, before scene loading.
-export function createMouseLook(canvas, { document:doc=canvas.ownerDocument, active, move, action, onUnlock=()=>{}, onError=()=>{}, bindings=defaultBindings() }) {
+export function createMouseLook(canvas, { document:doc=canvas.ownerDocument, active, move, action, onUnlock=()=>{}, onError=()=>{}, onReset=()=>{}, bindings=defaultBindings() }) {
   let mapping=bindingMap(bindings); const held=new Map();
-  const resetButtons=()=>{for(const name of new Set(held.values()))action(name,false);held.clear();};
+  const resetButtons=()=>{if(held.size)onReset();for(const name of new Set(held.values()))action(name,false);held.clear();};
   let wasLocked=false, wanted=false, pending=false, disposed=false, reported=false;
   const locked=()=>doc.pointerLockElement===canvas;
   const fail=()=>{pending=false;if(wanted&&!reported){reported=true;onError();}};

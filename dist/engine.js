@@ -1,7 +1,7 @@
 import {NativeStealthFeedback} from './native-stealth-feedback.js';
 import {validCombatTarget,acquireCombatTarget} from './combat-targeting.js';
 import {nativeStrideSpeed} from './native-movement-profile.js';
-import { traversalTap, NATIVE_AIR_PHYSICS, NATIVE_ROLL_POSES, nativeDashPose, NATIVE_CROUCH_POSES, NATIVE_GROUND_MOVE_POSES, NATIVE_JUMP_POSES, nativeTraversalDirection } from './native-traversal.js';
+import { traversalTap, NATIVE_AIR_PHYSICS, NATIVE_JUMP_HOLD_SECONDS, nativeAirVerticalVelocity, NATIVE_ROLL_POSES, nativeDashPose, NATIVE_CROUCH_POSES, NATIVE_GROUND_MOVE_POSES, NATIVE_JUMP_POSES, nativeTraversalDirection } from './native-traversal.js';
 import { FixedStepClock } from './fixed-step.js';
 import { NATIVE_WALL_POSES, WALL_TRAVERSAL_ADAPTER as WALL } from './native-wall-traversal.js';
 import { FrameMeter, RenderScaleController, createFrameOverlay } from './frame-meter.js';
@@ -570,7 +570,9 @@ export class MeteorGame {
         const dy = jump.height - before; p.y += dy; f.vy = dy / dt;
         if (jump.elapsed >= jump.duration - 1e-8) f.nativeJump = null;
       } else {
-        f.nativeJump = null; f.vy -= this.hostPhysics.gravity * dt; p.y += f.vy * dt;
+        f.nativeJump = null;
+        f.vy=f.combat.busy?f.vy-this.hostPhysics.gravity*dt:nativeAirVerticalVelocity(f.vy,Math.hypot(f.velocity.x,f.velocity.z),dt,this.hostPhysics.gravity);
+        p.y += f.vy * dt;
       }
       if(p.y>beforeY&&this._ceilingBlocked(v3(p.x,beforeY,p.z),p.y-beforeY)){p.y=beforeY;f.vy=0;f.nativeJump=null;f.jumpSequence=null;if(f.wallRun)this._endWallTraversal(f);}
       const landing = this._ground(p.x, p.z, p.y + Math.max(.7, -f.vy * dt + .15));
@@ -709,7 +711,7 @@ export class MeteorGame {
   }
   requestMouseLock() { return this.mouseLook?.request(); }
   setKeyBindings(bindings) { this.keyboard?.setBindings(bindings);this.mouseLook?.setBindings(bindings); }
-  releaseInput({releaseMouse=true}={}) { this.keyboard?.reset(); if(releaseMouse)this.mouseLook?.release(); this.keys.clear(); clearPlayerCommands(this.localControl||this); this.pointer=null; if(this.hero)this.hero.guard=false; }
+  releaseInput({releaseMouse=true}={}) { clearPlayerCommands(this.localControl||this); this.keyboard?.reset(); if(releaseMouse)this.mouseLook?.release(); this.keys.clear(); this.pointer=null; if(this.hero)this.hero.guard=false; }
   pause(value = true) { this.releaseInput({releaseMouse:!!value}); if(this.paused !== !!value)this._resetWorldClock(); this.paused = !!value; this.projectiles?.pause(this.paused); this.muskets?.pause(this.paused); this.wheels?.pause(this.paused); if (this.master) this.master.gain.value = this.paused || this.muted ? 0 : .25; this._hud(); }
   async setCharacter(id = 0, appearance = Number(id) === 0 ? DEFAULT_CHARACTER_APPEARANCE : 'original') {
     const request = ++this.characterRequest;
@@ -836,31 +838,42 @@ export class MeteorGame {
   setMuted(value) { this.muted = !!value; if (this.master) this.master.gain.value = value ? 0 : .25; }
   setQuality(value) { this.quality = value; this.butterflyVfx?.setQuality(value); this._applyMapPresentation(); this.renderScale.reset(Math.min(window.devicePixelRatio || 1, value === 'low' ? 1 : 2)); this.renderer.setPixelRatio(this.renderScale.ratio); this.resize(); }
   setDamageResolver(resolver) { if (resolver !== null && typeof resolver !== 'function') throw new Error('Damage resolver must be a function or null'); this.damageResolver = resolver; }
-  _beginJump(actor) {
+  _beginJump(actor,{large=false}={}) {
     if (!actor.grounded || actor.combat.busy) return false;
     const control=this._controlFor(actor),direction=nativeTraversalDirection(control?.keys)||'forward';
     const sequence=NATIVE_JUMP_POSES[direction];
     const pose = actor.combat.data.poses.get(sequence.start);
     if(!pose?.valid)return false;
     if(control&&!control.locked)actor.root.rotation.y=control.cameraAngle+Math.PI;
-    actor.jumpSequence={...sequence,direction,facing:actor.root.rotation.y};actor.wallEntries=0;actor.wallRun=null;actor.wallKick=null;
-    actor.musketAim=false; actor.grounded = false; actor.vy = this.hostPhysics.jumpVelocity;
-    if (pose?.valid && actor.character.sampleSceneMotion) {
-      // 004ce850 consumes d_base movement independently of the visible skin.
-      // Preserve the authored takeoff instead of a fixed-height substitute.
-      // Interrupted/descending free flight still uses the Web gravity adapter.
-      const fps = actor.combat.fps;
-      actor.nativeJump = { pose, fps, elapsed: 0, height: 0, duration: (pose.end - pose.start) / fps,
-        origin: actor.character.sampleSceneMotion(pose.source, pose.start).z };
-    }
+    actor.jumpSequence={...sequence,direction,facing:actor.root.rotation.y,ballistic:true};actor.wallEntries=0;actor.wallRun=null;actor.wallKick=null;
+    actor.musketAim=false; actor.grounded = false; actor.vy = large?NATIVE_AIR_PHYSICS.largeJumpVelocity:this.hostPhysics.jumpVelocity;
+    // 004cf5a0 enters state0 with physical vertical speed; ordinary jump
+    // animation must not add its d_base elevation on top of that flight.
+    actor.nativeJump=null;
     actor.combat.play(sequence.start, { force: true }); actor.heldPose = 'jump'; return true;
+  }
+  _finishJumpCharge(actor,control){
+    const charge=control?.jumpCharge;if(!charge)return false;control.jumpCharge=null;
+    if(charge.actor!==actor||!this.running||this.paused||actor.dead||actor.disposed||actor.scriptInputBlocked||actor.combat.busy||actor.guard)return false;
+    const duration=actor.playerControl?Math.max(0,(control.inputTime??charge.time)-charge.time):Math.max(charge.elapsed,(this.elapsed??charge.time)-charge.time);
+    control.directionBuffer=[];
+    return actor.grounded?this._beginJump(actor,{large:duration+1e-9>=NATIVE_JUMP_HOLD_SECONDS}):this._beginWallJump(actor);
+  }
+  _updateJumpCharge(actor,control,dt){
+    const charge=control?.jumpCharge;if(!charge)return;
+    if(actor.dead||actor.disposed||actor.scriptInputBlocked||actor.guard){control.jumpCharge=null;return;}
+    charge.elapsed+=dt;
+    // Remote hold duration follows the client's ordered event clock. Host
+    // polling delay alone must not turn a short tap into a large jump.
+    const elapsed=actor.playerControl?Math.max(0,(control.inputTime??charge.time)-charge.time):charge.elapsed;
+    if(elapsed>NATIVE_JUMP_HOLD_SECONDS+1e-9&&!actor.combat.busy)this._finishJumpCharge(actor,control);
   }
   _controlFor(actor) { return actor?.playerControl || (actor?.hero ? this.localControl || this : null); }
   _beginRoll(direction, poseId, actor = this.hero, control = this._controlFor(actor)) {
     if(!this.running||this.paused||!actor||actor.dead||!actor.grounded||actor.scriptInputBlocked||actor.combat.busy||!control?.keys.has('crouch')||poseId!==NATIVE_ROLL_POSES[direction])return false;
     if(!actor.combat.data.poses.get(poseId)?.valid)return false;
     if(!actor.combat.play(poseId,{motion:true,context:{kind:'roll',direction,poseId,name:({forward:'向前翻滚',back:'向后翻滚',left:'向左翻滚',right:'向右翻滚'})[direction]}}))return false;
-    actor.root.rotation.y=control.cameraAngle+Math.PI;actor.velocity.set(0,0,0);actor.guard=false;actor.heldPose=null;clearPlayerCommands(control);
+    actor.root.rotation.y=control.cameraAngle+Math.PI;actor.velocity.set(0,0,0);actor.guard=false;actor.heldPose=null;clearPlayerCommands(control,{preserveJump:true});
     return true;
   }
   _beginDash(direction,poseId,actor=this.hero,control=this._controlFor(actor)) {
@@ -873,6 +886,13 @@ export class MeteorGame {
     if(!actor || !control)return;
     if(['switch','drop','pickup'].includes(name)){if(active){if(name==='switch')return this._switchInventoryWeapon(actor);if(name==='drop')return this.dropWeapon(actor);return this._tryPickupActor(actor);}return;}
     const inputTime=control.inputTime??this.elapsed;
+    if(name==='clear'){control.keys.clear();clearPlayerCommands(control);actor.guard=false;actor.musketAim=false;return;}
+    if(name==='jump'){
+      if(!active){this._finishJumpCharge(actor,control);return;}
+      if(!this.running||this.paused||actor.dead||actor.disposed||actor.scriptInputBlocked||actor.combat.busy||actor.guard||(!actor.grounded&&!actor.wallRun))return;
+      if(!control.jumpCharge){if(actor===this.hero)this._unlockAudio();control.jumpCharge={actor,time:inputTime,elapsed:0};}
+      return;
+    }
     if (name === 'guard') {
       const held = active && this.running && !this.paused && !actor.dead;
       if (held) control.keys.add('guard'); else control.keys.delete('guard');
@@ -901,14 +921,11 @@ export class MeteorGame {
         buffer: [...control.directionBuffer], held: [...control.keys] };
       else { control.recoveryAttack = null; this._beginAttack(actor); }
     }
-    else if (name === 'jump' && !actor.combat.busy) {
-      control.directionBuffer = []; if(actor.grounded)this._beginJump(actor);else this._beginWallJump(actor);
-    }
     else if (name === 'lock' && !actor.musketAim) { this._toggleCombatLock(actor,control); if(actor===this.hero){this.cameraManualUntil = 0;this._hud();} }
   }
   action(name, active = true) {
     if(['switch','drop','pickup'].includes(name)){if(active){if(name==='switch')return this.switchWeapon();if(name==='drop')return this.dropWeapon();this._tryPickupActor(this.hero);this._hud();}return;}
-    if(['guard','crouch','forward','back','left','right','attack','jump','lock'].includes(name))return this._actionFighter(this.hero,this._controlFor(this.hero),name,active);
+    if(['clear','guard','crouch','forward','back','left','right','attack','jump','lock'].includes(name))return this._actionFighter(this.hero,this._controlFor(this.hero),name,active);
     if (!active || !this.running || this.paused || !this.hero || this.hero.dead || this.hero.scriptInputBlocked) return;
     this._unlockAudio();
     if (name === 'fury' || name === 'dodge') this._emit('该动作的原版指令与条件正在逆向，当前不使用替代招式', 'info');
@@ -1012,6 +1029,7 @@ export class MeteorGame {
     // Only the two contacting actors pause; mission time, projectiles and
     // other fighters keep running. These short durations are Web feedback.
     if (f.hitstop > 0) { const pause = Math.min(dt, f.hitstop); f.hitstop -= pause; dt -= pause; if (dt <= 1e-7) return; }
+    this._updateJumpCharge(f,control,dt);
     let direction = v3(), speed = this.hostPhysics.speed * nativeMovementScale(f);
     if (control && control.recoveryAttack) {
       const input = control.recoveryAttack;
@@ -1038,7 +1056,7 @@ export class MeteorGame {
         // Dijkstra/waypoint navigation is a Web adapter. Elevated source links
         // (e.g. sn09 WP7→0) need the same original takeoff as the player; a
         // walking-only follower would fall when the source floors disappear.
-        if (moveTarget && Number(f.scriptConfig?.Jump) > 0 && moveTarget.y - f.root.position.y > this.hostPhysics.step + .3 && flatDistance(moveTarget, f.root.position) < 8) this._beginJump(f);
+        if (moveTarget && Number(f.scriptConfig?.Jump) > 0 && moveTarget.y - f.root.position.y > this.hostPhysics.step + .3 && flatDistance(moveTarget, f.root.position) < 8) this._beginJump(f,{large:moveTarget.y-f.root.position.y>3.3});
         const distance = targetAlive ? flatDistance(target.root.position, f.root.position) : Infinity;
         if (moveTarget && (moveTarget !== target?.root.position || distance > reach + .2)) { direction.copy(moveTarget).sub(f.root.position); direction.y = 0; if (direction.length() > .45) direction.normalize(); else direction.set(0, 0, 0); }
         if (targetAlive && control.canAttack) {
@@ -1114,7 +1132,7 @@ export class MeteorGame {
     if (control && !f.combat.busy && !f.scriptInputBlocked && control.keys.has('guard')) f.guard = true;
     const motion = v3();
     for (const segment of state.segments || [state]) {
-      if(f.jumpSequence&&[f.jumpSequence.start,f.jumpSequence.air].includes(segment.poseId)&&f.character.sampleSceneMotion){
+      if(f.jumpSequence&&!f.jumpSequence.ballistic&&[f.jumpSequence.start,f.jumpSequence.air].includes(segment.poseId)&&f.character.sampleSceneMotion){
         // Consume BOTH takeoff and linked air d_base tracks, at actual POS time.
         // The former host stopped at takeoff, then injected an extra ballistic arc.
         f.nativeJump=null;
@@ -1478,16 +1496,16 @@ export class MeteorGame {
   _bind() {
     const bind = (el, name, fn, options) => { el.addEventListener(name, fn, options); this._listeners.push(() => el.removeEventListener(name, fn, options)); };
     bind(document, 'visibilitychange', () => { this.frameMeter.reset(); this.clock.getDelta(); this.simulationClock.reset(); });
-    this.keyboard = bindKeyboard(window, { bindings: defaultBindings(), enabled: () => this.running && !this.paused && !document.querySelector('dialog[open]') && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName), action: (name, down) => this.action(name, down) });
+    this.keyboard = bindKeyboard(window, { bindings: defaultBindings(), enabled: () => this.running && !this.paused && !document.querySelector('dialog[open]') && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName), action: (name, down) => this.action(name, down),onReset:()=>this.action('clear',false) });
     this._listeners.push(() => this.keyboard.dispose());
-    this.mouseLook = createMouseLook(this.canvas, { active: () => this.running && !this.paused && !document.querySelector('dialog[open]'), move: (dx, dy) => turnMouseCamera(this, dx, dy), action: (name, down) => this.action(name, down), onUnlock: () => this.onEvent({ type: 'pointer-unlock' }), onError: () => this.onEvent({ type: 'pointer-error', text: '鼠标锁定未成功，请点击游戏画面重试；也可继续使用键盘操作。' }) });
+    this.mouseLook = createMouseLook(this.canvas, { active: () => this.running && !this.paused && !document.querySelector('dialog[open]'), move: (dx, dy) => turnMouseCamera(this, dx, dy), action: (name, down) => this.action(name, down),onReset:()=>this.action('clear',false), onUnlock: () => this.onEvent({ type: 'pointer-unlock' }), onError: () => this.onEvent({ type: 'pointer-error', text: '鼠标锁定未成功，请点击游戏画面重试；也可继续使用键盘操作。' }) });
     this._listeners.push(() => this.mouseLook.dispose());
     bind(window, 'blur', () => this.releaseInput());
     bind(this.canvas, 'contextmenu', e => e.preventDefault());
     bind(this.canvas, 'pointerdown', e => { this._unlockAudio(); if(this.mouseLook.pointerDown(e))return; this.pointer = { x: e.clientX, y: e.clientY, startX: e.clientX, startY: e.clientY, button: e.button, moved: false }; this.canvas.setPointerCapture?.(e.pointerId); if (e.button === 2) this.action('jump'); });
     bind(this.canvas, 'pointermove', e => { if(this.mouseLook.locked || this.locked&&!this.locked.dead&&!this.locked.disposed)return; const p = this.pointer; if (!p) return; if (Math.hypot(e.clientX - p.startX, e.clientY - p.startY) > 5) p.moved = true; if (p.moved && this.running && !this.paused) { this.cameraManualUntil = this.elapsed + 2; this.cameraAngle -= (e.clientX - p.x) * .005; this.cameraPitch = clamp(this.cameraPitch + (e.clientY - p.y) * .003, .15, .95); } p.x = e.clientX; p.y = e.clientY; });
-    bind(this.canvas, 'pointerup', e => { this.mouseLook.pointerUp(e); if (this.pointer && !this.pointer.moved && this.pointer.button === 0) this.action('attack'); this.pointer = null; });
-    for (const event of ['pointercancel', 'lostpointercapture']) bind(this.canvas, event, () => { this.pointer = null; this.action('guard', false); });
+    bind(this.canvas, 'pointerup', e => { this.mouseLook.pointerUp(e); if (this.pointer && !this.pointer.moved && this.pointer.button === 0) this.action('attack'); if(this.pointer?.button===2)this.action('jump',false); this.pointer = null; });
+    for (const event of ['pointercancel', 'lostpointercapture']) bind(this.canvas, event, () => { if(this.pointer?.button===2)this.action('clear',false);this.pointer = null; this.action('guard', false); });
     bind(this.canvas, 'wheel', e => { if (!this.running || this.locked&&!this.locked.dead&&!this.locked.disposed) return; e.preventDefault(); this.cameraDistance = clamp(this.cameraDistance + e.deltaY * .008, 3.5, 18); }, { passive: false });
     bind(window, 'resize', () => this.resize());
   }

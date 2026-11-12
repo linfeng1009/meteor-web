@@ -54,6 +54,12 @@ test('原防御分支使用独立五选一抽样，蹲下与格挡标志保留�
   assert.equal(brain.guard,false);assert.equal(brain.crouch,false);
 });
 
+test('火铳专用蹲下拒绝条件读取瞄准标志，收枪后可重新蹲守',()=>{
+  const f=actor('musket');f.scriptConfig={Guard:100};f.musketAim=true;
+  const brain=new NativeNpcCombat(data,{random:draws(0)});brain.choose(f);assert.equal(brain.crouch,false);
+  f.musketAim=false;brain.choose(f);assert.equal(brain.crouch,true);
+});
+
 test('失去敌人和重置清除两种防御标志，暂停不会更改已选防御',()=>{
   const f=actor('musket');f.scriptConfig={Guard:100};
   const brain=new NativeNpcCombat(data,{random:draws(0)});

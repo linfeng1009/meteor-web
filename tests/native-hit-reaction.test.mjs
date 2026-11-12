@@ -299,7 +299,7 @@ test('fixed world replay preserves sword hits, death, respawn and movement acros
     game._stepWorld=dt=>{
       if(tickIndex===0)game.action('attack');
       if(tickIndex===210)game.action('right');
-      if(tickIndex===240){game.action('right',false);game.action('jump');}
+      if(tickIndex===240){game.action('right',false);game.action('jump');game.action('jump',false);}
       if(tickIndex===300)game.action('guard');
       if(tickIndex===330)game.action('guard',false);
       step(dt);tickIndex++;
@@ -385,7 +385,7 @@ test('public held guard can be released and pressed during block stun, repeated 
   assert.equal(hero.combat.reactionPhase, 'guard'); assert.equal(hero.guard, true);
   game.action('guard', false); assert.equal(hero.guard, false);
   game.action('guard'); assert.equal(hero.guard, true);
-  game.action('attack'); game.action('jump'); assert.equal(hero.combat.queuedMove, null); assert.equal(hero.grounded, true);
+  game.action('attack'); game.action('jump');game.action('jump',false); assert.equal(hero.combat.queuedMove, null); assert.equal(hero.grounded, true);
   const hp = hero.hp; game._updateFighter(hero, .06); hit(game, target, hero, 262);
   assert.equal(hero.hp, hp); assert.equal(hero.combat.reactionPhase, 'guard');
   hit(game, target, hero, 298);
@@ -504,7 +504,7 @@ test('native hitstun cannot be cancelled by jumping; held defense engages on rec
   const { game, hero, target } = await fixture();
   hit(game, target, hero, 264);
   assert.equal(hero.combat.timeline.pose.id, 98);
-  game.action('forward'); game.action('attack'); game.action('jump'); game.action('guard');
+  game.action('forward'); game.action('attack'); game.action('jump');game.action('jump',false); game.action('guard');
   game._updateFighter(hero, 1 / 60);
   assert.equal(hero.combat.timeline.pose.id, 98); assert.equal(hero.combat.queuedMove, null); assert.equal(hero.grounded, true);
   assert.equal(hero.velocity.lengthSq(), 0, 'held movement cannot cancel authored recoil'); assert.equal(hero.guard, false);
@@ -512,7 +512,7 @@ test('native hitstun cannot be cancelled by jumping; held defense engages on rec
   for (let frame = 0; frame < 240; frame++) { game.elapsed += 1 / 60; game._updateFighter(hero, 1 / 60); }
   assert.equal(hero.combat.reacting, false); assert.equal(hero.combat.timeline.pose.id, 16); assert.equal(hero.guard, true);
   game.action('guard', false); game._updateFighter(hero, 1 / 60); assert.equal(hero.combat.timeline.pose.id, 6);
-  game.action('jump'); assert.equal(hero.grounded, false); assert.equal(hero.combat.timeline.pose.id, 151);
+  game.action('jump');game.action('jump',false); assert.equal(hero.grounded, false); assert.equal(hero.combat.timeline.pose.id, 151);
 });
 
 test('real impact feedback freezes only the contacting actors and consumes only its pause portion of the next update', async () => {

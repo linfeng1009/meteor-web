@@ -5,9 +5,20 @@ export const NATIVE_TRAVERSAL_WINDOW=.3;
 // Reference EXE 004cb083 initializes actor+0xd8 to float32(-882);
 // 004cf5a0 assigns float32(282) to actor+0x398 for jump argument0.
 // 004ce840 consumes the gravity vector during attack/free-flight motion.
-// Ordinary jump root curves, collision shape and air steering remain Web adapters.
-export const NATIVE_AIR_PHYSICS=Object.freeze({gravity:882*.08,jumpVelocity:282*.08,
-  provenance:'Reference Meteor.exe actor constructor004cb083 immc45c8000;004cf5a0 normal jump uses005aa93c float282, alternate005aa940 float375 is not enabled without its original input gate. Native units×.08.'});
+// 004cf4b0 starts the button timer;004cf530 selects the jump on release,
+// comparing against float64(.11) at005aa8e8.004cd3a0 auto-releases after it.
+// Collision shape, horizontal steering and wall traversal remain Web adapters.
+export const NATIVE_JUMP_HOLD_SECONDS=.11;
+export const NATIVE_AIR_PHYSICS=Object.freeze({gravity:882*.08,jumpVelocity:282*.08,largeJumpVelocity:375*.08,
+  provenance:'Reference Meteor.exe constructor004cb083 immc45c8000;004cf5a0 uses005aa93c float282 or005aa940 float375.004cf530 hold threshold float64(.11) at005aa8e8. Native units×.08.'});
+// 004cd3a0 state0 applies linear drag(.1*200) before gravity, then
+// quadratic drag(.1/600). Horizontal steering remains the Web host adapter.
+export function nativeAirVerticalVelocity(vertical,horizontal,dt,gravity=NATIVE_AIR_PHYSICS.gravity){
+  let velocity=vertical/.08,speed=Math.hypot(velocity,horizontal/.08);
+  if(speed>0)velocity=Math.fround(velocity*Math.max(0,1-20*dt/speed));
+  velocity=Math.fround(velocity-gravity/.08*dt);speed=Math.hypot(velocity,horizontal/.08);
+  return Math.fround(velocity*Math.max(0,1-speed*dt/6000))*.08;
+}
 export const NATIVE_ROLL_POSES=Object.freeze({forward:176,right:177,left:178,back:179});
 // 004cc730 maps crouched idle -> 10 and walk/run 140/144,141,142,143
 // to 145,146,147,148. 004cf770 selects directional takeoff; 004cf7d0

@@ -349,10 +349,24 @@ export class NativeCombatController {
     for (let candidate = Math.ceil(armed - 1e-6); candidate < pose.end; candidate++) if (this.timeline.isBlendFrame(candidate)) return candidate;
     return pose.end;
   }
+  _acceptFrame(){
+    const {pose,frame}=this.timeline;
+    return this.timeline.canCancel?frame:pose.cancels.find(window=>window.start>frame)?.start??pose.end;
+  }
+  _acceptRequest(request){
+    if(request.accepted)return true;
+    if(request.canStart?.(request.context)===false)return false;
+    request.accepted=true;request.onAccept?.(request.context);return true;
+  }
+  _acceptQueued(){
+    const request=this._queuedRequest;
+    if(request&&!request.accepted&&request.waitForPose==null&&this.timeline.frame>=request.acceptFrame-1e-6)this._acceptRequest(request);
+  }
   _canCancelFor(request) {
     if(request.waitForPose!=null){
       if(this.timeline.pose.id!==request.waitForPose)return false;
-      request.waitForPose=null;request.transitionFrame=this._queueFrame();
+      request.waitForPose=null;request.transitionFrame=this._queueFrame();request.acceptFrame=this._acceptFrame();
+      if(request.acceptFrame<=this.timeline.frame+1e-6)this._acceptRequest(request);
     }
     return !this._transition && this.timeline.frame >= request.transitionFrame - 1e-6;
   }
@@ -360,7 +374,7 @@ export class NativeCombatController {
     const pose = this.data.poses.get(request.id); if (!pose?.valid) return false;
     // Queued requests reserve no resource. Re-check and pay only when the
     // requested pose actually starts; automatic POS links pay no second cost.
-    if (!linked && (request.canStart?.(request.context) === false || request.onStart?.(request.context) === false)) return false;
+    if (!linked && (request.canStart?.(request.context) === false || !this._acceptRequest(request) || request.onStart?.(request.context) === false)) return false;
     this.timeline = new NativePoseTimeline(pose, { fps: this.fps, loop: request.loop, sampleRoot: this.sampleRoot, scale: this.scale, frameTable: this.frameTable });
     this._effectElapsed = 0;
     this._transition = null;
@@ -386,10 +400,10 @@ export class NativeCombatController {
     if (from && duration > 0) this._transition = { from, to: { source: this.timeline.pose.source, frame: this.timeline.frame, poseId: request.id }, duration, elapsed: 0 };
     return true;
   }
-  play(id, { loop = false, force = false, context = null, canStart = null, onStart = null, attack = false, motion = false } = {}) {
+  play(id, { loop = false, force = false, context = null, canStart = null, onAccept = null, onStart = null, attack = false, motion = false } = {}) {
     const pose = this.data.poses.get(id); if (!pose?.valid) return false;
     if (!force && this.reacting) return false;
-    const request = { id, loop, context, canStart, onStart, attack, motion };
+    const request = { id, loop, context, canStart, onAccept, onStart, attack, motion };
     // 004cbf10 enters controller state6;004cff40 explicitly accepts attacks
     // from state6. This is a locomotion interrupt, not an invented ACT link.
     if(!force&&attack&&this._motionChain&&this._activeMove?.kind==='dash')return this._start(request);
@@ -420,8 +434,13 @@ export class NativeCombatController {
         const same=request.id===queued.id&&request.context?.poseId===queued.context?.poseId;
         const deliberate=move=>!!move&&(move.input?.length>1||(move.rage||0)>0);
         if(same||deliberate(queued.context)&&!deliberate(request.context))return true;
+        // 0055d130 clears model+620 on acceptance. State2 owns its one
+        // destination until the compiled switch; later input cannot replace it.
+        if(queued.accepted)return false;
       }
       request.transitionFrame = request.waitForPose!=null?Infinity:recovery ? this.timeline.frame : this._queueFrame();
+      request.acceptFrame=request.waitForPose!=null?Infinity:recovery?this.timeline.frame:this._acceptFrame();
+      if(request.acceptFrame<=this.timeline.frame+1e-6)this._acceptRequest(request);
       if (!this._canCancelFor(request)) { this.queued = request.id; this._queuedRequest = request; return true; }
       return this._startTransition(request);
     }
@@ -443,8 +462,8 @@ export class NativeCombatController {
     if (from) this._transition = { from, to: { source: pose.source, frame: pose.start, poseId: id }, duration: blendTime, elapsed: 0 };
     return true;
   }
-  attack({ air = false, poseId = null, context = null, canStart = null, onStart = null } = {}) {
-    const options = { attack: true, context, canStart, onStart };
+  attack({ air = false, poseId = null, context = null, canStart = null, onAccept = null, onStart = null } = {}) {
+    const options = { attack: true, context, canStart, onAccept, onStart };
     if (poseId != null) return this.play(poseId, options);
     const profile = NATIVE_WEAPONS[this.weapon];
     const sequence = air ? profile.air : profile.modes?.[this.weaponMode]?.basic || profile.basic;
@@ -495,18 +514,21 @@ export class NativeCombatController {
       if (this.weapon === 'wheel' && pose.id === 219) timeline.loop = !projectileReady;
       const timedReaction = ['hit', 'guard'].includes(this._reaction?.phase) && Number.isFinite(pose.loopStart) && Number.isFinite(pose.loopEnd);
       if (timedReaction) timeline.loop = this._reaction.remainingDuration > 1e-7;
+      this._acceptQueued();
       if (this._queuedRequest && (this._canCancelFor(this._queuedRequest) || timeline.finished&&this._queuedRequest.waitForPose==null)) {
         const request = this._queuedRequest; this._queuedRequest = null; this.queued = null;
         if (this._startTransition(request)) continue;
       }
       let stopAtFrame = Infinity;
       if (this._queuedRequest && this._queuedRequest.transitionFrame > timeline.frame) stopAtFrame = this._queuedRequest.transitionFrame;
+      if(this._queuedRequest&&!this._queuedRequest.accepted&&this._queuedRequest.acceptFrame>timeline.frame)stopAtFrame=Math.min(stopAtFrame,this._queuedRequest.acceptFrame);
       const step = timedReaction && this._reaction.remainingDuration > 1e-7 ? Math.min(remaining, this._reaction.remainingDuration) : remaining;
       state = { ...timeline.advance(step, { stopAtFrame }), serial: this.serial, combo: this.combo, pose, context: this._activeMove,
         authoredMotionScale: this._reaction ? ['hit', 'guard'].includes(this._reaction.phase) ? this._reaction.motionScale : 1 : (this._attackChain || this._motionChain) ? 1 : null };
       remaining -= state.consumed;
       if (timedReaction) this._reaction.remainingDuration = Math.max(0, this._reaction.remainingDuration - state.consumed);
       if(getFacing)state.facing=getFacing();this._stampEffectTime(state); segments.push(state);
+      this._acceptQueued();
       if (this._queuedRequest && (this._canCancelFor(this._queuedRequest) || timeline.finished&&this._queuedRequest.waitForPose==null)) {
         const request = this._queuedRequest; this._queuedRequest = null; this.queued = null;
         if (this._startTransition(request)) continue;
@@ -514,6 +536,7 @@ export class NativeCombatController {
       if (timeline.finished && pose.link != null) {
         if (this._startTransition({ id: pose.link, loop: pose.link === NATIVE_LOCOMOTION.fall && grounded === false }, { linked: true })) continue;
       }
+      if(remaining>1e-7&&this._queuedRequest&&timeline.frame<this._queuedRequest.transitionFrame-1e-6)continue;
       if (timedReaction && remaining > 1e-7 && this._reaction.remainingDuration <= 1e-7 && !timeline.finished) continue;
       break;
     }

@@ -8,6 +8,33 @@ const data = { poses: parsePos(decodeNativeText(await readFile(new URL('P0.POS',
   actions: parseAct(decodeNativeText(await readFile(new URL('character.act', root)))) };
 const { poses, actions } = data;
 
+test('原接招窗先接受命令，编译切换帧再起招，重复确认不重复接受',()=>{
+  const combat=new NativeCombatController(data,{weapon:'sword'}),events=[];
+  combat.attack({poseId:262});
+  const context={id:'接招',poseId:263};
+  const options={poseId:263,context,onAccept:()=>events.push({kind:'accept',pose:combat.timeline.pose.id,frame:combat.timeline.frame}),onStart:()=>events.push({kind:'start'})};
+  combat.attack(options);const request=combat._queuedRequest;
+  assert.equal(request.acceptFrame,9767);assert.equal(request.transitionFrame,9777);assert.deepEqual(events,[]);
+  for(let i=0;i<100&&!events.length;i++)combat.update(1/120,{grounded:true});
+  assert.deepEqual(events,[{kind:'accept',pose:262,frame:9767}]);assert.equal(combat.timeline.pose.id,262);
+  combat.attack(options);combat.attack(options);assert.equal(events.length,1);
+  assert.equal(combat.attack({poseId:264,context:{poseId:264},onAccept:()=>events.push({kind:'replaced'})}),false);
+  assert.equal(combat._queuedRequest,request);
+  for(let i=0;i<100&&!events.some(e=>e.kind==='start');i++)combat.update(1/120,{grounded:true});
+  assert.deepEqual(events.map(e=>e.kind),['accept','start']);assert.equal(combat.timeline.pose.id,263);
+  combat.update(5,{grounded:true});assert.equal(events.filter(e=>e.kind==='accept').length,1);
+});
+
+test('命令接受后被受击打断不会起招，接受前失去资源不触发接受回调',()=>{
+  for(const interrupted of [false,true]){
+    const combat=new NativeCombatController(data,{weapon:'sword'});let accepts=0,starts=0,rage=100;
+    combat.attack({poseId:262});combat.attack({poseId:263,canStart:()=>rage>=100,onAccept:()=>accepts++,onStart:()=>starts++});
+    if(interrupted){for(let i=0;i<100&&!accepts;i++)combat.update(1/120,{grounded:true});assert.equal(accepts,1);combat.react(90);}
+    else rage=0;
+    combat.update(5,{grounded:true});assert.equal(starts,0);assert.equal(accepts,interrupted?1:0);assert.equal(combat.queued,null);
+  }
+});
+
 test('original ACT resolves a requested command group through the current allowed list to its actual destination', () => {
   for (const [from, requested, actual] of [[264, 368, 369], [281, 293, 294], [299, 310, 313], [301, 310, 312], [231, 233, 234]]) {
     assert.equal(actions.canLink(from, requested), false, 'these are actual missing root-pose links');

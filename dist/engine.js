@@ -983,8 +983,8 @@ export class MeteorGame {
       // Rage and actor lifetime are still checked again at the actual start.
       canStart: command => !f.dead && !f.disposed && !f.scriptRemoved && (!command || (f.hero && this.infiniteRage || (f.rage || 0) >= command.rage) &&
         ((command.stance === 'air') === !f.grounded || f.combat.busy && command.continuationOf?.includes(f.combat.currentMove?.poseId))),
+      onAccept:()=>this._captureActionMomentum(f,{ninja:f.weapon==='ninja'}),
       onStart: command => {
-        this._captureActionMomentum(f,{ninja:f.weapon==='ninja'});
         // Queued ACT transitions start later than the click: use the target's
         // current position at the actual start, rather than a captured position.
         if(control&&!f.musketAim){const current=this._attackTarget(f,control);if(current)this._face(f,current.root.position);}

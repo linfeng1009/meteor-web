@@ -751,6 +751,25 @@ test('all twenty supplied characters share the scene dummy hierarchy used by the
 });
 
 
+test('连剑在原接招接受帧采样惯性，后续切换动作时不再重采样',()=>{
+  const state=fixture();try{
+    const {game,hero}=state;hero.weapon='sword';hero.combat.setWeapon('sword');hero.combat.play(6,{force:true});
+    hero.combat.sampleRoot=(source,frame)=>hero.character.sampleSceneMotion(source,frame);
+    const capture=game._captureActionMomentum,records=[];
+    game._captureActionMomentum=function(actor,options){
+      const before=actor.motionVelocity.clone();capture.call(this,actor,options);
+      records.push({pose:actor.combat.timeline?.pose.id,frame:actor.combat.timeline?.frame,before,after:actor.actionMomentum.clone()});
+    };
+    assert.equal(game._beginAttack(hero),true);assert.equal(hero.combat.timeline.pose.id,262);records.length=0;
+    assert.equal(game._beginAttack(hero),true);assert.equal(records.length,0);
+    for(let i=0;i<100&&!records.length;i++)game._updateFighter(hero,1/120);
+    assert.equal(records.length,1);assert.equal(records[0].pose,262);assert.equal(records[0].frame,9767);
+    assert.ok(records[0].before.distanceTo(records[0].after)<1e-5);assert.equal(hero.combat.timeline.pose.id,262);
+    for(let i=0;i<100&&hero.combat.timeline.pose.id===262;i++)game._updateFighter(hero,1/120);
+    assert.equal(hero.combat.timeline.pose.id,263);assert.equal(records.length,1);
+  }finally{state.dispose();}
+});
+
 test('跑动出招继承实际速度，地面与空中按原9和0.2阻尼衰减，碰撞清掉受阻分量',()=>{
   for(const grounded of [false,true]){
     const state=fixture();try{

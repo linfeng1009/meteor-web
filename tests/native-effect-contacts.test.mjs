@@ -9,6 +9,7 @@ import { loadNativeCombat, NativeCombatController, createNativeDamageResolver } 
 import { NativeEffectContacts, nativeEffectBounds, intersectsEffectBody } from '../dist/native-effect-contacts.js';
 import { NativeRageVfx } from '../dist/native-rage-vfx.js';
 import { NativeImpactFeedback } from '../dist/native-impact-feedback.js';
+import {NetworkReplicaMotion} from '../dist/network-game.js';
 import { nativeEffectiveStat } from '../dist/native-combat.js';
 import { nativeMovementScale, useNativeScriptItem, updateNativeScriptItems, clearNativeScriptItems, nativeIsInvisible } from '../dist/native-items.js';
 
@@ -820,4 +821,17 @@ test('自身道具在原动作最后两帧生效，而非等整个动画结束',
  const {game}=await fixture([]);await game._equip(game.hero,'ninja');game.hero.rage=100;manual(game,['left','right','back']);
  for(let i=0;i<180&&!nativeIsInvisible(game.hero);i++)tick(game);
  const timeline=game.hero.combat.timeline;assert.equal(timeline.pose.id,535);assert.ok(timeline.frame>=timeline.pose.end-1);assert.ok(timeline.frame<timeline.pose.end);assert.equal(timeline.finished,false);
+});
+
+test('真实原角色的联机过渡插值与本地同权重骨骼姿势一致',async()=>{
+ const host=await fixture([]),guest=await fixture([]),a=host.game.hero,b=guest.game.hero;
+ const pose=data.poses.get(263),from={source:0,frame:data.poses.get(262).end},to={source:0,frame:pose.entryFrame};
+ b.combat.play(263,{force:true});const motion=new NetworkReplicaMotion(),state={position:b.root.position.toArray(),angle:0,dead:false,source:0,frame:to.frame,serial:1,blend:{from,to,weight:.2,duration:.3}};
+ motion.receive(b,state,.1,{poseChanged:true});motion.receive(b,{...state,blend:{...state.blend,weight:.8}},.1);motion.update(b,.05);
+ a.character.setPoseBlend(from,to,.5);
+ for(let i=0;i<a.character.bones.length;i++){
+  assert.ok(a.character.bones[i].position.distanceTo(b.character.bones[i].position)<1e-7);
+  assert.ok(a.character.bones[i].quaternion.angleTo(b.character.bones[i].quaternion)<1e-6);
+ }
+ assert.equal(a.hp,b.hp);
 });

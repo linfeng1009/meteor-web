@@ -6,6 +6,13 @@ import { battleCharacterSelection } from './character-appearances.js';
 // Uses the same native POS/ACT/RES combat, movement and collision paths.
 const continuous=['forward','back','left','right','guard','crouch'];
 import {createPlayerControl,clearPlayerCommands} from './player-control.js';
+export function networkPoseBlend(blend){
+  if(!blend)return null;
+  // Interrupted-hit snapshots stay local: transmit two frame descriptors,
+  // then capture the guest's currently displayed pose once per cast serial.
+  const descriptor=value=>({source:value.source,frame:value.frame});
+  return {from:descriptor(blend.from),to:descriptor(blend.to),weight:blend.weight,duration:blend.duration,fromSnapshot:!!blend.from.snapshot};
+}
 // Presentation only: never advance combat, collisions, damage or movement rules.
 export class NetworkReplicaMotion{
   constructor(){this.samples=new Map();}
@@ -17,18 +24,34 @@ export class NetworkReplicaMotion{
       targetAngle:state.angle,elapsed:0,duration:Math.max(.03,Math.min(.15,duration||.07)),dead:!!state.dead,
       source:state.source,frame:state.frame,fromFrame:actor.character.frame,
       animate:!snap&&!poseChanged&&previous.source===state.source&&state.frame>=actor.character.frame};
+    if(state.blend&&actor.character.setPoseBlend){
+      const same=previous?.hostBlend&&previous.serial===state.serial;
+      const from=same?previous.blend.from:state.blend.fromSnapshot?actor.character.capturePose?.()||{source:actor.character.source,frame:actor.character.frame}:state.blend.from;
+      sample.blend={from,to:state.blend.to};sample.hostBlend=true;sample.serial=state.serial;
+      sample.fromWeight=same?previous.weight:state.blend.weight;sample.toWeight=state.blend.weight;
+      if(snap||sample.fromWeight>sample.toWeight)sample.fromWeight=sample.toWeight;
+      sample.weight=sample.fromWeight;sample.animate=false;
+    }else if(!snap&&previous?.blend&&previous.weight<1&&actor.character.setPoseBlend){
+      // Finish the displayed partial blend before resuming ordinary frames.
+      sample.blend={from:actor.character.capturePose?.()||{source:actor.character.source,frame:actor.character.frame},to:{source:state.source,frame:state.frame}};
+      sample.fromWeight=0;sample.toWeight=1;sample.weight=0;sample.animate=false;
+    }
     this.samples.set(actor,sample);
     if(snap){position.fromArray(state.position);actor.root.rotation.y=state.angle;sample.elapsed=sample.duration;}
-    if(!sample.animate)this.frame(actor,state.source,state.frame);
+    if(sample.blend)this.blend(actor,sample);else if(!sample.animate)this.frame(actor,state.source,state.frame);
   }
+  blend(actor,sample){actor.combat.timeline.frame=sample.blend.to.frame;actor.character.setPoseBlend(sample.blend.from,sample.blend.to,sample.weight);}
   frame(actor,source,frame){const pose=actor.combat.timeline?.pose;if(!pose)return;const at=Math.max(pose.start,Math.min(pose.end,frame));actor.combat.timeline.frame=at;actor.character.setPoseFrame(source,at);}
   update(actor,dt){const s=this.samples.get(actor);if(!s||!(dt>0)||!Number.isFinite(dt))return;
+    if(s.elapsed>=s.duration&&s.presented)return; // No extrapolation or repeated skeleton work while stalled.
     s.elapsed=Math.min(s.duration,s.elapsed+dt);const t=s.elapsed/s.duration;
     actor.root.position.fromArray(s.from.map((n,i)=>n+(s.to[i]-n)*t));
     // Snapped states must stay at their destination, including after respawn.
     if(t===1)actor.root.position.fromArray(s.to);
     actor.root.rotation.y=t===1?s.targetAngle:s.angle+s.turn*t;
-    if(s.animate)this.frame(actor,s.source,s.fromFrame+(s.frame-s.fromFrame)*t);
+    if(s.blend){s.weight=s.fromWeight+(s.toWeight-s.fromWeight)*t;this.blend(actor,s);}
+    else if(s.animate)this.frame(actor,s.source,s.fromFrame+(s.frame-s.fromFrame)*t);
+    s.presented=true;
   }
 }
 export class NetworkGame{
@@ -132,7 +155,7 @@ export class NetworkGame{
       this.game._actionFighter(actor,control,input.action,input.active);
     }
   }
-  snapshot(){if(!this.active||!this.client.host)return null;const g=this.game;return {sequence:++this.sequence,time:g.matchElapsed,result:this.result,loot:g._lootSnapshot?.(),impacts:g._combatFeedbackSnapshot?.(),players:[...this.actors.values()].map(f=>({id:f.networkId,team:f.team,lockTargetId:this.game._controlFor?.(f)?.locked?.networkId??null,autoLockEnabled:this.game._controlFor?.(f)?.autoLockEnabled!==false,weaponId:f.weaponId,weapon2Id:f.weapon2Id??null,pickupSerial:f.pickupSerial||0,statuses:(f.scriptItems||[]).map(item=>({id:item.id,name:item.name,statKey:item.statKey,remaining:item.remaining,value:item.value,period:item.period||0})),position:f.root.position.toArray(),angle:f.root.rotation.y,hp:f.hp,maxHp:f.maxHp,rage:f.rage,dead:f.dead,grounded:f.grounded,guard:f.guard,queuedMoveName:f.combat.queuedMove?.name??null,musketAim:!!f.musketAim,aimPitch:this.game._controlFor?.(f)?.aimPitch||0,pose:f.combat.timeline?.pose.id||0,source:f.character.source??0,frame:f.character.frame??0,serial:f.combat.serial,effectTime:f.combat._effectElapsed||0,context:f.combat.currentMove?{name:f.combat.currentMove.name||'',rage:f.combat.currentMove.rage||0,poseId:f.combat.currentMove.poseId,command:f.combat.currentMove.command||'',...(Number.isFinite(f.combat.currentMove.deathEffectTime)?{deathEffectTime:f.combat.currentMove.deathEffectTime,deathEffectAt:f.combat.currentMove.deathEffectAt}:{})}:null,...this.scores.get(f.networkId)}))};}
+  snapshot(){if(!this.active||!this.client.host)return null;const g=this.game;return {sequence:++this.sequence,time:g.matchElapsed,result:this.result,loot:g._lootSnapshot?.(),impacts:g._combatFeedbackSnapshot?.(),players:[...this.actors.values()].map(f=>({id:f.networkId,team:f.team,lockTargetId:this.game._controlFor?.(f)?.locked?.networkId??null,autoLockEnabled:this.game._controlFor?.(f)?.autoLockEnabled!==false,weaponId:f.weaponId,weapon2Id:f.weapon2Id??null,pickupSerial:f.pickupSerial||0,statuses:(f.scriptItems||[]).map(item=>({id:item.id,name:item.name,statKey:item.statKey,remaining:item.remaining,value:item.value,period:item.period||0})),position:f.root.position.toArray(),angle:f.root.rotation.y,hp:f.hp,maxHp:f.maxHp,rage:f.rage,dead:f.dead,grounded:f.grounded,guard:f.guard,queuedMoveName:f.combat.queuedMove?.name??null,musketAim:!!f.musketAim,aimPitch:this.game._controlFor?.(f)?.aimPitch||0,pose:f.combat.timeline?.pose.id||0,source:f.character.source??0,frame:f.character.frame??0,serial:f.combat.serial,effectTime:f.combat._effectElapsed||0,blend:networkPoseBlend(f.combat.poseBlend),context:f.combat.currentMove?{name:f.combat.currentMove.name||'',rage:f.combat.currentMove.rage||0,poseId:f.combat.currentMove.poseId,command:f.combat.currentMove.command||'',...(Number.isFinite(f.combat.currentMove.deathEffectTime)?{deathEffectTime:f.combat.currentMove.deathEffectTime,deathEffectAt:f.combat.currentMove.deathEffectAt}:{})}:null,...this.scores.get(f.networkId)}))};}
   apply(frame){if(this.client.host||!this.active||frame.sequence<=this.lastFrame)return;this.lastFrame=frame.sequence;const g=this.game,duration=frame.time-this.presentationTime;this.presentationTime=frame.time;g.matchElapsed=frame.time;
     g._applyLootState?.(frame.loot);
     for(const state of frame.players){const f=this.actors.get(state.id);if(!f||!f.combat.data.poses.has(state.pose))continue;
@@ -150,7 +173,9 @@ export class NetworkGame{
       this.presentation.receive(f,state,duration,{poseChanged:serial});
       const pose=f.combat.timeline.pose,at=Math.max(pose.start,Math.min(pose.end,state.frame));
       const from=previousSerial===state.serial&&previousFrame<=at?Math.max(pose.start,previousFrame):Math.max(pose.start,at-1),span=Math.min(.15,Math.max(1/60,Number.isFinite(duration)?duration:1/15));
-      g.rageVfx?.sample(f,{pose,context:state.context,serial:state.serial,frame:at,source:state.source,effectTime:state.effectTime,deathEffectAge:Math.max(0,frame.time-(state.context?.deathEffectAt??frame.time)),consumed:span,frameIntervals:[{from,to:at,timeFrom:0,timeTo:span}]});
+      const displayed=this.presentation.samples.get(f),fxBlend=state.blend&&displayed?.blend?{...displayed.blend,weight:displayed.weight,duration:state.blend.duration}:state.blend;
+      g.rageVfx?.sample(f,{pose,context:state.context,serial:state.serial,frame:at,source:state.source,effectTime:state.effectTime,blend:fxBlend,deathEffectAge:Math.max(0,frame.time-(state.context?.deathEffectAt??frame.time)),consumed:span,frameIntervals:[{from,to:at,timeFrom:0,timeTo:span}]});
+      if(displayed?.blend)this.presentation.blend(f,displayed);
       if(serial&&state.context)g._soundDefinition?.(pose.raw?.fields.effectid);
       if(f===g.hero){g.kills=state.kills;g.deaths=state.deaths;}
     }

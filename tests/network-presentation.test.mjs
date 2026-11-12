@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from '../dist/vendor/three.module.js';
-import {NetworkReplicaMotion,NetworkGame} from '../dist/network-game.js';
+import {NetworkReplicaMotion,NetworkGame,networkPoseBlend} from '../dist/network-game.js';
 
 function fixture(){
   const actor={root:new THREE.Group(),hp:1000,combat:{timeline:{pose:{start:0,end:100},frame:0}},character:{frame:0,setPoseFrame(source,frame){this.source=source;this.frame=frame;}}};
@@ -39,4 +39,38 @@ test('guest interpolation runs on render presentation, independently of fixed co
   game._updateFighter(actor,1/60);assert.equal(actor.root.position.x,0,'guest combat tick must not advance presentation or simulation');
   game._updatePresentation(.025);assert.equal(actor.root.position.x,.5);assert.equal(drawn,1);
   session.dispose();assert.equal(game._updatePresentation,original,'leaving restores the single-player presentation hook');
+});
+
+function blending(){
+ const f=fixture(),calls=[];let captured=0;
+ f.actor.character.setPoseBlend=function(from,to,weight){this.source=to.source;this.frame=to.frame;calls.push({from,to,weight});};
+ f.actor.character.capturePose=function(){return {source:this.source,frame:this.frame,snapshot:{id:++captured,transforms:['本地姿势']}};};
+ return {...f,calls,blend:{from:{source:0,frame:10},to:{source:0,frame:20},weight:.2,duration:.3}};
+}
+
+test('联机过渡只传帧描述和权重，不发送受击姿势的骨骼数组',()=>{
+ const wire=networkPoseBlend({from:{source:0,frame:10,snapshot:{id:1,transforms:Array(100).fill({position:[1,2,3]})}},to:{source:0,frame:20},weight:.5,duration:.3});
+ assert.equal(wire.fromSnapshot,true);assert.equal('snapshot' in wire.from,false);assert.ok(JSON.stringify(wire).length<200);assert.equal(networkPoseBlend(null),null);
+});
+
+test('客人按主机权重平滑换招，结束过渡时不会突然跳到完整目标姿势',()=>{
+ const {actor,motion,state,calls,blend}=blending();
+ motion.receive(actor,{...state,frame:20,serial:2,blend},.1,{poseChanged:true});assert.equal(calls.at(-1).weight,.2);
+ motion.receive(actor,{...state,frame:20,serial:2,blend:{...blend,weight:.8}},.1);motion.update(actor,.05);assert.ok(Math.abs(calls.at(-1).weight-.5)<1e-9);
+ motion.receive(actor,{...state,frame:30,serial:2},.1);assert.equal(calls.at(-1).weight,0);assert.ok(calls.at(-1).from.snapshot);
+ motion.update(actor,.05);assert.equal(calls.at(-1).weight,.5);motion.update(actor,.05);assert.equal(calls.at(-1).weight,1);
+ motion.receive(actor,{...state,frame:40,serial:2},.1);motion.update(actor,.05);assert.equal(actor.character.frame,35);assert.equal(actor.hp,1000);
+});
+
+test('受击过渡从客人当前显示姿势捕获一次，重复快照不重新捕获',()=>{
+ const {actor,motion,state,calls,blend}=blending(),hit={...blend,fromSnapshot:true};
+ motion.receive(actor,{...state,frame:20,serial:3,blend:hit},.1,{poseChanged:true});const first=calls.at(-1).from;
+ assert.ok(first.snapshot);motion.receive(actor,{...state,frame:20,serial:3,blend:{...hit,weight:.6}},.1);motion.update(actor,.05);assert.equal(calls.at(-1).from,first);
+ motion.receive(actor,{...state,frame:20,serial:4,blend:hit},.1,{poseChanged:true});assert.notEqual(calls.at(-1).from,first);
+});
+
+test('网络停顿不把未完成的主机过渡外推到结束，静止姿势不重复采样',()=>{
+ const {actor,motion,state,calls,blend}=blending();motion.receive(actor,{...state,frame:20,serial:2,blend},.1,{poseChanged:true});motion.update(actor,1);
+ assert.equal(calls.at(-1).weight,.2);const count=calls.length;for(let i=0;i<60;i++)motion.update(actor,1/60);assert.equal(calls.length,count);
+ motion.receive(actor,{...state,frame:0,serial:3,dead:true},.1);assert.equal(actor.character.frame,0,'死亡切换不能残留活人过渡');
 });

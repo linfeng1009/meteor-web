@@ -576,10 +576,13 @@ export class MeteorGame {
     }
     this.raycaster.far=Infinity;return false;
   }
-  _move(f, direction, speed, dt, motion = null) {
+  _move(f, direction, speed, dt, motion = null, actionMotion=f.combat.busy) {
     if(f.combat.reacting)f.wallKick=null;
-    const drifting=!f.grounded&&!f.combat.busy&&!f.wallRun;
-    if(drifting){
+    const drifting=!f.grounded&&!actionMotion&&!f.wallRun;
+    // 004ce840 writes current velocity from d_base plus copied momentum;
+    // old locomotion must not remain as a second NPC velocity channel.
+    if(actionMotion)f.velocity.set(0,0,0);
+    else if(drifting){
       const control=this._controlFor(f),a=f.root.rotation.y;
       let inputX=direction.x,inputZ=direction.z,forwardRunning=direction.x*Math.sin(a)+direction.z*Math.cos(a)>0;
       if(control){
@@ -593,7 +596,7 @@ export class MeteorGame {
     }
     else{const desired=f.wallRun?f.wallRun.velocity:direction.clone().multiplyScalar(speed);if(this._controlFor(f))f.velocity.copy(desired);else f.velocity.lerp(desired,1-Math.exp(-dt*14));}
     let dx = f.velocity.x * dt + (motion?.x || 0), dz = f.velocity.z * dt + (motion?.z || 0), p = f.root.position;
-    const momentum=f.combat.busy&&f.actionMomentum;
+    const momentum=actionMotion&&f.actionMomentum;
     if(momentum){
       momentum.x=nativeActionMomentum(momentum.x,dt,f.grounded);momentum.z=nativeActionMomentum(momentum.z,dt,f.grounded);
       dx+=momentum.x*dt;dz+=momentum.z*dt;
@@ -632,6 +635,10 @@ export class MeteorGame {
       return;
     }
     f.motionVelocity??=v3();if(dt>0)f.motionVelocity.set((p.x-from.x)/dt,0,(p.z-from.z)/dt);
+    // A pose may finish during combat.update before this motion step.
+    // Its final authored segment still uses action physics; state0/1 keeps
+    // the resulting current velocity rather than restoring old locomotion.
+    if(actionMotion&&!f.combat.busy){f.velocity.copy(f.motionVelocity);f.actionMomentum=null;f.nativeAirGroundContact=false;}
     if (p.y < this.currentMap.bounds.min.y - 20 || Math.abs(p.x) > 3000 || Math.abs(p.z) > 3000) { if (this.mode === 'story'||this.networkCombat) { f.hp = 0; this._kill(f,{awardKill:false}); } else this._placeFighter(f, this.currentMap.spawns[f.hero ? 0 : (f.spawnIndex || 1) % this.currentMap.spawns.length]); }
   }
   _captureActionMomentum(actor,{ninja=false}={}){
@@ -1200,7 +1207,7 @@ export class MeteorGame {
     // hit/attack recovery ends. It must not depend on OS key-repeat or a new
     // touch press while several opponents are attacking.
     if (control && f.grounded && !f.wallRun && !f.combat.busy && !f.scriptInputBlocked && control.keys.has('guard')) f.guard = true;
-    const motion = v3();
+    const motion = v3();let actionMotion=false;
     for (const segment of state.segments || [state]) {
       if(f.jumpSequence&&!f.jumpSequence.ballistic&&[f.jumpSequence.start,f.jumpSequence.air].includes(segment.poseId)&&f.character.sampleSceneMotion){
         // Consume BOTH takeoff and linked air d_base tracks, at actual POS time.
@@ -1209,6 +1216,7 @@ export class MeteorGame {
         for(const range of segment.frameIntervals||[]){const a=f.character.sampleSceneMotion(segment.source,range.from),b=f.character.sampleSceneMotion(segment.source,range.to);motion.y+=(b.z-a.z)*SCALE;}
       }
       if(segment.authoredMotionScale==null)continue;
+      if(segment.consumed>0)actionMotion=true;
       const a = Number.isFinite(segment.facing)?segment.facing:f.root.rotation.y, scale = segment.authoredMotionScale;
       const localX = segment.rootDelta.x * scale, localZ = -segment.rootDelta.y * scale;
       motion.x += Math.cos(a) * localX + Math.sin(a) * localZ;
@@ -1217,7 +1225,7 @@ export class MeteorGame {
     }
     // Native animation advances before the actor's motion update (004cc130).
     // All authored recoil/lunges now share floor, wall and hazard checks.
-    this._move(f, direction, speed, dt, motion);
+    this._move(f, direction, speed, dt, motion,actionMotion||f.combat.busy);
     if (f.dead) return;
     // A queued move may turn toward its target during combat.update(). Old
     // attack windows in that same tick still belong to their earlier facing.

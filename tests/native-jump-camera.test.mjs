@@ -954,6 +954,50 @@ test('连剑在原接招接受帧采样惯性，后续切换动作时不再重�
   }finally{state.dispose();}
 });
 
+test('NPC动作运动不再叠加旧移动插值，所有角色只消费一份原动作惯性',()=>{
+  for(const remote of [false,true]){
+    const state=fixture();try{
+      const {game,hero}=state;hero.hero=false;hero.weapon='sword';hero.combat.setWeapon('sword');hero.combat.play(6,{force:true});
+      if(remote)hero.playerControl=createPlayerControl();
+      else{game.hero={root:new THREE.Group()};game.hero.root.position.z=8;game.enemies=[];}
+      for(let i=0;i<12;i++)game._move(hero,v(1,0,0),8,1/60);
+      const incoming=hero.motionVelocity.clone();assert.ok(incoming.length()>7.4);assert.equal(game._beginAttack(hero),true);
+      assert.ok(hero.actionMomentum.distanceTo(incoming)<1e-5);const before=hero.root.position.clone();
+      game._move(hero,v(),0,1/60);
+      assert.equal(hero.velocity.length(),0);assert.ok(Math.abs(hero.root.position.x-before.x-incoming.x*.85/60)<1e-6);
+      assert.ok(Math.abs(hero.motionVelocity.x-incoming.x*.85)<1e-5);
+    }finally{state.dispose();}
+  }
+});
+
+test('空中动作结束的最后一段仍消费惯性，下一步继承真实速度且不重复叠加原位移',()=>{
+  const state=fixture();try{
+    const {game,hero}=state;game.enemies=[];game.locked=null;hero.weapon='sword';hero.combat.setWeapon('sword');hero.combat.play(6,{force:true});
+    hero.combat.sampleRoot=(source,frame)=>hero.character.sampleSceneMotion(source,frame);
+    game._move(hero,v(1,0,0),8,1/60);assert.equal(game._beginAttack(hero),true);assert.equal(hero.combat.timeline.pose.id,262);
+    hero.grounded=false;hero.root.position.y=20;hero.vy=0;
+    hero.combat.timeline.frame=hero.combat.timeline.pose.end-.25;const before=hero.root.position.clone();
+    game._updateFighter(hero,1/60);assert.equal(hero.combat.busy,false);assert.equal(hero.actionMomentum,null);
+    assert.ok(hero.motionVelocity.x>7.9);assert.ok(hero.velocity.distanceTo(hero.motionVelocity)<1e-6);
+    assert.ok(Math.abs(hero.root.position.x-before.x-hero.motionVelocity.x/60)<1e-6);
+    const incoming=hero.velocity.clone(),position=hero.root.position.clone();game._updateFighter(hero,1/60);
+    assert.ok(hero.velocity.length()<incoming.length()&&hero.velocity.length()>incoming.length()-.1);
+    assert.ok(Math.abs(hero.root.position.x-position.x-hero.velocity.x/60)<1e-6);assert.equal(hero.actionMomentum,null);
+  }finally{state.dispose();}
+});
+
+test('空中轻受击结束后保留碰撞后的切向速度，不恢复被墙阻断的法向速度',()=>{
+  const state=fixture();try{
+    const {game,hero}=state;game.enemies=[];game.locked=null;game._move(hero,v(2,0,1).normalize(),8,1/60);
+    assert.equal(hero.combat.react(90),true);game._captureActionMomentum(hero);hero.combat.update(.2);
+    hero.grounded=false;hero.root.position.set(0,20,0);hero.vy=0;hero.combat.timeline.frame=hero.combat.timeline.pose.end-.25;
+    const wall=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshBasicMaterial({side:THREE.DoubleSide}));wall.rotation.y=Math.PI/2;wall.position.set(.41,20,0);wall.updateMatrixWorld(true);state.colliders.push(wall);
+    game._updateFighter(hero,1/60);assert.equal(hero.combat.reacting,false);assert.equal(hero.actionMomentum,null);
+    assert.equal(hero.velocity.x,0);assert.ok(Math.abs(hero.velocity.z)>.1);assert.ok(hero.velocity.distanceTo(hero.motionVelocity)<1e-6);
+    const before=hero.root.position.clone();game._updateFighter(hero,1/60);assert.equal(hero.root.position.x,before.x);assert.notEqual(hero.root.position.z,before.z);
+  }finally{state.dispose();}
+});
+
 test('跑动出招继承实际速度，地面与空中按原9和0.2阻尼衰减，碰撞清掉受阻分量',()=>{
   for(const grounded of [false,true]){
     const state=fixture();try{

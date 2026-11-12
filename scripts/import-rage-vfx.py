@@ -5,14 +5,44 @@ Emitter simulation and full native blend/IFL semantics remain incomplete.
 """
 from pathlib import Path
 from io import BytesIO
-from PIL import Image
 import argparse, hashlib, json, math, re, struct, zipfile, subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 TYPES = ['AUDIO','BOX','BILLBOARD','CYLINDER','DRAG','DONUT','MODEL','PARTICLE','PATH','PLANE','SPHERE','TRAPE']
 DIMS = {'PLANE':2, 'BILLBOARD':2, 'CYLINDER':5, 'SPHERE':5, 'BOX':3, 'DONUT':6}
 
-def read_effect(path):
+def read_particle_fields(data, cursor, end, blob):
+    """00587380 read order;00586d40 init;00586690 step. No renderer guesses."""
+    start=cursor
+    if cursor+96>end:raise ValueError('Truncated native particle parameters')
+    count=struct.unpack_from('<I',data,cursor)[0]
+    values=list(struct.unpack_from('<23f',data,cursor+4))
+    flags={i:struct.unpack_from('<I',data,cursor+i*4)[0] for i in [18,19,20,22]}
+    if not all(math.isfinite(value) for i,value in enumerate(values,1) if i not in flags):raise ValueError('Nonfinite native particle parameters')
+    cursor+=96
+    names=[]
+    for _ in range(3):
+        if cursor+4>end:raise ValueError('Truncated particle binding length')
+        length=struct.unpack_from('<I',data,cursor)[0];cursor+=4
+        if length>256 or cursor+length>end:raise ValueError('Invalid particle binding')
+        names.append(data[cursor:cursor+length].decode('cp950').rstrip('\0'));cursor+=length
+    if cursor!=end:raise ValueError('Unexpected particle parameter tail')
+    if len(blob) not in [0,16,28]:raise ValueError('Unverified native particle extension size')
+    native_jitter=struct.unpack('<f',struct.pack('<I',0x3e4ccccd))[0]
+    rotate,stretch,angular,jitter=0,0,[360.,720.],[native_jitter]*3
+    if blob:
+        rotate,stretch=struct.unpack_from('<2I',blob);angular=list(struct.unpack_from('<2f',blob,8))
+        if len(blob)==28:jitter=list(struct.unpack_from('<3f',blob,16))
+    if not all(math.isfinite(v) for v in angular+jitter):raise ValueError('Nonfinite particle extension')
+    f=lambda index:values[index-1]
+    return dict(capacity=count,capacityLimit=2000,sizeRange=[f(1),f(2)],secondarySizeRange=[f(3),f(4)],
+                steering=f(5),lifetimeRange=[f(6),f(7)],speedRange=[f(8),f(9)],directionChangeRange=[f(10),f(11)],
+                directionFrom=[f(i) for i in [12,13,14]],directionTo=[f(i) for i in [15,16,17]],
+                singleCycle=flags[18],slowDown=flags[19],fadeIn=flags[20],fadeInRatio=f(21),fadeOut=flags[22],fadeOutRatio=f(23),
+                references=names,rotate=rotate,stretch=stretch,angularSpeedRange=angular,directionJitter=jitter,
+                tailOffset=start,tailBytes=end-start,tailSha256=hashlib.sha256(data[start:end]).hexdigest(),extensionHex=blob.hex())
+
+def read_effect(path, include_particles=False):
     data = path.read_bytes()
     if data[:11] != b'PonEF V1.00': raise ValueError(f'Invalid EF header: {path}')
     offsets = sorted((m.start(), t) for t in TYPES for m in re.finditer(re.escape(t.encode().ljust(16,b'\0')),data))
@@ -37,7 +67,9 @@ def read_effect(path):
         keys = [list(struct.unpack_from('<28f',data,cursor+i*112)) for i in range(count)]; cursor+=112*count
         if not all(math.isfinite(v) for key in keys for v in key): raise ValueError('Nonfinite EF channel')
         if any(a[0]>b[0] for a,b in zip(keys,keys[1:])): raise ValueError('EF time order')
-        blob = struct.unpack_from('<I',data,cursor)[0]; cursor+=4+blob
+        blob = struct.unpack_from('<I',data,cursor)[0]; cursor+=4
+        blob_data=data[cursor:cursor+blob] if include_particles and kind=='PARTICLE' else b''
+        cursor+=blob
         if cursor>end: raise ValueError('EF blob exceeds node')
         node = dict(type=kind,name=name,flags=list(flags),bindings=bindings,texture=texture.lower(),keys=keys,offset=offset)
         if kind in DIMS:
@@ -46,11 +78,13 @@ def read_effect(path):
             if kind=='DONUT': node['unsupportedVisual']=True
         else:
             node['unsupportedVisual'] = kind != 'AUDIO'
+            if kind=='PARTICLE' and include_particles:node['particle']=read_particle_fields(data,cursor,end,blob_data)
         nodes.append(node)
     return dict(id=path.stem.lower(),source=f'sounds/definitions/{path.name}',sha256=hashlib.sha256(data).hexdigest(),nodes=nodes)
 
 def extract_effect_textures(references,textures,source,output):
     if not references:return
+    from PIL import Image
     archives=[]
     for name in ['TexturePatch.pak','ETexture.pak']:
         archive=zipfile.ZipFile(source/name)

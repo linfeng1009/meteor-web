@@ -14,7 +14,7 @@ import { NativeNpcCombat, nativeNpcMove, nativeNpcInRange, nativeNpcFacing } fro
 import { loadGmb, loadGmc } from './gmc-loader.js';
 import { DEFAULT_CHARACTER_APPEARANCE, loadNativeCharacter, NATIVE_APPEARANCES } from './native-character.js';
 import { appearanceCharacterName, FEATURED_APPEARANCES } from './character-appearances.js';
-import { loadNativeCombat, NativeCombatController, NATIVE_WEAPONS, NATIVE_LOCOMOTION, createNativeDamageResolver, createNativeSceneDamageResolver, nativeReactionParameters, nativeHitAngle, nativeHitSelection, nativeGuardPose } from './native-combat.js';
+import { loadNativeCombat, NativeCombatController, NATIVE_WEAPONS, NATIVE_LOCOMOTION, createNativeDamageResolver, createNativeSceneDamageResolver, nativeReactionParameters, nativeHitAngle, nativeHitSelection, nativeGuardPose, nativeAttackFrames } from './native-combat.js';
 import { NATIVE_MOVE_CATALOG } from './native-move-catalog.js';
 import { recordNativeDirection, selectNativeMove, NATIVE_RECOVERY_INPUT_WINDOW } from './native-input.js';
 import { loadOriginalSceneModels } from './native-scene-models.js';
@@ -1063,7 +1063,7 @@ export class MeteorGame {
       const stride=nativeStrideSpeed(f.character.nativeCharacterId??0,locomotion);
       if(stride>0){const rate=speed/this.hostPhysics.speed;if(control)speed=nativeStrideSpeed(0,locomotion)*rate;f.combat.timeline.playbackRate=speed/stride;}
     }
-    const state = f.combat.update(dt, { grounded: f.grounded, projectileReady: !this.wheels?.hasOwner(f) }); if (!state) return;
+    const state = f.combat.update(dt, { grounded: f.grounded, projectileReady: !this.wheels?.hasOwner(f), getFacing:()=>f.root.rotation.y }); if (!state) return;
     // A held defense is sampled continuously, including the exact frame a
     // hit/attack recovery ends. It must not depend on OS key-repeat or a new
     // touch press while several opponents are attacking.
@@ -1077,7 +1077,7 @@ export class MeteorGame {
         for(const range of segment.frameIntervals||[]){const a=f.character.sampleSceneMotion(segment.source,range.from),b=f.character.sampleSceneMotion(segment.source,range.to);motion.y+=(b.z-a.z)*SCALE;}
       }
       if(segment.authoredMotionScale==null)continue;
-      const a = f.root.rotation.y, scale = segment.authoredMotionScale;
+      const a = Number.isFinite(segment.facing)?segment.facing:f.root.rotation.y, scale = segment.authoredMotionScale;
       const localX = segment.rootDelta.x * scale, localZ = -segment.rootDelta.y * scale;
       motion.x += Math.cos(a) * localX + Math.sin(a) * localZ;
       motion.z += -Math.sin(a) * localX + Math.cos(a) * localZ;
@@ -1087,7 +1087,11 @@ export class MeteorGame {
     // All authored recoil/lunges now share floor, wall and hazard checks.
     this._move(f, direction, speed, dt, motion);
     if (f.dead) return;
-    for (const segment of state.segments || [state]) {
+    // A queued move may turn toward its target during combat.update(). Old
+    // attack windows in that same tick still belong to their earlier facing.
+    const finalFacing=f.root.rotation.y;
+    try{for (const segment of state.segments || [state]) {
+      if(Number.isFinite(segment.facing))f.root.rotation.y=segment.facing;
       if (!segment.blend && segment.serial !== f.lastSerial) {
         f.attackHits.clear(); f.lastSerial = segment.serial;
         const basicEmitter = { dart: NATIVE_DART_PROFILE, musket: NATIVE_MUSKET_PROFILE, wheel: NATIVE_WHEEL_PROFILE }[f.weapon];
@@ -1103,17 +1107,19 @@ export class MeteorGame {
       // A rendered frame can cross several narrow original attack windows.
       // Sample each window's authored frame, keeping its original index and
       // serial so multi-thrusts hit once per window, never once per render.
-      for (const attack of segment.attacks) {
-        const frame = clamp(segment.frame, attack.start, attack.end);
-        f.character.setPoseFrame(segment.source, frame);
-        const contactState = { ...segment, frame, attacks: [attack] };
-        this._launchNativeProjectiles(f, contactState); this._resolveContacts(f, contactState);
-      }
+      for (const attack of segment.attacks)this._resolveAttackWindow(f,segment,attack);
     }
+    }finally{f.root.rotation.y=finalFacing;}
     if (state.blend && f.character.setPoseBlend) f.character.setPoseBlend(state.blend.from, state.blend.to, state.blend.weight);
     else f.character.setPoseFrame(state.source, state.frame);
     this.rageVfx?.sample(f, state, f.combat.fps);
     if (f.nameplate) { f.nameplate.quaternion.copy(f.root.quaternion).invert().multiply(this.camera.quaternion); }
+  }
+  _resolveAttackWindow(actor,segment,attack){
+    // Projectile release and independent EF clocks retain their existing path.
+    const melee=!['dart','musket','wheel'].includes(actor.weapon)&&!attack.bones.includes('effect');
+    const frames=melee?nativeAttackFrames(segment,attack):[clamp(segment.frame,attack.start,attack.end)];
+    for(const frame of frames){actor.character.setPoseFrame(segment.source,frame);const state={...segment,frame,attacks:[attack]};this._launchNativeProjectiles(actor,state);this._resolveContacts(actor,state);}
   }
   _resolveContacts(attacker, state) {
     if (!this.running) return;

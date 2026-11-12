@@ -301,6 +301,22 @@ export class NativePoseTimeline {
   get canCancel() { return this.pose.cancels.some(w => includes(w, this.frame)); }
 }
 
+// Sample only authored frames actually crossed inside this POS attack window.
+// Sparse fixed ticks must not test just the last pose of a fast weapon swing.
+export function nativeAttackFrames(state,attack){
+  const frames=new Set(),intervals=state.frameIntervals||[];
+  if(!intervals.length)return includes(attack,state.frame)?[Math.min(state.frame,attack.end)]:[];
+  for(const interval of intervals){
+    // POS end is an inclusive source-frame number, valid until end+1.
+    if(interval.to<attack.start||interval.from>=attack.end+1)continue;
+    const from=Math.max(attack.start,Math.min(interval.from,attack.end)),to=Math.min(interval.to,attack.end);
+    if(interval.from<=attack.start)frames.add(from);
+    for(let frame=Math.ceil(from);frame<=to;frame++)frames.add(frame);
+    frames.add(to);
+  }
+  return [...frames];
+}
+
 export class NativeCombatController {
   constructor(data, { weapon = 'sword', fps = 30, sampleRoot = null, scale = .08 } = {}) {
     this.data = data; this.weapon = weapon; this.fps = fps; this.sampleRoot = sampleRoot; this.scale = scale;
@@ -420,7 +436,7 @@ export class NativeCombatController {
     if (this.timeline && !this.timeline.finished && index === sequence.length - 1 && !this.data.actions.canLink(current, next)) return false;
     return this.play(next, options);
   }
-  update(dt, { grounded, projectileReady = true } = {}) {
+  update(dt, { grounded, projectileReady = true, getFacing = null } = {}) {
     if (!this.timeline) return null;
     let remaining = Math.max(0, dt), state = null; const segments = [];
     for (let transitions = 0; transitions < 128; transitions++) {
@@ -432,7 +448,7 @@ export class NativeCombatController {
           serial: this.serial, combo: this.combo, context: this._activeMove, attacks: [], drags: [], cancel: false, finished: false,
           rootDelta: { x: 0, y: 0, z: 0 }, consumed, remaining,
           blend: { from: blend.from, to: blend.to, weight: Math.min(1, blend.elapsed / blend.duration), duration: blend.duration } };
-        this._stampEffectTime(state); segments.push(state);
+        if(getFacing)state.facing=getFacing();this._stampEffectTime(state); segments.push(state);
         if (blend.elapsed < blend.duration - 1e-7) break;
         this._transition = null;
         if (remaining <= 1e-7) break;
@@ -446,7 +462,7 @@ export class NativeCombatController {
         if (this._reaction.holdRemaining <= 1e-7) {
           if (waiting > 0) {
             state = { ...timeline.advance(waiting), serial: this.serial, combo: this.combo, pose, context: this._activeMove, authoredMotionScale: 1 };
-            this._stampEffectTime(state); segments.push(state); remaining -= waiting;
+            if(getFacing)state.facing=getFacing();this._stampEffectTime(state); segments.push(state); remaining -= waiting;
           }
           this._reaction.phase = 'recover';
           if (this._start({ id: NATIVE_REACTION_ADAPTER.recover[pose.id], loop: false }, { linked: true })) continue;
@@ -473,7 +489,7 @@ export class NativeCombatController {
         authoredMotionScale: this._reaction ? ['hit', 'guard'].includes(this._reaction.phase) ? this._reaction.motionScale : 1 : (this._attackChain || this._motionChain) ? 1 : null };
       remaining -= state.consumed;
       if (timedReaction) this._reaction.remainingDuration = Math.max(0, this._reaction.remainingDuration - state.consumed);
-      this._stampEffectTime(state); segments.push(state);
+      if(getFacing)state.facing=getFacing();this._stampEffectTime(state); segments.push(state);
       if (this._queuedRequest && (this._canCancelFor(this._queuedRequest) || timeline.finished)) {
         const request = this._queuedRequest; this._queuedRequest = null; this.queued = null;
         if (this._startTransition(request)) continue;

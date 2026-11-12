@@ -576,3 +576,11 @@ test('四种常用兵器的实际方向连招在连续点攻后仍按缓冲起�
    let windows=0;for(let i=0;i<180&&hero.combat.busy;i++){const state=hero.combat.update(1/120,{grounded:true});windows+=(state?.segments||[]).reduce((n,s)=>n+s.attacks.length,0);}assert.ok(windows>0,weapon+' retained original attack windows');
  }
 });
+
+test('实际连招换向时上一招命中采样保持旧朝向，结束后恢复新招朝向',async()=>{
+ const {game,hero,target}=await fixture('sword');command(game,[]);command(game,[]);assert.ok(hero.combat.queuedMove);const serial=hero.combat.serial,queued=hero.combat._queuedRequest,start=queued.onStart;
+ queued.onStart=context=>{target.root.position.set(3,.015,0);return start(context);};
+ const samples=[],resolve=game._resolveContacts;game._resolveContacts=function(actor,state){samples.push({serial:state.serial,facing:state.facing,actual:actor.root.rotation.y});assert.ok(Math.abs(actor.root.rotation.y-state.facing)<1e-9);return resolve.call(this,actor,state);};
+ for(let i=0;i<12&&!samples.some(s=>s.serial!==serial);i++)tick(game,.25);
+ assert.ok(samples.some(s=>s.serial===serial),'previous strike is still sampled');assert.ok(samples.some(s=>s.serial!==serial),'next strike is also sampled');assert.ok(Math.abs(hero.root.rotation.y)>1,'final render keeps the new facing');
+});

@@ -104,3 +104,8 @@ test('剑枪刀匕首已缓冲的方向招式不会被随后连点普通攻击�
 test('连点同一后续不会推迟首次接招时间，新的方向指令仍可主动替换',()=>{
  const combat=new NativeCombatController(data,{weapon:'sword'}),a=NATIVE_MOVE_CATALOG.find(m=>m.poseId===263),b=NATIVE_MOVE_CATALOG.find(m=>m.poseId===266);combat.attack({poseId:262});combat.attack({poseId:263,context:a});const queued=combat._queuedRequest,frame=queued.transitionFrame;combat.update(1/120,{grounded:true});combat.attack({poseId:263,context:a});assert.equal(combat._queuedRequest,queued);assert.equal(combat._queuedRequest.transitionFrame,frame);combat.attack({poseId:266,context:b});assert.equal(combat.queuedMove.id,b.id);
 });
+
+test('同一次更新跨过换招时，各段保留自己的起手朝向',()=>{
+ const combat=new NativeCombatController(data,{weapon:'sword'});let facing=0;combat.attack({poseId:262});combat.attack({poseId:263,onStart:()=>{facing=Math.PI/2;}});const segments=[];for(let i=0;i<12;i++){const state=combat.update(.2,{grounded:true,getFacing:()=>facing});segments.push(...state.segments);if(segments.some(s=>s.poseId===263&&!s.blend))break;}
+ assert.ok(segments.some(s=>s.poseId===262));assert.ok(segments.some(s=>s.poseId===263));for(const segment of segments)assert.equal(segment.facing,segment.poseId===262?0:Math.PI/2);
+});

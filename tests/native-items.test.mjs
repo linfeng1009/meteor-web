@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import * as THREE from '../dist/vendor/three.module.js';
-import { NativeItemSystem, nativeMeatbunEffect, NATIVE_ITEM_PICKUP_PROFILE, nativeWorldItemEffect, updateNativeScriptItems, nativeMovementScale } from '../dist/native-items.js';
+import { NativeItemSystem, nativeMeatbunEffect, NATIVE_ITEM_PICKUP_PROFILE, nativeWorldItemEffect, updateNativeScriptItems, nativeMovementScale, nativeAirMovementScale } from '../dist/native-items.js';
 import { nativeEffectiveStat } from '../dist/native-combat.js';
 import { MeteorGame } from '../dist/engine.js';
 import { NativeMissionHost } from '../dist/native-mission-host.js';
@@ -11,6 +11,13 @@ const original = new URL('../dist/assets/original/', import.meta.url);
 const res = JSON.parse(await readFile(new URL('characters/meteor-res-data.json', original), 'utf8'));
 const itemRecords = new Map(res.allRecords.filter(record => record.type === 2).map(record => [record.id, record]));
 const actor = (hp = 1000) => ({ hp, maxHp: 1500, root: new THREE.Group() });
+
+test('空中移动读取原stat5百分比，包括非默认基值和零值回退',()=>{
+  assert.equal(nativeAirMovementScale({}),1);assert.equal(nativeAirMovementScale({nativeStats:{5:120}}),1.2);
+  assert.equal(nativeAirMovementScale({nativeStats:{5:0}}),1);
+  const hero=actor(),{system}=fixture([item('speed',itemRecords.get(5).model)]);assert.equal(system.tryPickup(hero).ok,true);
+  assert.equal(nativeAirMovementScale(hero),nativeEffectiveStat(5,100,hero.activeItems)/100);
+});
 function item(name = 'actual-item', model = '"Item01"') {
   return { name, source: { properties: { model } }, root: new THREE.Group(), attributes: { active: 1, interactive: 1, collision: 1 },
     setActive(value) { this.attributes.active = Number(value); this.root.visible = value; }, setCollision(value) { this.attributes.collision = Number(value); } };

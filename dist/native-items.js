@@ -30,7 +30,7 @@ export const NATIVE_SCRIPT_ITEM_PROVENANCE = Object.freeze({
   native: 'Meteor.exe 004d59d0 duplicate refresh, 004d5020 duration/rate, 004d4e30 period*10 with float10 at005a84ac; 004d4d30 clamps HP/stat2 to maxHP/stat1 and rage/stat6 to maxRage/stat7. 004d4a70 initializes stat7 to100.',
   attack: '004af630 applies type3 parameter16 only after HP damage and victim rage gain, on an unguarded surviving target; 004d5fc0 resolves the type2 record, server004afcf0 applies it through004d59d0.',
   self: '004cff30 saves type3 parameter18 at controller+524 and flushes it on an accepted ACT request in state2;004ce410 passes2 to004dc8c0 for End-floor(frame)<2. Web applies it once at that final-frame gate or the accepted original cancel window, never on early input buffering alone; the native manager+210 message scheduling is not reproduced.',
-  rageSkills: 'Original type2/id21 immediate rage-10; id41 stat5 mode1 value150 for900/10 seconds; id34 attack+40 for900/10 seconds; id40 defense+20 for1200/10 seconds; id37 immediate rage-5; id13 stat5 mode1 value30 for600/10 seconds. Stat5 scales Web movement using a100-point basis; exact native movement/network consumer remains unverified.',
+  rageSkills: 'Original type2/id21 immediate rage-10; id41 stat5 mode1 value150 for900/10 seconds; id34 attack+40 for900/10 seconds; id40 defense+20 for1200/10 seconds; id37 immediate rage-5; id13 stat5 mode1 value30 for600/10 seconds. Actor004efb00 message26 queries stat5;004cd3a0 scales ordinary-air acceleration and speed gate by nonzero stat5×.01. Ground stride calibration and network scheduling remain Web adapters.',
   timing: '004b1e16 server and0048af49 client pass float32(.2). Each step expires before applying periodic effects;004d4e30 tests the old integer counter before adding trunc(counter+10*dt), applies at most once and resets to0. Web elapsed frames bridge to this source cadence; original wall-clock phase/network scheduling remain unverified.',
   maxHp: '004d5e30 stat1 adds the active modifier; removal restores maxHP without an invented immediate current-HP adjustment. 004d4d30 clamps the next HP adjustment.',
   invisibility: 'Stat10: item7 for60s, item36 for120s;004c0020 serializes it,004fc980 rejects discovery,0048aeb0 invokes005591b0 with model default alpha0.1. Cached enemy retention remains independent.',
@@ -99,6 +99,12 @@ export function nativeIsInvisible(actor) {
 export function nativeMovementScale(actor) {
   const basis = actor.nativeStats?.[5] ?? 100;
   return basis > 0 ? nativeEffectiveStat(5, basis, [actor.weaponRecord,...(actor.activeItems || [])]) / basis : 1;
+}
+// Controller message26 reaches actor004efb00 case0x1a, querying stat5;
+// 004cd49b uses nonzero returned integer×.01, otherwise leaves default1.
+export function nativeAirMovementScale(actor){
+  const value=nativeEffectiveStat(5,actor.nativeStats?.[5]??100,[actor.weaponRecord,...(actor.activeItems||[])]);
+  return value===0?1:value/100;
 }
 
 function syncScriptMaxHp(actor) {

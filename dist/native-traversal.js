@@ -7,7 +7,7 @@ export const NATIVE_TRAVERSAL_WINDOW=.3;
 // 004ce840 consumes the gravity vector during attack/free-flight motion.
 // 004cf4b0 starts the button timer;004cf530 selects the jump on release,
 // comparing against float64(.11) at005aa8e8.004cd3a0 auto-releases after it.
-// Collision shape, horizontal steering and wall traversal remain Web adapters.
+// Collision shape and contact probes remain Web adapters.
 export const NATIVE_JUMP_HOLD_SECONDS=.11;
 // 004cb5e0 passes mouseX*(world.mouseSpeed+1)*float32(1/140) to
 // 004cc640; native default speed50 is initialized at00486a28. That handler
@@ -40,14 +40,6 @@ export function nativeAirPose(current,vertical){
 }
 export const NATIVE_AIR_PHYSICS=Object.freeze({gravity:882*.08,jumpVelocity:282*.08,largeJumpVelocity:375*.08,
   provenance:'Reference Meteor.exe constructor004cb083 immc45c8000;004cf5a0 uses005aa93c float282 or005aa940 float375.004cf530 hold threshold float64(.11) at005aa8e8. Native units×.08.'});
-// 004cd3a0 state0 applies linear drag(.1*200) before gravity, then
-// quadratic drag(.1/600). Horizontal steering remains the Web host adapter.
-export function nativeAirVerticalVelocity(vertical,horizontal,dt,gravity=NATIVE_AIR_PHYSICS.gravity){
-  let velocity=vertical/.08,speed=Math.hypot(velocity,horizontal/.08);
-  if(speed>0)velocity=Math.fround(velocity*Math.max(0,1-20*dt/speed));
-  velocity=Math.fround(velocity-gravity/.08*dt);speed=Math.hypot(velocity,horizontal/.08);
-  return Math.fround(velocity*Math.max(0,1-speed*dt/6000))*.08;
-}
 // 004cd3a0 without directional force: linear drag20 native units/s,
 // gravity, then quadratic drag(.1/600) act on the SAME three-axis vector.
 // Update the supplied horizontal velocity in place, returning vertical speed.
@@ -57,6 +49,31 @@ export function stepNativeAirDrift(horizontal,vertical,dt,gravity=NATIVE_AIR_PHY
   x=Math.fround(x*linear);y=Math.fround(y*linear);z=Math.fround(z*linear);
   y=Math.fround(y-gravity/.08*dt);speed=Math.hypot(x,y,z);
   const quadratic=Math.max(0,1-speed*dt/6000);
+  horizontal.x=Math.fround(x*quadratic)*.08;horizontal.z=Math.fround(z*quadratic)*.08;
+  return Math.fround(y*quadratic)*.08;
+}
+// Ordinary-air portion of004cd3a0: airborne acceleration100, speed gate
+// 10000 (×.24 outside uncrouched forward input), positive input projection
+// cancels the parallel part of linear drag. Caller supplies world input basis.
+export function stepNativeAirMotion(horizontal,vertical,inputX,inputZ,forwardRunning,dt,movementScale=1,gravity=NATIVE_AIR_PHYSICS.gravity,groundContact=false){
+  const inputLength=Math.hypot(inputX,inputZ);
+  if(inputLength===0)return stepNativeAirDrift(horizontal,vertical,dt,gravity);
+  let x=horizontal.x/.08,y=vertical/.08,z=horizontal.z/.08,speed=Math.hypot(x,y,z);
+  const limit=10000*movementScale*(forwardRunning?1:.24),ratio=Math.fround(speed/limit);
+  // Above the gate the native routine leaves its original input vector;
+  // it does not hard-clamp existing velocity or reverse the acceleration.
+  let ax=inputX,az=inputZ;
+  if(ratio<1){const force=(1-ratio**4)*(groundContact?1000:100)*movementScale;ax=inputX/inputLength*force;az=inputZ/inputLength*force;}
+  ax=Math.fround(ax);az=Math.fround(az);
+  if(speed>0){
+    const amount=20*dt,forceLength=Math.hypot(ax,az),dot=forceLength>0?(ax*x+az*z)/(forceLength*speed):0;
+    let dx=-x/speed*amount,dy=-y/speed*amount,dz=-z/speed*amount;
+    if(dot>0){dx+=ax/forceLength*amount*dot;dz+=az/forceLength*amount*dot;}
+    if(Math.hypot(dx,dy,dz)>=speed)x=y=z=0;
+    else{x=Math.fround(x+dx);y=Math.fround(y+dy);z=Math.fround(z+dz);}
+  }
+  x=Math.fround(x+ax*dt);y=Math.fround(y-gravity/.08*dt);z=Math.fround(z+az*dt);
+  speed=Math.hypot(x,y,z);const quadratic=Math.max(0,1-speed*dt/6000);
   horizontal.x=Math.fround(x*quadratic)*.08;horizontal.z=Math.fround(z*quadratic)*.08;
   return Math.fround(y*quadratic)*.08;
 }

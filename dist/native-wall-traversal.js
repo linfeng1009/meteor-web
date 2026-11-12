@@ -36,4 +36,4 @@ export function nativeAirWallJumpVelocity(velocity,normal,{large=false}={}){
 }
 // Explicit browser contact/physics adapter, NOT recovered EXE constants.
 export const WALL_TRAVERSAL_ADAPTER=Object.freeze({reach:.2,heights:Object.freeze([.85,1.6]),maxNormalY:.25,
-  sideSpeed:6,kickDuration:.25,bodyHeight:2.2});
+  sideSpeed:6,bodyHeight:2.2});

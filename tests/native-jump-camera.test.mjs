@@ -9,7 +9,7 @@ import {NetworkGame} from '../dist/network-game.js';
 import {createPlayerControl} from '../dist/player-control.js';
 import {nativeWallJumpVelocity,nativeAirWallJumpVelocity} from '../dist/native-wall-traversal.js';
 import { NativeCombatController, decodeNativeText, parsePos, parseAct } from '../dist/native-combat.js';
-import {NATIVE_AIR_PHYSICS,NATIVE_DASH_POSES,NATIVE_CROUCH_POSES,NATIVE_GROUND_MOVE_POSES,NATIVE_JUMP_POSES,nativeTraversalDirection,nativeAirPose,nativeActionMomentum,stepNativeAirDrift} from '../dist/native-traversal.js';
+import {NATIVE_AIR_PHYSICS,NATIVE_DASH_POSES,NATIVE_CROUCH_POSES,NATIVE_GROUND_MOVE_POSES,NATIVE_JUMP_POSES,nativeTraversalDirection,nativeAirPose,nativeActionMomentum,stepNativeAirDrift,stepNativeAirMotion} from '../dist/native-traversal.js';
 import { createNativeCharacter, parseNativeSkin, parseNativeBones, parseNativeAnimation, parseNativePoses } from '../dist/native-character.js';
 
 // Use the supplied native skin, skeleton and every original jump frame. A
@@ -321,7 +321,7 @@ test('wall exit impulse cannot pass through an opposite wall and yields to a hit
     const {game,hero}=state;game._updateFighter(hero,1/60);assert.equal(game._beginWallJump(hero),true);
     const opposite=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshBasicMaterial({side:THREE.DoubleSide}));opposite.position.z=1;opposite.updateMatrixWorld(true);state.colliders.push(opposite);
     for(let i=0;i<12;i++){game._updateFighter(hero,1/60);assert.ok(hero.root.position.z<.61,'the normal collision radius stops the kick');}
-    assert.ok(hero.wallKick);hero.combat.react(90);game._updateFighter(hero,1/60);assert.equal(hero.wallKick,null);
+    assert.equal(hero.wallKick,null,'蹬墙不再用计时器强制覆盖输入');hero.combat.react(90);game._updateFighter(hero,1/60);assert.equal(hero.wallKick,null);assert.equal(hero.combat.reacting,true);
   }finally{state.dispose();}
 });
 
@@ -915,7 +915,7 @@ test('vertical camera follow preserves its settled height over the collision roo
 test('moving forward during the native jump keeps the rendered body on screen and lands while moving', () => {
   const state = fixture();
   try {
-    const start = state.hero.root.position.clone(); state.game.action('forward');
+    const start = state.hero.root.position.clone(); state.game.mouseLook={locked:true};state.game.action('forward');
     const frames = jump(state), last = frames.at(-1);
     assert.ok(last.root.distanceTo(start) > 10, 'the original actor must actually travel while airborne and after landing');
     for (const f of frames) assert.ok(Math.abs(f.screen.x) < .95 && Math.abs(f.screen.y) < .95 && f.screen.z < 1, `moving frame ${f.i}: body escaped view: ${f.screen.toArray()}`);
@@ -957,8 +957,8 @@ test('连剑在原接招接受帧采样惯性，后续切换动作时不再重�
 test('跑动出招继承实际速度，地面与空中按原9和0.2阻尼衰减，碰撞清掉受阻分量',()=>{
   for(const grounded of [false,true]){
     const state=fixture();try{
-      const {game,hero}=state;hero.grounded=grounded;hero.root.position.y=grounded?.015:20;
-      game._move(hero,v(1,0,1).normalize(),8,1/60);
+      const {game,hero}=state;game._move(hero,v(1,0,1).normalize(),8,1/60);
+      hero.grounded=grounded;hero.root.position.y=grounded?.015:20;
       const incoming=hero.motionVelocity.clone();assert.ok(incoming.length()>7.9);
       assert.equal(game._beginAttack(hero),true);assert.ok(hero.actionMomentum.distanceTo(incoming)<1e-5);
       const before=hero.root.position.clone(),factor=grounded?.85:1-.2/60;
@@ -1024,17 +1024,66 @@ test('无方向空中阻力作用于同一三轴向量，零重力对称且粗�
   const falling=v();assert.ok(Math.abs(stepNativeAirDrift(falling,0,dt)+NATIVE_AIR_PHYSICS.gravity*dt)<.001);assert.equal(falling.length(),0);
 });
 
+test('普通空中按原加速度积分，顺输入保留惯性，反向输入逐渐减速而非瞬间改向',()=>{
+  const dt=1/60,fromRest=v();stepNativeAirMotion(fromRest,0,1,0,true,dt,1,0);
+  const nativeAfter=100*dt,expected=nativeAfter*(1-nativeAfter*dt/6000)*.08;
+  assert.ok(Math.abs(fromRest.x-expected)<1e-6);assert.equal(fromRest.z,0);assert.ok(fromRest.x<.14);
+  const forward=v(8,0,0),coast=forward.clone(),reverse=forward.clone();
+  stepNativeAirMotion(forward,0,1,0,true,dt,1,0);stepNativeAirMotion(coast,0,0,0,false,dt,1,0);stepNativeAirMotion(reverse,0,-1,0,false,dt,1,0);
+  assert.ok(forward.x>8);assert.ok(coast.x<8);assert.ok(reverse.x>7.8&&reverse.x<coast.x);
+  const fast=v(900,0,0);stepNativeAirMotion(fast,0,1,0,true,dt,1,0);assert.ok(fast.x>870,'原速度门限不硬裁已有高速');
+});
+
+test('地面起跳保留首步接地加速度标志，下一空中步和蹬墙使用空中系数',()=>{
+  const state=fixture();try{
+    const {game,hero}=state;game.enemies=[];game.locked=null;game.mouseLook={locked:true};game.action('forward');
+    assert.equal(game._beginJump(hero),true);assert.equal(hero.nativeAirGroundContact,true);assert.equal(hero.velocity.length(),0);
+    game._updateFighter(hero,1/60);const first=hero.velocity.length();assert.ok(first>1.3&&first<1.34);assert.equal(hero.nativeAirGroundContact,false);
+    game._updateFighter(hero,1/60);assert.ok(hero.velocity.length()>first&&hero.velocity.length()-first<.14);
+  }finally{state.dispose();}
+  const wall=wallFixture('front',30);try{
+    wall.game._updateFighter(wall.hero,1/60);assert.equal(wall.game._beginWallJump(wall.hero),true);assert.equal(wall.hero.nativeAirGroundContact,false);
+  }finally{wall.dispose();}
+});
+
+test('空中前进斜向按原0.2侧向权重，后退及蹲姿斜向等权，远端与本地相同',()=>{
+  for(const remote of [false,true])for(const crouched of [false,true])for(const forward of [false,true]){
+    const state=fixture();try{
+      const {game,hero}=state;game.enemies=[];game.locked=null;game.mouseLook={locked:true};hero.root.rotation.y=Math.PI;
+      if(remote){hero.hero=false;hero.playerControl=createPlayerControl({lookLocked:true});}
+      const control=remote?hero.playerControl:game;control.keys.add(forward?'forward':'back');control.keys.add('right');if(crouched)control.keys.add('crouch');
+      hero.grounded=false;hero.root.position.y=20;hero.velocity.set(0,0,0);hero.vy=0;
+      game._updateFighter(hero,1/60);const ratio=Math.abs(hero.velocity.x/hero.velocity.z);
+      assert.ok(Math.abs(ratio-(forward&&!crouched?.2:1))<1e-5);assert.ok(hero.velocity.length()<.14);
+      assert.ok(hero.velocity.x>0);assert.ok(forward?hero.velocity.z<0:hero.velocity.z>0);
+      for(let i=0;i<20;i++)game._updateFighter(hero,1/60);
+      const before=hero.velocity.clone();control.cameraAngle=Math.PI;control.lookPending=true;game._updateFighter(hero,1/60);
+      assert.ok(hero.velocity.dot(before)>0,'转身通过力积分，不能直接把已有速度翻转');
+    }finally{state.dispose();}
+  }
+});
+
+test('蹬墙后立即按普通空中力学响应输入，不在0.25秒后把推离速度改成前进步速',()=>{
+  const state=wallFixture('front',30);try{
+    const {game,hero}=state;game._updateFighter(hero,1/60);assert.equal(game._beginWallJump(hero),true);
+    const initial=hero.velocity.z;assert.ok(initial>15);assert.equal(hero.wallKick,null);
+    game._updateFighter(hero,1/60);assert.ok(hero.velocity.z<initial&&hero.velocity.z>initial-.3);
+    for(let i=0;i<20;i++)game._updateFighter(hero,1/60);
+    assert.ok(hero.velocity.z>10,'前进输入只逐步对抗推离惯性');assert.equal(hero.wallRun,null);
+  }finally{state.dispose();}
+});
+
 test('四向腾空松键保留逐步衰减的水平速度，空转视角不瞬间扭转惯性，落地松键停止',()=>{
   for(const direction of ['forward','right','left','back'])for(const remote of [false,true]){
     const state=fixture();try{
       const {game,hero}=state;game.enemies=[];game.locked=null;
       if(remote){hero.hero=false;hero.playerControl=createPlayerControl({lookLocked:true});}
       const control=remote?hero.playerControl:game;
-      game._actionFighter(hero,control,direction);game._beginJump(hero);game._updateFighter(hero,1/60);
-      const incoming=hero.velocity.clone(),position=hero.root.position.clone();assert.ok(incoming.length()>7);
+      game._actionFighter(hero,control,direction);game._updateFighter(hero,1/60);game._beginJump(hero);game._updateFighter(hero,1/60);
+      const incoming=hero.velocity.clone(),position=hero.root.position.clone();assert.ok(incoming.length()>.7);
       game._actionFighter(hero,control,direction,false);control.cameraAngle+=Math.PI/2;control.lookPending=true;
       game._updateFighter(hero,1/60);const displacement=hero.root.position.clone().sub(position);displacement.y=0;
-      assert.ok(displacement.length()>.1);assert.ok(displacement.clone().normalize().dot(incoming.clone().normalize())>.999);
+      assert.ok(displacement.length()>incoming.length()/60*.95);assert.ok(displacement.clone().normalize().dot(incoming.clone().normalize())>.999);
       assert.ok(hero.velocity.length()<incoming.length()&&hero.velocity.length()>incoming.length()-.1);
       for(let i=0;i<120&&!hero.grounded;i++)game._updateFighter(hero,1/60);
       assert.equal(hero.grounded,true);const landed=hero.root.position.clone();game._updateFighter(hero,1/60);assert.ok(hero.root.position.distanceTo(landed)<1e-6);

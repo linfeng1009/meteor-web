@@ -744,3 +744,23 @@ test('忍刀瞬移仍受墙体约束，并能按原接招表接出攻击',async(
   assert.ok(game.hero.root.position.z<3);assert.ok(events.some(e=>e.type==='move'&&e.poseId===461));assert.equal(game.hero.combat.busy,false);
  }finally{game.currentMap.colliders.pop();wall.geometry.dispose();wall.material.dispose();}
 });
+
+test('忍刀压制沿原起手初踩收刀链完成，重复指令按原ACT接再踩',async()=>{
+ const {game,events}=await fixture([v(0,.015,1.5),v(0,.015,15)]);await game._equip(game.hero,'ninja');game.hero.rage=100;
+ manual(game,['left','right']);assert.equal(game.hero.combat.currentMove.poseId,540);assert.equal(game.hero.rage,90);
+ for(let i=0;i<180&&game.hero.combat.timeline.pose.id!==541;i++)tick(game);
+ assert.equal(game.hero.combat.timeline.pose.id,541);manual(game,['left','right']);assert.equal(game.hero.combat.queued,542);
+ const seen=settle(game),hits=events.filter(e=>e.type==='hit');
+ assert.ok(seen.has(542));assert.ok(seen.has(543));assert.equal(game.hero.rage,80);assert.equal(game.hero.combat.busy,false);
+ assert.ok(hits.some(e=>e.poseId===540));assert.ok(hits.some(e=>e.poseId===541));assert.ok(hits.some(e=>e.poseId===542));assert.ok(hits.some(e=>e.poseId===543));
+ assert.equal(game.enemies[1].hp,10000);
+ assert.deepEqual(hits.map(e=>[e.poseId,e.amount]),[[540,25],[541,0],[542,0],[543,25]]);
+ assert.equal(hits.find(e=>e.poseId===541).raw.targetValue,4);assert.equal(hits.find(e=>e.poseId===542).raw.targetValue,3);
+});
+
+test('压制挥空会自动收刀，起手期间乱按不扣第二次怒气',async()=>{
+ const {game,events}=await fixture([v(0,.015,15)]);await game._equip(game.hero,'ninja');game.hero.rage=10;
+ manual(game,['left','right']);manual(game,['left','right']);assert.equal(game.hero.rage,0);
+ const seen=settle(game);assert.ok(seen.has(541));assert.ok(seen.has(543));assert.equal(seen.has(542),false);
+ assert.equal(game.hero.combat.busy,false);assert.equal(events.filter(e=>e.type==='move').length,1);assert.equal(events.filter(e=>e.type==='hit').length,0);
+});

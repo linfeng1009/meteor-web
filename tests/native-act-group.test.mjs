@@ -89,3 +89,18 @@ test('original direct A chains and held air recovery links survive group resolut
   assert.equal(air.timeline.pose.id, 341);
   assert.equal(poses.get(261).link, 341);
 });
+
+import {NATIVE_MOVE_CATALOG} from '../dist/native-move-catalog.js';
+import {NATIVE_WEAPONS} from '../dist/native-combat.js';
+test('剑枪刀匕首已缓冲的方向招式不会被随后连点普通攻击覆盖',()=>{
+  for(const weapon of ['sword','spear','blade','dagger']){
+    const from=NATIVE_WEAPONS[weapon].basic[0],plain=NATIVE_MOVE_CATALOG.find(m=>m.weapon===weapon&&m.continuationOf?.includes(from)&&m.input.length===1),directed=NATIVE_MOVE_CATALOG.find(m=>m.weapon===weapon&&!m.pending&&!m.rage&&m.input.length>1&&m.poseId!==from&&actions.resolveTransition(from,m.poseId)!=null);
+    assert.ok(plain&&directed,weapon+' requires an original legal pair');const combat=new NativeCombatController(data,{weapon});combat.attack({poseId:from});assert.equal(combat.attack({poseId:directed.poseId,context:directed}),true);assert.equal(combat.queuedMove?.id,directed.id);
+    for(let i=0;i<4;i++)assert.equal(combat.attack({poseId:plain.poseId,context:plain}),true);
+    assert.equal(combat.queuedMove?.id,directed.id,weapon+' must keep deliberate directional input');const actual=actions.resolveTransition(from,directed.poseId);for(let i=0;i<180&&combat.timeline.pose.id===from;i++)combat.update(1/60,{grounded:true});assert.equal(combat.timeline.pose.id,actual);
+  }
+});
+
+test('连点同一后续不会推迟首次接招时间，新的方向指令仍可主动替换',()=>{
+ const combat=new NativeCombatController(data,{weapon:'sword'}),a=NATIVE_MOVE_CATALOG.find(m=>m.poseId===263),b=NATIVE_MOVE_CATALOG.find(m=>m.poseId===266);combat.attack({poseId:262});combat.attack({poseId:263,context:a});const queued=combat._queuedRequest,frame=queued.transitionFrame;combat.update(1/120,{grounded:true});combat.attack({poseId:263,context:a});assert.equal(combat._queuedRequest,queued);assert.equal(combat._queuedRequest.transitionFrame,frame);combat.attack({poseId:266,context:b});assert.equal(combat.queuedMove.id,b.id);
+});

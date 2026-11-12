@@ -275,7 +275,7 @@ function updateHUD(s){if(!running)return;
   const comboFeedback=$('#combo-feedback'),comboText=s.moveName||(s.combo>1?`${s.combo} 连击`:'');lastCombo=s.combo;
   if(comboFeedback.textContent!==comboText)comboFeedback.textContent=comboText;
   comboFeedback.classList.toggle('named-move',!!s.moveName);if(!s.moveName)comboFeedback.dataset.command='';
-  $('#battle-hint-text').textContent=s.inputBlocked?'剧情进行中 · 对话后恢复操作':s.playerReaction==='hit'?'受击中 · 按住 '+keyHint('guard')+' 防御，恢复后接招':s.hp<=0?(currentMode==='story'?'任务结束':'胜败乃兵家常事 · 正在重返战场'):s.infiniteRage?'无限怒气调试中 · 暂停后查看各兵器招式':s.rage>=100?'怒气已满 · 暂停后「查看招式」可查怒气技':s.locked?'镜头跟随锁定目标 · '+keyHint('lock')+' 解除 · 战斗镜头固定方向':(s.weapon==='dart'?'七星飞镖 · '+keyHint('attack')+' 投掷 · 暂停后可查看招式':(game?.mouseLook?.locked?'移动鼠标转视角 · ':'点击画面锁定鼠标 · ')+keyHint('attack')+' 出招');
+  $('#battle-hint-text').textContent=s.inputBlocked?'剧情进行中 · 对话后恢复操作':s.playerReaction==='hit'?'受击中 · 按住 '+keyHint('guard')+' 防御，恢复后接招':s.queuedMoveName?'已接招：'+s.queuedMoveName:s.hp<=0?(currentMode==='story'?'任务结束':'胜败乃兵家常事 · 正在重返战场'):s.infiniteRage?'无限怒气调试中 · 暂停后查看各兵器招式':s.rage>=100?'怒气已满 · 暂停后「查看招式」可查怒气技':s.locked?'镜头跟随锁定目标 · '+keyHint('lock')+' 解除 · 战斗镜头固定方向':(s.weapon==='dart'?'七星飞镖 · '+keyHint('attack')+' 投掷 · 暂停后可查看招式':(game?.mouseLook?.locked?'移动鼠标转视角 · ':'点击画面锁定鼠标 · ')+keyHint('attack')+' 出招');
   if(s.hp<lastHp){$('#game-hud').style.boxShadow='inset 0 0 90px #a2222266';setTimeout(()=>$('#game-hud').style.boxShadow='',180);}lastHp=s.hp;
   drawMinimap(s);
 }

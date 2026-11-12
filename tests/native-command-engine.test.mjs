@@ -565,3 +565,14 @@ test('Raiden sword skin preserves native melee damage and reuses its cached temp
   assert.equal(hero.raidenSword.children[0].geometry, template.children[0].geometry);
   assert.equal(hero.raidenSword.visible, true);
 });
+
+test('四种常用兵器的实际方向连招在连续点攻后仍按缓冲起手并产生原版攻击窗',async()=>{
+ for(const weapon of ['sword','spear','blade','dagger']){
+   const {game,hero,events}=await fixture(weapon),from=NATIVE_MOVE_CATALOG.find(m=>m.weapon===weapon&&m.input.length===1&&m.stance==='ground'&&!m.continuationOf);
+   const directed=NATIVE_MOVE_CATALOG.find(m=>m.weapon===weapon&&!m.pending&&!m.rage&&m.stance==='ground'&&m.input.length>1&&!m.continuationOf&&combat.actions.resolveTransition(from.poseId,m.poseId)!=null);
+   assert.ok(directed);command(game,[]);assert.equal(hero.combat.currentMove.poseId,from.poseId);command(game,directed.input.filter(k=>k!=='attack'));assert.equal(hero.combat.queuedMove?.id,directed.id);
+   for(let i=0;i<5;i++)command(game,[]);assert.equal(hero.combat.queuedMove?.id,directed.id);
+   const predecessorSerial=hero.combat.serial;for(let i=0;i<180&&hero.combat.serial===predecessorSerial;i++)tick(game);assert.equal(hero.combat.currentMove?.id,directed.id);assert.ok(events.some(e=>e.type==='move'&&e.moveId===directed.id));
+   let windows=0;for(let i=0;i<180&&hero.combat.busy;i++){const state=hero.combat.update(1/120,{grounded:true});windows+=(state?.segments||[]).reduce((n,s)=>n+s.attacks.length,0);}assert.ok(windows>0,weapon+' retained original attack windows');
+ }
+});

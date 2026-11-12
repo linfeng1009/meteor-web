@@ -111,3 +111,5 @@ test('房间列表跨玩家可见且不暴露凭证，关闭房间后列表清�
  const rooms=new NetworkRooms(),host=rooms.create('局域网房主',{mode:'deathmatch'});let list=rooms.list();assert.equal(list.rooms[0].code,host.room.code);assert.equal(list.rooms[0].hostName,'局域网房主');assert.equal(list.rooms[0].mode,'deathmatch');assert.equal(JSON.stringify(list).includes(host.token),false);assert.equal('token' in list.rooms[0],false);
  rooms.join(host.room.code,'客人');assert.equal(rooms.list().rooms[0].players,2);rooms.request(host.room.code,host.token,'leave');assert.deepEqual(rooms.list().rooms,[]);
 });
+
+test('已接收的连招名称随房主状态同步，超长显示字段不会污染上一帧',()=>{const {a,b,call}=playing(),state=frame(a,b);state.players[0].queuedMoveName='残日红江';call(a,'sync',{frame:state});assert.equal(call(b,'sync').frame.players[0].queuedMoveName,'残日红江');const invalid={...state,sequence:2,players:state.players.map((p,i)=>i?p:{...p,queuedMoveName:'字'.repeat(65)})};assert.throws(()=>call(a,'sync',{frame:invalid}),/无效/);assert.equal(call(b,'sync').frame.sequence,1);});

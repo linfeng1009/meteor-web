@@ -379,6 +379,15 @@ export class NativeCombatController {
       const resolved = this.data.actions.resolveTransition ? this.data.actions.resolveTransition(from, id) : this.data.actions.canLink(from, id) ? id : null;
       if (resolved == null) return false;
       request.id = resolved;
+      const queued=this._queuedRequest;
+      if(attack&&queued?.attack){
+        // A single accepted command slot: repeat clicks acknowledge the same
+        // request without moving its original transition frame. Plain attack
+        // spam must not erase a deliberate directional/rage command.
+        const same=request.id===queued.id&&request.context?.poseId===queued.context?.poseId;
+        const deliberate=move=>!!move&&(move.input?.length>1||(move.rage||0)>0);
+        if(same||deliberate(queued.context)&&!deliberate(request.context))return true;
+      }
       request.transitionFrame = recovery ? this.timeline.frame : this._queueFrame();
       if (!this._canCancelFor(request)) { this.queued = request.id; this._queuedRequest = request; return true; }
       return this._startTransition(request);

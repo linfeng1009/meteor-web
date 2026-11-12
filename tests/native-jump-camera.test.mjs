@@ -1016,6 +1016,23 @@ test('stride-calibrated ground movement stops on release and attack without iner
  }
 });
 
+test('键盘四向起跳保留身体朝向，显式新视角才在起跳前消费且不清除锁定',()=>{
+  for(const direction of ['forward','right','left','back'])for(const look of [false,true]){
+    const state=fixture();try{
+      const {game,hero}=state;game.enemies=[];game.locked=null;game.cameraAngle=1.2;hero.root.rotation.y=-.7;
+      game.action(direction);if(look)turnMouseCamera(game,20,0);
+      const expected=look?game.cameraAngle+Math.PI:hero.root.rotation.y;
+      game.action('jump');game.action('jump',false);
+      assert.equal(hero.combat.timeline.pose.id,NATIVE_JUMP_POSES[direction].start);assert.equal(hero.root.rotation.y,expected);
+      assert.equal(hero.jumpSequence.facing,expected);game._updateFighter(hero,1/60);assert.equal(hero.root.rotation.y,expected);
+    }finally{state.dispose();}
+  }
+  const state=fixture({locked:true});try{
+    const {game,hero}=state,target=game.locked;hero.root.rotation.y=.4;
+    game.action('jump');game.action('jump',false);assert.equal(game.locked,target);assert.equal(hero.root.rotation.y,.4);
+  }finally{state.dispose();}
+});
+
 test('四向小跳共享原初速度和重力，动画衔接不叠加第二条跳跃曲线',()=>{
  for(const direction of ['forward','right','left','back']){
   const state=fixture();try{const {game,hero}=state;game.action(direction);game.action('jump');game.action('jump',false);let ticks=0,top=0;

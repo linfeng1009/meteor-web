@@ -886,7 +886,10 @@ export class MeteorGame {
     const sequence=NATIVE_JUMP_POSES[direction];
     const pose = actor.combat.data.poses.get(sequence.start);
     if(!pose?.valid)return false;
-    if(control&&!control.locked)actor.root.rotation.y=control.cameraAngle+Math.PI;
+    // 004cf760 chooses a directional pose;004cf5a0 changes vertical speed
+    // and state without reorienting the model. Consume actual look input,
+    // but do not snap a keyboard-only jump toward an unrelated camera.
+    if(usesPlayerLook(control))applyPlayerLook(actor,control);
     actor.jumpSequence={...sequence,direction,facing:actor.root.rotation.y,ballistic:true};actor.wallEntries=0;actor.wallRun=null;actor.wallKick=null;
     actor.wallJumpReady=true;actor.wallJumpAge=0;
     actor.musketAim=false; actor.grounded = false; actor.vy = large?NATIVE_AIR_PHYSICS.largeJumpVelocity:this.hostPhysics.jumpVelocity;

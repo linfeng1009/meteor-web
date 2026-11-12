@@ -7,7 +7,7 @@ import { FixedStepClock } from './fixed-step.js';
 import { NATIVE_WALL_POSES, NATIVE_WALL_PHYSICS, NATIVE_AIR_WALL_PHYSICS, nativeWallVerticalVelocity, nativeWallJumpVelocity, nativeAirWallJumpVelocity, WALL_TRAVERSAL_ADAPTER as WALL } from './native-wall-traversal.js';
 import { FrameMeter, RenderScaleController, createFrameOverlay } from './frame-meter.js';
 import { StaticColliderIndex } from './collision-index.js';
-import { bindLocalPlayerControl, clearPlayerCommands, applyPlayerLook, usesPlayerLook } from './player-control.js';
+import { bindLocalPlayerControl, clearPlayerCommands, applyPlayerLook, usesPlayerLook, updatePlayerTurn } from './player-control.js';
 import { createMouseLook, turnMouseCamera } from './mouse-look.js';
 import { bindKeyboard, defaultBindings } from './keybindings.js';
 import * as THREE from './vendor/three.module.js';
@@ -345,6 +345,7 @@ export class MeteorGame {
     f.musketAim=false; f.nativeJump = null; f.jumpSequence = null; f.wallRun = null; f.wallKick = null; f.wallEntries = 0;
     f.actionMomentum=null;f.motionVelocity?.set(0,0,0);
     f.wallJumpReady=false;f.wallJumpAge=0;
+    f.standingTurn=null;
     const p = spawn?.position || this.currentMap.spawns[0].position; f.root.position.copy(p);
     // D_user DES quaternions use wxyz in the native Z-up coordinates.
     // Project their facing onto the walking plane instead of facing the player.
@@ -625,6 +626,7 @@ export class MeteorGame {
     if (p.y < this.currentMap.bounds.min.y - 20 || Math.abs(p.x) > 3000 || Math.abs(p.z) > 3000) { if (this.mode === 'story'||this.networkCombat) { f.hp = 0; this._kill(f,{awardKill:false}); } else this._placeFighter(f, this.currentMap.spawns[f.hero ? 0 : (f.spawnIndex || 1) % this.currentMap.spawns.length]); }
   }
   _captureActionMomentum(actor,{ninja=false}={}){
+    actor.standingTurn=null;
     const velocity=actor.motionVelocity||actor.velocity,scale=ninja?NATIVE_ACTION_MOTION.ninjaScale:1;
     actor.actionMomentum??=v3();actor.actionMomentum.set(Math.fround((velocity?.x||0)/SCALE*scale)*SCALE,0,Math.fround((velocity?.z||0)/SCALE*scale)*SCALE);
     actor.wallKick=null;
@@ -1078,6 +1080,7 @@ export class MeteorGame {
     // Only the two contacting actors pause; mission time, projectiles and
     // other fighters keep running. These short durations are Web feedback.
     if (f.hitstop > 0) { const pause = Math.min(dt, f.hitstop); f.hitstop -= pause; dt -= pause; if (dt <= 1e-7) return; }
+    updatePlayerTurn(f,control,dt);
     this._updateJumpCharge(f,control,dt);
     let direction = v3(), speed = this.hostPhysics.speed * nativeMovementScale(f);
     if (control && control.recoveryAttack) {
@@ -1165,6 +1168,7 @@ export class MeteorGame {
           const movingPose=NATIVE_CROUCH_POSES[requested]??(f.heldPose>=145&&f.heldPose<=148?f.heldPose:NATIVE_CROUCH_POSES.forward);
           pose=walking?movingPose:NATIVE_CROUCH_POSES.idle;
         }
+        if(!moving&&!f.guard&&!f.musketAim&&f.standingTurn)pose=f.standingTurn.poseId;
         if(f.heldPose!==pose){f.combat.play(pose,{loop:true,force:true});if(f.musketAim&&pose===212){f.combat.timeline.frame=f.combat.timeline.pose.end;f.combat.timeline.finished=true;}f.heldPose=pose;}
       }
     }

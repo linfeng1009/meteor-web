@@ -9,6 +9,15 @@ export const NATIVE_TRAVERSAL_WINDOW=.3;
 // comparing against float64(.11) at005aa8e8.004cd3a0 auto-releases after it.
 // Collision shape, horizontal steering and wall traversal remain Web adapters.
 export const NATIVE_JUMP_HOLD_SECONDS=.11;
+// 004cb5e0 passes mouseX*(world.mouseSpeed+1)*float32(1/140) to
+// 004cc640; native default speed50 is initialized at00486a28. That handler
+// selects right141/left142 only beyond±1 and restarts actor+1c8.004cd3a0
+// returns to stance after its clock exceeds float64(.2) at005a8f90.
+export const NATIVE_STANDING_TURN=Object.freeze({hold:.2,mouseSpeed:50,inputScale:Math.fround(1/140)});
+export function nativeStandingTurnDirection(mouseX){
+  const value=Math.fround(mouseX*(NATIVE_STANDING_TURN.mouseSpeed+1)*NATIVE_STANDING_TURN.inputScale);
+  return value>1?'right':value< -1?'left':null;
+}
 // 004ce840 damps actor+3b8/+3bc by1-(grounded?9:.2)*dt.
 // Ninja004e34e0 scales those fields byfloat32(.67) on an accepted attack.
 export const NATIVE_ACTION_MOTION=Object.freeze({groundDamping:9,airDamping:Math.fround(.2),ninjaScale:Math.fround(.67)});

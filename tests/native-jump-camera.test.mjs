@@ -360,6 +360,53 @@ function visualBounds(hero) {
   hero.root.updateMatrixWorld(true); hero.character.skeleton.update(); hero.character.mesh.computeBoundingBox();
   return hero.character.mesh.boundingBox.clone().applyMatrix4(hero.character.mesh.matrixWorld);
 }
+
+test('原地鼠标转身播放站立和蹲姿左右原动画，不移动角色且连续输入不重启动作',()=>{
+  for(const crouched of [false,true])for(const dx of [-8,8]){
+    const state=fixture();try{
+      const {game,hero}=state;game.enemies=[];game.locked=null;game.mouseLook={locked:true};
+      if(crouched){game.action('crouch');game._updateFighter(hero,1/60);}
+      const position=hero.root.position.clone(),pose=crouched?(dx>0?146:147):(dx>0?141:142);
+      turnMouseCamera(game,dx,0);game._updateFighter(hero,1/60);
+      assert.equal(hero.combat.timeline.pose.id,pose);const serial=hero.combat.serial,bones=hero.character.bones[15].quaternion.toArray();
+      for(let i=0;i<8;i++){turnMouseCamera(game,dx,0);game._updateFighter(hero,1/60);}
+      assert.equal(hero.combat.serial,serial);assert.notDeepEqual(hero.character.bones[15].quaternion.toArray(),bones);
+      assert.ok(hero.root.position.distanceTo(position)<1e-6);
+      for(let i=0;i<12;i++)game._updateFighter(hero,1/60);
+      assert.equal(hero.combat.timeline.pose.id,pose,'0.2秒边界仍保留转身');
+      game._updateFighter(hero,1/60);assert.equal(hero.combat.timeline.pose.id,crouched?10:hero.combat.stance);
+    }finally{state.dispose();}
+  }
+});
+
+test('转身阈值按原默认鼠标输入缩放，逐逻辑步合并输入且纵向输入不刷新转身',()=>{
+  const state=fixture();try{
+    const {game,hero}=state;game.enemies=[];game.locked=null;game.mouseLook={locked:true};
+    for(const dx of [1,2,-1,-2]){turnMouseCamera(game,dx,0);game._updateFighter(hero,1/60);assert.equal(hero.combat.timeline.pose.id,hero.combat.stance);}
+    turnMouseCamera(game,3,0);turnMouseCamera(game,-3,0);game._updateFighter(hero,1/60);assert.equal(hero.combat.timeline.pose.id,hero.combat.stance);
+    turnMouseCamera(game,2,0);turnMouseCamera(game,2,0);game._updateFighter(hero,1/60);assert.equal(hero.combat.timeline.pose.id,141);
+    for(let i=0;i<8;i++)game._updateFighter(hero,1/60);
+    turnMouseCamera(game,-1,0);game._updateFighter(hero,1/60);assert.equal(hero.combat.timeline.pose.id,141,'小输入保留当前方向并刷新计时');
+    for(let i=0;i<13;i++){turnMouseCamera(game,0,1);game._updateFighter(hero,1/60);}
+    assert.equal(hero.combat.timeline.pose.id,hero.combat.stance);
+  }finally{state.dispose();}
+});
+
+test('转身被移动、跳跃、攻击和格挡中断，忙碌期间鼠标输入不延迟重放',()=>{
+  for(const action of ['forward','jump','attack','guard']){
+    const state=fixture();try{
+      const {game,hero}=state;game.enemies=[];game.locked=null;game.mouseLook={locked:true};
+      turnMouseCamera(game,8,0);game._updateFighter(hero,1/60);assert.equal(hero.combat.timeline.pose.id,141);
+      game.action(action);if(action==='jump')game.action(action,false);
+      game._updateFighter(hero,1/60);assert.equal(hero.standingTurn,null,action);
+      if(action==='attack'||action==='guard'){
+        turnMouseCamera(game,50,0);game._updateFighter(hero,1/60);game.action(action,false);
+        for(let i=0;i<180;i++)game._updateFighter(hero,1/60);
+        assert.equal(hero.standingTurn,null);assert.equal(hero.combat.timeline.pose.id,hero.combat.stance);
+      }
+    }finally{state.dispose();}
+  }
+});
 function projection(game, box) {
   game.camera.updateMatrixWorld(true);
   return box.getCenter(v()).project(game.camera);
@@ -478,6 +525,21 @@ test('腾空蹬离后用鼠标转身可在同次飞行中接上对面墙，走�
     assert.equal(hero.wallRun?.side,'front');assert.equal(hero.wallEntries,1);const facing=hero.root.rotation.y;
     turnMouseCamera(game,20,0);game._updateFighter(hero,1/60);assert.ok(hero.wallRun);assert.equal(hero.root.rotation.y,facing);
   }finally{state.dispose();}
+});
+
+test('客人原地转身复用既有角度包与原动作，重复相同角度不会延长转身',()=>{
+  for(const crouched of [false,true]){
+    const state=fixture();try{
+      const {game,hero}=state;game.enemies=[];hero.hero=false;hero.networkId='guest';hero.playerControl=createPlayerControl({lookLocked:true});
+      if(crouched){hero.playerControl.keys.add('crouch');game._updateFighter(hero,1/60);}
+      const session=Object.create(NetworkGame.prototype);Object.assign(session,{client:{host:true},active:true,game,actors:new Map([['guest',hero]]),controls:new Map([['guest',hero.playerControl]])});
+      const input=angle=>session.inputs([{playerId:'guest',action:'look',angle,time:10,held:crouched?['crouch']:[]}]);
+      input(-.04);game._updateFighter(hero,1/60);assert.equal(hero.combat.timeline.pose.id,crouched?146:141);
+      for(let i=0;i<13;i++){input(-.04);game._updateFighter(hero,1/60);}
+      assert.equal(hero.combat.timeline.pose.id,crouched?10:hero.combat.stance);
+      input(.04);game._updateFighter(hero,1/60);assert.equal(hero.combat.timeline.pose.id,crouched?147:142);
+    }finally{state.dispose();}
+  }
 });
 
 test('客人同批转向和空中攻击在主机按顺序处理，不等下一个物理步才更新朝向',()=>{

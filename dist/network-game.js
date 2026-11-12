@@ -5,7 +5,7 @@ import { battleCharacterSelection } from './character-appearances.js';
 // Listen-host simulation adapter: guests submit inputs, never HP/damage.
 // Uses the same native POS/ACT/RES combat, movement and collision paths.
 const continuous=['forward','back','left','right','guard','crouch'];
-import {createPlayerControl,clearPlayerCommands,applyPlayerLook} from './player-control.js';
+import {createPlayerControl,clearPlayerCommands,applyPlayerLook,PLAYER_LOOK_YAW_SCALE} from './player-control.js';
 import {nativeSameTeam} from './native-teams.js';
 export function networkPoseBlend(blend){
   if(!blend)return null;
@@ -151,6 +151,7 @@ export class NetworkGame{
       // recovery expiration and damage continue on the host's fixed ticks.
       control.inputTime=Number.isFinite(input.time)?input.time:this.game.elapsed;
       if(input.action==='clear'){control.keys.clear();clearPlayerCommands(control);actor.guard=false;actor.musketAim=false;continue;}
+      if(input.action==='look')control.lookDeltaX=(control.lookDeltaX||0)-(input.angle-control.cameraAngle)/PLAYER_LOOK_YAW_SCALE;
       control.cameraAngle=input.angle;control.aimPitch=input.pitch??0;
       applyPlayerLook(actor,control);
       if(input.action==='look'){const held=new Set(input.held||[]);for(const key of continuous){if(control.keys.has(key)&&!held.has(key))this.game._actionFighter(actor,control,key,false);else if(!control.keys.has(key)&&held.has(key))this.game._actionFighter(actor,control,key,true);}continue;}

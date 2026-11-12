@@ -1,14 +1,16 @@
 import { bindingMap, defaultBindings } from './keybindings.js';
 import {validCombatTarget} from './combat-targeting.js';
+import {PLAYER_LOOK_YAW_SCALE} from './player-control.js';
 export function turnMouseCamera(game, dx, dy) {
   if(game.hero?.musketAim){if(!Number.isFinite(dx)||!Number.isFinite(dy))return false;game.cameraAngle-=dx*.003;const c=game.localControl||game;c.aimPitch=Math.max(-1.2,Math.min(1.2,(c.aimPitch||0)-dy*.003));return true;}
   if(validCombatTarget(game.hero,game.locked))return false;
   if(!Number.isFinite(dx)||!Number.isFinite(dy))return false;
   if(game.locked)game.locked=null;
   game.cameraManualUntil=game.elapsed+2;
-  game.cameraAngle-=dx*.005;
+  game.cameraAngle-=dx*PLAYER_LOOK_YAW_SCALE;
   game.cameraPitch=Math.max(.15,Math.min(.95,game.cameraPitch+dy*.003));
   (game.localControl||game).lookPending=true;
+  if(!game.lootReplica){const control=game.localControl||game;control.lookDeltaX=(control.lookDeltaX||0)+dx;}
   // Raw mouse events update the camera only. Fixed steps and action entry
   // consume this angle, avoiding model/quaternion work at sensor frequency.
   return true;

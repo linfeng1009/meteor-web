@@ -27,10 +27,10 @@ export function sampleEffectKeys(keys, time, result = new Array(28)) {
 }
 
 export function createEffectTransforms(actor, definition, manifest) {
-  const graph = { actor, manifest, time: 0, nodes: [], names: new Map() };
+  const graph = { actor, manifest, time: 0, nodes: [], names: new Map(), nodeMatrices: new Set() };
   for (const source of definition.nodes) {
     const node = { source, matrix: new THREE.Matrix4(), local: new THREE.Matrix4(), key: new Array(28), valid: false };
-    graph.nodes.push(node);
+    graph.nodes.push(node); graph.nodeMatrices.add(node.matrix);
     if (source.type !== 'AUDIO' && !graph.names.has(source.name.toLowerCase())) graph.names.set(source.name.toLowerCase(), node);
   }
   return graph;
@@ -40,11 +40,14 @@ export function setEffectTime(graph, time) {
   for (const node of graph.nodes) { node.updated = false; node.valid = false; }
 }
 
-function anchor(graph, name, visiting, rotation = false) {
+function anchor(graph, name, visiting, rotation = false, owner = null) {
   const { actor, manifest } = graph, binding = String(name ?? ''), key = binding.toLowerCase();
-  const parent = key && key !== 'root' && key !== 'character' ? graph.names.get(key) : null;
-  if (parent) return effectNodeMatrix(graph, parent, visiting);
-  if (graph.frozenAnchors) return graph.frozenAnchors.get(`${Number(rotation)}:${key}`) || null;
+  const candidate = key && key !== 'root' && key !== 'character' ? graph.names.get(key) : null;
+  // 0056e230 searches external bones/sockets before sibling nodes and skips
+  // the requesting node itself (native pos245/246/247 Board_1 rotation).
+  const parent = candidate !== owner ? candidate : null;
+  if (graph.frozenAnchors) return graph.frozenAnchors.get(owner)?.[Number(rotation)]
+    || (parent ? effectNodeMatrix(graph, parent, visiting) : null);
   // 0056e230 returns the effect owner's default matrix for ROOT/empty names;
   // 00582120 uses an identity orientation when no rotation parent resolved.
   // Native world axes still require the Web coordinate/unit conversion.
@@ -66,6 +69,7 @@ function anchor(graph, name, visiting, rotation = false) {
     const q = dummy.quaternion, local = new THREE.Matrix4().compose(new THREE.Vector3(...dummy.position), new THREE.Quaternion(q[1], q[2], q[3], q[0]).normalize(), UNIT);
     return model.matrixWorld.clone().multiply(NATIVE_TO_WEB).multiply(local);
   }
+  if (parent) return effectNodeMatrix(graph, parent, visiting);
   // 0056e230 also returns the owner's default matrix when no named bone,
   // weapon socket or sibling effect resolves (e.g. original blink binding b).
   if(rotation)return NATIVE_WORLD;
@@ -75,14 +79,20 @@ function anchor(graph, name, visiting, rotation = false) {
 // Detached visual tails keep the caster's last sampled anchors, while their
 // own authored node keys continue. Attack-query graphs never use this cache.
 export function snapshotEffectAnchors(graph) {
-  const snapshots = new Map();
-  for (const node of graph.nodes) for (let role = 0; role < 2; role++) {
-    const binding = String(node.source.bindings[role] ?? ''), key = binding.toLowerCase();
-    if (graph.names.has(key)) continue;
-    const id = `${role}:${key}`;
-    if (snapshots.has(id)) continue;
-    const matrix = anchor(graph, binding, new Set(), role === 1);
-    if (matrix) snapshots.set(id, matrix.clone());
+  const snapshots = new Map(), copies = new Map();
+  for (const node of graph.nodes) {
+    const anchors = [null, null];
+    for (let role = 0; role < 2; role++) {
+      const binding = String(node.source.bindings[role] ?? '');
+      const matrix = anchor(graph, binding, new Set(), role === 1, node);
+      if (matrix && !graph.nodeMatrices.has(matrix)) {
+        if (!copies.has(matrix)) copies.set(matrix, matrix.clone());
+        anchors[role] = copies.get(matrix);
+      }
+    }
+    // A name can be this node's rejected self reference but another node's
+    // live sibling reference. Freeze external anchors per requester/role.
+    snapshots.set(node, anchors);
   }
   return snapshots;
 }
@@ -92,7 +102,7 @@ export function effectNodeMatrix(graph, node, visiting = new Set()) {
   visiting.add(node); node.updated = true; node.valid = false;
   const source = node.source, key = sampleEffectKeys(source.keys, graph.time, node.key);
   if (!key) { visiting.delete(node); return null; }
-  const positionAnchor = anchor(graph, source.bindings[0], visiting), rotationAnchor = anchor(graph, source.bindings[1], visiting, true);
+  const positionAnchor = anchor(graph, source.bindings[0], visiting, false, node), rotationAnchor = anchor(graph, source.bindings[1], visiting, true, node);
   if (!positionAnchor || !rotationAnchor) { visiting.delete(node); return null; }
   const position = new THREE.Vector3(...key.slice(1, 4)), quaternion = new THREE.Quaternion(...key.slice(4, 8)).normalize(), scale = new THREE.Vector3(...key.slice(8, 11));
   // 00582120 takes only the position anchor's origin, then copies the full

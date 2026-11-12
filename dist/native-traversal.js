@@ -48,6 +48,18 @@ export function nativeAirVerticalVelocity(vertical,horizontal,dt,gravity=NATIVE_
   velocity=Math.fround(velocity-gravity/.08*dt);speed=Math.hypot(velocity,horizontal/.08);
   return Math.fround(velocity*Math.max(0,1-speed*dt/6000))*.08;
 }
+// 004cd3a0 without directional force: linear drag20 native units/s,
+// gravity, then quadratic drag(.1/600) act on the SAME three-axis vector.
+// Update the supplied horizontal velocity in place, returning vertical speed.
+export function stepNativeAirDrift(horizontal,vertical,dt,gravity=NATIVE_AIR_PHYSICS.gravity){
+  let x=horizontal.x/.08,y=vertical/.08,z=horizontal.z/.08,speed=Math.hypot(x,y,z);
+  const linear=speed>0?Math.max(0,1-20*dt/speed):0;
+  x=Math.fround(x*linear);y=Math.fround(y*linear);z=Math.fround(z*linear);
+  y=Math.fround(y-gravity/.08*dt);speed=Math.hypot(x,y,z);
+  const quadratic=Math.max(0,1-speed*dt/6000);
+  horizontal.x=Math.fround(x*quadratic)*.08;horizontal.z=Math.fround(z*quadratic)*.08;
+  return Math.fround(y*quadratic)*.08;
+}
 export const NATIVE_ROLL_POSES=Object.freeze({forward:176,right:177,left:178,back:179});
 // 004cc730 maps crouched idle -> 10 and walk/run 140/144,141,142,143
 // to 145,146,147,148. 004cf770 selects directional takeoff; 004cf7d0

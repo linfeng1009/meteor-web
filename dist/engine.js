@@ -2,7 +2,7 @@ import {NativeStealthFeedback} from './native-stealth-feedback.js';
 import {validCombatTarget,acquireCombatTarget} from './combat-targeting.js';
 import {nativeSameTeam} from './native-teams.js';
 import {nativeStrideSpeed} from './native-movement-profile.js';
-import { traversalTap, NATIVE_AIR_PHYSICS, NATIVE_ACTION_MOTION, nativeActionMomentum, NATIVE_JUMP_HOLD_SECONDS, nativeAirPose, nativeAirVerticalVelocity, NATIVE_ROLL_POSES, nativeDashPose, NATIVE_CROUCH_POSES, NATIVE_GROUND_MOVE_POSES, NATIVE_JUMP_POSES, nativeTraversalDirection } from './native-traversal.js';
+import { traversalTap, NATIVE_AIR_PHYSICS, NATIVE_ACTION_MOTION, nativeActionMomentum, NATIVE_JUMP_HOLD_SECONDS, nativeAirPose, nativeAirVerticalVelocity, stepNativeAirDrift, NATIVE_ROLL_POSES, nativeDashPose, NATIVE_CROUCH_POSES, NATIVE_GROUND_MOVE_POSES, NATIVE_JUMP_POSES, nativeTraversalDirection } from './native-traversal.js';
 import { FixedStepClock } from './fixed-step.js';
 import { NATIVE_WALL_POSES, NATIVE_WALL_PHYSICS, NATIVE_AIR_WALL_PHYSICS, nativeWallVerticalVelocity, nativeWallJumpVelocity, nativeAirWallJumpVelocity, WALL_TRAVERSAL_ADAPTER as WALL } from './native-wall-traversal.js';
 import { FrameMeter, RenderScaleController, createFrameOverlay } from './frame-meter.js';
@@ -579,7 +579,9 @@ export class MeteorGame {
   }
   _move(f, direction, speed, dt, motion = null) {
     if(f.combat.reacting)f.wallKick=null;
-    const desired = f.wallRun?f.wallRun.velocity:direction.clone().multiplyScalar(speed); if(this._controlFor(f))f.velocity.copy(desired);else f.velocity.lerp(desired,1-Math.exp(-dt*14));
+    const drifting=!f.grounded&&!f.combat.busy&&!f.wallRun&&!f.wallKick&&direction.lengthSq()===0;
+    if(drifting)f.vy=stepNativeAirDrift(f.velocity,f.vy,dt,this.hostPhysics.gravity);
+    else{const desired=f.wallRun?f.wallRun.velocity:direction.clone().multiplyScalar(speed);if(this._controlFor(f))f.velocity.copy(desired);else f.velocity.lerp(desired,1-Math.exp(-dt*14));}
     let dx = f.velocity.x * dt + (motion?.x || 0), dz = f.velocity.z * dt + (motion?.z || 0), p = f.root.position;
     const momentum=f.combat.busy&&f.actionMomentum;
     if(momentum){
@@ -590,8 +592,8 @@ export class MeteorGame {
     // itself against the same movement speed and the actor sticks to the wall.
     if(f.wallKick){const step=Math.min(dt,f.wallKick.remaining);dx=f.wallKick.velocity.x*step;dz=f.wallKick.velocity.z*step;f.velocity.copy(f.wallKick.velocity);f.wallKick.remaining-=step;if(f.wallKick.remaining<=1e-8)f.wallKick=null;}
     const from = p.clone();
-    if (!this._horizontalBlocked(p, dx, 0)) p.x += dx;else if(momentum)momentum.x=0;
-    if (!this._horizontalBlocked(p, 0, dz)) p.z += dz;else if(momentum)momentum.z=0;
+    if (!this._horizontalBlocked(p, dx, 0)) p.x += dx;else{if(momentum)momentum.x=0;if(drifting)f.velocity.x=0;}
+    if (!this._horizontalBlocked(p, 0, dz)) p.z += dz;else{if(momentum)momentum.z=0;if(drifting)f.velocity.z=0;}
     const ground = this._ground(p.x, p.z, p.y + this.hostPhysics.step);
     // Native 004ce850 overrides vertical velocity when the authored d_base
     // velocity has |trunc(native units/sec)|>=float0.1; otherwise gravity
@@ -606,7 +608,7 @@ export class MeteorGame {
         f.nativeJump = null; f.vy = motion.y / dt; p.y += motion.y;
       } else {
         f.nativeJump = null;
-        f.vy=f.combat.busy?f.vy-this.hostPhysics.gravity*dt:nativeAirVerticalVelocity(f.vy,Math.hypot(f.velocity.x,f.velocity.z),dt,this.hostPhysics.gravity);
+        if(!drifting)f.vy=f.combat.busy?f.vy-this.hostPhysics.gravity*dt:nativeAirVerticalVelocity(f.vy,Math.hypot(f.velocity.x,f.velocity.z),dt,this.hostPhysics.gravity);
         p.y += f.vy * dt;
       }
       if(p.y>beforeY&&this._ceilingBlocked(v3(p.x,beforeY,p.z),p.y-beforeY)){p.y=beforeY;f.vy=0;f.nativeJump=null;f.jumpSequence=null;if(f.wallRun)this._endWallTraversal(f);}

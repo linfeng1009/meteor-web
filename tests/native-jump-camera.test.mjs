@@ -9,7 +9,7 @@ import {NetworkGame} from '../dist/network-game.js';
 import {createPlayerControl} from '../dist/player-control.js';
 import {nativeWallJumpVelocity,nativeAirWallJumpVelocity} from '../dist/native-wall-traversal.js';
 import { NativeCombatController, decodeNativeText, parsePos, parseAct } from '../dist/native-combat.js';
-import {NATIVE_AIR_PHYSICS,NATIVE_DASH_POSES,NATIVE_CROUCH_POSES,NATIVE_GROUND_MOVE_POSES,NATIVE_JUMP_POSES,nativeTraversalDirection,nativeAirPose,nativeActionMomentum} from '../dist/native-traversal.js';
+import {NATIVE_AIR_PHYSICS,NATIVE_DASH_POSES,NATIVE_CROUCH_POSES,NATIVE_GROUND_MOVE_POSES,NATIVE_JUMP_POSES,nativeTraversalDirection,nativeAirPose,nativeActionMomentum,stepNativeAirDrift} from '../dist/native-traversal.js';
 import { createNativeCharacter, parseNativeSkin, parseNativeBones, parseNativeAnimation, parseNativePoses } from '../dist/native-character.js';
 
 // Use the supplied native skin, skeleton and every original jump frame. A
@@ -1014,6 +1014,41 @@ test('stride-calibrated ground movement stops on release and attack without iner
    game.action('attack');game._updateFighter(hero,1/60);assert.equal(hero.velocity.length(),0);
   }finally{state.dispose();}
  }
+});
+
+test('无方向空中阻力作用于同一三轴向量，零重力对称且粗步不会反向加速',()=>{
+  const horizontal=v(3,0,4),dt=1/60,initial=13/.08,afterLinear=initial-20*dt;
+  const expected=(afterLinear/initial)*(1-afterLinear*dt/6000),vertical=stepNativeAirDrift(horizontal,12,dt,0);
+  assert.ok(Math.abs(horizontal.x-3*expected)<1e-6);assert.ok(Math.abs(horizontal.z-4*expected)<1e-6);assert.ok(Math.abs(vertical-12*expected)<1e-6);
+  const stopped=v(.001,0,-.001);assert.equal(stepNativeAirDrift(stopped,.001,1,0),0);assert.equal(stopped.length(),0);
+  const falling=v();assert.ok(Math.abs(stepNativeAirDrift(falling,0,dt)+NATIVE_AIR_PHYSICS.gravity*dt)<.001);assert.equal(falling.length(),0);
+});
+
+test('四向腾空松键保留逐步衰减的水平速度，空转视角不瞬间扭转惯性，落地松键停止',()=>{
+  for(const direction of ['forward','right','left','back'])for(const remote of [false,true]){
+    const state=fixture();try{
+      const {game,hero}=state;game.enemies=[];game.locked=null;
+      if(remote){hero.hero=false;hero.playerControl=createPlayerControl({lookLocked:true});}
+      const control=remote?hero.playerControl:game;
+      game._actionFighter(hero,control,direction);game._beginJump(hero);game._updateFighter(hero,1/60);
+      const incoming=hero.velocity.clone(),position=hero.root.position.clone();assert.ok(incoming.length()>7);
+      game._actionFighter(hero,control,direction,false);control.cameraAngle+=Math.PI/2;control.lookPending=true;
+      game._updateFighter(hero,1/60);const displacement=hero.root.position.clone().sub(position);displacement.y=0;
+      assert.ok(displacement.length()>.1);assert.ok(displacement.clone().normalize().dot(incoming.clone().normalize())>.999);
+      assert.ok(hero.velocity.length()<incoming.length()&&hero.velocity.length()>incoming.length()-.1);
+      for(let i=0;i<120&&!hero.grounded;i++)game._updateFighter(hero,1/60);
+      assert.equal(hero.grounded,true);const landed=hero.root.position.clone();game._updateFighter(hero,1/60);assert.ok(hero.root.position.distanceTo(landed)<1e-6);
+    }finally{state.dispose();}
+  }
+});
+
+test('空中无输入惯性被墙阻断后清除法向速度，出招仍只继承一次实际水平速度',()=>{
+  const state=fixture();try{
+    const {game,hero}=state;game.enemies=[];game.locked=null;hero.grounded=false;hero.root.position.y=10;hero.velocity.set(8,0,4);hero.vy=2;
+    const wall=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshBasicMaterial({side:THREE.DoubleSide}));wall.rotation.y=Math.PI/2;wall.position.set(.41,10,0);wall.updateMatrixWorld(true);state.colliders.push(wall);
+    game._updateFighter(hero,1/60);assert.equal(hero.velocity.x,0);assert.equal(hero.motionVelocity.x,0);assert.ok(hero.velocity.z>3.9);
+    const incoming=hero.motionVelocity.clone();assert.equal(game._beginAttack(hero),true);assert.ok(hero.actionMomentum.distanceTo(incoming)<1e-5);
+  }finally{state.dispose();}
 });
 
 test('键盘四向起跳保留身体朝向，显式新视角才在起跳前消费且不清除锁定',()=>{

@@ -75,9 +75,10 @@ export function sweepActorCapsule(from, to, actor, projectileRadius = .12, bodyR
 }
 
 export class NativeProjectileSystem {
-  constructor({ scene, getTargets = () => [], getColliders = () => [], onActorHit = () => {}, onWorldHit = () => {}, profile = NATIVE_DART_PROFILE, bodyRadius = .4 } = {}) {
+  constructor({ scene, getTargets = () => [], canHit = () => true, getColliders = () => [], onActorHit = () => {}, onWorldHit = () => {}, profile = NATIVE_DART_PROFILE, bodyRadius = .4 } = {}) {
     this.scene = scene; this.getTargets = getTargets; this.getColliders = getColliders; this.onActorHit = onActorHit; this.onWorldHit = onWorldHit;
     this.profile = profile; this.bodyRadius = bodyRadius; this.active = []; this.serial = 0; this.paused = false; this.disposed = false;
+    this.canHit=canHit;
     this.group = new THREE.Group(); this.group.name = '原版七星投射物'; scene?.add(this.group); this.raycaster = new THREE.Raycaster();
   }
   get size() { return this.active.length; }
@@ -110,7 +111,7 @@ export class NativeProjectileSystem {
       shot.previous.copy(shot.position); const to = shot.position.clone().addScaledVector(shot.velocity, step); to.y -= .5 * shot.profile.gravity * step * step;
       const world = this.worldContact(shot.position, to, shot.profile.radius); let actor = null, actorT = Infinity;
       for (const target of this.getTargets(shot) || []) {
-        if (!target || target === shot.owner || target.id === shot.owner.id || target.dead || target.disposed || target.scriptRemoved || target.hp <= 0) continue;
+        if (!target || target === shot.owner || target.id === shot.owner.id || target.dead || target.disposed || target.scriptRemoved || target.hp <= 0 || !this.canHit(shot.owner,target)) continue;
         // Relative-motion sweep also catches an actor crossing the flight line.
         const relativeFrom = target.previousPosition ? shot.position.clone().add(target.root.position).sub(target.previousPosition) : shot.position;
         const t = sweepActorCapsule(relativeFrom, to, target, shot.profile.radius, this.bodyRadius);
@@ -132,9 +133,10 @@ export class NativeProjectileSystem {
 }
 
 export class NativeMusketSystem {
-  constructor({ getTargets = () => [], getColliders = () => [], onActorHit = () => {}, onWorldHit = () => {}, bodyRadius = .4 } = {}) {
+  constructor({ getTargets = () => [], canHit = () => true, getColliders = () => [], onActorHit = () => {}, onWorldHit = () => {}, bodyRadius = .4 } = {}) {
     this.getTargets = getTargets; this.getColliders = getColliders; this.onActorHit = onActorHit; this.onWorldHit = onWorldHit; this.bodyRadius = bodyRadius;
     this.raycaster = new THREE.Raycaster(); this.serial = 0; this.paused = false; this.disposed = false; this.releases = new WeakMap();
+    this.canHit=canHit;
   }
   get size() { return 0; }
   pause(value = true) { this.paused = !!value; }
@@ -148,7 +150,7 @@ export class NativeMusketSystem {
     const to = position.clone().addScaledVector(direction.clone().normalize(), range), world = worldSegmentContact(this, position, to, 0);
     let actor = null, actorT = Infinity;
     for (const target of this.getTargets(shot) || []) {
-      if (!target || target === owner || target.id === owner.id || target.dead || target.disposed || target.scriptRemoved || target.hp <= 0) continue;
+      if (!target || target === owner || target.id === owner.id || target.dead || target.disposed || target.scriptRemoved || target.hp <= 0 || !this.canHit(owner,target)) continue;
       const t = sweepActorCapsule(position, to, target, 0, this.bodyRadius);
       if (t != null && t < actorT) { actor = target; actorT = t; }
     }
@@ -187,8 +189,8 @@ export const NATIVE_WHEEL_PROFILE = Object.freeze({
   provenance: 'Original W6 models, POS218/220/222 release windows and RES pose damage; Web outbound/return trajectory, one damaging contact per throw, range/catch/timing are provisional.'
 });
 export class NativeWheelSystem {
-  constructor({ scene, getTargets = () => [], getColliders = () => [], onActorHit = () => {}, onWorldHit = () => {}, bodyRadius = .4 } = {}) {
-    Object.assign(this, { scene, getTargets, getColliders, onActorHit, onWorldHit, bodyRadius });
+  constructor({ scene, getTargets = () => [], canHit = () => true, getColliders = () => [], onActorHit = () => {}, onWorldHit = () => {}, bodyRadius = .4 } = {}) {
+    Object.assign(this, { scene, getTargets, canHit, getColliders, onActorHit, onWorldHit, bodyRadius });
     this.active = []; this.serial = 0; this.raycaster = new THREE.Raycaster(); this.paused = false; this.disposed = false;
   }
   get size() { return this.active.length; }
@@ -216,7 +218,7 @@ export class NativeWheelSystem {
       if (shot.phase === 'outbound') {
         const world = worldSegmentContact(this, shot.position, to, profile.radius); let target = null, targetT = Infinity;
         for (const actor of this.getTargets(shot) || []) {
-          if (!actor || actor === owner || actor.id === owner.id || actor.dead || actor.disposed || actor.scriptRemoved || actor.hp <= 0) continue;
+          if (!actor || actor === owner || actor.id === owner.id || actor.dead || actor.disposed || actor.scriptRemoved || actor.hp <= 0 || !this.canHit(owner,actor)) continue;
           const t = sweepActorCapsule(shot.position, to, actor, profile.radius, this.bodyRadius);
           if (t != null && t < targetT) { target = actor; targetT = t; }
         }

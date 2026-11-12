@@ -3,6 +3,7 @@
 // Evidence: work/meteor-original/evidence/E-native-combat.md.
 const BLOCK_TYPES = new Set(['pose', 'blend', 'action', 'attack', 'drag', 'nextpose']);
 import { NATIVE_MOVE_CATALOG } from './native-move-catalog.js';
+import {nativeTeamMask} from './native-teams.js';
 const scalar = value => /^[-+]?\d+(?:\.\d*)?(?:e[-+]?\d+)?$/i.test(value) ? Number(value) : value;
 const values = text => [...text.matchAll(/"([^"]*)"|([-+]?\d+(?:\.\d*)?(?:e[-+]?\d+)?|[^\s,=]+)/gi)].map(m => m[1] ?? scalar(m[2]));
 const includes = (block, frame) => frame >= block.start && frame < block.end + 1;
@@ -229,7 +230,7 @@ export function createNativeDamageResolver(data) {
     const weapon = actor => actor.weaponRecord || data.weaponRecords.get(NATIVE_WEAPONS[actor.weapon]?.model);
     const attack = nativeEffectiveStat(3, attacker.nativeStats?.[3] ?? 0, [weapon(attacker), ...(attacker.activeItems || [])]);
     const defense = nativeEffectiveStat(4, target.nativeStats?.[4] ?? 0, [weapon(target), ...(target.activeItems || [])]);
-    const sameTeam = ((attacker.teamMask ?? (attacker.hero ? 1 : 2)) & (target.teamMask ?? (target.hero ? 1 : 2))) !== 0;
+    const sameTeam = (nativeTeamMask(attacker,attacker.hero?1:2)&nativeTeamMask(target,target.hero?1:2))!==0;
     context.nativeResult = calculateNativeDamage({ attack, defense, moveRecord, factor: sameTeam ? .2 : 1, guarded, sameTeam });
     return context.nativeResult.damage;
   };

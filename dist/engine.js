@@ -1,5 +1,6 @@
 import {NativeStealthFeedback} from './native-stealth-feedback.js';
 import {validCombatTarget,acquireCombatTarget} from './combat-targeting.js';
+import {nativeSameTeam} from './native-teams.js';
 import {nativeStrideSpeed} from './native-movement-profile.js';
 import { traversalTap, NATIVE_AIR_PHYSICS, NATIVE_ACTION_MOTION, nativeActionMomentum, NATIVE_JUMP_HOLD_SECONDS, nativeAirPose, nativeAirVerticalVelocity, NATIVE_ROLL_POSES, nativeDashPose, NATIVE_CROUCH_POSES, NATIVE_GROUND_MOVE_POSES, NATIVE_JUMP_POSES, nativeTraversalDirection } from './native-traversal.js';
 import { FixedStepClock } from './fixed-step.js';
@@ -93,12 +94,14 @@ export class MeteorGame {
   }
   _initializeProjectiles() {
     this.projectiles = new NativeProjectileSystem({ scene: this.scene, bodyRadius: this.hostPhysics.radius,
+      canHit:(owner,target)=>!this.networkCombat||!nativeSameTeam(owner,target),
       getTargets: () => [this.hero, ...this.enemies].filter(Boolean),
       getColliders: (from, to, radius) => { const center = from.clone().add(to).multiplyScalar(.5); return this.currentMap ? this._collisionCandidates(center.x, center.z, from.distanceTo(to) / 2 + radius + 1) : []; },
       onActorHit: (shot, target, point) => this._applyNativeHit(shot.context.attacker, target, shot.context.state, shot.context.attack, point, { projectileId: shot.id }),
       onWorldHit: (shot, hit) => this._projectileWorldHit(shot, hit)
     });
     this.muskets = new NativeMusketSystem({ bodyRadius: this.hostPhysics.radius,
+      canHit:(owner,target)=>!this.networkCombat||!nativeSameTeam(owner,target),
       getTargets: () => [this.hero, ...this.enemies].filter(Boolean),
       getColliders: (from, to) => {
         if (!this.currentMap) return [];
@@ -111,6 +114,7 @@ export class MeteorGame {
       onWorldHit: (shot, hit) => this._projectileWorldHit(shot, hit)
     });
     this.wheels = new NativeWheelSystem({ scene: this.scene, bodyRadius: this.hostPhysics.radius,
+      canHit:(owner,target)=>!this.networkCombat||!nativeSameTeam(owner,target),
       getTargets: () => [this.hero, ...this.enemies].filter(Boolean),
       getColliders: (from, to, radius) => { const center = from.clone().add(to).multiplyScalar(.5); return this.currentMap ? this._collisionCandidates(center.x, center.z, from.distanceTo(to) / 2 + radius + 1) : []; },
       onActorHit: (shot, target, point) => this._applyNativeHit(shot.context.attacker, target, shot.context.state, shot.context.attack, point, { wheelId: shot.id }),
@@ -1013,7 +1017,7 @@ export class MeteorGame {
     if(!control.locked&&control.autoLockEnabled!==false&&!actor.musketAim&&!['musket','dart','wheel'].includes(actor.weapon))control.locked=acquireCombatTarget(actor,[this.hero,...this.enemies],{angle:control.cameraAngle+Math.PI,lineOfSight:(a,b)=>this.hasScriptLineOfSight(a,b)});
     return control.locked;
   }
-  _nearest(range = Infinity, actor = this.hero) { let best = null; for (const f of [this.hero,...this.enemies]) { if(!f||f===actor)continue; const d = flatDistance(f.root.position, actor.root.position); if (!f.dead && !f.disposed && !f.scriptRemoved && !nativeIsInvisible(f) && f.team !== actor.team && d < range) { range = d; best = f; } } return best; }
+  _nearest(range = Infinity, actor = this.hero) { let best = null; for (const f of [this.hero,...this.enemies]) { if(!f||f===actor)continue; const d = flatDistance(f.root.position, actor.root.position); if (!f.dead && !f.disposed && !f.scriptRemoved && !nativeIsInvisible(f) && !nativeSameTeam(f,actor) && d < range) { range = d; best = f; } } return best; }
   _npcCombatAction(f, target, due, { requested = false, allowed = true, reach = 0 } = {}) {
     if (!target || !allowed || target.dead || target.disposed || target.scriptRemoved || !this.hasScriptLineOfSight(f, target)) return;
     if (requested) {
@@ -1214,7 +1218,7 @@ export class MeteorGame {
   }
   _resolveContacts(attacker, state, sampledEffectVolumes) {
     if (!this.running) return;
-    const targets = attacker.playerControl ? [this.hero,...this.enemies].filter(f=>f!==attacker&&f.team!==attacker.team) : attacker.hero ? this.enemies.filter(f=>!this.networkCombat||f.team!==attacker.team) : this.mode === 'story' ? [this.hero, ...this.enemies].filter(f => f !== attacker && f.team !== attacker.team) : [this.hero];
+    const targets = attacker.playerControl ? [this.hero,...this.enemies].filter(f=>f!==attacker&&!nativeSameTeam(f,attacker)) : attacker.hero ? this.enemies.filter(f=>!this.networkCombat||!nativeSameTeam(f,attacker)) : this.mode === 'story' ? [this.hero, ...this.enemies].filter(f => f !== attacker && !nativeSameTeam(f,attacker)) : [this.hero];
     for (const attack of state.attacks) this._resolveSceneContacts(attacker, state, attack);
     for (const attack of state.attacks) {
       const points = [];
@@ -1239,7 +1243,7 @@ export class MeteorGame {
     }
   }
   _applyNativeHit(attacker, target, state, attack, contact, extra = {}) {
-    if (!this.running || target.dead || target.disposed || target.scriptRemoved || this.networkCombat&&target.team===attacker.team) return false;
+    if (!this.running || target.dead || target.disposed || target.scriptRemoved || this.networkCombat&&nativeSameTeam(target,attacker)) return false;
     target.contacts = (target.contacts || 0) + 1; if (attacker.hero) this.contactHits++;
     const raw = { targetValue: attack.targetvalue, targetMove: attack.targetmove, defenseValue: attack.defensevalue, defenseMove: attack.defensemove, attackType: attack.attacktype, targetPose: attack.targetpose, moveRecord: this.combatData.moveRecords.get(state.poseId), weaponRecord: attacker.weaponRecord || this.combatData.weaponRecords.get(NATIVE_WEAPONS[attacker.weapon]?.model) };
     // Original POS parser rule 0x30 stores AttackType at record+0x30;
@@ -1366,7 +1370,7 @@ export class MeteorGame {
   }
   _finish(win) { if (!this.running) return; this.running = false; this.projectiles?.clear('match-end'); this.muskets?.clear(); this.wheels?.clear(); this.keys.clear(); this.traversalTap=null; this.onEnd({ win, kills: this.kills, deaths: this.deaths, damage: this.totalDamage, time: Math.round(this.matchElapsed), nativeData: true, damageVerified: !!this.damageResolver, mode: this.mode, mission: this.missionState, reason: this.storyResult?.reason }); }
   _nameplate(f) {
-    const c = document.createElement('canvas'); c.width = 256; c.height = 64; const ctx = c.getContext('2d'); ctx.font = '28px serif'; ctx.fillStyle = '#eee7cf'; ctx.textAlign = 'center'; ctx.fillText(`${f.team === this.hero?.team ? '同伴' : f.team === 0 ? '剧情' : '对手'} · ${f.name}`, 128, 43, 240);
+    const c = document.createElement('canvas'); c.width = 256; c.height = 64; const ctx = c.getContext('2d'); ctx.font = '28px serif'; ctx.fillStyle = '#eee7cf'; ctx.textAlign = 'center'; ctx.fillText(`${nativeSameTeam(f,this.hero) ? '同伴' : f.team === 0 ? '剧情' : '对手'} · ${f.name}`, 128, 43, 240);
     const g = new THREE.Group(); const label = new THREE.Mesh(new THREE.PlaneGeometry(1.7, .425), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c), transparent: true, depthWrite: false })); g.add(label); g.position.y = 3.1; f.root.add(g); f.nameplate = g;
   }
   _disposeNameplate(f) { if (!f.nameplate) return; f.nameplate.traverse(o => { o.geometry?.dispose(); o.material?.map?.dispose(); o.material?.dispose(); }); f.nameplate.removeFromParent(); }
@@ -1447,7 +1451,7 @@ export class MeteorGame {
     const item = this.running ? this.items?.peek(f) : null;
     const pickup = item ? { name: item.name, heal: item.heal, description:item.description, fullReason:item.fullReason, full: item.full, distance: item.distance, objectName: item.objectName } : null;
     const statuses = (f.networkItemStatuses || f.scriptItems || []).map(item => ({ id: item.id, name: item.name, statKey: item.statKey, remaining: item.remaining, value: item.value, period: item.period }));
-    this.onUpdate({ musketAim:!!f.musketAim, infiniteRage: !!this.infiniteRage, characterAppearance: f.character.appearanceStatus, pickup, statuses, inputBlocked: !!f.scriptInputBlocked, hp: f.hp, maxHp: f.maxHp, playerReaction: f.combat.reactionPhase, rage: f.rage, hits: this.contactHits, kills: this.kills, deaths: this.deaths, time: this.matchElapsed, enemy, combo: f.combat.attacking ? f.combat.combo : 0, moveName: f.combat.busy ? f.combat.currentMove?.name : null, moveCommand: f.combat.busy ? f.combat.currentMove?.command : null, queuedMoveName: this.networkCombat&&this.lootReplica?f.networkQueuedMoveName??null:f.combat.queuedMove?.name||null, locked: !!this.locked, position: { x: f.root.position.x, z: f.root.position.z }, enemies: this.enemies.filter(e => !e.dead && !e.scriptRemoved && e.team !== f.team && e.team !== 0 && !nativeIsInvisible(e)).map(e => ({ x: e.root.position.x, z: e.root.position.z })), allies: this.enemies.filter(e => !e.dead && !e.scriptRemoved && e.team === f.team).map(e => ({ x: e.root.position.x, z: e.root.position.z })), weapon: f.weapon, weaponId: f.weaponId, weaponName: f.weaponName, weapon2Name:this.weaponItems?.get(f.weapon2Id)?.name||null, weaponMode: f.combat.weaponMode, mission: this.missionState, paused: this.paused, mapBounds: b ? { minX: b.min.x, maxX: b.max.x, minZ: b.min.z, maxZ: b.max.z } : null, native: { pose: f.combat.timeline?.pose.id, source: f.character.source, frame: f.character.frame, contacts: this.contactHits, damagePending: !this.damageResolver, hpSourcePending: !f.hpSourceVerified, physicsPending: true, sceneDamagePending: this.mode === 'story' && !this.sceneDamageResolver, projectilePending: false, projectileSpecialsPending: true, projectilePhysics: NATIVE_DART_PROFILE.provenance.flight, projectiles: this.projectiles?.size || 0, missionVmPending: this.mode === 'story' ? !this.missionHost?.started : false } });
+    this.onUpdate({ musketAim:!!f.musketAim, infiniteRage: !!this.infiniteRage, characterAppearance: f.character.appearanceStatus, pickup, statuses, inputBlocked: !!f.scriptInputBlocked, hp: f.hp, maxHp: f.maxHp, playerReaction: f.combat.reactionPhase, rage: f.rage, hits: this.contactHits, kills: this.kills, deaths: this.deaths, time: this.matchElapsed, enemy, combo: f.combat.attacking ? f.combat.combo : 0, moveName: f.combat.busy ? f.combat.currentMove?.name : null, moveCommand: f.combat.busy ? f.combat.currentMove?.command : null, queuedMoveName: this.networkCombat&&this.lootReplica?f.networkQueuedMoveName??null:f.combat.queuedMove?.name||null, locked: !!this.locked, position: { x: f.root.position.x, z: f.root.position.z }, enemies: this.enemies.filter(e => !e.dead && !e.scriptRemoved && !nativeSameTeam(e,f) && e.team !== 0 && !nativeIsInvisible(e)).map(e => ({ x: e.root.position.x, z: e.root.position.z })), allies: this.enemies.filter(e => !e.dead && !e.scriptRemoved && nativeSameTeam(e,f)).map(e => ({ x: e.root.position.x, z: e.root.position.z })), weapon: f.weapon, weaponId: f.weaponId, weaponName: f.weaponName, weapon2Name:this.weaponItems?.get(f.weapon2Id)?.name||null, weaponMode: f.combat.weaponMode, mission: this.missionState, paused: this.paused, mapBounds: b ? { minX: b.min.x, maxX: b.max.x, minZ: b.min.z, maxZ: b.max.z } : null, native: { pose: f.combat.timeline?.pose.id, source: f.character.source, frame: f.character.frame, contacts: this.contactHits, damagePending: !this.damageResolver, hpSourcePending: !f.hpSourceVerified, physicsPending: true, sceneDamagePending: this.mode === 'story' && !this.sceneDamageResolver, projectilePending: false, projectileSpecialsPending: true, projectilePhysics: NATIVE_DART_PROFILE.provenance.flight, projectiles: this.projectiles?.size || 0, missionVmPending: this.mode === 'story' ? !this.missionHost?.started : false } });
   }
   _emit(text, type = 'info', amount, point, extra = {}) { const p = point?.clone().project(this.camera); this.onEvent({ text, type, amount, x: p ? (p.x + 1) / 2 : undefined, y: p ? (1 - p.y) / 2 : undefined, ...extra }); }
   _resetWorldClock() { this.simulationClock?.reset(); this.clock?.getDelta(); this.frameMeter?.reset(); }

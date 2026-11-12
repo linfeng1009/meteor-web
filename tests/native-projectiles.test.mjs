@@ -64,6 +64,32 @@ test('actual dart movement hits once using original 75/65 RES and recovered dama
   assert.equal(events.filter(e => e.type === 'hit').length, 1); assert.equal(target.rage, 4);
 });
 
+test('联机关闭队伤时，飞镖火铳飞轮在选最近碰撞前跳过队友并命中后方敌人',()=>{
+  for(const kind of ['dart','musket','wheel']){
+    const {game,hero,target}=fixture(),ally=actor(3,'spear');ally.team=ally.teamMask=3;game.enemies.unshift(ally);game.scene.add(ally.root);game.networkCombat=true;
+    try{
+      const pose=poses.get(kind==='musket'?206:200),context={attacker:hero,state:{poseId:pose.id,pose,serial:1},attack:pose.attacks[0]};
+      if(kind==='dart'){release(game,hero);game.projectiles.update(.4);}
+      else if(kind==='musket')game.muskets.fire({owner:hero,position:v(0,1.4,0),direction:v(0,0,1),range:20,context});
+      else{game.wheels.spawn({owner:hero,position:v(0,1.4,0),direction:v(0,0,1),context});game.wheels.update(.5);}
+      assert.equal(ally.hp,1000,kind);assert.ok(target.hp<1000,kind);assert.equal(game.contactHits,1,kind);
+    }finally{game.projectiles.dispose();game.muskets.dispose();game.wheels.dispose();}
+  }
+});
+
+test('队友过滤不穿过地图墙体，非联机仍保留已有原同阵营伤害倍率',()=>{
+  for(const networkCombat of [false,true]){
+    const blocker=networkCombat?wall(6):null,{game,hero,target}=fixture({colliders:blocker?[blocker]:[]}),ally=actor(3,'spear');
+    ally.team=ally.teamMask=3;game.enemies.unshift(ally);game.scene.add(ally.root);game.networkCombat=networkCombat;
+    try{
+      release(game,hero);const shot=game.projectiles.active[0];game.projectiles.update(.4);
+      assert.equal(target.hp,1000);
+      if(networkCombat){assert.equal(ally.hp,1000);assert.equal(shot.removalReason,'world');}
+      else{assert.equal(ally.hp,994);assert.equal(shot.removalReason,'actor');}
+    }finally{game.projectiles.dispose();game.muskets.dispose();game.wheels.dispose();blocker?.geometry.dispose();blocker?.material.dispose();}
+  }
+});
+
 test('continuous swept contact does not tunnel through a capsule at a low frame rate', () => {
   const target = actor(5, 'spear'); assert.ok(sweepActorCapsule(v(0, 1.3, 0), v(0, 1.3, 100), target) < .06);
   let hits = 0; const system = new NativeProjectileSystem({ getTargets: () => [target], onActorHit: () => hits++, profile: { ...NATIVE_DART_PROFILE, speed: 1000 } });

@@ -33,6 +33,12 @@ test('native nearby awareness is omnidirectional but never bypasses range or an 
   actor.scriptConfig.View = 400; assert.equal(nativeCanDiscover(actor, target, () => false), false);
 });
 
+test('NPC不把重叠阵营掩码的角色当敌人，已锁定目标转为同伴时立即丢弃',()=>{
+  const actor=observer(),target=enemy(v(0,0,5));assert.equal(findNativeEnemy(actor,[target],()=>true),target);
+  target.teamMask=3;assert.equal(nativeCanDiscover(actor,target,()=>true),false);assert.equal(findNativeEnemy(actor,[target],()=>false),null);
+  target.teamMask=4;assert.equal(findNativeEnemy(actor,[target],()=>true),target);
+});
+
 test('an unknown actor is not a target; a known nearby enemy is retained and lost at the original200-unit boundary', () => {
   const actor = observer(), target = enemy(v(0, 0, -12));
   assert.equal(findNativeEnemy(actor, [target], () => true), null);

@@ -6,6 +6,7 @@ import { battleCharacterSelection } from './character-appearances.js';
 // Uses the same native POS/ACT/RES combat, movement and collision paths.
 const continuous=['forward','back','left','right','guard','crouch'];
 import {createPlayerControl,clearPlayerCommands} from './player-control.js';
+import {nativeSameTeam} from './native-teams.js';
 export function networkPoseBlend(blend){
   if(!blend)return null;
   // Interrupted-hit snapshots stay local: transmit two frame descriptors,
@@ -111,7 +112,7 @@ export class NetworkGame{
       if(!wasDead&&target.dead){
         const victim=session.scores.get(target.networkId);if(victim)victim.deaths++;
         const killer=options.attacker?.networkId||[...session.actors].find(([,actor])=>actor.root===options.attacker?.root)?.[0];
-        if(options.awardKill!==false&&killer&&killer!==target.networkId&&options.attacker.team!==target.team&&session.scores.has(killer))session.scores.get(killer).kills++;
+        if(options.awardKill!==false&&killer&&killer!==target.networkId&&!nativeSameTeam(options.attacker,target)&&session.scores.has(killer))session.scores.get(killer).kills++;
         if(session.rules.mode==='deathmatch')target.respawn=Infinity;
       }
       const score=session.scores.get(client.playerId);if(score){game.kills=score.kills;game.deaths=score.deaths;}
@@ -131,7 +132,7 @@ export class NetworkGame{
     const result=matchResult(this.rules,players,this.game.matchElapsed);if(result)this.finish(result);
   }
   updateNameplates(){
-    const hero=this.game.hero,near=[...this.actors.values()].filter(f=>f!==hero&&!f.dead&&!f.disposed&&(!nativeIsInvisible(f)||f.team===hero.team)).sort((a,b)=>a.root.position.distanceToSquared(hero.root.position)-b.root.position.distanceToSquared(hero.root.position));
+    const hero=this.game.hero,near=[...this.actors.values()].filter(f=>f!==hero&&!f.dead&&!f.disposed&&(!nativeIsInvisible(f)||nativeSameTeam(f,hero))).sort((a,b)=>a.root.position.distanceToSquared(hero.root.position)-b.root.position.distanceToSquared(hero.root.position));
     const visible=new Set(near.slice(0,3));if(this.game.locked&&!this.game.locked.dead&&!nativeIsInvisible(this.game.locked))visible.add(this.game.locked);
     for(const actor of this.actors.values())if(actor.nameplate)actor.nameplate.visible=visible.has(actor);
   }

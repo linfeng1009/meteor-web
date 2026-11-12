@@ -1,4 +1,5 @@
 import {nativeIsInvisible} from './native-items.js';
+import {nativeSameTeam} from './native-teams.js';
 
 // 00556445 defaults the native model's hidden alpha factor to0.1;
 // 0048aeb0 reads effective stat10 and calls005591b0. Material isolation and
@@ -26,7 +27,7 @@ export class NativeStealthFeedback {
         actor.root.traverse(node=>{if(!node.isMesh||!node.material)return;const original=node.material,replacement=Array.isArray(original)?original.map(clone):clone(original);state.bindings.push({node,original,replacement});node.material=replacement;});
         this.actors.set(actor,state);
       }
-      if(actor.nameplate&&observer&&actor!==observer&&actor.team!==observer.team){
+      if(actor.nameplate&&observer&&actor!==observer&&!nativeSameTeam(actor,observer)){
         if(!state.nameplate){state.nameplate=actor.nameplate;state.nameplateVisible=actor.nameplate.visible;}
         actor.nameplate.visible=false;
       }

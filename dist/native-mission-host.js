@@ -5,6 +5,7 @@ import { clearNativeScriptItems, NATIVE_SCRIPT_ITEM_PROVENANCE } from './native-
 import { validNativeWeatherSetting, NATIVE_WEATHER_PROVENANCE } from './native-weather.js';
 import { findNativeEnemy, NATIVE_AWARENESS } from './native-awareness.js';
 import { NATIVE_NPC_COMBAT_PROVENANCE } from './native-npc-combat.js';
+import {nativeSameTeam} from './native-teams.js';
 
 const ORIGINAL_ROOT = new URL('./assets/original/', import.meta.url);
 const SCALE = .08;
@@ -382,7 +383,7 @@ export class NativeMissionHost {
         const ref = intent.targetRef ?? intent.targetId;
         const target = typeof ref === 'string' && !/^[-+]?\d+$/.test(ref) ? this.findActor(ref) : this.actor(ref, false);
         if (target) {
-          if (target.team !== actor.team) { attackTarget = target; canAttack = true; }
+          if (!nativeSameTeam(target,actor)) { attackTarget = target; canAttack = true; }
           moveTarget = this.lineOfSight(actor, target) ? target.root.position :
             this.moveViaWaypoint(actor,this.closestWaypoint(target.root.position,{visible:true})?.id);
         }
@@ -434,7 +435,7 @@ export class NativeMissionHost {
       } else this.completionAt = null;
       return;
     }
-    const hostile = [...this.actors.values()].filter(actor => actor.scriptId !== 0 && actor.team !== this.actor(0).team && !actor.scriptRemoved);
+    const hostile = [...this.actors.values()].filter(actor => actor.scriptId !== 0 && !nativeSameTeam(actor,this.actor(0)) && !actor.scriptRemoved);
     if (this.rule === 10 && hostile.length && hostile.every(actor => !alive(actor)) && !this.pending.size) {
       if (this.completionAt == null) this.completionAt = this.clock + this.completionDelay;
       if (this.clock >= this.completionAt) this.finish(true, 'hostile-npcs-defeated', this.provenance.rule10);

@@ -11,6 +11,7 @@ export const NATIVE_EFFECT_CONTACT_ADAPTER = Object.freeze({
   provenance: 'Source EF bound dimensions, keys, A/a name filter and POS effect windows; Web transform interpolation, temporal sampling and actor body box.'
 });
 const WORLD_AXES = [new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 1)];
+const EFFECT_STEP=Symbol('native-effect-contact-step');
 
 export function nativeEffectBounds(source) {
   const d = source.dimensions;
@@ -77,18 +78,49 @@ function activeIntervals(state, attack, fps) {
 
 export class NativeEffectContacts {
   constructor({ manifest, bodyRadius = .4 } = {}) {
-    this.manifest = manifest; this.bodyRadius = bodyRadius; this.actors = new Map(); this.disposed = false;
+    this.manifest = manifest; this.bodyRadius = bodyRadius; this.actors = new Map(); this.timelines=new Map(); this.disposed = false;
+  }
+  _graph(actor,id,serial){
+    const graph={...createEffectTransforms(actor,this.manifest.effects[id],this.manifest),id,serial};
+    graph.attackNodes=graph.nodes.filter(node=>/^[aA]/.test(node.source.name)&&nativeEffectBounds(node.source));
+    this.actors.set(actor,graph);return graph;
+  }
+  beginStep(actor,state){
+    if(this.disposed||!actor||!state)return;
+    if(actor.dead||actor.disposed||actor.scriptRemoved){this.clearActor(actor);return;}
+    let record=this.timelines.get(actor);
+    if(!record){record={clock:0,serial:null,effects:[]};this.timelines.set(actor,record);}
+    for(const segment of state.segments||[state]){
+      const start=record.clock,id=String(segment.pose?.raw?.fields.effectid||'').toLowerCase(),definition=this.manifest.effects[id];
+      if(!segment.blend&&record.serial!==segment.serial){
+        record.serial=segment.serial;
+        if(definition?.nodes.some(node=>/^[aA]/.test(node.name)&&nativeEffectBounds(node))){
+          const graph=this._graph(actor,id,segment.serial),born=start-(segment.previousEffectTime||0);
+          const end=born+Math.max(...graph.attackNodes.map(node=>node.source.keys.at(-1)[0]));
+          record.effects.push({graph,born,end});
+          if(record.effects.length>16)record.effects.shift();
+        }
+      }
+      // 0055da50 queries all living owner effects, not only the current POS
+      // effect ID. An automatic phase with EffectID0 does not erase its caster.
+      segment[EFFECT_STEP]=record.effects.filter(effect=>effect.end>=start-1e-7).map(effect=>({graph:effect.graph,offset:start-effect.born}));
+      record.clock+=Math.max(0,segment.consumed||0);
+      record.effects=record.effects.filter(effect=>effect.end>=record.clock-1e-7);
+    }
   }
   sample(actor, state, attack, fps = 30) {
     if (this.disposed || !actor || actor.dead || actor.disposed || actor.scriptRemoved || actor.combat?.reacting || state.blend || !attack.bones?.includes('effect')) return [];
+    if(state[EFFECT_STEP])return state[EFFECT_STEP].flatMap(({graph,offset})=>this._sampleGraph(actor,{...state,previousEffectTime:offset,effectTime:offset+(state.consumed||0)},attack,fps,graph));
     const id = String(state.pose?.raw?.fields.effectid || '').toLowerCase(), definition = this.manifest.effects[id];
     if (!definition) return [];
     let graph = this.actors.get(actor);
     if (!graph || graph.serial !== state.serial || graph.id !== id) {
-      graph = { ...createEffectTransforms(actor, definition, this.manifest), id, serial: state.serial };
-      graph.attackNodes = graph.nodes.filter(node => /^[aA]/.test(node.source.name) && nativeEffectBounds(node.source));
-      this.actors.set(actor, graph);
+      graph = this._graph(actor,id,state.serial);
     }
+    return this._sampleGraph(actor,state,attack,fps,graph);
+  }
+  _sampleGraph(actor,state,attack,fps,graph){
+    const id=graph.id;
     if (!graph.attackNodes.length) return [];
     const volumes = [], savedFrame = actor.character.frame, savedSource = actor.character.source;
     try {
@@ -123,7 +155,7 @@ export class NativeEffectContacts {
     }
     return null;
   }
-  clearActor(actor) { this.actors.delete(actor); }
-  clear() { this.actors.clear(); }
+  clearActor(actor) { this.actors.delete(actor); this.timelines.delete(actor); }
+  clear() { this.actors.clear(); this.timelines.clear(); }
   dispose() { this.clear(); this.disposed = true; }
 }

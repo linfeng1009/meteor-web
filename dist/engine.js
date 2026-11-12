@@ -1069,6 +1069,7 @@ export class MeteorGame {
       if(stride>0){const rate=speed/this.hostPhysics.speed;if(control)speed=nativeStrideSpeed(0,locomotion)*rate;f.combat.timeline.playbackRate=speed/stride;}
     }
     const state = f.combat.update(dt, { grounded: f.grounded, projectileReady: !this.wheels?.hasOwner(f), getFacing:()=>f.root.rotation.y }); if (!state) return;
+    this.effectContacts?.beginStep(f,state);
     // A held defense is sampled continuously, including the exact frame a
     // hit/attack recovery ends. It must not depend on OS key-repeat or a new
     // touch press while several opponents are attacking.

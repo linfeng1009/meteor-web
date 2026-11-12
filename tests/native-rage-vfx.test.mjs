@@ -28,6 +28,20 @@ function state(id, time, context = { rage: 60 }, serial = 1) {
   const pose = data.poses.get(id); return { pose, context, serial, frame: pose.start + time * 30 };
 }
 
+test('原特效继续跟随无特效衔接段，下一招在过渡完成后才创建特效',()=>{
+ const {actor,vfx}=fixture('hammer');try{
+  const context={poseId:372},first=vfx.sample(actor,{...state(372,2,context),effectTime:2});
+  assert.equal(first.id,'pos324');
+  const linked=vfx.sample(actor,{...state(373,0,context,2),consumed:.1});
+  assert.equal(linked,first);assert.ok(Math.abs(first.time-2.1)<1e-9);assert.equal(first.live,true);
+  const blend={from:{source:0,frame:1},to:{source:0,frame:2},weight:.5};
+  vfx.sample(actor,{...state(293,0,{poseId:293},3),blend,consumed:.2,effectTime:0});
+  assert.equal(vfx.active.length,1);assert.ok(Math.abs(first.time-2.3)<1e-9);
+  const next=vfx.sample(actor,{...state(293,0,{poseId:293},3),effectTime:.01});
+  assert.notEqual(next,first);assert.equal(next.time,.01);assert.equal(first.live,false);
+ }finally{vfx.dispose();}
+});
+
 test('ordinary native EF definitions keep source hashes and render without a rage context',async()=>{
   const extra=JSON.parse(await readFile(new URL('../dist/assets/original/combat-vfx.json',import.meta.url),'utf8'));
   assert.ok(Object.keys(extra.effects).length>=66);

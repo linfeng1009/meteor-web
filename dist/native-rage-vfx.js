@@ -101,8 +101,15 @@ export class NativeRageVfx {
   }
   _sampleSegment(actor, state, fps, at) {
     const current = this.actors.get(actor), context = state.context;
+    if(state.blend){
+      if(current){current.time+=Math.max(0,state.consumed||0);current.anchorSnapshot=snapshotEffectAnchors(current);}
+      return current||null;
+    }
     const id = String(state.pose?.raw?.fields.effectid || '').toLowerCase();
     if (!this.manifest.effects[id]) {
+      if(current&&Number.isInteger(context?.poseId)&&current.castPoseId===context.poseId&&state.pose?.raw?.fields.effectid===0){
+        current.time+=Math.max(0,state.consumed||0);current.anchorSnapshot=snapshotEffectAnchors(current);return current;
+      }
       if (current) this._retire(current, at - (state.consumed || 0));
       return null;
     }
@@ -120,7 +127,7 @@ export class NativeRageVfx {
     while (this.active.length >= RAGE_VFX_ADAPTER.maxActive) this._remove(this.active[0]);
     const definition = this.manifest.effects[id], group = new THREE.Group(); group.name = `${id} · 怒气技`;
     this.group.add(group);
-    const effect = { ...createEffectTransforms(actor, definition, this.manifest), id, serial: state.serial, group, live: true, tail: 0, visualEnd: 0 };
+    const effect = { ...createEffectTransforms(actor, definition, this.manifest), id, serial: state.serial, castPoseId:state.context?.poseId, group, live: true, tail: 0, visualEnd: 0 };
     for (const node of effect.nodes) {
       const { source } = node; node.mesh = null;
       const particle=definition.particleAdapter && source.type==='PARTICLE';

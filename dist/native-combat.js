@@ -524,7 +524,9 @@ export class NativeCombatController {
   }
   _stampEffectTime(state) {
     state.previousEffectTime = this._effectElapsed;
-    this._effectElapsed += Math.max(0, state.consumed || 0);
+    // 0055d560 creates the new POS effects only after crossfade completes.
+    // Existing effects age independently; the target effect is not born yet.
+    if(!state.blend)this._effectElapsed += Math.max(0, state.consumed || 0);
     state.effectTime = this._effectElapsed;
   }
   get attacking() { return !!this.timeline && !this.timeline.finished && this.timeline.pose.attacks.length > 0; }

@@ -340,7 +340,7 @@ function settle(game, seen = new Set()) {
 }
 
 test('qiankun ultimate renders every final slash after pose456 ends without changing original hits or rage', async t => {
-  const { game, events } = await fixture([v(0, .015, 8)]), actor = game.hero;
+  const { game, events } = await fixture([v(0, .015, 12)]), actor = game.hero;
   await game._equip(actor, 'qiankun'); manual(game, ['back', 'back']); settle(game);
   const textures = new Map(Object.entries(manifest.textures).filter(([, record]) => record.url).map(([id]) => [id, new THREE.Texture()]));
   game.rageVfx = new NativeRageVfx({ scene: game.scene, manifest, textures });
@@ -352,7 +352,7 @@ test('qiankun ultimate renders every final slash after pose456 ends without chan
     for (const effect of game.rageVfx.active.filter(e => e.id === 'pos456')) {
       endTime = Math.max(endTime, effect.time);
       for (const node of effect.nodes.filter(n => /^SLASH/.test(n.source.name) && n.mesh?.visible)) {
-        seen.add(node.source.name); if (!effect.live) late.add(node.source.name);
+        seen.add(node.source.name); if (actor.combat.timeline.pose.id!==456) late.add(node.source.name);
         assert.ok(node.mesh.matrix.elements.every(Number.isFinite));
       }
     }
@@ -363,7 +363,7 @@ test('qiankun ultimate renders every final slash after pose456 ends without chan
   assert.equal(actor.rage, 0); assert.equal(events.slice(start).filter(e => e.type === 'move').length, 1);
   assert.ok(events.slice(start).some(e => e.type === 'hit' && e.contactSource === 'effect'));
   assert.equal(actor.combat.busy, false); assert.equal(game.rageVfx.active.length, 0);
-  t.diagnostic(`Public ↓↓A → ↓↓↑A; final shapes=${seen.size}, detached=${late.size}, last EF sample=${endTime.toFixed(3)}s; one100-rage command.`);
+  t.diagnostic(`Public ↓↓A → ↓↓↑A; final shapes=${seen.size}, after456=${late.size}, last EF sample=${endTime.toFixed(3)}s; one100-rage command.`);
 });
 
 test('reported weapon specials use public inputs, original attack contacts, one rage charge and complete recovery', async t => {
@@ -393,7 +393,7 @@ test('reported weapon specials use public inputs, original attack contacts, one 
       for (let n = 0; n < 3; n++) tick(game);
     }
     game.hero.rage = 100; const firstEvent = events.length;
-    manual(game, keys); assert.equal(game.hero.combat.currentMove?.poseId, pose);
+    manual(game, keys); assert.equal(game.hero.combat.currentMove?.poseId, pose);assert.equal(game.hero.rage,100-cost);
     const seen = settle(game);
     for (const id of chain) assert.ok(seen.has(id), `missing automatic pose${id}`);
     const castEvents = events.slice(firstEvent), hits = castEvents.filter(e => e.type === 'hit' && chain.includes(e.poseId));
@@ -401,7 +401,9 @@ test('reported weapon specials use public inputs, original attack contacts, one 
     assert.ok(game.enemies.some(actor => actor.hp < 10000));
     assert.ok(hits.some(hit => hit.contactSource === 'effect'), 'special must use original EF attack volumes');
     assert.equal(castEvents.filter(e => e.type === 'move').length, 1);
-    assert.equal(game.hero.rage, 100 - cost);
+    const collateral=castEvents.filter(e=>e.type==='hit'&&e.targetHero);
+    assert.equal(game.hero.rage,Math.min(100,100-cost+collateral.reduce((sum,e)=>sum+Math.floor(14*(e.amount||0)/100),0)));
+    if(pose===451)assert.ok(collateral.every(e=>[103,106].includes(e.poseId)),'original hit-reaction body contacts can return victim rage; automatic links do not charge again');
     assert.equal(game.wheels.size, 0, 'specials do not leave a normal returning disc blocking recovery');
     assert.equal(game.muskets.size || 0, 0);
     if (pose === 224) assert.ok(game.enemies.some(actor => actor.scriptItems?.some(item => item.id === 13)));
@@ -641,4 +643,49 @@ test('乾坤刀第三次攻击跨原引导段接出弧月，不跳过贪噬突�
  assert.deepEqual(events.filter(e=>e.type==='hit').map(e=>e.poseId),[520,522,523]);
  assert.deepEqual(events.filter(e=>e.type==='move').map(e=>e.poseId),[431,520,521,523]);
  const left=game.hero.character.getAttachment('d_wpnLP');assert.ok(game.hero.weaponModels.every(model=>model.parent===left),'normal grip is restored after the authored return');
+});
+
+
+test('大锤伏虎腾翔跌的后段使用前段仍存活的原冲击波',async()=>{
+ const {game,events}=await fixture([v(0,.015,7),v(0,.015,-20),v(0,.015,12)]);await game._equip(game.hero,'hammer');manual(game,['left','right','back']);assert.equal(game.hero.combat.currentMove.poseId,372);
+ for(let i=0;i<300;i++)tick(game);
+ const hits=events.filter(e=>e.type==='hit'&&e.poseId===373);
+ assert.ok(hits.some(e=>e.contactSource==='effect'&&e.effectId==='pos324'&&e.effectNode==='AttackWave'));
+ assert.equal(game.enemies[1].hp,10000);assert.equal(game.enemies[2].hp,10000);assert.equal(game.hero.combat.busy,false);
+});
+
+test('攻击特效跨无特效动作保留独立寿命，过渡期间不提前创建目标特效',async()=>{
+ const {game}=await fixture([]),actor=game.hero,contacts=game.effectContacts;
+ const segment=(id,serial,consumed,extra={})=>({pose:data.poses.get(id),serial,consumed,previousEffectTime:0,...extra});
+ contacts.beginStep(actor,segment(372,1,2.15));
+ const original=contacts.timelines.get(actor).effects[0];assert.equal(original.graph.id,'pos324');
+ const pose=data.poses.get(373),attack=pose.attacks.find(a=>a.bones.includes('effect'));
+ const phase=segment(373,2,.1,{previousFrame:attack.start,frame:attack.end,frameIntervals:[{from:attack.start,to:attack.end,timeFrom:0,timeTo:.1}]});
+ contacts.beginStep(actor,phase);
+ const volumes=contacts.sample(actor,phase,attack);
+ assert.ok(volumes.length);assert.ok(volumes.every(v=>v.effectId==='pos324'&&v.time>=2.15));
+ const blend=segment(293,3,.2,{blend:{}});contacts.beginStep(actor,blend);
+ assert.equal(contacts.timelines.get(actor).effects.length,1);assert.equal(contacts.sample(actor,blend,attack).length,0);
+ contacts.beginStep(actor,segment(293,3,.01));
+ const next=contacts.timelines.get(actor).effects.find(e=>e.graph.id==='pos293');
+ assert.ok(next);assert.ok(Math.abs(next.born-2.45)<1e-9,'目标特效从过渡结束时出生');
+ contacts.beginStep(actor,segment(0,4,20));assert.equal(contacts.timelines.get(actor).effects.length,0);
+ contacts.clearActor(actor);assert.equal(contacts.timelines.has(actor),false);assert.equal(contacts.actors.has(actor),false);
+});
+
+test('乾坤刀大绝回鞘阶段的五个原攻击窗仍查询前段特效',async()=>{
+ const {game,events}=await fixture([]);await game._equip(game.hero,'qiankun');manual(game,['back','back']);settle(game);
+ const windows=new Set(),sample=game.effectContacts.sample.bind(game.effectContacts);
+ game.effectContacts.sample=(actor,state,attack,fps)=>{
+  const volumes=sample(actor,state,attack,fps);
+  if(actor===game.hero&&state.pose.id===487&&volumes.length){
+   assert.ok(volumes.every(v=>v.effectId==='pos456'));
+   const probe={root:{position:volumes[0].center.clone().add(v(0,-1.3,0))}};
+   assert.equal(game.effectContacts.contact(volumes,probe)?.effectId,'pos456');windows.add(attack.index);
+  }
+  return volumes;
+ };
+ game.hero.rage=100;manual(game,['back','back','forward']);settle(game);
+ assert.deepEqual([...windows].sort(),[0,1,2,3,4]);assert.equal(game.hero.rage,0);
+ assert.equal(events.filter(e=>e.type==='move'&&e.poseId===451).length,1);
 });

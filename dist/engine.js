@@ -3,7 +3,7 @@ import {validCombatTarget,acquireCombatTarget} from './combat-targeting.js';
 import {nativeStrideSpeed} from './native-movement-profile.js';
 import { traversalTap, NATIVE_AIR_PHYSICS, NATIVE_JUMP_HOLD_SECONDS, nativeAirVerticalVelocity, NATIVE_ROLL_POSES, nativeDashPose, NATIVE_CROUCH_POSES, NATIVE_GROUND_MOVE_POSES, NATIVE_JUMP_POSES, nativeTraversalDirection } from './native-traversal.js';
 import { FixedStepClock } from './fixed-step.js';
-import { NATIVE_WALL_POSES, WALL_TRAVERSAL_ADAPTER as WALL } from './native-wall-traversal.js';
+import { NATIVE_WALL_POSES, NATIVE_WALL_PHYSICS, nativeWallVerticalVelocity, WALL_TRAVERSAL_ADAPTER as WALL } from './native-wall-traversal.js';
 import { FrameMeter, RenderScaleController, createFrameOverlay } from './frame-meter.js';
 import { StaticColliderIndex } from './collision-index.js';
 import { bindLocalPlayerControl, clearPlayerCommands } from './player-control.js';
@@ -495,14 +495,18 @@ export class MeteorGame {
     return {...hits[0],side,forward};
   }
   _endWallTraversal(actor) {
-    actor.wallRun=null;actor.nativeJump=null;actor.jumpSequence=null;actor.vy=Math.min(0,actor.vy);
+    const wall=actor.wallRun,air=NATIVE_JUMP_POSES.forward.air;
+    actor.wallRun=null;actor.nativeJump=null;
+    // 004cc120 state2→0 keeps velocity;004cf7c0 maps a wall pose to152.
+    // Reactions retain their own pose and must not be overwritten here.
+    actor.jumpSequence=wall&&!actor.dead&&!actor.combat.busy?{start:air,air,direction:'forward',facing:wall.facing,ballistic:true}:null;
   }
   _updateWallTraversal(actor,direction,dt) {
     if(this.paused)return;
     const allowed=this.running&&!actor.grounded&&!actor.dead&&!actor.scriptInputBlocked&&!actor.guard&&!actor.combat.busy;
     if(actor.wallRun){
       const wall=actor.wallRun,hit=allowed&&direction.lengthSq()>0?this._wallContact(actor,wall.side,wall.facing):null;
-      if(!hit||wall.elapsed+dt>WALL.duration||hit.planeNormal.dot(wall.planeNormal)<.95||Math.abs(wall.planeNormal.dot(hit.point.clone().sub(wall.point)))>.15||direction.dot(wall.forward)<.25){this._endWallTraversal(actor);return;}
+      if(!hit||wall.elapsed+dt>NATIVE_WALL_PHYSICS.duration||hit.planeNormal.dot(wall.planeNormal)<.95||Math.abs(wall.planeNormal.dot(hit.point.clone().sub(wall.point)))>.15||direction.dot(wall.forward)<.25){this._endWallTraversal(actor);return;}
       wall.elapsed+=dt;return;
     }
     if(!allowed||!this._controlFor(actor)||(actor.wallEntries||0)>=WALL.maxEntries||direction.lengthSq()===0)return;
@@ -511,7 +515,7 @@ export class MeteorGame {
       if(side==='front'?direction.dot(hit.normal)>-.25:Math.abs(direction.dot(hit.normal))>.75)continue;
       const pose=NATIVE_WALL_POSES[side].pose;if(!actor.combat.data.poses.get(pose)?.valid)continue;
       const tangent=hit.forward.clone().addScaledVector(hit.normal,-hit.forward.dot(hit.normal)).normalize();
-      actor.wallRun={...hit,pose,facing:actor.root.rotation.y,elapsed:dt,velocity:side==='front'?v3():tangent.multiplyScalar(WALL.sideSpeed),rise:side==='front'?WALL.frontRise:WALL.sideRise};
+      actor.wallRun={...hit,pose,facing:actor.root.rotation.y,elapsed:dt,velocity:side==='front'?v3():tangent.multiplyScalar(WALL.sideSpeed)};
       actor.wallEntries=(actor.wallEntries||0)+1;actor.nativeJump=null;actor.jumpSequence=null;actor.wallKick=null;actor.velocity.set(0,0,0);
       return;
     }
@@ -559,7 +563,7 @@ export class MeteorGame {
     else {
       f.grounded = false;
       const beforeY=p.y;
-      if(f.wallRun){f.nativeJump=null;f.vy=f.wallRun.rise;p.y+=f.vy*dt;}
+      if(f.wallRun){f.nativeJump=null;f.vy=nativeWallVerticalVelocity(f.vy,dt,this.hostPhysics.gravity);p.y+=f.vy*dt;}
       else if (authoredVertical) {
         f.nativeJump = null; f.vy = motion.y / dt; p.y += motion.y;
       } else if (f.nativeJump && !f.combat.busy) {
@@ -897,7 +901,7 @@ export class MeteorGame {
       const held = active && this.running && !this.paused && !actor.dead;
       if (held) control.keys.add('guard'); else control.keys.delete('guard');
       if(held)actor.musketAim=false;
-      actor.guard = held && !actor.scriptInputBlocked && (!actor.combat.busy || actor.combat.reactionPhase === 'guard');
+      actor.guard = held && !actor.scriptInputBlocked && !actor.wallRun && (actor.grounded||actor.combat.reactionPhase==='guard') && (!actor.combat.busy || actor.combat.reactionPhase === 'guard');
       return;
     }
     if (active && actor.scriptInputBlocked) return;
@@ -934,7 +938,8 @@ export class MeteorGame {
   }
   _beginAttack(f, savedInput = null) {
     const control=this._controlFor(f);
-    if (f.dead || f.disposed || f.scriptRemoved || f.scriptCrouched || f.combat.reacting || control && f.scriptInputBlocked) return false;
+    // 004cff30 accepts actor states0/1/3/6, excluding wall state2.
+    if (f.dead || f.disposed || f.scriptRemoved || f.scriptCrouched || f.wallRun || f.combat.reacting || control && f.scriptInputBlocked) return false;
     // Native musket state 004deca0: first ground attack enters ready pose212;
     // crouch/aim blocks movement (004ded10). Subsequent attacks use POS/ACT.
     if(control&&f.weapon==='musket'&&!f.musketAim){
@@ -1012,7 +1017,7 @@ export class MeteorGame {
       this.onEvent?.({ type: 'npc-decision', actorId: f.scriptId ?? f.id, kind: 'attack', category: choice.category,
         program: choice.program, poseId: move?.poseId, accepted });
     } else this.onEvent?.({ type: 'npc-decision', actorId: f.scriptId ?? f.id, kind: choice.kind, defense: choice.defense });
-    f.guard = f.npcCombat.guard && !f.combat.busy;
+    f.guard = f.npcCombat.guard && f.grounded && !f.wallRun && !f.combat.busy;
   }
   _updateFighter(f, dt) {
     if (f.disposed || f.scriptRemoved) return;
@@ -1036,7 +1041,7 @@ export class MeteorGame {
       if (input.actor !== f || input.weaponId !== f.weaponId || this.elapsed > input.expires || input.air !== !f.grounded || f.scriptInputBlocked) control.recoveryAttack = null;
       else if (!f.combat.reacting) { control.recoveryAttack = null; this._beginAttack(f, input); }
     }
-    if (control) f.guard = control.keys.has('guard') && !f.scriptInputBlocked && (!f.combat.busy || f.combat.reactionPhase === 'guard');
+    if (control) f.guard = control.keys.has('guard') && !f.scriptInputBlocked && !f.wallRun && (f.grounded||f.combat.reactionPhase==='guard') && (!f.combat.busy || f.combat.reactionPhase === 'guard');
     if (f.combat.reacting || f.scriptCrouched || f.combat.busy && ['roll','dash'].includes(f.combat.currentMove?.kind)) {
       if (f.combat.reactionPhase !== 'guard') f.guard = false;
     } else if (control) {
@@ -1049,7 +1054,7 @@ export class MeteorGame {
       else if (direction.lengthSq() > 0 && !f.combat.busy) this._face(f, f.root.position.clone().add(direction), dt);
     } else if (f.scriptControlled) {
       const control = f.scriptControl;
-      f.guard = !!(control?.guard || !control?.paused && f.npcCombat?.guard) && !f.combat.busy; speed *= Number(control?.speedScale ?? 1) * .68;
+      f.guard = !!(control?.guard || !control?.paused && f.npcCombat?.guard) && f.grounded && !f.wallRun && !f.combat.busy; speed *= Number(control?.speedScale ?? 1) * .68;
       if (control && !control.paused) {
         const target = control.attackTarget, targetAlive = target && !target.dead && !target.disposed;
         const moveTarget = control.moveTarget, reach = f.weaponReach || (f.weapon === 'spear' ? 3.8 : 2.3);
@@ -1068,7 +1073,7 @@ export class MeteorGame {
     } else if (this.running && !this.hero.dead) {
       const target = findNativeEnemy(f, [this.hero], (observer, enemy) => this.hasScriptLineOfSight(observer, enemy));
       if (target) {
-        f.guard = !!f.npcCombat?.guard && !f.combat.busy;
+        f.guard = !!f.npcCombat?.guard && f.grounded && !f.wallRun && !f.combat.busy;
         const delta = target.root.position.clone().sub(f.root.position); delta.y = 0; const distance = delta.length();
         this._face(f, target.root.position, dt); speed *= this.difficulty === 'hard' ? .9 : .68;
         const reach = f.weaponReach || (f.weapon === 'spear' ? 3.8 : 2.3);
@@ -1129,7 +1134,7 @@ export class MeteorGame {
     // A held defense is sampled continuously, including the exact frame a
     // hit/attack recovery ends. It must not depend on OS key-repeat or a new
     // touch press while several opponents are attacking.
-    if (control && !f.combat.busy && !f.scriptInputBlocked && control.keys.has('guard')) f.guard = true;
+    if (control && f.grounded && !f.wallRun && !f.combat.busy && !f.scriptInputBlocked && control.keys.has('guard')) f.guard = true;
     const motion = v3();
     for (const segment of state.segments || [state]) {
       if(f.jumpSequence&&!f.jumpSequence.ballistic&&[f.jumpSequence.start,f.jumpSequence.air].includes(segment.poseId)&&f.character.sampleSceneMotion){

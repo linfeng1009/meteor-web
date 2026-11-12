@@ -54,9 +54,63 @@ test('three native wall families enter, animate, kick away and follow their real
   }
 });
 
+test('走壁不能直接攻击或开始防御，脱墙后允许空中攻击',()=>{
+  const state=wallFixture('front',30);try{
+    const {game,hero}=state;game._updateFighter(hero,1/60);
+    game.action('guard');assert.equal(hero.guard,false);
+    assert.equal(game._beginAttack(hero),false);
+    game._updateFighter(hero,1/60);assert.ok(hero.wallRun);assert.equal(hero.combat.timeline.pose.id,161);
+    game.action('guard',false);game.action('forward',false);game._updateFighter(hero,1/60);
+    assert.equal(hero.wallRun,null);assert.equal(hero.grounded,false);
+    assert.equal(game._beginAttack(hero),true);assert.equal(hero.combat.attacking,true);
+  }finally{state.dispose();}
+});
+
+test('空中按住防御不能开始格挡，落地后才进入防御',()=>{
+  for(const remote of [false,true]){
+    const state=fixture();try{
+      const {game,hero}=state;
+      if(remote)hero.playerControl=createPlayerControl();
+      const act=(name,active=true)=>remote?game._actionFighter(hero,hero.playerControl,name,active):game.action(name,active);
+      act('jump');act('jump',false);act('guard');assert.equal(hero.guard,false);
+      let frames=0;
+      do{game._updateFighter(hero,1/60);frames++;if(!hero.grounded)assert.equal(hero.guard,false);}while(!hero.grounded&&frames<120);
+      assert.ok(frames>20&&frames<120);assert.equal(hero.grounded,true);
+      game._updateFighter(hero,1/60);assert.equal(hero.guard,true);
+      act('guard',false);assert.equal(hero.guard,false);
+    }finally{state.dispose();}
+  }
+});
+
+test('走壁继承入墙竖直速度，按原阻尼减速，脱墙后继续升空并衔接原152',()=>{
+  for(const side of ['front','right','left'])for(const dt of [1/60,1/120]){
+    const state=wallFixture(side,30);try{
+      const {game,hero}=state;hero.vy=12;
+      for(let i=0;i<Math.round(.5/dt);i++)game._updateFighter(hero,dt);
+      assert.equal(hero.wallRun?.side,side);
+      const terminal=-70.56*.1/1.2,expected=terminal+(12-terminal)*Math.exp(-1.2*.5);
+      assert.ok(Math.abs(hero.vy-expected)<.15,`${side}/${dt}: ${hero.vy} vs ${expected}`);
+      assert.ok(hero.root.position.y>33.6&&hero.root.position.y<33.9);
+      const before=hero.root.position.y;game.action('forward',false);game._updateFighter(hero,dt);
+      assert.equal(hero.wallRun,null);assert.ok(hero.vy>0);assert.ok(hero.root.position.y>before);
+      assert.equal(hero.combat.timeline.pose.id,152);assert.equal(hero.combat.timeline.loop,false);
+      for(let i=0;i<300;i++)game._updateFighter(hero,dt);assert.equal(hero.grounded,true);
+    }finally{state.dispose();}
+  }
+});
+
+test('原走壁时限为1.8秒，没有上升动量时自然下滑，落地后重置接墙次数',()=>{
+  const state=wallFixture('front',30);try{
+    const {game,hero}=state;for(let i=0;i<60;i++)game._updateFighter(hero,1/60);
+    assert.ok(hero.wallRun,'1秒时仍未超过原1.8秒时限');assert.ok(hero.vy<0);assert.ok(hero.root.position.y<30);
+    for(let i=0;i<60;i++)game._updateFighter(hero,1/60);
+    assert.equal(hero.wallRun,null);assert.equal(hero.wallEntries,1);
+  }finally{state.dispose();}
+});
+
 test('wall contact expires, cannot recharge in midair and resets only on landing',()=>{
   const state=wallFixture('front',30);try{
-    const {game,hero}=state;for(let i=0;i<50;i++)game._updateFighter(hero,1/60);
+    const {game,hero}=state;for(let i=0;i<120;i++)game._updateFighter(hero,1/60);
     assert.equal(hero.wallRun,null);assert.equal(hero.wallEntries,1);assert.ok(hero.root.position.y<=32.6);assert.equal(hero.grounded,false);
     assert.equal(game._beginWallJump(hero),false);assert.equal(game._beginJump(hero),false);
     for(let i=0;i<180;i++)game._updateFighter(hero,1/60);
@@ -86,6 +140,7 @@ test('short ledges and floor surfaces cannot count as a wall, and a roof stops c
     const {game,hero,wall}=state;wall.scale.y=.004;wall.position.y=2.85;wall.updateMatrixWorld(true);
     game._updateFighter(hero,1/60);assert.equal(hero.wallRun,undefined);
     wall.scale.y=1;wall.position.y=2;wall.updateMatrixWorld(true);
+    hero.vy=10;
     const roof=new THREE.Mesh(new THREE.PlaneGeometry(10,10),new THREE.MeshBasicMaterial({side:THREE.DoubleSide}));
     roof.rotation.x=Math.PI/2;roof.position.y=4.4;roof.updateMatrixWorld(true);state.colliders.push(roof);
     for(let i=0;i<15;i++){game._updateFighter(hero,1/60);assert.ok(hero.root.position.y+2.2<=4.4+.001);}
@@ -104,11 +159,11 @@ test('remote wall traversal uses its own input, including the wall jump action',
 test('ceiling contact covers the body edge and an already flush head without penetrating',()=>{
   for(const [x,z,height] of [[.35,0,4.25],[.25,.25,4.25],[0,0,4.2]]){
     const state=wallFixture();try{
-      const {game,hero}=state;
+      const {game,hero}=state;hero.vy=10;
       const roof=new THREE.Mesh(new THREE.PlaneGeometry(.2,.2),new THREE.MeshBasicMaterial({side:THREE.DoubleSide}));
       roof.rotation.x=Math.PI/2;roof.position.set(x,height,z);roof.updateMatrixWorld(true);state.colliders.push(roof);
       for(let i=0;i<8;i++){game._updateFighter(hero,1/60);assert.ok(hero.root.position.y+2.2<=height+1e-6,`roof ${x}/${z}/${height}: ${hero.root.position.y}`);}
-      assert.equal(hero.wallRun,null);assert.equal(hero.nativeJump,null);assert.equal(hero.jumpSequence,null);
+      assert.equal(hero.wallRun,null);assert.equal(hero.nativeJump,null);assert.equal(hero.jumpSequence?.air,152);assert.ok(hero.vy<=0);
     }finally{state.dispose();}
   }
 });

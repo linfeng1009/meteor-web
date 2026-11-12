@@ -69,6 +69,25 @@ test('受击过渡从客人当前显示姿势捕获一次，重复快照不重�
  motion.receive(actor,{...state,frame:20,serial:4,blend:hit},.1,{poseChanged:true});assert.notEqual(calls.at(-1).from,first);
 });
 
+test('旧混合被主机新动作中断时，客人立即显示新动作而不补播旧混合',()=>{
+ for(const poseChanged of [false,true]){
+  const {actor,motion,state,calls,blend}=blending();
+  motion.receive(actor,{...state,frame:20,serial:2,blend},.1,{poseChanged:true});
+  motion.receive(actor,{...state,frame:20,serial:2,blend:{...blend,weight:.8}},.1);motion.update(actor,.025);
+  assert.ok(calls.at(-1).weight<1);const count=calls.length;
+  motion.receive(actor,{...state,frame:70,serial:3},.1,{poseChanged});
+  assert.equal(calls.length,count);assert.equal(actor.character.source,0);assert.equal(actor.character.frame,70);
+  assert.equal(motion.samples.get(actor).blend,undefined);
+  motion.update(actor,.05);assert.equal(calls.length,count);assert.equal(actor.character.frame,70);
+ }
+});
+
+test('动作编号改变时不延续旧混合，即使收到重复的施招序号',()=>{
+ const {actor,motion,state,calls,blend}=blending();motion.receive(actor,{...state,frame:20,serial:2,blend},.1,{poseChanged:true});
+ const count=calls.length;motion.receive(actor,{...state,frame:75,serial:2},.1,{poseChanged:true});
+ assert.equal(calls.length,count);assert.equal(actor.character.frame,75);assert.equal(motion.samples.get(actor).blend,undefined);
+});
+
 test('网络停顿不把未完成的主机过渡外推到结束，静止姿势不重复采样',()=>{
  const {actor,motion,state,calls,blend}=blending();motion.receive(actor,{...state,frame:20,serial:2,blend},.1,{poseChanged:true});motion.update(actor,1);
  assert.equal(calls.at(-1).weight,.2);const count=calls.length;for(let i=0;i<60;i++)motion.update(actor,1/60);assert.equal(calls.length,count);

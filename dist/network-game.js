@@ -23,8 +23,8 @@ export class NetworkReplicaMotion{
     const sample={from,to:[...state.position],angle:actor.root.rotation.y,
       turn:Math.atan2(Math.sin(state.angle-actor.root.rotation.y),Math.cos(state.angle-actor.root.rotation.y)),
       targetAngle:state.angle,elapsed:0,duration:Math.max(.03,Math.min(.15,duration||.07)),dead:!!state.dead,
-      source:state.source,frame:state.frame,fromFrame:actor.character.frame,
-      animate:!snap&&!poseChanged&&previous.source===state.source&&state.frame>=actor.character.frame};
+      source:state.source,frame:state.frame,fromFrame:actor.character.frame,serial:state.serial,
+      animate:!snap&&!poseChanged&&previous.serial===state.serial&&previous.source===state.source&&state.frame>=actor.character.frame};
     if(state.blend&&actor.character.setPoseBlend){
       const same=previous?.hostBlend&&previous.serial===state.serial;
       const from=same?previous.blend.from:state.blend.fromSnapshot?actor.character.capturePose?.()||{source:actor.character.source,frame:actor.character.frame}:state.blend.from;
@@ -32,8 +32,9 @@ export class NetworkReplicaMotion{
       sample.fromWeight=same?previous.weight:state.blend.weight;sample.toWeight=state.blend.weight;
       if(snap||sample.fromWeight>sample.toWeight)sample.fromWeight=sample.toWeight;
       sample.weight=sample.fromWeight;sample.animate=false;
-    }else if(!snap&&previous?.blend&&previous.weight<1&&actor.character.setPoseBlend){
-      // Finish the displayed partial blend before resuming ordinary frames.
+    }else if(!snap&&!poseChanged&&previous?.serial===state.serial&&previous?.blend&&previous.weight<1&&actor.character.setPoseBlend){
+      // Only finish a partial blend within the same authoritative action.
+      // An unblended new action must not inherit an interrupted old blend.
       sample.blend={from:actor.character.capturePose?.()||{source:actor.character.source,frame:actor.character.frame},to:{source:state.source,frame:state.frame}};
       sample.fromWeight=0;sample.toWeight=1;sample.weight=0;sample.animate=false;
     }

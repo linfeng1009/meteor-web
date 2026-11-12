@@ -83,6 +83,33 @@ test('ordinary native EF definitions keep source hashes and render without a rag
   }finally{f.vfx.dispose();}
 });
 
+test('已导出基础网格特效的贴图引用全部闭合，动画贴图帧也有本地资源',async()=>{
+ const extra=JSON.parse(await readFile(new URL('../dist/assets/original/combat-vfx.json',import.meta.url),'utf8')),effects={...extra.effects,...manifest.effects};
+ const checked=new Set();async function check(name){
+  if(checked.has(name))return;checked.add(name);const record=manifest.textures[name];assert.ok(record,`缺少原贴图引用 ${name}`);
+  if(record.frames){assert.ok(record.frames.length);for(const frame of record.frames)await check(frame);}
+  else{assert.ok(record.url);const bytes=await readFile(new URL(record.url,packRoot));assert.equal(bytes.subarray(1,4).toString(),'PNG');assert.equal(bytes.readUInt32BE(16),record.width);assert.equal(bytes.readUInt32BE(20),record.height);}
+ }
+ let nodes=0;for(const effect of Object.values(effects))for(const node of effect.nodes)if(['PLANE','BILLBOARD','SPHERE','CYLINDER','BOX'].includes(node.type)&&node.texture){nodes++;await check(node.texture);}
+ assert.ok(nodes>=602);
+});
+
+test('曹沫举顶与虬龙扫暴阵使用补齐的原PAK贴图并实际显示相应网格',async()=>{
+ const extra=JSON.parse(await readFile(new URL('../dist/assets/original/combat-vfx.json',import.meta.url),'utf8'));
+ for(const [id,name,texture,time,sourceHash,pngHash] of [
+  [253,'Rectangle_9','fpirea00.bmp',.64,'bd5ad81f492315981c23506e957ec6bacdd62efb31b7d1c022bed953f2c912cf','19f6b40121639217c5775a50991c97ac785c6fcacce6e771302ca92d12c34cc7'],
+  [291,'Cylinder_8','ff807001.bmp',.9333333373,'3615fdf43fb201898690adf7d625e741054f1c25329fccae444fba51c2d9f250','3c29cbcfa54f21c916266c137471180c56c45965d6be239f47bacb38964fad34']]){
+  const record=manifest.textures[texture];assert.equal(record.sha256,sourceHash);assert.equal(record.archive,'ETexture.pak');
+  assert.equal(createHash('sha256').update(await readFile(new URL(record.url,packRoot))).digest('hex'),pngHash);
+  const f=fixture(id===253?'dagger':'spear');try{
+   f.vfx.manifest={...manifest,effects:{...extra.effects,...manifest.effects}};f.actor.character.getAttachment=()=>f.actor.character.nativeSpace;
+   const effect=f.vfx.sample(f.actor,{...state(id,time,null),effectTime:time});f.vfx.update(0);
+   const node=effect.nodes.find(n=>n.source.name===name);assert.ok(node.mesh?.visible);assert.equal(node.mesh.material.map,f.textures.get(texture));
+   assert.ok(node.mesh.geometry.attributes.position.count>0);assert.equal(f.actor.hp,1000);assert.equal(f.actor.rage,100);
+  }finally{f.vfx.dispose();}
+ }
+});
+
 test('enhanced weapon skins keep their original POS blade trail instead of hiding it with the original mesh',()=>{
   const f=fixture(),pose=data.poses.get(279),drag=pose.drags[0];try{
     f.actor.weaponModel.visible=false;f.actor.butterflySword={visible:true};f.actor.character.setPoseFrame=(_,frame)=>{f.actor.weaponModel.rotation.z=(frame-drag.start)*.4;};

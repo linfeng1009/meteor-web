@@ -54,7 +54,7 @@ test('Doubao retains the complete original surface and byte-identical 4K JPEG at
   for(const relative of [manifest.mesh,...skin.materials.map(m=>m.texture)])assert.ok(new URL(relative,assets).pathname.startsWith(assets.pathname));
 }));
 
-test('Doubao appears in game/workshop and switching all six surfaces preserves pose and live weapon',async()=>withFetch(async()=>{
+test('Doubao appears in game/workshop and switching five surfaces preserves pose and live weapon',async()=>withFetch(async()=>{
   assert.equal(NATIVE_APPEARANCES.doubao.characterId,0);assert.equal(Object.isFrozen(NATIVE_APPEARANCES.doubao),true);
   assert.ok(WORKSHOP_APPEARANCES.includes('doubao'));assert.equal(appearanceCharacterName(0,'doubao'),'豆包');
   const actor=createNativeCharacter(data,{loadTextures:false});
@@ -62,7 +62,7 @@ test('Doubao appears in game/workshop and switching all six surfaces preserves p
     actor.group.position.set(2,3,-4);actor.group.rotation.y=.7;actor.setPoseFrame(0,data.poses[262].start+3.5);
     const attachment=actor.getAttachment('d_wpnR'),weapon=new THREE.Group();attachment.add(weapon);actor.group.updateMatrixWorld(true);
     const native=actor.skeleton,pose=matrices(actor),weaponTransform=weapon.matrixWorld.toArray(),frame=actor.frame,meshes=new Map();
-    for(const appearance of ['original','hd','hutao','raiden','emilia','doubao','original','doubao']){
+    for(const appearance of ['original','hutao','raiden','emilia','doubao','original','doubao']){
       const status=await actor.setAppearance(appearance);assert.equal(status.available,true);assert.equal(status.appearance,appearance);
       if(meshes.has(appearance))assert.equal(actor.mesh===meshes.get(appearance),true);else meshes.set(appearance,actor.mesh);
       assert.equal(actor.skeleton===native,true);assert.equal(actor.skeleton.bones.length,30);
@@ -70,7 +70,7 @@ test('Doubao appears in game/workshop and switching all six surfaces preserves p
       assert.deepEqual(matrices(actor),pose);assert.equal(actor.frame,frame);assert.deepEqual(weapon.matrixWorld.toArray(),weaponTransform);
       assert.equal(actor.getAttachment('d_wpnR')===attachment,true);assert.equal(actor.nativeSpace.children.filter(o=>o.isSkinnedMesh).length,1);
     }
-    assert.equal(meshes.size,6);
+    assert.equal(new Set(meshes.values()).size,5);
   }finally{actor.dispose();}
 }));
 

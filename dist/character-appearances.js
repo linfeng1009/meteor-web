@@ -1,10 +1,10 @@
-import { NATIVE_APPEARANCES, NATIVE_CHARACTERS } from './native-character.js';
+import { DEFAULT_CHARACTER_APPEARANCE, NATIVE_APPEARANCES, NATIVE_CHARACTERS } from './native-character.js';
 
 // Shared presentation for the lobby, HUD and workshop. Native story identities
 // and character IDs remain in the original character data.
 const details = Object.freeze({
   original: { name: '原版人物', shortLabel: '原版', title: '原版人物', kind: 'original' },
-  hd: { name: '孟星魂', shortLabel: '高清试版', title: '孟星魂 · 高清试版', kind: 'hd', note: '本版为原模型基础上的几何与材质改良，脸部贴图使用 AI 辅助细化。尚属试作，面数增长不代表完成手工角色重制。' },
+  liuchao: { name: '琉潮', seal: '琉', shortLabel: '琉潮', title: '琉潮 · 原创角色', kind: 'pmx', note: '原创角色，保留源模型比例与主要饰物，适配《流星》动作。游戏版本精简了身体与饰物网格；头发、衣物与表情暂未接入独立物理和控制。' },
   hutao: { name: 'YS-胡桃', seal: '胡', shortLabel: 'YS-胡桃', title: 'YS-胡桃 · 模型适配', kind: 'pmx', note: '采用本地完整「胡桃喵1.0.pmx」及配套贴图。资料署名 miHoYo／观海，目录署名摸鱼大水怪。适配原版骨架；发尾已加入独立弹簧骨骼、惯性和基础身体碰撞；衣摆与表情尚未接入原模型物理和控制。' },
   raiden: { name: 'YS-影', seal: '影', shortLabel: 'YS-影', title: 'YS-影 · 模型适配', kind: 'pmx', note: '采用本地完整「礼服影.pmx」及配套贴图。改模：花咲十七夜；头部：miHoYo／ota／ash.k／manashiku，身体：miHoYo／观海子。适配《流星》动作；长发已加入独立弹簧骨骼、惯性和基础身体碰撞；礼服裙摆与表情尚未接入原模型物理和控制。' },
   emilia: { name: 'RE0-爱蜜莉雅', seal: '爱', shortLabel: 'RE0-爱蜜莉雅', title: 'RE0-爱蜜莉雅 · 模型适配', kind: 'pmx', note: '采用本地完整「Emilia_v1.pmx」及配套贴图，适配《流星》人物动作。长发已加入独立弹簧骨骼、惯性和基础身体碰撞；衣裙物理和面部表情尚未接入；原包署名 Skymoons／Elemental Craft／Kadokawa corp／chenxs（陈心舒），完整原说明保留在本地。' },
@@ -17,10 +17,33 @@ const details = Object.freeze({
   aether: { name: '空', seal: '空', shortLabel: '空', title: '空 · 模型适配', kind: 'pmx', note: '保留原模型身高、躯干与四肢比例，网格与贴图未经压缩，沿用《流星》动作；辫发为轻量跟随。模型提供：miHoYo；模型改造：观海（BiliBili：观海子）。披风、围巾与表情尚未接入物理与控制。' },
   furina: { name: '芙宁娜', seal: '芙', shortLabel: '芙宁娜', title: '芙宁娜 · 模型适配', kind: 'pmx', note: '保留原模型身高、躯干与四肢比例，网格与贴图未经压缩，沿用《流星》动作；长发与卷发为轻量跟随。模型提供：miHoYo；模型改造：观海（BiliBili：观海子）。多层裙摆、礼帽与表情尚未接入物理与控制。' },
   zhaojun: { name: '王昭君', seal: '昭', shortLabel: '长夜焕生', title: '王昭君 · 长夜焕生', kind: 'pmx', note: '王者荣耀王昭君「长夜焕生」皮肤，保留原模型身高、躯干与四肢比例，网格与贴图未经压缩，沿用《流星》动作；长发与飘带为轻量跟随。本包未附署名或配布说明文件，素材归属腾讯《王者荣耀》。长裙、飘带与披帛尚未接入物理。' },
-  keqing: { name: '刻晴', seal: '刻', shortLabel: '刻晴', title: '刻晴 · 模型适配', kind: 'pmx', note: '保留原模型身高、躯干与四肢比例，网格与贴图未经压缩，沿用《流星》动作；左右长发与辫子为轻量跟随。模型提供：miHoYo；模型改造：观海（BiliBili：观海子）。裙摆、飘带与表情尚未接入物理与控制。' }
+  keqing: { name: '刻晴', seal: '刻', shortLabel: '刻晴', title: '刻晴 · 模型适配', kind: 'pmx', note: '保留原模型身高、躯干与四肢比例，网格与贴图未经压缩，沿用《流星》动作；左右长发与辫子为轻量跟随。模型提供：miHoYo；模型改造：观海（BiliBili：观海子）。裙摆、飘带与表情尚未接入物理与控制。' },
+  haku: { name: 'TDA 弱音', seal: '弱', shortLabel: '夏日特调', title: 'TDA 弱音 · 夏日特调', kind: 'pmx', note: 'TDA 式弱音，保留原模型身高、躯干与四肢比例，网格与贴图未经压缩，沿用《流星》动作；刘海、侧发与双马尾为轻量跟随。身体：TDA/iRon0129；面部/头发：coa/iRon0129/larig-apagar/DD-372Cassin；服装/鞋：Samsink；模型编辑：DD-372Cassin。裙摆（252 根骨骼）、草帽与配饰尚未接入物理。' },
+  ningguang: { name: '凝光', seal: '凝', shortLabel: '纱中幽兰', title: '凝光 · 纱中幽兰', kind: 'pmx', note: '由可编辑 .blend 直接导入，保留原模型身高、躯干与四肢比例，网格与贴图未经压缩，沿用《流星》动作；头发在原模型中为刚性，没有独立弹簧链。原模型版权归 miHoYo；本包未附署名或配布说明。裙摆与流苏尚未接入物理。' }
 });
 
-export const WORKSHOP_APPEARANCES = Object.freeze(Object.keys(NATIVE_APPEARANCES).filter(id => NATIVE_APPEARANCES[id].assetPath));
+export const FEATURED_APPEARANCES = Object.freeze(Object.keys(NATIVE_APPEARANCES).filter(id => NATIVE_APPEARANCES[id].assetPath));
+export const WORKSHOP_APPEARANCES = FEATURED_APPEARANCES;
+
+export function battleCharacterSelection(selection) {
+  const { character, characterAppearance } = selection || {};
+  if (characterAppearance === 'original' && Number.isInteger(character) && NATIVE_CHARACTERS[character]) {
+    return { character, characterAppearance };
+  }
+  if (FEATURED_APPEARANCES.includes(characterAppearance)) {
+    return { character: NATIVE_APPEARANCES[characterAppearance].characterId, characterAppearance };
+  }
+  return { character: 0, characterAppearance: DEFAULT_CHARACTER_APPEARANCE };
+}
+
+export function savedBattleCharacterSelection(selection) {
+  // Old profiles saved original Meng even when the player never picked a character.
+  if (selection?.characterSelected !== true) {
+    return battleCharacterSelection();
+  }
+  return battleCharacterSelection(selection);
+}
+
 export function appearanceDetails(id) {
   return details[id] || { name: NATIVE_APPEARANCES[id]?.label || '人物', shortLabel: NATIVE_APPEARANCES[id]?.label || '人物', title: NATIVE_APPEARANCES[id]?.label || '人物外观', kind: 'pmx', note: '本地模型与原版动作适配。' };
 }

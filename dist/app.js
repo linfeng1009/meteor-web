@@ -13,8 +13,8 @@ function refreshKeyGuide(){
   for(const [keys,label] of items){const span=document.createElement('span'),kbd=document.createElement('kbd');kbd.textContent=keys;span.append(kbd,' '+label);guide.append(span);}
 }
 refreshKeyGuide();
-import { NATIVE_CHARACTERS, NATIVE_APPEARANCES } from './native-character.js';
-import { appearanceDetails, appearanceCharacterName, appearanceCharacterSeal } from './character-appearances.js';
+import { DEFAULT_CHARACTER_APPEARANCE, NATIVE_CHARACTERS, NATIVE_APPEARANCES } from './native-character.js';
+import { FEATURED_APPEARANCES, appearanceDetails, appearanceCharacterName, appearanceCharacterSeal, battleCharacterSelection, savedBattleCharacterSelection } from './character-appearances.js';
 import { NATIVE_MISSIONS, getNativeMission } from './native-missions.js';
 import { NATIVE_WEAPON_MENU, QIANKUN_MODE_NAMES } from './native-weapon-menu.js';
 import { renderNativeMoveGuide } from './native-move-guide.js';
@@ -27,15 +27,23 @@ const maps={sifang:{name:'四方阵',english:'THE FOUR SQUARES',poem:'方寸之�
 maps[QIYUN_MAP.id] = QIYUN_MAP;
 for(const mission of NATIVE_MISSIONS)maps[mission.mapId]={name:mission.name,english:'ORIGINAL MISSION · '+mission.id.toUpperCase(),poem:'原版单机任务'};
 const weapons=NATIVE_WEAPON_MENU;
-let prefs={showFps:false,weapon:'sword',map:'sifang',character:0,characterAppearance:'original',swordStyle:'butterfly',spearStyle:'original',mission:'sn01',completedMissions:[],difficulty:'normal',infiniteRage:false,muted:true,quality:matchMedia('(pointer:coarse)').matches?'low':'high',best:0};
-try{const p=JSON.parse(localStorage.getItem('meteor-web-original-v2')||'{}');for(const k of ['showFps','weapon','map','character','characterAppearance','swordStyle','spearStyle','mission','completedMissions','difficulty','infiniteRage','muted','quality','best'])if(p[k]!==undefined)prefs[k]=p[k];}catch{}
+let prefs={showFps:false,weapon:'sword',map:'sifang',character:0,characterAppearance:DEFAULT_CHARACTER_APPEARANCE,characterSelected:false,swordStyle:'butterfly',spearStyle:'original',mission:'sn01',completedMissions:[],difficulty:'normal',infiniteRage:false,muted:true,quality:matchMedia('(pointer:coarse)').matches?'low':'high',best:0};
+try{const p=JSON.parse(localStorage.getItem('meteor-web-original-v2')||'{}');for(const k of ['showFps','weapon','map','character','characterAppearance','characterSelected','swordStyle','spearStyle','mission','completedMissions','difficulty','infiniteRage','muted','quality','best'])if(p[k]!==undefined)prefs[k]=p[k];}catch{}
+
 if(!maps[prefs.map]){if(/^sn\d{2}$/.test(prefs.map))maps[prefs.map]={name:prefs.map.toUpperCase(),english:'ORIGINAL MAP',poem:'原版战场'};else prefs.map='sifang';}if(!weapons[prefs.weapon])prefs.weapon='sword';if(!['normal','hard'].includes(prefs.difficulty))prefs.difficulty='normal';if(!['low','high'].includes(prefs.quality))prefs.quality='high';
-if(!Object.hasOwn(NATIVE_APPEARANCES,prefs.characterAppearance))prefs.characterAppearance='original';
+Object.assign(prefs, savedBattleCharacterSelection(prefs));
 if(!Object.hasOwn(swordStyleNames,prefs.swordStyle))prefs.swordStyle='butterfly';
 if(!['original','phoenix'].includes(prefs.spearStyle))prefs.spearStyle='original';
 prefs.infiniteRage=prefs.infiniteRage===true;
-const appearanceURL=new URL(location.href);if(Object.hasOwn(NATIVE_APPEARANCES,appearanceURL.searchParams.get('appearance'))){prefs.characterAppearance=appearanceURL.searchParams.get('appearance');if(prefs.characterAppearance!=='original')prefs.character=0;appearanceURL.searchParams.delete('appearance');history.replaceState(null,'',appearanceURL.pathname+appearanceURL.search+appearanceURL.hash);}
-if(!Number.isInteger(prefs.character)||!NATIVE_CHARACTERS[prefs.character])prefs.character=0;
+const appearanceURL = new URL(location.href);
+const linkedAppearance = appearanceURL.searchParams.get('appearance');
+if (linkedAppearance !== null) {
+  if (Object.hasOwn(NATIVE_APPEARANCES, linkedAppearance)) {
+    Object.assign(prefs, battleCharacterSelection({ character: 0, characterAppearance: linkedAppearance }), { characterSelected: true });
+  }
+  appearanceURL.searchParams.delete('appearance');
+  history.replaceState(null, '', appearanceURL.pathname + appearanceURL.search + appearanceURL.hash);
+}
 const save=()=>{try{localStorage.setItem('meteor-web-original-v2',JSON.stringify(prefs));}catch{}};
 if(!getNativeMission(prefs.mission))prefs.mission='sn01';
 prefs.completedMissions=NATIVE_MISSIONS.filter(m=>Array.isArray(prefs.completedMissions)&&prefs.completedMissions.includes(m.id)).map(m=>m.id);
@@ -46,8 +54,8 @@ let mapSelectionRequest=0;
 let game,running=false,paused=false,ended=false,modalKind='',toastTimer,announcementTimer,hitTimer,lastCombo=0,lastHp=100;
 let nativeCombat=null;
 let guideWeapon='sword',lobbyPage='home',settingsTab='picture';
-let appearanceUIRequest=0;
-async function applyCharacterAppearance(requested,notify=true){const request=++appearanceUIRequest;const button=$('#appearance-toggle');button.disabled=true;const select=$('#character-appearance');if(select)select.disabled=true;try{const result=await game?.setCharacterAppearance(requested);if(request!==appearanceUIRequest)return;const actual=Object.hasOwn(NATIVE_APPEARANCES,result?.appearance)?result.appearance:'original';if(result?.available===false&&NATIVE_APPEARANCES[requested]?.characterId===prefs.character)markAppearanceUnavailable(requested);prefs.characterAppearance=actual;save();updateSelection();if(notify||!result?.available)toast(result?.reason|| ('已切换为'+(NATIVE_APPEARANCES[actual]?.label||'原版人物')));}catch(error){if(request===appearanceUIRequest){console.error(error);if(NATIVE_APPEARANCES[requested]?.characterId===prefs.character)markAppearanceUnavailable(requested);prefs.characterAppearance=game?.hero?.character?.appearance||prefs.characterAppearance;save();updateSelection();toast('人物外观未能载入，已保留此前外观');}}finally{if(request===appearanceUIRequest){button.disabled=prefs.character!==0;const select=$('#character-appearance');if(select)select.disabled=prefs.character!==0;}}}
+const characterSelectionLocked = () => running && currentMode !== 'training';
+
 let originalManifest=null;
 const readyAppearances=new Set(['original']);
 function markAppearanceUnavailable(id){
@@ -110,7 +118,7 @@ function updateSelection(){
   const name=appearanceCharacterName(prefs.character,prefs.characterAppearance),descriptor=NATIVE_APPEARANCES[prefs.characterAppearance];
   const appearanceApplies=descriptor?.characterId===prefs.character;
   $('#character-label').textContent=name+(appearanceApplies&&appearanceDetails(prefs.characterAppearance).kind==='pmx'?' · 模型外观':'');
-  $('#appearance-label').textContent=appearanceApplies?appearanceDetails(prefs.characterAppearance).shortLabel:'原版';$('#appearance-toggle').disabled=prefs.character!==0;
+  $('#appearance-label').textContent=appearanceApplies?appearanceDetails(prefs.characterAppearance).shortLabel:'原版';$('#appearance-toggle').disabled=prefs.character!==0||characterSelectionLocked();
   $('#appearance-toggle').title='依次切换'+Object.keys(NATIVE_APPEARANCES).map(id=>appearanceDetails(id).shortLabel).join('、');
   $('#player-name').textContent=name;$('.player-seal').textContent=appearanceCharacterSeal(prefs.character,prefs.characterAppearance);
   $('#home-loadout').textContent=name+' · '+weapons[prefs.weapon].name;$('#prep-summary').textContent=name+' / '+weapons[prefs.weapon].name+' / '+maps[prefs.map].name;
@@ -137,22 +145,21 @@ function charactersHTML(){
 function refreshCharacterOptions(){
   if(!modal.open||modalKind!=='characters')return;
   for(const button of $$('[data-pick-appearance]')){const id=button.dataset.pickAppearance,ready=readyAppearances.has(id);button.disabled=characterSelectionBusy||!ready;const small=button.querySelector('small');if(small)small.textContent=ready?({original:'原版人物',hd:'高清试版',hutao:'模型外观',raiden:'礼服外观',emilia:'模型外观'}[id]||'人物外观'):'资源未就绪';}
+
 }
 async function selectCharacter(id,appearance){
-  if(characterSelectionBusy||!game||!Number.isInteger(id)||!NATIVE_CHARACTERS[id]||!Object.hasOwn(NATIVE_APPEARANCES,appearance)||!readyAppearances.has(appearance))return;
+  if(characterSelectionBusy||characterSelectionLocked()||!game||!Number.isInteger(id)||!NATIVE_CHARACTERS[id]||!Object.hasOwn(NATIVE_APPEARANCES,appearance)||!readyAppearances.has(appearance))return;
   characterSelectionBusy=true;$('#start-game').disabled=true;
   for(const button of $$('[data-pick-character], [data-pick-appearance]'))button.disabled=true;
   const status=$('#character-pick-status');if(status)status.textContent='正在载入人物…';
   try{
-    await game.setCharacter(id);
-    const result=await game.setCharacterAppearance(appearance);
-    if(!result?.available||result.appearance!==appearance)throw new Error(result?.reason||'人物外观未能载入');
-    prefs.character=id;prefs.characterAppearance=appearance;save();updateSelection();
+    await game.setCharacter(id, appearance);
+    prefs.character=id;prefs.characterAppearance=appearance;prefs.characterSelected=true;save();updateSelection();
     if(modal.open&&modalKind==='characters')closeModal();
   }catch(error){
-    console.error(error);prefs.character=game.hero?.modelId??game.characterId??prefs.character;prefs.characterAppearance=game.hero?.character?.appearance||'original';
-    if(NATIVE_APPEARANCES[appearance]?.characterId===prefs.character)markAppearanceUnavailable(appearance);
-    save();updateSelection();toast('人物未能载入，已保留当前人物');
+    console.error(error);
+    if(appearance!=='original')markAppearanceUnavailable(appearance);
+    updateSelection();toast('人物未能载入，已保留当前人物');
   }finally{
     characterSelectionBusy=false;$('#start-game').disabled=loadingMatch||Boolean($('#scene-load-status').textContent);
     if(modal.open&&modalKind==='characters')openModal('characters');
@@ -194,19 +201,23 @@ function closeModal(){
   if(running&&paused){paused=false;game?.pause(false);}
   priorFocus?.focus?.();if(running&&!paused&&!matchMedia('(pointer:coarse)').matches)game?.requestMouseLock();
 }
-async function startMatch(mode='training',missionId=currentMissionId,isCurrent=()=>true){
-  if(loadingMatch||characterSelectionBusy)return;
-  if(typeof mode!=='string')mode='training';if(mode!=='network'&&networkLobby?.client)await networkLobby.leave(false);currentMode=mode==='network'?'network':mode==='story'?'story':'training';const mission=currentMode==='story'?getNativeMission(missionId):null;if(currentMode==='story'){if(!mission){toast('这段原版任务尚未开放');return;}currentMissionId=mission.id;prefs.mission=mission.id;prefs.map=mission.mapId;prefs.character=0;save();updateSelection();}
+async function startMatch(mode='training',missionId=currentMissionId,isCurrent=()=>true,roomSelection){
 
+  if(loadingMatch||characterSelectionBusy)return;
+  if(typeof mode!=='string')mode='training';if(mode!=='network'&&networkLobby?.client)await networkLobby.leave(false);currentMode=mode==='network'?'network':mode==='story'?'story':'training';const mission=currentMode==='story'?getNativeMission(missionId):null;if(currentMode==='story'){if(!mission){toast('这段原版任务尚未开放');return;}currentMissionId=mission.id;prefs.mission=mission.id;save();}
+
+  const map = mission?.mapId ?? (currentMode === 'network' ? 'sifang' : prefs.map);
+  const selection = battleCharacterSelection(currentMode === 'network' ? roomSelection : prefs);
   if(!game)return;game.menuIdle=false;game.frameMeter?.reset();if(!matchMedia('(pointer:coarse)').matches)game.requestMouseLock();$('#start-game').disabled=true;
-  if(modal.open)modal.close();$('#page-content').replaceChildren();ended=false;paused=false;running=true;lastCombo=0;lastHp=mission?.playerHp??1000;clearDialogue();clearCombatFeedback();matchLoading(true);$('#load-status').textContent=mission?'正在载入'+mission.name+'与原版任务脚本…':'正在载入'+maps[prefs.map].name+'…';
+  if(modal.open)modal.close();$('#page-content').replaceChildren();ended=false;paused=false;running=true;lastCombo=0;lastHp=mission?.playerHp??1000;clearDialogue();clearCombatFeedback();matchLoading(true);$('#load-status').textContent=mission?'正在载入'+mission.name+'与原版任务脚本…':'正在载入'+maps[map].name+'…';
   $('#lobby').classList.add('hidden');$('#game-hud').classList.remove('hidden');document.body.classList.add('playing');
-  $('#hud-map').textContent=currentMode==='network'?'四方阵 · 联机对战':maps[prefs.map].name+(currentMode==='story'?' · 单机任务':' · 演武');$('#battle-hint-text').textContent='原版招式演武 · 按 '+keyHint('attack')+' 出招';$('#combo-feedback').textContent='';
-  try{if(currentMode==='network')await game.setCharacterAppearance('original');if(!isCurrent())return;game.setInfiniteRage(currentMode==='training'&&prefs.infiniteRage);await game.start({map:currentMode==='network'?'sifang':prefs.map,weapon:currentMode==='network'?'sword':prefs.weapon,difficulty:prefs.difficulty,character:currentMode==='network'?0:prefs.character,mode:currentMode});if(!isCurrent())return;game.setMuted(prefs.muted);game.setQuality(prefs.quality);syncMusic();announce(currentMode==='network'?'联机战场载入中':mission?mission.name+' · 单机任务':'演武 · 开始',2200);$('#world').setAttribute('tabindex','-1');$('#world').focus();}
-  catch(e){if(isCurrent()){console.error(e);returnLobby();toast('战场加载失败，请刷新重试');}}
+  $('#hud-map').textContent=currentMode==='network'?'四方阵 · 联机对战':maps[map].name+(currentMode==='story'?' · 单机任务':' · 演武');$('#battle-hint-text').textContent='原版招式演武 · 按 '+keyHint('attack')+' 出招';$('#combo-feedback').textContent='';
+  try{if(!isCurrent())return;game.setInfiniteRage(currentMode==='training'&&prefs.infiniteRage);await game.start({map,weapon:currentMode==='network'?'sword':prefs.weapon,difficulty:prefs.difficulty,...selection,mode:currentMode});if(!isCurrent())return;game.setMuted(prefs.muted);game.setQuality(prefs.quality);syncMusic();announce(currentMode==='network'?'联机战场载入中':mission?mission.name+' · 单机任务':'演武 · 开始',2200);$('#world').setAttribute('tabindex','-1');$('#world').focus();}
+  catch(e){if(isCurrent()){if(currentMode==='network')throw e;console.error(e);returnLobby();toast('战场加载失败，请刷新重试');}}
   finally{matchLoading(false);}
 }
-function returnLobby(){if(game)game.menuIdle=true;if(networkLobby?.client){networkLobby.leave();return;}if(modal.open)modal.close();running=false;paused=false;ended=false;clearDialogue();clearCombatFeedback();game?.pause(false);game?.menu(prefs.map).then(()=>{if(!running)game.setWeapon(prefs.weapon);}).catch(error=>{console.error(error);toast('返回战场失败，请刷新重试');});syncMusic();$('#lobby').classList.remove('hidden');$('#game-hud').classList.add('hidden');document.body.classList.remove('playing');$$('.nav-link').forEach(el=>el.classList.toggle('active',el.dataset.panel==='home'));showLobbyPage('home');$('.mode-primary').focus();}
+function returnLobby(){if(game)game.menuIdle=true;if(networkLobby?.client){networkLobby.leave();return;}if(modal.open)modal.close();running=false;paused=false;ended=false;clearDialogue();clearCombatFeedback();game?.pause(false);game?.menu(prefs.map, battleCharacterSelection(prefs)).then(()=>{if(!running)game.setWeapon(prefs.weapon);}).catch(error=>{console.error(error);toast('返回战场失败，请刷新重试');});syncMusic();$('#lobby').classList.remove('hidden');$('#game-hud').classList.add('hidden');document.body.classList.remove('playing');$$('.nav-link').forEach(el=>el.classList.toggle('active',el.dataset.panel==='home'));showLobbyPage('home');$('.mode-primary').focus();}
+
 function updateHUD(s){if(!running)return;
   const avatarId=game?.hero?.modelId??prefs.character,avatarAppearance=s.characterAppearance?.appearance||'original';$('#player-name').textContent=networkLobby?.session?game.hero.name:appearanceCharacterName(avatarId,avatarAppearance);$('.player-seal').textContent=appearanceCharacterSeal(avatarId,avatarAppearance);
   $('#musket-reticle').classList.toggle('hidden',!s.musketAim);
@@ -267,15 +278,17 @@ document.addEventListener('keydown',e=>{if(e.key!=='Escape'||modal.open)return;i
 document.addEventListener('input',e=>{if(e.target.id==='map-search'){const query=e.target.value.trim().toLowerCase();$$('.original-map-option').forEach(button=>button.hidden=!button.textContent.toLowerCase().includes(query));}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&running&&!paused)openModal('pause');syncMusic();});
 window.addEventListener('blur',()=>{if(running&&!paused)openModal('pause');});
-document.addEventListener('change',e=>{if(e.target.id==='show-fps'){prefs.showFps=e.target.checked;game?.frameOverlay?.setVisible(prefs.showFps);save();return;}if(e.target.id==='infinite-rage'){prefs.infiniteRage=e.target.checked;game?.setInfiniteRage(currentMode==='training'&&prefs.infiniteRage);save();updateSelection();return;}if(e.target.id==='spear-style'){if(!['original','phoenix'].includes(e.target.value))return;prefs.spearStyle=e.target.value;game?.setSpearStyle(prefs.spearStyle);save();updateSelection();return;}if(e.target.id==='sword-style'){if(!Object.hasOwn(swordStyleNames,e.target.value))return;prefs.swordStyle=e.target.value;game?.setSwordStyle(prefs.swordStyle);save();updateSelection();return;}if(e.target.id==='quality'){prefs.quality=e.target.value;game?.setQuality(prefs.quality);save();}if(e.target.id==='character-appearance'){applyCharacterAppearance(e.target.value);return;}if(e.target.id==='difficulty'){prefs.difficulty=e.target.value;save();updateSelection();}});
-$('#appearance-toggle').addEventListener('click',()=>{const appearances=Object.keys(NATIVE_APPEARANCES).filter(id=>readyAppearances.has(id));applyCharacterAppearance(appearances[(appearances.indexOf(prefs.characterAppearance)+1)%appearances.length]);});
+document.addEventListener('change',e=>{if(e.target.id==='show-fps'){prefs.showFps=e.target.checked;game?.frameOverlay?.setVisible(prefs.showFps);save();return;}if(e.target.id==='infinite-rage'){prefs.infiniteRage=e.target.checked;game?.setInfiniteRage(currentMode==='training'&&prefs.infiniteRage);save();updateSelection();return;}if(e.target.id==='spear-style'){if(!['original','phoenix'].includes(e.target.value))return;prefs.spearStyle=e.target.value;game?.setSpearStyle(prefs.spearStyle);save();updateSelection();return;}if(e.target.id==='sword-style'){if(!Object.hasOwn(swordStyleNames,e.target.value))return;prefs.swordStyle=e.target.value;game?.setSwordStyle(prefs.swordStyle);save();updateSelection();return;}if(e.target.id==='quality'){prefs.quality=e.target.value;game?.setQuality(prefs.quality);save();}if(e.target.id==='character-appearance'){selectCharacter(0,e.target.value);return;}if(e.target.id==='difficulty'){prefs.difficulty=e.target.value;save();updateSelection();}});
+$('#appearance-toggle').addEventListener('click',()=>{const appearances=Object.keys(NATIVE_APPEARANCES).filter(id=>readyAppearances.has(id));selectCharacter(0,appearances[(appearances.indexOf(prefs.characterAppearance)+1)%appearances.length]);});
+
 $('#difficulty-toggle').addEventListener('click',()=>{prefs.difficulty=prefs.difficulty==='normal'?'hard':'normal';save();updateSelection();toast(prefs.difficulty==='hard'?'已切换：江湖高手':'已切换：江湖新手');});
 $('#fullscreen').addEventListener('click',async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else if(document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();else toast('当前浏览器不支持全屏，可使用浏览器全屏模式');}catch{toast('当前浏览器暂不允许全屏');}});
 $('#pickup-hint').addEventListener('click',()=>{game?.action('pickup');$('#world').focus();});
 $$('[data-action]').filter(button=>button.id!=='pickup-hint').forEach(button=>{button.addEventListener('pointerdown',e=>{e.preventDefault();if(!running||paused)return;button.setPointerCapture(e.pointerId);game.action(button.dataset.action,true);});for(const type of ['pointerup','pointercancel','lostpointercapture'])button.addEventListener(type,e=>{e.preventDefault();game?.action(button.dataset.action,false);});});
-networkLobby=new NetworkLobby({getGame:()=>game,onStart:isCurrent=>startMatch('network',undefined,isCurrent),onNotice:text=>toast(text),onResult:()=>openModal('network'),onStop:text=>{returnLobby();toast(text);}});
+networkLobby=new NetworkLobby({getGame:()=>game,getSelection:()=>battleCharacterSelection(prefs),onStart:(isCurrent,selection)=>startMatch('network',undefined,isCurrent,selection),onNotice:text=>toast(text),onResult:()=>openModal('network'),onStop:text=>{returnLobby();toast(text);}});
 updateSelection();
 try{
-  const {MeteorGame}=await import('./engine.js');game=new MeteorGame($('#world'),{onUpdate:updateHUD,onEvent:handleEvent,onEnd:handleEnd});game.menuIdle=true;game.setKeyBindings(keyBindings);window.__game=game;game.frameOverlay.setVisible(prefs.showFps);await game.ready;game.setSwordStyle(prefs.swordStyle);game.setSpearStyle(prefs.spearStyle);game.setInfiniteRage(prefs.infiniteRage);game.setMuted(prefs.muted);game.setQuality(prefs.quality);game.setWeapon(prefs.weapon);await game.setCharacter?.(prefs.character);await game.menu(prefs.map);await applyCharacterAppearance(prefs.characterAppearance,false);
+  const {MeteorGame}=await import('./engine.js');game=new MeteorGame($('#world'),{onUpdate:updateHUD,onEvent:handleEvent,onEnd:handleEnd});game.menuIdle=true;game.setKeyBindings(keyBindings);window.__game=game;game.frameOverlay.setVisible(prefs.showFps);await game.ready;game.setSwordStyle(prefs.swordStyle);game.setSpearStyle(prefs.spearStyle);game.setInfiniteRage(prefs.infiniteRage);game.setMuted(prefs.muted);game.setQuality(prefs.quality);game.setWeapon(prefs.weapon);await game.menu(prefs.map, battleCharacterSelection(prefs));if (Object.hasOwn(NATIVE_APPEARANCES, linkedAppearance)) save();
+
   $('#load-status').textContent='江湖已就绪';$('#load-screen').style.opacity=0;setTimeout(()=>$('#load-screen').classList.add('hidden'),650);
 }catch(error){console.error(error);$('#load-screen').classList.add('hidden');const el=document.createElement('div');el.className='fatal-error';const text=document.createElement('p');text.textContent='江湖画卷未能展开。请使用支持 WebGL 的新版浏览器，并通过本地服务器打开。';const btn=document.createElement('button');btn.textContent='重新加载';btn.addEventListener('click',()=>location.reload());el.append(text,btn);document.body.append(el);}

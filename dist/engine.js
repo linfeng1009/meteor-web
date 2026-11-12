@@ -11,7 +11,8 @@ import * as THREE from './vendor/three.module.js';
 import { findNativeEnemy } from './native-awareness.js';
 import { NativeNpcCombat, nativeNpcMove, nativeNpcInRange, nativeNpcFacing } from './native-npc-combat.js';
 import { loadGmb, loadGmc } from './gmc-loader.js';
-import { loadNativeCharacter, NATIVE_CHARACTERS, NATIVE_APPEARANCES } from './native-character.js';
+import { DEFAULT_CHARACTER_APPEARANCE, loadNativeCharacter, NATIVE_APPEARANCES } from './native-character.js';
+import { appearanceCharacterName, FEATURED_APPEARANCES } from './character-appearances.js';
 import { loadNativeCombat, NativeCombatController, NATIVE_WEAPONS, NATIVE_LOCOMOTION, createNativeDamageResolver, createNativeSceneDamageResolver, nativeReactionParameters, nativeHitAngle, nativeHitSelection, nativeGuardPose } from './native-combat.js';
 import { NATIVE_MOVE_CATALOG } from './native-move-catalog.js';
 import { recordNativeDirection, selectNativeMove, NATIVE_RECOVERY_INPUT_WINDOW } from './native-input.js';
@@ -71,7 +72,7 @@ export class MeteorGame {
     this.frameMeter = new FrameMeter(); this.frameOverlay = createFrameOverlay(canvas.ownerDocument);
     this.renderScale = new RenderScaleController(this.renderer.getPixelRatio());
     this.clock = new THREE.Clock(); this.simulationClock = new FixedStepClock(); this.elapsed = 0; this.updateAccum = 0; this.running = false; this.paused = false;
-    this.map = 'sifang'; this.weapon = 'sword'; this.swordStyle = 'butterfly'; this.spearStyle = 'original'; this.infiniteRage = false; this.characterId = 0; this.characterAppearance = 'original'; this.appearanceRequest = 0; this.actorSerial = 0; this.mode = 'training'; this.enemies = []; this.keys = new Set();
+    this.map = 'sifang'; this.weapon = 'sword'; this.swordStyle = 'butterfly'; this.spearStyle = 'original'; this.infiniteRage = false; this.characterId = 0; this.characterAppearance = DEFAULT_CHARACTER_APPEARANCE; this.appearanceRequest = 0; this.actorSerial = 0; this.mode = 'training'; this.enemies = []; this.keys = new Set();
     this.cameraManualUntil = 0; this.cameraAngle = .4; this.cameraPitch = .45; this.cameraDistance = 8; this.cameraTarget = v3(); this.locked = null;
     this.raycaster = new THREE.Raycaster(); this.collisionMaterial = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
     this.mapCache = new Map(); this.mapData = new Map(); this.pendingMaps = new Set(); this.weaponCache = new Map(); this.soundCache = new Map(); this.effects = []; this._listeners = []; this.mapRequest = 0; this.characterRequest = 0; this.sessionRequest = 0; this.directionBuffer = [];
@@ -221,7 +222,7 @@ export class MeteorGame {
     });
     this.effectDefinitions = new Map((manifest.sounds?.effectDefinitions || []).map(e => [e.id.toLowerCase(), e]));
     this.waveFiles = new Map((manifest.sounds?.effects || []).map(e => [e.id.toLowerCase(), e]));
-    const [hero] = await Promise.all([this._createFighter(0, '孟星魂', true), this._loadMap('sifang')]);
+    const [hero] = await Promise.all([this._createFighter(0, null, true), this._loadMap('sifang')]);
     this.hero = hero; this.scene.add(hero.root); this._placeFighter(hero, this.currentMap.spawns[0]); await this._equip(hero, this.weapon);
     this.cameraTarget.copy(hero.root.position).add(v3(0, 1.6, 0)); this._tickCamera(1);
     await Promise.all([rageVfxReady, effectContactsReady, poisonReady, slowReady]);
@@ -312,10 +313,14 @@ export class MeteorGame {
     if (!spawns.length || bounds.isEmpty()) throw new Error(`Map ${id} has no usable original spawn/collision data`);
     return { id, entry, metadata, model, colliders, props, environment, sceneObjects: props.instances, bounds, points, spawns, skippedSpawns };
   }
-  async _createFighter(characterId, name, hero = false, team = null) {
-    const character = await loadNativeCharacter(characterId, { scale: SCALE, inPlace: true, appearance: hero ? this.characterAppearance : 'original' });
-    if (hero && character.appearanceStatus.requested !== (this.characterAppearance || 'original')) await character.setAppearance(this.characterAppearance || 'original');
-    const f = { character, root: character.group, id: ++this.actorSerial, modelId: characterId, name: name || NATIVE_CHARACTERS.find(c => c.id === characterId)?.name || `角色 ${characterId}`, hero, team, teamMask: team, hp: 1000, maxHp: 1000, rage: 0, weapon: this.weapon, velocity: v3(), vy: 0, grounded: true, guard: false, dead: false, respawn: 0, attackHits: new Set(), lastSerial: 0, contacts: 0, heldPose: null };
+  async _createFighter(characterId, name, hero = false, team = null, appearance = hero ? this.characterAppearance ?? 'original' : 'original') {
+    const character = await loadNativeCharacter(characterId, { scale: SCALE, inPlace: true, appearance });
+    if (character.appearance !== appearance) {
+      const reason = character.appearanceStatus.reason;
+      character.dispose();
+      throw new Error(reason || '人物外观未能载入');
+    }
+    const f = { character, root: character.group, id: ++this.actorSerial, modelId: characterId, name: name || appearanceCharacterName(characterId, appearance), hero, team, teamMask: team, hp: 1000, maxHp: 1000, rage: 0, weapon: this.weapon, velocity: v3(), vy: 0, grounded: true, guard: false, dead: false, respawn: 0, attackHits: new Set(), lastSerial: 0, contacts: 0, heldPose: null };
     const combatData = character.combatPoses ? { ...this.combatData, poses: character.combatPoses } : this.combatData;
     // The physics track is d_base, not the pelvis' local sway. 004ce850
     // consumes that scene-motion delta independently of skin deformation.
@@ -605,7 +610,7 @@ export class MeteorGame {
       duration: result.duration, value: result.value, refreshed: result.refreshed });
     return true;
   }
-  async start({ map = 'sifang', weapon = 'sword', difficulty = 'normal', character = 0, mode = 'training' } = {}) {
+  async start({ map = 'sifang', weapon = 'sword', difficulty = 'normal', character = 0, characterAppearance = Number(character) === 0 ? DEFAULT_CHARACTER_APPEARANCE : 'original', mode = 'training' } = {}) {
     if (mode === 'story') {
       const mission = getNativeMission(map);
       if (!mission) throw new Error(`Original story mission ${map} is not available yet`);
@@ -618,8 +623,8 @@ export class MeteorGame {
     if (map !== this.map) await this._loadMap(map);
     if (request !== this.sessionRequest || this.disposed) return;
     this.currentMap.props?.reset?.();
-    if (this.mode === 'story') character = 0;
-    if (Number(character) !== this.characterId) await this.setCharacter(character);
+    if (this.mode === 'story') { character = 0; characterAppearance = 'original'; }
+    await this.setCharacter(character, characterAppearance);
     if (request !== this.sessionRequest || this.disposed) return;
     this.difficulty = difficulty;
     for (const f of this.enemies) { f.disposed = true; this._disposeNameplate(f); f.character.dispose(); f.root.removeFromParent(); } this.enemies = [];
@@ -633,38 +638,75 @@ export class MeteorGame {
       if (request !== this.sessionRequest || this.disposed) { host.dispose(); return; }
     } else {
       this.weapon = NATIVE_WEAPONS[weapon] ? weapon : 'sword'; await this._equip(this.hero, this.weapon); this._placeFighter(this.hero, this.currentMap.spawns[0]);
-      const actors = await Promise.all([1, 2, 5].map(id => this._createFighter(id, NATIVE_CHARACTERS.find(c => c.id === id)?.name)));
-      if (request !== this.sessionRequest || this.disposed) { for (const f of actors) { f.disposed = true; this._disposeNameplate(f); f.character.dispose(); } return; }
-      const heroPos = this.hero.root.position;
-      const ordered = this.currentMap.spawns.map((spawn, i) => ({ ...spawn, index: i })).filter(spawn => flatDistance(spawn.position, heroPos) > 4).sort((a, b) => flatDistance(a.position, heroPos) - flatDistance(b.position, heroPos));
-      await Promise.all(actors.map(async (f, i) => {
-        const spawn = ordered[i] || this.currentMap.spawns[(i + 1) % this.currentMap.spawns.length];
-        f.spawnIndex = spawn.index ?? i + 1; f.slot = i; f.team = f.teamMask = 2; this._placeFighter(f, spawn); this.scene.add(f.root); this.enemies.push(f); await this._equip(f, ['sword', 'blade', 'spear'][i]);
-      }));
+      if (mode !== 'network') {
+        await this._spawnTrainingOpponents(request);
+      }
     }
     if (request !== this.sessionRequest || this.disposed) return;
     this._resetWorldClock(); this.running = true; this.cameraManualUntil = 0; this.cameraAngle = this.currentMap.id === 'sn01' ? Math.PI / 2 : 0; this.cameraPitch = this.currentMap.cameraPitch ?? .4; this.cameraDistance = this.currentMap.cameraDistance ?? 8;
     this.cameraTarget.copy(this.hero.root.position).add(v3(0, 1.5, 0)); this._tickCamera(1); this._unlockAudio();
     this._emit(this.mode === 'story' ? `原版${this.currentMap.entry.name || this.currentMap.id}` : '原版动作演练开始', 'info'); this._hud();
   }
-  async menu(map = this.map) {
+  async _spawnTrainingOpponents(request) {
+    const appearances = FEATURED_APPEARANCES.filter(id => id !== this.hero.character.appearance).slice(0, 3);
+    const results = await Promise.allSettled(appearances.map(id => this._createFighter(NATIVE_APPEARANCES[id].characterId, null, false, 2, id)));
+    const actors = results.filter(result => result.status === 'fulfilled').map(result => result.value);
+    const failure = results.find(result => result.status === 'rejected');
+    if (failure || request !== this.sessionRequest || this.disposed) {
+      for (const actor of actors) { actor.disposed = true; this._disposeNameplate(actor); actor.character.dispose(); }
+      if (failure && request === this.sessionRequest && !this.disposed) throw failure.reason;
+      return;
+    }
+    const heroPos = this.hero.root.position;
+    const spawns = this.currentMap.spawns;
+    const ordered = spawns.map((spawn, i) => ({ ...spawn, index: i })).filter(spawn => flatDistance(spawn.position, heroPos) > 4).sort((a, b) => flatDistance(a.position, heroPos) - flatDistance(b.position, heroPos));
+    await Promise.all(actors.map(async (actor, i) => {
+      const spawn = ordered[i] || spawns[(i + 1) % spawns.length];
+      actor.spawnIndex = spawn.index ?? i + 1;
+      actor.slot = i;
+      this._placeFighter(actor, spawn);
+      this.scene.add(actor.root);
+      this.enemies.push(actor);
+      await this._equip(actor, ['sword', 'blade', 'spear'][i]);
+    }));
+  }
+  async menu(map = this.map, selection) {
     this.mouseLook?.release();
     this.keyboard?.reset();
-    ++this.sessionRequest; this.projectiles?.clear('menu'); this.projectiles?.pause(false); this.muskets?.clear(); this.wheels?.clear(); this.muskets?.pause(false); this.wheels?.pause(false); this.impactFeedback?.clear(); this.rageVfx?.clear(); this.effectContacts?.clear(); this.items?.reset(); this._clearDroppedWeapons(); this.missionHost?.dispose(); this.missionHost = null; this.missionState = null; this.mode = 'training';
+    const request = ++this.sessionRequest;
+    this.projectiles?.clear('menu'); this.projectiles?.pause(false); this.muskets?.clear(); this.wheels?.clear(); this.muskets?.pause(false); this.wheels?.pause(false); this.impactFeedback?.clear(); this.rageVfx?.clear(); this.effectContacts?.clear(); this.items?.reset(); this._clearDroppedWeapons(); this.missionHost?.dispose(); this.missionHost = null; this.missionState = null; this.mode = 'training';
     this.running = false; this.paused = false; this.keys.clear(); this.traversalTap=null; this.pointer = null; this.locked = null; this.directionBuffer = [];
-    await this.ready; if (this.disposed) return;
+    await this.ready; if (this.disposed || request !== this.sessionRequest) return;
     if (map !== this.map) await this._loadMap(map);
+    if (this.disposed || request !== this.sessionRequest) return;
     this.currentMap.props?.reset?.();
     for (const f of this.enemies) { f.disposed = true; this._disposeNameplate(f); f.character.dispose(); } this.enemies = [];
+    if (selection) await this.setCharacter(selection.character, selection.characterAppearance);
+    if (this.disposed || request !== this.sessionRequest) return;
     this.hero.guard = false; this.hero.scriptConfig = null; this.hero.scriptInputBlocked = false; this._placeFighter(this.hero, this.currentMap.spawns[0]); this.hero.root.rotation.y = -.3; this._resetWorldClock(); this._hud();
   }
   requestMouseLock() { return this.mouseLook?.request(); }
   setKeyBindings(bindings) { this.keyboard?.setBindings(bindings);this.mouseLook?.setBindings(bindings); }
   releaseInput({releaseMouse=true}={}) { this.keyboard?.reset(); if(releaseMouse)this.mouseLook?.release(); this.keys.clear(); clearPlayerCommands(this.localControl||this); this.pointer=null; if(this.hero)this.hero.guard=false; }
   pause(value = true) { this.releaseInput({releaseMouse:!!value}); if(this.paused !== !!value)this._resetWorldClock(); this.paused = !!value; this.projectiles?.pause(this.paused); this.muskets?.pause(this.paused); this.wheels?.pause(this.paused); if (this.master) this.master.gain.value = this.paused || this.muted ? 0 : .25; this._hud(); }
-  async setCharacter(id = 0) {
-    const request = ++this.characterRequest; await this.ready; id = Number(id); if (id === this.characterId || request !== this.characterRequest) return;
-    const actor = await this._createFighter(id, NATIVE_CHARACTERS.find(c => c.id === id)?.name, true); if (this.disposed || request !== this.characterRequest) { actor.disposed = true; actor.character.dispose(); return; }
+  async setCharacter(id = 0, appearance = Number(id) === 0 ? DEFAULT_CHARACTER_APPEARANCE : 'original') {
+    const request = ++this.characterRequest;
+    await this.ready;
+    if (this.disposed || request !== this.characterRequest) return;
+    id = Number(id);
+    if (id === this.characterId) {
+      if (this.hero.character.appearance !== appearance || this.characterAppearance !== undefined && this.characterAppearance !== appearance) {
+        const status = await this.setCharacterAppearance(appearance);
+        if (request === this.characterRequest && (!status?.available || status.appearance !== appearance)) {
+          throw new Error(status?.reason || '人物外观未能载入');
+        }
+      }
+      if (request === this.characterRequest) this.hero.name = appearanceCharacterName(id, appearance);
+      return;
+    }
+    const actor = await this._createFighter(id, null, true, null, appearance);
+    if (this.disposed || request !== this.characterRequest) { actor.disposed = true; actor.character.dispose(); return; }
+    this.characterAppearance = appearance;
     if (this.hero) { this.rageVfx?.clearActor(this.hero); this.effectContacts?.clearActor(this.hero); disposePhoenixSpear(this.hero.phoenixSpear); this.hero.disposed = true; this.hero.character.dispose(); } this.hero = actor; this.characterId = id; this.scene.add(actor.root); this._placeFighter(actor, this.currentMap.spawns[0]); await this._equip(actor, this.weapon); this._hud();
   }
   async setCharacterAppearance(mode = 'original') {

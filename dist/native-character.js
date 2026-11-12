@@ -9,9 +9,10 @@ import {configureSourceMaterial} from './character-materials.js';
 const baseURL=new URL('./assets/original/characters/',import.meta.url);
 const dataCache=new Map(), textureCache=new Map(), enhancedCache=new Map();
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+export const DEFAULT_CHARACTER_APPEARANCE = 'liuchao';
 export const NATIVE_APPEARANCES=Object.freeze({
   original:Object.freeze({id:'original',label:'原版人物',characterId:null}),
-  hd:Object.freeze({id:'hd',label:'孟星魂 · 高清试制',characterId:0,assetPath:'./assets/enhanced/p0/'}),
+  liuchao:Object.freeze({id:'liuchao',label:'琉潮 · 原创角色',characterId:0,assetPath:'./assets/enhanced/liuchao/'}),
   hutao:Object.freeze({id:'hutao',label:'YS-胡桃 · 模型适配',characterId:0,assetPath:'./assets/enhanced/hutao/'}),
   raiden:Object.freeze({id:'raiden',label:'YS-影 · 模型适配',characterId:0,assetPath:'./assets/enhanced/raiden/'}),
   emilia:Object.freeze({id:'emilia',label:'RE0-爱蜜莉雅 · 模型适配',characterId:0,assetPath:'./assets/enhanced/emilia/'}),
@@ -24,7 +25,9 @@ export const NATIVE_APPEARANCES=Object.freeze({
   aether:Object.freeze({id:'aether',label:'空 · 模型适配',characterId:0,assetPath:'./assets/enhanced/aether/'}),
   furina:Object.freeze({id:'furina',label:'芙宁娜 · 模型适配',characterId:0,assetPath:'./assets/enhanced/furina/'}),
   zhaojun:Object.freeze({id:'zhaojun',label:'王昭君 · 长夜焕生',characterId:0,assetPath:'./assets/enhanced/zhaojun/'}),
-  keqing:Object.freeze({id:'keqing',label:'刻晴 · 模型适配',characterId:0,assetPath:'./assets/enhanced/keqing/'})
+  keqing:Object.freeze({id:'keqing',label:'刻晴 · 模型适配',characterId:0,assetPath:'./assets/enhanced/keqing/'}),
+  haku:Object.freeze({id:'haku',label:'TDA 弱音 · 夏日特调',characterId:0,assetPath:'./assets/enhanced/haku/'}),
+  ningguang:Object.freeze({id:'ningguang',label:'凝光 · 纱中幽兰',characterId:0,assetPath:'./assets/enhanced/ningguang/'})
 });
 export const NATIVE_POSES=Object.freeze({idle:0,swordReady:6,spearReady:7,bladeReady:8,guard:16,spearGuard:17,bladeGuard:18,walk:140,run:144,jump:151,fall:152,hit:90,death:117,attack:262,attack2:263,attack3:264,spearAttack:279,bladeAttack:295});
 export const NATIVE_CHARACTERS=Object.freeze([{"id":0,"name":"孟星魂","portrait":"./assets/original/characters/portraits/p0.jpg"},{"id":1,"name":"冷燕","portrait":"./assets/original/characters/portraits/p1.jpg"},{"id":2,"name":"铁胡子","portrait":"./assets/original/characters/portraits/p2.jpg"},{"id":3,"name":"破空","portrait":"./assets/original/characters/portraits/p3.jpg"},{"id":4,"name":"夜猫子","portrait":"./assets/original/characters/portraits/p4.jpg"},{"id":5,"name":"冯浩","portrait":"./assets/original/characters/portraits/p5.jpg"},{"id":6,"name":"孙剑","portrait":"./assets/original/characters/portraits/p6.jpg"},{"id":7,"name":"萧安","portrait":"./assets/original/characters/portraits/p7.jpg"},{"id":8,"name":"子与","portrait":"./assets/original/characters/portraits/p8.jpg"},{"id":9,"name":"王强","portrait":"./assets/original/characters/portraits/p9.jpg"},{"id":10,"name":"无名","portrait":"./assets/original/characters/portraits/p10.jpg"},{"id":11,"name":"叶翔","portrait":"./assets/original/characters/portraits/p11.jpg"},{"id":12,"name":"小何","portrait":"./assets/original/characters/portraits/p12.jpg"},{"id":13,"name":"凤凰","portrait":"./assets/original/characters/portraits/p13.jpg"},{"id":14,"name":"石群","portrait":"./assets/original/characters/portraits/p14.jpg"},{"id":15,"name":"屠城","portrait":"./assets/original/characters/portraits/p15.jpg"},{"id":16,"name":"范璇","portrait":"./assets/original/characters/portraits/p16.jpg"},{"id":17,"name":"高寄萍","portrait":"./assets/original/characters/portraits/p17.jpg"},{"id":18,"name":"孙玉伯","portrait":"./assets/original/characters/portraits/p18.jpg"},{"id":19,"name":"律香川","portrait":"./assets/original/characters/portraits/p19.jpg"}]);
@@ -116,15 +119,15 @@ export function validateEnhancedSkin(skin,boneCount=30){
   if(skin.normals!==undefined&&(!finite(skin.normals)||skin.normals.length!==nv*3))throw new Error('Invalid enhanced character normals');
   return {...skin,vertexCount:nv,triangleCount:skin.faces.length};
 }
-export async function loadEnhancedCharacterData(id=0,appearance='hd'){
+export async function loadEnhancedCharacterData(id=0,appearance=DEFAULT_CHARACTER_APPEARANCE){
   const descriptor=NATIVE_APPEARANCES[appearance];
   if(!descriptor?.assetPath)throw new Error('Unknown enhanced character appearance');
   if(Number(id)!==descriptor.characterId)throw new Error(`${descriptor.label}目前仅提供孟星魂骨架适配`);
   const key=`${Number(id)}:${appearance}`,enhancedURL=new URL(descriptor.assetPath,import.meta.url);
   if(!enhancedCache.has(key))enhancedCache.set(key,(async()=>{
-    const manifestResponse=await fetch(new URL('manifest.json',enhancedURL));if(!manifestResponse.ok)throw new Error(`高清资源尚未就绪（${manifestResponse.status}）`);
+    const manifestResponse=await fetch(new URL('manifest.json',enhancedURL));if(!manifestResponse.ok)throw new Error(`人物资源尚未就绪（${manifestResponse.status}）`);
     const manifest=await manifestResponse.json();if(manifest.characterId!==descriptor.characterId||typeof manifest.mesh!=='string'||(manifest.appearance!==undefined&&manifest.appearance!==appearance))throw new Error('人物外观资源清单与骨架或外观不匹配');
-    const meshURL=new URL(manifest.mesh,enhancedURL),meshResponse=await fetch(meshURL);if(!meshResponse.ok)throw new Error(`高清模型读取失败（${meshResponse.status}）`);
+    const meshURL=new URL(manifest.mesh,enhancedURL),meshResponse=await fetch(meshURL);if(!meshResponse.ok)throw new Error(`人物模型读取失败（${meshResponse.status}）`);
     return {manifest,skin:validateEnhancedSkin(await meshResponse.json()),path:new URL('./',meshURL)};
   })().catch(error=>{enhancedCache.delete(key);throw error;}));
   return enhancedCache.get(key);

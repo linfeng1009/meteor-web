@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 import * as THREE from '../dist/vendor/three.module.js';
 import { nativeCanDiscover, findNativeEnemy } from '../dist/native-awareness.js';
 import { MeteorGame } from '../dist/engine.js';
+import { FEATURED_APPEARANCES, savedBattleCharacterSelection } from '../dist/character-appearances.js';
 import { loadNativeCombat, createNativeDamageResolver } from '../dist/native-combat.js';
 import { NativeNpcCombat } from '../dist/native-npc-combat.js';
 
@@ -56,7 +57,7 @@ const fixtures = [];
 async function fixture({ originalMap = false } = {}) {
   const game = Object.create(MeteorGame.prototype), events = [], floor = new THREE.Mesh(new THREE.PlaneGeometry(250, 250), new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }));
   floor.rotation.x = -Math.PI / 2; floor.updateMatrixWorld(true);
-  Object.assign(game, { ready: Promise.resolve(), sessionRequest: 0, characterId: 0, map: 'sifang', actorSerial: 0, enemies: [],
+  Object.assign(game, { ready: Promise.resolve(), sessionRequest: 0, characterRequest: 0, characterId: 0, map: 'sifang', actorSerial: 0, enemies: [],
     combatData: combat, weaponManifest: weapons, weaponItems: new Map(weapons.items.map(item => [Number(item.itemId), item])),
     weaponModels: new Map(weapons.models.map(model => [model.modelId.toLowerCase(), model])), weaponCache: new Map(),
     scene: new THREE.Scene(), camera: new THREE.PerspectiveCamera(), cameraTarget: v(), raycaster: new THREE.Raycaster(),
@@ -124,6 +125,11 @@ test('unseen training enemies cannot discover through real collision triangles a
 test('original四方阵 geometry and normal start preserve discovery-gated live AI rather than an opening three-enemy rush', async t => {
   const { game } = await fixture({ originalMap: true });
   assert.ok(game.currentMap.colliders.length > 0); assert.ok(game.currentMap.props);
+  assert.equal(game.hero.character.appearance, 'liuchao');
+  assert.equal(game.hero.name, '琉潮');
+  assert.equal(new Set(game.enemies.map(actor => actor.character.appearance)).size, 3);
+  assert.ok(game.enemies.every(actor => FEATURED_APPEARANCES.includes(actor.character.appearance)));
+
   const start = game.enemies.map(actor => actor.root.position.clone());
   for (let frame = 0; frame < 60; frame++) tick(game);
   const moved = game.enemies.map((actor, index) => actor.root.position.distanceTo(start[index]));
@@ -131,6 +137,25 @@ test('original四方阵 geometry and normal start preserve discovery-gated live 
   assert.ok(moved[0] > 1); assert.ok(moved[1] < .01); assert.ok(moved[2] < .01);
   assert.equal(game.hero.hp, game.hero.maxHp);
   t.diagnostic(`Originalsn06 model/colliders/spawns plus live AI: displacement=${moved.map(n => n.toFixed(3))}; one enemy discovers the player, two remain unaware. CPU; no browser rendering.`);
+});
+
+test('an old default or retired character migrates to Liu Chao, while explicit original choices persist', () => {
+  const defaultChoice = { character: 0, characterAppearance: 'liuchao' };
+  assert.deepEqual(savedBattleCharacterSelection({ character: 0, characterAppearance: 'original' }), defaultChoice);
+  assert.deepEqual(savedBattleCharacterSelection({ character: 0, characterAppearance: 'hd', characterSelected: true }), defaultChoice);
+  assert.deepEqual(savedBattleCharacterSelection({ character: 0, characterAppearance: 'original', characterSelected: true }), { character: 0, characterAppearance: 'original' });
+  assert.deepEqual(savedBattleCharacterSelection({ character: 1, characterAppearance: 'original', characterSelected: true }), { character: 1, characterAppearance: 'original' });
+});
+
+test('a manually picked original fighter remains selected when opening a battlefield with featured NPCs', async () => {
+  const { game } = await fixture();
+  await game.start({ map: 'sifang', character: 1, characterAppearance: 'original' });
+  assert.equal(game.hero.modelId, 1);
+  assert.equal(game.hero.character.appearance, 'original');
+  assert.ok(game.enemies.every(actor => FEATURED_APPEARANCES.includes(actor.character.appearance)));
+  await game.menu('sifang', { character: 0, characterAppearance: 'hutao' });
+  assert.equal(game.hero.character.appearance, 'hutao');
+  assert.equal(game.enemies.length, 0);
 });
 
 async function opponent(game, weapon, config, random) {

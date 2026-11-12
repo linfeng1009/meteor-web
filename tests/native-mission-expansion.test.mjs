@@ -24,6 +24,8 @@ function damageVip(game, vip, threshold = 0) {
 test('both new missions load real source geometry, original equipment and exact NPC HP/team/spawns', async () => {
   for (const id of ['sn09', 'sn15']) {
     const { game, host } = await mission(id);
+    assert.equal(game.hero.character.appearance, 'original');
+    assert.ok(game.enemies.every(actor => actor.character.appearance === 'original'));
     assert.equal(game.currentMap.props.warnings.length, 0); assert.equal(host.diagnostics.length, 0);
     assert.equal(game.hero.hp, id === 'sn09' ? 3000 : 2500);
     assert.equal(game.hero.weaponId, id === 'sn09' ? 5 : 13);

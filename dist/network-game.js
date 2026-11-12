@@ -1,4 +1,5 @@
 import {roomRules,matchResult,NETWORK_MODES} from './network-rules.js';
+import { battleCharacterSelection } from './character-appearances.js';
 // Listen-host simulation adapter: guests submit inputs, never HP/damage.
 // Uses the same native POS/ACT/RES combat, movement and collision paths.
 const continuous=['forward','back','left','right','guard','crouch'];
@@ -39,7 +40,8 @@ export class NetworkGame{
     game.hero.name=self.name;game.hero.networkId=self.id;
     try{
       for(const player of room.players.filter(p=>p.id!==client.playerId)){
-        const peer=await game._createFighter(0,player.name);created.push(peer);
+        const selection=battleCharacterSelection(player.selection);
+        const peer=await game._createFighter(selection.character,player.name,false,null,selection.characterAppearance);created.push(peer);
         if(!valid())return null;peer.networkId=player.id;game.scene.add(peer.root);game.enemies.push(peer);await game._equip(peer,'sword');if(!valid())return null;
       }
       for(const player of room.players){

@@ -107,6 +107,6 @@ test('Raiden Shogun display rig follows the original moves without changing limb
 test('Raiden Shogun is selectable in the workshop with its own identity',async()=>{
   assert.ok(WORKSHOP_APPEARANCES.includes('shogun'));
   assert.equal(appearanceCharacterName(0,'shogun'),'雷电将军');
-  assert.equal(NATIVE_APPEARANCES.ganyu.characterId,0);
-  assert.equal(Object.isFrozen(NATIVE_APPEARANCES.ganyu),true);
+  assert.equal(NATIVE_APPEARANCES.shogun.characterId,0);
+  assert.equal(Object.isFrozen(NATIVE_APPEARANCES.shogun),true);
 });

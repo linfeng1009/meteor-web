@@ -52,7 +52,7 @@ test('rage costs and unavailable projectile specials remain visible next to thei
   }
   assert.match(guide('dart'), /8 项指令/);
   assert.equal((guide('dart').match(/暂不可用/g) || []).length, 0);
-  assert.match(row('dart', 209), /移动速度系数50%，持续15秒/);
+  assert.match(row('dart', 209), /命中施加原钝筋：移动速度系数50%，持续15秒/);
   assert.match(row('dart', 210), /每3秒削减10气血，持续15秒/);
   assert.match(row('dart', 201), /削减敌人20怒气/);
   assert.match(row('dart', 551), /空中向四周散射/);

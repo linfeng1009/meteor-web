@@ -2,12 +2,13 @@ import {NETWORK_MODES} from './network-rules.js';
 import {NetworkClient} from './network-client.js';
 import {NetworkGame} from './network-game.js';
 export class NetworkLobby{
-  constructor({getGame,onStart,onStop,onNotice,onResult=()=>{},createClient=options=>new NetworkClient(options),createSession=(...args)=>NetworkGame.create(...args)}){Object.assign(this,{getGame,onStart,onStop,onNotice,onResult,createClient,createSession});}
+  constructor({getGame,getSelection=()=>undefined,onStart,onStop,onNotice,onResult=()=>{},createClient=options=>new NetworkClient(options),createSession=(...args)=>NetworkGame.create(...args)}){Object.assign(this,{getGame,getSelection,onStart,onStop,onNotice,onResult,createClient,createSession});}
   mount(root){this.root=root;this.render();if(!this.client)this.refreshRooms();}
   async refreshRooms(){
     if(this.listLoading||this.client)return;this.listLoading=true;this.listError='';this.render();
     try{const result=await new NetworkClient().api('/api/rooms/list');this.availableRooms=result.rooms;}catch(error){this.listError=error.message;}finally{this.listLoading=false;if(!this.client)this.render();}
   }
+
   render(){
     const root=this.root;if(!root?.isConnected)return;root.replaceChildren();
     const node=(tag,text,cls,parent=root)=>{const el=document.createElement(tag);if(text!==undefined)el.textContent=text;if(cls)el.className=cls;parent.append(el);return el;};
@@ -40,7 +41,7 @@ export class NetworkLobby{
     node('p',room.mode==='deathmatch'?`四方阵 · 红蓝两队 · 队友免伤 · 阵亡后本局不复活 · ${room.timeLimit/60}分钟超时平局`:`四方阵 · 自由混战 · ${room.scoreLimit}杀或${room.timeLimit/60}分钟结算`,'room-status');
     const seats=node('div',undefined,'room-seats');for(const p of room.players){const row=node('div',`${p.name}${p.id===room.hostId?'（房主）':''}${p.id===this.client.playerId?'（你）':''}\n${room.mode==='deathmatch'?(p.team===1?'红队 · ':'蓝队 · '):''}${p.ready?'已准备':'未准备'}${room.phase==='loading'?(p.loaded?' · 载入完成':' · 载入中'):''}`,'room-seat',seats);if(room.mode==='deathmatch')row.dataset.team=p.team;}
     for(let i=room.players.length;i<(room.maxPlayers||4);i++)node('div','等待同道加入','room-seat empty',seats);
-    const rules=node('section',undefined,'room-rules');node('h3','本局说明','',rules);node('p','联机固定四方阵、原版人物与长剑。所有人准备后，由房主开局。','',rules);
+    const rules=node('section',undefined,'room-rules');node('h3','本局说明','',rules);node('p','联机固定四方阵、房间选定人物与长剑。所有人准备后，由房主开局。','',rules);
     if(room.phase==='loading')node('p','正在等待：'+room.players.filter(p=>!p.loaded).map(p=>p.name).join('、')+' 载入战场','room-wait').setAttribute('role','status');
     const actions=node('div',undefined,'room-actions');button('退出房间',()=>this.leave(),actions);
     if(room.phase==='waiting'){
@@ -64,9 +65,10 @@ export class NetworkLobby{
       onRoom:r=>{if(current())this.roomChanged(r,client).catch(error=>stop('联机状态错误：'+error.message));},
       onInput:inputs=>{if(!current())return;if(!this.session?.active)throw Error('战斗未就绪，无法应用操作');this.session.inputs(inputs);},
       onFrame:frame=>{if(current())this.session?.apply(frame);},onError:message=>stop('联机中断：'+message)});
-    try{this.client=client;this.render();await client.connect(kind,data);if(current())this.render();}
+    try{this.client=client;this.render();await client.connect(kind,{...data,selection:this.getSelection()});if(current())this.render();}
     catch(e){if(current()){client.closed=true;clearInterval(client.timer);this.client=null;this.error=e.message;throw e;}}
     finally{if(this.generation===generation){this.connecting=false;this.render();}}
+
   }
   async roomChanged(room,client=this.client){
     if(!client||client!==this.client||client.closed)return;
@@ -77,7 +79,7 @@ export class NetworkLobby{
       const current=()=>generation===this.generation&&this.client===client&&!client.closed;
       const valid=()=>current()&&client.room.round===room.round&&client.room.phase==='loading'&&(!game||this.getGame()===game);
       try{
-        await this.onStart(valid);if(!valid()){if(current()&&client.room.phase==='waiting')this.onStop('房间已结束');return;}
+        await this.onStart(valid,room.players?.find(player=>player.id===client.playerId)?.selection);if(!valid()){if(current()&&client.room.phase==='waiting')this.onStop('房间已结束');return;}
         game=this.getGame();const session=await this.createSession(game,client,room,{isCurrent:valid});
         if(!valid()){session?.dispose();if(current()&&client.room.phase==='waiting')this.onStop('房间已结束');return;}
         if(!session)return;this.session=session;await client.command('loaded');

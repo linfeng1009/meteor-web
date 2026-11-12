@@ -1,0 +1,187 @@
+{
+  "schema": 1,
+  "characterId": 0,
+  "appearance": "haku",
+  "label": "TDA 弱音 · 夏日特调",
+  "mesh": "mesh.json",
+  "complete": true,
+  "completeness": {
+    "bodyGeometry": true,
+    "headHairGeometry": true,
+    "eyes": true,
+    "faceGeometry": true,
+    "sourcePmxSkeleton": true,
+    "originalSourceGameSkeleton": false
+  },
+  "stats": {
+    "sourceVertices": 29555,
+    "sourceTriangles": 43251,
+    "vertices": 29555,
+    "triangles": 42876,
+    "sourceBones": 633,
+    "bones": 30,
+    "dummies": 6,
+    "secondaryBones": 26,
+    "materials": 35,
+    "textures": 13,
+    "omittedTriangles": 375
+  },
+  "retarget": {
+    "method": "Original mesh proportions preserved by a single uniform transform; independent source-length display skeleton follows original AMB/POS rotations; display weapon sockets follow the new hands.",
+    "provisional": true,
+    "sourceSkeletonMissing": false,
+    "hairPhysics": true,
+    "hairPhysicsProfile": "web-spring-bone-v2-restrained",
+    "originalMmdPhysics": false,
+    "clothPhysics": false,
+    "fingerArticulation": "Thumb and index chains of the native rig drive the source finger groups; other fingers fold into those two chains."
+  },
+  "provenance": {
+    "sourceArchive": "assets/source/haku",
+    "sourceModel": "TDA Haku ",
+    "modelAuthor": "TDA / iRon0129（身体）、coa / iRon0129 / larig-apagar / DD-372Cassin（面部与头发）、Samsink 机动战士牛肉（服装与鞋）",
+    "rigAuthor": "模型编辑：DD-372Cassin",
+    "credit": "身体：TDA/iRon0129；面部/头发：coa/iRon0129/larig-apagar/DD-372Cassin；服装/鞋：Samsink（机动战士牛肉）；模型编辑：DD-372Cassin。",
+    "license": "Original distribution readme retained verbatim. It forbids redistribution, part extraction and commercial use, and states MMD use; this is a user-requested local adaptation, not a rights grant or published distribution.",
+    "limits": [
+      "Original source proportions preserved; action retarget remains approximate.",
+      "Source PMX has no verified real-world centimetre calibration; no physical height is claimed.",
+      "Source hair skeleton and weights retained but MMD rigid bodies are not executed.",
+      "Skirt (スカート_*, 252 bones), straw-hat ribbons and accessories are rigid on their parent body bones; no cloth solver.",
+      "No expression morph or independent per-finger solver.",
+      "Original toon ramp and sphere maps are not reproduced; base colour, alpha cutout and roughness are used."
+    ]
+  },
+  "omittedRenderPasses": [
+    {
+      "material": "发丝",
+      "sourceMaterial": 33,
+      "triangles": 375,
+      "reason": "Authored default alpha zero."
+    }
+  ],
+  "sourceFiles": [
+    {
+      "file": "Haku2.pmx",
+      "bytes": 2199076,
+      "sha256": "95fe957bee4df0edfdb4f17d9c5fc48674ab5836ddf4b33fdcfed72fbfe46de5"
+    },
+    {
+      "file": "tex/body.png",
+      "runtime": "textures/body.png",
+      "sha256": "eb2a6c13d78a1c460bc89cd6eb1f2392f871337517d1f08f2dac1fdb4efc3d8c",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "data/UV3.png",
+      "runtime": "textures/UV3.png",
+      "sha256": "ad425cbca9684b69cb22e8c5e26a6186cb57664c790c761a4e008a11212ee2e2",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "data/UV2.png",
+      "runtime": "textures/UV2.png",
+      "sha256": "f27c842006476adeaf9ecd0bf4fd8c16f7355b9374846751f4927856ee087334",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "data/UV1.png",
+      "runtime": "textures/UV1.png",
+      "sha256": "1179a145a09cd72001bb6e99f0e22f35c602b6ea8080807e30a4b6e6636fad24",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "data/UVL1.png",
+      "runtime": "textures/UVL1.png",
+      "sha256": "6ee673e7f3ec1e37cedd64030bae3a84330fa389bc45329e8b590ed948b4bc0c",
+      "size": [
+        1393,
+        1183
+      ]
+    },
+    {
+      "file": "data/UVH.png",
+      "runtime": "textures/UVH.png",
+      "sha256": "0971cf2e426125dc98e9bc36cbd58978d283841cda49d0293f0fb5f04eddd3d6",
+      "size": [
+        2048,
+        1024
+      ]
+    },
+    {
+      "file": "data/UVL.png",
+      "runtime": "textures/UVL.png",
+      "sha256": "ddd6b87181cee8b57ce06d7dd862cb6dc940a2b1148de37b7bde7a6e6c79857b",
+      "size": [
+        1393,
+        1183
+      ]
+    },
+    {
+      "file": "data/UVG.png",
+      "runtime": "textures/UVG.png",
+      "sha256": "e7b75bd2a55b60981510666f907410893ba6dec2372e6b4c3071cb12ea809330",
+      "size": [
+        300,
+        1024
+      ]
+    },
+    {
+      "file": "tex/face_Haku_R.png",
+      "runtime": "textures/face_Haku_R.png",
+      "sha256": "50af5ad98d9a11a3f753a9839e2639adc9800a73866773b5029899abf095d6df",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "tex/Face.png",
+      "runtime": "textures/Face.png",
+      "sha256": "5025274350e9ea50c68ad68518c53adc9f4447e0f51bf522b44c0056322386a1",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "tex/eye.png",
+      "runtime": "textures/eye.png",
+      "sha256": "e8b5bb7b58e72e789d4267adacfcbe66b67deab923eb0447f78dd1303e1d73ad",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "tex/eyehi.png",
+      "runtime": "textures/eyehi.png",
+      "sha256": "ef47bc002bd0ad01c891097b0ec2a697398d7d25c8e23ade60778b074bfb6caf",
+      "size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "tex/hair_HakuOp.png",
+      "runtime": "textures/hair_HakuOp.png",
+      "sha256": "b486786a57509a5963d1bae03d73c46ab1050174515c153ea5a1d19533096778",
+      "size": [
+        1024,
+        1024
+      ]
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "schema": 1,
+  "characterId": 0,
+  "appearance": "ningguang",
+  "label": "凝光 · 纱中幽兰",
+  "mesh": "mesh.json",
+  "complete": true,
+  "completeness": {
+    "bodyGeometry": true,
+    "headHairGeometry": true,
+    "eyes": true,
+    "faceGeometry": true,
+    "sourcePmxSkeleton": false,
+    "originalSourceGameSkeleton": false
+  },
+  "stats": {
+    "sourceVertices": 24547,
+    "sourceTriangles": 31188,
+    "vertices": 24547,
+    "triangles": 23805,
+    "sourceBones": 94,
+    "bones": 30,
+    "dummies": 6,
+    "secondaryBones": 0,
+    "materials": 29,
+    "textures": 3,
+    "omittedTriangles": 7383
+  },
+  "retarget": {
+    "method": "Original mesh proportions preserved by a single uniform transform; independent source-length display skeleton follows original AMB/POS rotations; display weapon sockets follow the new hands.",
+    "provisional": true,
+    "sourceSkeletonMissing": false,
+    "hairPhysics": false,
+    "hairPhysicsProfile": "none (hair is rigid to the head)",
+    "originalMmdPhysics": false,
+    "clothPhysics": false,
+    "fingerArticulation": "Thumb and index chains of the native rig drive the source finger groups; other fingers fold into those two chains."
+  },
+  "provenance": {
+    "sourceArchive": "assets/source/ningguang",
+    "sourceModel": "凝光_纱中幽兰_可编辑.blend",
+    "modelAuthor": "miHoYo（原模型）",
+    "rigAuthor": "未提供署名文件",
+    "credit": "凝光「纱中幽兰」可编辑模型；原模型版权归 miHoYo，本包未附署名或配布说明文件。",
+    "license": "No readme, credit or licence file was shipped with this pack. Treated as a private local conversion; not redistributed or published.",
+    "limits": [
+      "Original source proportions preserved; action retarget remains approximate.",
+      "Source is a .blend scene, not a PMX, so PMX-specific statistics are not applicable.",
+      "Co-planar colour layers 肌 (duplicate of 体2) and 肌2 (inside 体) are skipped.",
+      "Hair has no secondary chain in the source; it stays rigid on the head.",
+      "Skirt and sash cloth are rigid on their parent body bones; no cloth solver.",
+      "No expression morphs; sphere/toon maps are not reproduced."
+    ]
+  },
+  "omittedRenderPasses": [
+    {
+      "material": "肌",
+      "duplicateOf": "体2",
+      "reason": "Co-planar colour layer sharing the base surface vertices."
+    },
+    {
+      "material": "肌2",
+      "duplicateOf": "体",
+      "reason": "Co-planar colour layer sharing the base surface vertices."
+    }
+  ],
+  "sourceFiles": [
+    {
+      "file": "凝光_纱中幽兰_可编辑.blend",
+      "bytes": 30924662,
+      "sha256": "1dfd94981287da5d9bd73e0ff3eaf6a7737ca3bbccaa78dc0f9354568c314783"
+    },
+    {
+      "file": "packed:颜.png",
+      "runtime": "textures/颜.png",
+      "sha256": "1239e4d1ba05cf9626f4fead519bedb73c104fb100797455709d02bbfcc76b88",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "packed:髪.png",
+      "runtime": "textures/髪.png",
+      "sha256": "3250efc58d4bf5398bdb7c4d261aef08c314e8a04d12a5c907f21d0d30d2fc2a",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "packed:体.png",
+      "runtime": "textures/体.png",
+      "sha256": "63e59aadd7928530ca80d4a754c86b6bbc41334537ce0a6f4c72c99fe6891bd0",
+      "size": [
+        2048,
+        2048
+      ]
+    }
+  ]
+}

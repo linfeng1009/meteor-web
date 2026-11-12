@@ -107,6 +107,6 @@ test('Lumine display rig follows the original moves without changing limb length
 test('Lumine is selectable in the workshop with its own identity',async()=>{
   assert.ok(WORKSHOP_APPEARANCES.includes('lumine'));
   assert.equal(appearanceCharacterName(0,'lumine'),'荧');
-  assert.equal(NATIVE_APPEARANCES.ganyu.characterId,0);
-  assert.equal(Object.isFrozen(NATIVE_APPEARANCES.ganyu),true);
+  assert.equal(NATIVE_APPEARANCES.lumine.characterId,0);
+  assert.equal(Object.isFrozen(NATIVE_APPEARANCES.lumine),true);
 });

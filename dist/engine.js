@@ -4,7 +4,7 @@ import {nativeSameTeam} from './native-teams.js';
 import {nativeStrideSpeed} from './native-movement-profile.js';
 import { traversalTap, NATIVE_AIR_PHYSICS, NATIVE_ACTION_MOTION, nativeActionMomentum, NATIVE_JUMP_HOLD_SECONDS, nativeAirPose, nativeAirVerticalVelocity, NATIVE_ROLL_POSES, nativeDashPose, NATIVE_CROUCH_POSES, NATIVE_GROUND_MOVE_POSES, NATIVE_JUMP_POSES, nativeTraversalDirection } from './native-traversal.js';
 import { FixedStepClock } from './fixed-step.js';
-import { NATIVE_WALL_POSES, NATIVE_WALL_PHYSICS, nativeWallVerticalVelocity, nativeWallJumpVelocity, WALL_TRAVERSAL_ADAPTER as WALL } from './native-wall-traversal.js';
+import { NATIVE_WALL_POSES, NATIVE_WALL_PHYSICS, NATIVE_AIR_WALL_PHYSICS, nativeWallVerticalVelocity, nativeWallJumpVelocity, nativeAirWallJumpVelocity, WALL_TRAVERSAL_ADAPTER as WALL } from './native-wall-traversal.js';
 import { FrameMeter, RenderScaleController, createFrameOverlay } from './frame-meter.js';
 import { StaticColliderIndex } from './collision-index.js';
 import { bindLocalPlayerControl, clearPlayerCommands } from './player-control.js';
@@ -344,6 +344,7 @@ export class MeteorGame {
     clearNativeScriptItems(f);
     f.musketAim=false; f.nativeJump = null; f.jumpSequence = null; f.wallRun = null; f.wallKick = null; f.wallEntries = 0;
     f.actionMomentum=null;f.motionVelocity?.set(0,0,0);
+    f.wallJumpReady=false;f.wallJumpAge=0;
     const p = spawn?.position || this.currentMap.spawns[0].position; f.root.position.copy(p);
     // D_user DES quaternions use wxyz in the native Z-up coordinates.
     // Project their facing onto the walking plane instead of facing the player.
@@ -484,10 +485,10 @@ export class MeteorGame {
     }
     return false;
   }
-  _wallContact(actor,side,facing=actor.root.rotation.y) {
+  _wallContact(actor,side,facing=actor.root.rotation.y,probe=null) {
     const forward=v3(Math.sin(facing),0,Math.cos(facing)),right=v3(-Math.cos(facing),0,Math.sin(facing));
-    const toward=side==='front'?forward:side==='right'?right:right.negate();
-    const reach=this.hostPhysics.radius+WALL.reach,hits=[];
+    const toward=probe?.direction??(side==='front'?forward:side==='right'?right:right.negate());
+    const reach=probe?.reach??this.hostPhysics.radius+WALL.reach,hits=[];
     for(const height of WALL.heights){
       this.raycaster.set(actor.root.position.clone().add(v3(0,height,0)),toward);this.raycaster.far=reach;
       const hit=this.raycaster.intersectObjects(this._collisionCandidates(actor.root.position.x,actor.root.position.z,reach+1),false).find(hit=>hit.face&&hit.distance>=.001);
@@ -502,19 +503,23 @@ export class MeteorGame {
   _endWallTraversal(actor) {
     const wall=actor.wallRun,air=NATIVE_JUMP_POSES.forward.air;
     actor.wallRun=null;actor.nativeJump=null;
-    // 004cc120 state2→0 keeps velocity;004cf7c0 maps a wall pose to152.
+    // 004cc120 state2→0 keeps velocity;004cf7c0 maps a wall pose to152
+    // once ordinary descent reaches the native<-40 speed threshold.
     // Reactions retain their own pose and must not be overwritten here.
     actor.jumpSequence=wall&&!actor.dead&&!actor.combat.busy?{start:air,air,direction:'forward',facing:wall.facing,ballistic:true}:null;
   }
   _updateWallTraversal(actor,direction,dt) {
     if(this.paused)return;
-    const allowed=this.running&&!actor.grounded&&!actor.dead&&!actor.scriptInputBlocked&&!actor.guard&&!actor.combat.busy;
+    if(actor.wallJumpReady&&!actor.grounded)actor.wallJumpAge=(actor.wallJumpAge||0)+dt;
+    const control=this._controlFor(actor),forwardHeld=control?.keys.has('forward')&&!control.keys.has('back');
+    const allowed=this.running&&forwardHeld&&!actor.grounded&&!actor.dead&&!actor.scriptInputBlocked&&!actor.guard&&!actor.combat.busy;
     if(actor.wallRun){
       const wall=actor.wallRun,hit=allowed&&direction.lengthSq()>0?this._wallContact(actor,wall.side,wall.facing):null;
       if(!hit||wall.elapsed+dt>NATIVE_WALL_PHYSICS.duration||hit.planeNormal.dot(wall.planeNormal)<.95||Math.abs(wall.planeNormal.dot(hit.point.clone().sub(wall.point)))>.15||direction.dot(wall.forward)<.25){this._endWallTraversal(actor);return;}
       wall.elapsed+=dt;return;
     }
-    if(!allowed||!this._controlFor(actor)||(actor.wallEntries||0)>=WALL.maxEntries||direction.lengthSq()===0)return;
+    // 004ccca0: forward>0, jump permission+e4=1, vy>=0, jump age>=.1.
+    if(!allowed||!actor.wallJumpReady||actor.vy<0||(actor.wallJumpAge||0)+1e-9<NATIVE_WALL_PHYSICS.entryDelay||direction.lengthSq()===0)return;
     for(const side of ['front','right','left']){
       const hit=this._wallContact(actor,side);if(!hit||direction.dot(hit.forward)<.25)continue;
       if(side==='front'?direction.dot(hit.normal)>-.25:Math.abs(direction.dot(hit.normal))>.75)continue;
@@ -522,6 +527,7 @@ export class MeteorGame {
       const tangent=hit.forward.clone().addScaledVector(hit.normal,-hit.forward.dot(hit.normal)).normalize();
       actor.wallRun={...hit,pose,facing:actor.root.rotation.y,elapsed:dt,velocity:side==='front'?v3():tangent.multiplyScalar(WALL.sideSpeed)};
       actor.wallEntries=(actor.wallEntries||0)+1;actor.nativeJump=null;actor.jumpSequence=null;actor.wallKick=null;actor.velocity.set(0,0,0);
+      actor.wallJumpReady=false;
       return;
     }
   }
@@ -529,9 +535,24 @@ export class MeteorGame {
     const wall=actor.wallRun;if(!wall||!this.running||this.paused||actor.dead||actor.scriptInputBlocked||actor.guard||actor.combat.busy)return false;
     const hit=this._wallContact(actor,wall.side,wall.facing);
     if(!hit||hit.planeNormal.dot(wall.planeNormal)<.95||Math.abs(wall.planeNormal.dot(hit.point.clone().sub(wall.point)))>.15){this._endWallTraversal(actor);return false;}
+    return this._startWallKick(actor,wall,{large});
+  }
+  _beginAirWallJump(actor,{large=false}={}){
+    if(!this.running||this.paused||!this.currentMap||!this.raycaster||actor.grounded||actor.wallRun||actor.dead||actor.scriptInputBlocked||actor.guard||actor.combat.busy)return false;
+    const facing=actor.root.rotation.y,forward=v3(Math.sin(facing),0,Math.cos(facing)),right=v3(-Math.cos(facing),0,Math.sin(facing));
+    // Body-height coverage and facing-based probe basis remain Web geometry
+    // adapters; the native contact range, result poses and impulse are kept.
+    for(const [side,direction] of [['front',forward],['right',forward.clone().add(right).normalize()],['left',forward.clone().sub(right).normalize()]]){
+      const hit=this._wallContact(actor,side,facing,{direction,reach:NATIVE_AIR_WALL_PHYSICS.reach});
+      if(hit&&this._startWallKick(actor,{...hit,facing},{large,air:true}))return true;
+    }
+    return false;
+  }
+  _startWallKick(actor,wall,{large=false,air=false}={}){
     const id=NATIVE_WALL_POSES[wall.side].exit,pose=actor.combat.data.poses.get(id);
     if(!pose?.valid||!Number.isFinite(pose.link))return false;
-    const velocity=nativeWallJumpVelocity(wall.planeNormal,{large});if(!velocity)return false;
+    const incoming=actor.motionVelocity||actor.velocity;
+    const velocity=air?nativeAirWallJumpVelocity({x:incoming.x,y:actor.vy,z:incoming.z},wall.planeNormal,{large}):nativeWallJumpVelocity(wall.planeNormal,{large});if(!velocity)return false;
     actor.wallRun=null;actor.grounded=false;actor.vy=velocity.y;
     actor.jumpSequence={start:id,air:pose.link,direction:wall.side,facing:wall.facing,ballistic:true};
     actor.nativeJump=null;
@@ -539,6 +560,8 @@ export class MeteorGame {
     // the explicitly labelled Web adapter pending full air-force recovery.
     actor.wallKick={velocity:v3(velocity.x,0,velocity.z),remaining:WALL.kickDuration};
     actor.velocity.copy(actor.wallKick.velocity);
+    actor.motionVelocity??=v3();actor.motionVelocity.copy(actor.wallKick.velocity);
+    actor.wallJumpReady=true;actor.wallJumpAge=0;
     actor.combat.play(id,{force:true});actor.heldPose='jump';return true;
   }
   _ceilingBlocked(position,rise) {
@@ -587,7 +610,7 @@ export class MeteorGame {
       }
       if(p.y>beforeY&&this._ceilingBlocked(v3(p.x,beforeY,p.z),p.y-beforeY)){p.y=beforeY;f.vy=0;f.nativeJump=null;f.jumpSequence=null;if(f.wallRun)this._endWallTraversal(f);}
       const landing = this._ground(p.x, p.z, p.y + Math.max(.7, -f.vy * dt + .15));
-      if (landing && p.y <= landing.point.y + .04 && f.vy <= 0) { p.y = landing.point.y + .015; f.vy = 0; f.grounded = true; f.musketAim=false; f.nativeJump = null; f.jumpSequence = null; f.wallRun=null;f.wallKick=null;f.wallEntries=0; }
+      if (landing && p.y <= landing.point.y + .04 && f.vy <= 0) { p.y = landing.point.y + .015; f.vy = 0; f.grounded = true; f.musketAim=false; f.nativeJump = null; f.jumpSequence = null; f.wallRun=null;f.wallKick=null;f.wallEntries=0;f.wallJumpReady=false;f.wallJumpAge=0; }
     }
     const hazard = this.currentMap.environment?.sweep(from, p);
     if (hazard && !f.dead) {
@@ -863,6 +886,7 @@ export class MeteorGame {
     if(!pose?.valid)return false;
     if(control&&!control.locked)actor.root.rotation.y=control.cameraAngle+Math.PI;
     actor.jumpSequence={...sequence,direction,facing:actor.root.rotation.y,ballistic:true};actor.wallEntries=0;actor.wallRun=null;actor.wallKick=null;
+    actor.wallJumpReady=true;actor.wallJumpAge=0;
     actor.musketAim=false; actor.grounded = false; actor.vy = large?NATIVE_AIR_PHYSICS.largeJumpVelocity:this.hostPhysics.jumpVelocity;
     // 004cf5a0 enters state0 with physical vertical speed; ordinary jump
     // animation must not add its d_base elevation on top of that flight.
@@ -875,7 +899,7 @@ export class MeteorGame {
     const duration=actor.playerControl?Math.max(0,(control.inputTime??charge.time)-charge.time):Math.max(charge.elapsed,(this.elapsed??charge.time)-charge.time);
     control.directionBuffer=[];
     const options={large:duration+1e-9>=NATIVE_JUMP_HOLD_SECONDS};
-    return actor.grounded?this._beginJump(actor,options):this._beginWallJump(actor,options);
+    return actor.grounded?this._beginJump(actor,options):actor.wallRun?this._beginWallJump(actor,options):this._beginAirWallJump(actor,options);
   }
   _updateJumpCharge(actor,control,dt){
     const charge=control?.jumpCharge;if(!charge)return;
@@ -909,7 +933,7 @@ export class MeteorGame {
     if(name==='clear'){control.keys.clear();clearPlayerCommands(control);actor.guard=false;actor.musketAim=false;return;}
     if(name==='jump'){
       if(!active){this._finishJumpCharge(actor,control);return;}
-      if(!this.running||this.paused||actor.dead||actor.disposed||actor.scriptInputBlocked||actor.combat.busy||actor.guard||(!actor.grounded&&!actor.wallRun))return;
+      if(!this.running||this.paused||actor.dead||actor.disposed||actor.scriptInputBlocked||actor.combat.busy||actor.guard)return;
       if(!control.jumpCharge){if(actor===this.hero)this._unlockAudio();control.jumpCharge={actor,time:inputTime,elapsed:0};}
       return;
     }

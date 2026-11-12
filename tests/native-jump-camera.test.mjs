@@ -7,7 +7,7 @@ import * as THREE from '../dist/vendor/three.module.js';
 import { MeteorGame } from '../dist/engine.js';
 import {NetworkGame} from '../dist/network-game.js';
 import {createPlayerControl} from '../dist/player-control.js';
-import {nativeWallJumpVelocity} from '../dist/native-wall-traversal.js';
+import {nativeWallJumpVelocity,nativeAirWallJumpVelocity} from '../dist/native-wall-traversal.js';
 import { NativeCombatController, decodeNativeText, parsePos, parseAct } from '../dist/native-combat.js';
 import {NATIVE_AIR_PHYSICS,NATIVE_DASH_POSES,NATIVE_CROUCH_POSES,NATIVE_GROUND_MOVE_POSES,NATIVE_JUMP_POSES,nativeTraversalDirection,nativeAirPose,nativeActionMomentum} from '../dist/native-traversal.js';
 import { createNativeCharacter, parseNativeSkin, parseNativeBones, parseNativeAnimation, parseNativePoses } from '../dist/native-character.js';
@@ -33,6 +33,9 @@ function wallFixture(side='front',height=2){
   else{wall.rotation.y=Math.PI/2;wall.position.x=side==='right'?.5:-.5;}
   wall.position.y=height;wall.updateMatrixWorld(true);colliders.push(wall);
   hero.root.position.y=height;hero.root.rotation.y=Math.PI;hero.grounded=false;hero.vy=0;game.cameraAngle=0;game.mouseLook={locked:true};game.action('forward');
+  // Represent an existing jump older than.1s; walking off a ledge alone
+  // does not grant the original actor+e4 wall-entry permission.
+  hero.wallJumpReady=true;hero.wallJumpAge=.1;
   return {...state,wall};
 }
 
@@ -53,6 +56,76 @@ test('three native wall families enter, animate, kick away and apply the source 
       else assert.ok((escaped.x-start.x)*(side==='right'?-1:1)>.5);
     }finally{state.dispose();}
   }
+});
+
+test('普通腾空可直接蹬墙，三向使用原157/159/160，小跳180与大跳260区别于走壁跳开',()=>{
+  for(const [side,pose] of [['front',157],['right',159],['left',160]])for(const large of [false,true]){
+    const state=wallFixture(side,20);try{
+      const {game,hero}=state;game.action('forward',false);hero.wallJumpReady=false;
+      assert.equal(hero.wallRun,undefined);assert.equal(game._beginAirWallJump(hero,{large}),true);
+      assert.equal(hero.combat.timeline.pose.id,pose);assert.equal(hero.wallRun,null);assert.equal(hero.nativeJump,null);
+      assert.ok(Math.abs(hero.vy-(large?20.8:14.4)/Math.SQRT2)<1e-5);
+      assert.equal(hero.wallJumpReady,true);assert.equal(hero.wallJumpAge,0);
+      for(let i=0;i<180;i++)game._updateFighter(hero,1/60);
+      assert.equal(hero.grounded,true);assert.equal(hero.wallJumpReady,false);
+    }finally{state.dispose();}
+  }
+});
+
+test('普通空中蹬墙去掉入墙法向速度，但保留切向与下坠速度，空地不能凭空二段跳',()=>{
+  const normal=v(0,0,1),result=nativeAirWallJumpVelocity(v(4,-20,-8),normal);
+  assert.ok(Math.abs(result.x-4)<1e-6);assert.ok(Math.abs(result.y-(-20+14.4/Math.SQRT2))<1e-5);
+  assert.ok(Math.abs(result.z-14.4/Math.SQRT2)<1e-5);assert.ok(result.y<0);
+  const state=fixture();try{
+    const {game,hero}=state;game._beginJump(hero);const serial=hero.combat.serial,vertical=hero.vy;
+    game.action('jump');game.action('jump',false);assert.equal(hero.combat.serial,serial);assert.equal(hero.vy,vertical);
+    assert.equal(game._beginAirWallJump(hero),false);assert.equal(hero.wallRun,null);
+  }finally{state.dispose();}
+});
+
+test('普通腾空蹬墙的本地和远端大小跳仍使用各自的操作时钟，蹬墙后立即攻击保留新速度',()=>{
+  for(const remote of [false,true])for(const large of [false,true]){
+    const state=wallFixture('front',30);try{
+      const {game,hero}=state;game.action('forward',false);hero.wallJumpReady=false;
+      if(remote){hero.playerControl=createPlayerControl({lookLocked:true});hero.playerControl.inputTime=10;}
+      const control=remote?hero.playerControl:game.localControl,begin=game._beginAirWallJump;let received;
+      game._beginAirWallJump=function(actor,options){received=options.large;return begin.call(this,actor,options);};
+      const act=active=>remote?game._actionFighter(hero,control,'jump',active):game.action('jump',active);
+      act(true);
+      if(remote){for(let i=0;i<10;i++)game._updateFighter(hero,1/60);assert.equal(received,undefined);control.inputTime=large?10.11:10.04;}
+      else if(large)for(let i=0;i<7;i++)game._updateFighter(hero,1/60);
+      act(false);assert.equal(received,large);assert.equal(hero.combat.timeline.pose.id,157);
+      const incoming=hero.velocity.clone();assert.equal(game._beginAttack(hero),true);
+      assert.ok(hero.actionMomentum.distanceTo(incoming)<1e-5);assert.equal(hero.wallKick,null);
+    }finally{state.dispose();}
+  }
+});
+
+test('接墙必须有未消费许可、上升速度、前进输入和0.1秒起跳年龄，蹬墙可恢复许可',()=>{
+  for(const mode of ['no-permission','descending','too-early','no-forward']){
+    const state=wallFixture('front',20);try{
+      const {game,hero}=state;
+      if(mode==='no-permission')hero.wallJumpReady=false;
+      if(mode==='descending')hero.vy=-1;
+      if(mode==='too-early')hero.wallJumpAge=0;
+      if(mode==='no-forward'){game.action('forward',false);game.action('right');}
+      game._updateFighter(hero,1/60);assert.equal(hero.wallRun,undefined,mode);
+    }finally{state.dispose();}
+  }
+  const state=wallFixture('front',20);try{
+    const {game,hero}=state;game._updateFighter(hero,1/60);assert.equal(hero.wallJumpReady,false);assert.equal(hero.wallEntries,1);
+    game.action('forward',false);game._updateFighter(hero,1/60);game.action('forward');game._updateFighter(hero,1/60);
+    assert.equal(hero.wallRun,null,'脱墙本身不恢复接墙许可');
+    assert.equal(game._beginAirWallJump(hero),true);assert.equal(hero.wallJumpReady,true);
+  }finally{state.dispose();}
+  const chain=wallFixture('front',20);try{
+    const {game,hero}=chain;game._updateFighter(hero,1/60);
+    assert.equal(game._beginWallJump(hero,{large:true}),true);
+    const opposite=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshBasicMaterial({side:THREE.DoubleSide}));
+    opposite.position.set(0,20,.9);opposite.updateMatrixWorld(true);chain.colliders.push(opposite);
+    for(let i=0;i<30&&!hero.wallRun;i++)game._updateFighter(hero,1/60);
+    assert.equal(hero.wallRun?.side,'front');assert.equal(hero.wallEntries,2);assert.equal(hero.wallJumpReady,false);
+  }finally{chain.dispose();}
 });
 
 test('蹬墙大小跳采用原法线加向上方向的初速度，并以物理高度对齐蒙皮',()=>{
@@ -157,7 +230,7 @@ test('原走壁时限为1.8秒，没有上升动量时自然下滑，落地后�
   }finally{state.dispose();}
 });
 
-test('wall contact expires, cannot recharge in midair and resets only on landing',()=>{
+test('wall contact expires without automatically renewing permission, and landing resets the state',()=>{
   const state=wallFixture('front',30);try{
     const {game,hero}=state;for(let i=0;i<120;i++)game._updateFighter(hero,1/60);
     assert.equal(hero.wallRun,null);assert.equal(hero.wallEntries,1);assert.ok(hero.root.position.y<=32.6);assert.equal(hero.grounded,false);

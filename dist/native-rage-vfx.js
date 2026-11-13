@@ -9,6 +9,35 @@ export { sampleEffectKeys } from './native-effect-transforms.js';
 const ROOT = new URL('./assets/original/rage-vfx/', import.meta.url);
 const FORMATS = new Set(['PLANE', 'BILLBOARD', 'CYLINDER', 'SPHERE', 'BOX']);
 export const RAGE_VFX_ADAPTER = Object.freeze({ brightness: 1, colorGain: 1.15, tail: .18, maxActive: 12, scale: .08 });
+// 0058e6d0 maps original file indices to the factors named by 00475840.
+const NATIVE_BLEND_FACTORS = Object.freeze([THREE.OneFactor, THREE.ZeroFactor, THREE.SrcColorFactor,
+  THREE.OneMinusSrcColorFactor, THREE.SrcAlphaFactor, THREE.OneMinusSrcAlphaFactor,
+  THREE.DstColorFactor, THREE.OneMinusDstColorFactor, THREE.DstAlphaFactor, THREE.OneMinusDstAlphaFactor]);
+
+export function configureNativeEffectBlend(material, blend) {
+  if (!blend) return true; // Legacy/adaptor-only fixtures retain additive alpha gating.
+  const [mode, source, destination] = blend;
+  let factors;
+  switch (mode) {
+    case 0: material.blending = THREE.NoBlending; return false;
+    case 1: factors = [THREE.SrcColorFactor, THREE.OneFactor]; break;
+    case 2: factors = [THREE.ZeroFactor, THREE.OneMinusSrcColorFactor]; break;
+    case 3: factors = [THREE.SrcAlphaFactor, THREE.OneMinusSrcAlphaFactor]; break;
+    case 4:
+      if (!Number.isInteger(source) || !Number.isInteger(destination) || !NATIVE_BLEND_FACTORS[source] || !NATIVE_BLEND_FACTORS[destination])
+        throw new Error('Unverified original effect blend factor');
+      factors = [NATIVE_BLEND_FACTORS[source], NATIVE_BLEND_FACTORS[destination]]; break;
+    default: throw new Error('Unverified original effect blend mode');
+  }
+  material.blending = THREE.CustomBlending;
+  material.blendEquation = THREE.AddEquation;
+  [material.blendSrc, material.blendDst] = factors;
+  // Native uses the same factors for color and alpha, unlike Three's
+  // NormalBlending shortcut. The destination is unchanged at source alpha0
+  // only for the two source-alpha formulas below; darkening ignores alpha.
+  material.blendEquationAlpha = material.blendSrcAlpha = material.blendDstAlpha = null;
+  return factors[0] === THREE.SrcAlphaFactor && [THREE.OneFactor, THREE.OneMinusSrcAlphaFactor].includes(factors[1]);
+}
 
 function effectGeometry(node) {
   const d = node.dimensions;
@@ -158,6 +187,7 @@ export class NativeRageVfx {
       const material = particle ? new THREE.PointsMaterial({size:.10,transparent:true,opacity:0,blending:THREE.AdditiveBlending,depthWrite:false,depthTest:true,toneMapped:false}) : new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, blending: THREE.AdditiveBlending,
         depthWrite: false, depthTest: true, side: THREE.DoubleSide, toneMapped: false });
       const mesh = node.mesh = particle ? new THREE.Points(geometry,material) : new THREE.Mesh(geometry, material); mesh.name = source.name;
+      node.alphaZeroInvisible = configureNativeEffectBlend(material, source.blend);
       if (!particle && source.uvSpeed?.some(value => value !== 0)) {
         node.uvOffset = new THREE.Vector2();
         // Per-material uniform: keep shared textures/IFL frames immutable and
@@ -226,7 +256,7 @@ export class NativeRageVfx {
         }
         mesh.material.color.setRGB(...node.key.slice(11, 14).map(v => THREE.MathUtils.clamp(v, 0, 1) * RAGE_VFX_ADAPTER.colorGain));
         mesh.material.opacity = THREE.MathUtils.clamp(node.key[24], 0, 1) * RAGE_VFX_ADAPTER.brightness;
-        mesh.visible = mesh.material.opacity > .001;
+        mesh.visible = !node.alphaZeroInvisible || mesh.material.opacity > .001;
       }
     }
   }

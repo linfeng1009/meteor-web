@@ -566,7 +566,7 @@ test('所有原隐藏节点不分配显示网格，但仍保留在绑定图中',
   } finally { f.vfx.dispose(); }
 });
 
-test('原隐藏的指虎怒气攻击环仍按原effect窗口命中', () => {
+test('原隐藏的忍刀暴怒爆弹攻击环仍按原effect窗口命中', () => {
   const f = fixture(), contacts = new NativeEffectContacts({ manifest });
   try {
     const definition = manifest.effects.pos473, attackNode = definition.nodes.find(n => n.name === 'AttackDonut');
@@ -584,4 +584,46 @@ test('原隐藏的指虎怒气攻击环仍按原effect窗口命中', () => {
       assert.deepEqual(volumes.map(v => [v.center.toArray(), v.edges.map(e => e.toArray())]), expected.map(v => [v.center.toArray(), v.edges.map(e => e.toArray())]));
     } finally { comparison.dispose(); }
   } finally { contacts.dispose(); f.vfx.dispose(); }
+});
+
+
+test('飞轮夺命轮盘光效使用原减暗模式，匕首斩痕和火铳烟雾不再统一加亮', async () => {
+  const combat = JSON.parse(await readFile(new URL('../dist/assets/original/combat-vfx.json', import.meta.url), 'utf8'));
+  const f = fixture();
+  try {
+    f.vfx.manifest = { ...manifest, effects: { ...combat.effects, ...manifest.effects } };
+    const cases = [
+      ['pos554', 'BlackBall', .31, THREE.ZeroFactor, THREE.OneMinusSrcColorFactor, false],
+      ['pos245', 'Board_1', .2, THREE.SrcColorFactor, THREE.OneFactor, false],
+      ['pos206', 'Particle_yan', .1, THREE.SrcAlphaFactor, THREE.OneMinusSrcAlphaFactor, true],
+      ['pos279', 'Cylinder_4', .3, THREE.SrcAlphaFactor, THREE.OneFactor, true]
+    ];
+    for (const [id, name, time, source, destination, alphaGate] of cases) {
+      const effect = f.vfx._create(f.actor, { serial: 1 }, id); effect.time = time; f.vfx.update(0);
+      const node = effect.nodes.find(n => n.source.name === name);
+      assert.ok(node.mesh?.visible, `${id}/${name} authored visible interval`);
+      assert.equal(node.mesh.material.blending, THREE.CustomBlending);
+      assert.equal(node.mesh.material.blendSrc, source); assert.equal(node.mesh.material.blendDst, destination);
+      assert.equal(node.alphaZeroInvisible, alphaGate);
+      assert.ok(node.mesh.material.map); assert.equal(f.actor.hp, 1000); assert.equal(f.actor.rage, 100);
+      f.vfx._remove(effect);
+    }
+  } finally { f.vfx.dispose(); }
+});
+
+test('减暗网格在源alpha0但颜色非零时仍生效，alpha叠加网格则可略过', async () => {
+  const combat = JSON.parse(await readFile(new URL('../dist/assets/original/combat-vfx.json', import.meta.url), 'utf8'));
+  const f = fixture();
+  try {
+    const effectDefinition = structuredClone(combat.effects.pos245);
+    const slash = effectDefinition.nodes.find(n => n.name === 'Board_1');
+    slash.blend = [2, 1, 3]; for (const key of slash.keys) { key[24] = 0; key.splice(11, 3, 1, 1, 1); }
+    f.vfx.manifest = { ...manifest, effects: { ...manifest.effects, pos245: effectDefinition } };
+    const effect = f.vfx._create(f.actor, { serial: 1 }, 'pos245'); effect.time = .2; f.vfx.update(0);
+    const node = effect.nodes.find(n => n.source.name === 'Board_1');
+    assert.equal(node.mesh.material.opacity, 0); assert.equal(node.mesh.visible, true);
+    f.vfx._remove(effect); slash.blend = [3, 4, 5];
+    const alpha = f.vfx._create(f.actor, { serial: 2 }, 'pos245'); alpha.time = .2; f.vfx.update(0);
+    assert.equal(alpha.nodes.find(n => n.source.name === 'Board_1').mesh.visible, false);
+  } finally { f.vfx.dispose(); }
 });

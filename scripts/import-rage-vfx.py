@@ -68,6 +68,10 @@ def read_effect(path, include_particles=False):
         # 0058e8a0 reads material+a4 (common effect data+dc). Native draw
         # routines reject nonzero values; transform/contact queries do not.
         hidden=struct.unpack_from('<I',data,cursor+69)[0]!=0
+        # 0058e540 selects modes0..4; 0058e6d0 maps the two custom
+        # factor indices only for mode4. Preserve unused factor words too.
+        blend=list(struct.unpack_from('<3I',data,cursor+81))
+        if blend[0]>4 or (blend[0]==4 and any(value>9 for value in blend[1:])):raise ValueError('Unverified EF blend mode or factor')
         cursor+=93
         count = struct.unpack_from('<I',data,cursor)[0]; cursor+=4
         if not 0<count<=256 or cursor+112*count+4>end: raise ValueError(f'Invalid EF key stream: {path}:{name}')
@@ -81,6 +85,7 @@ def read_effect(path, include_particles=False):
         node = dict(type=kind,name=name,flags=list(flags),bindings=bindings,texture=texture.lower(),keys=keys,offset=offset)
         if any(uv_speed):node['uvSpeed']=uv_speed
         if hidden:node['hidden']=True
+        node['blend']=blend
         if kind in DIMS:
             if end-cursor != DIMS[kind]*4: raise ValueError(f'Unexpected shape size {path}:{name}:{end-cursor}')
             node['dimensions'] = list(struct.unpack_from('<'+'f'*DIMS[kind],data,cursor))

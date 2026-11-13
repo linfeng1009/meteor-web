@@ -88,6 +88,6 @@ test('投射物保存的攻击者快照按角色身份正确记分',()=>{
  const shooter=actors[2],chosen=actors[3],hand=new T.Group();shooter.root.add(hand);hand.position.y=1.35;shooter.root.position.set(0,0,0);chosen.root.position.set(5,0,0);actors[0].root.position.set(0,0,5);
  shooter.weapon='dart';shooter.attackHits=new Set();shooter.character.getAttachment=()=>hand;shooter.weaponModel=new T.Mesh(new T.BoxGeometry(.1,.1,.1),new T.MeshBasicMaterial());session.controls.get(shooter.networkId).locked=chosen;
  let launched;g.projectiles={spawn(shot){launched=shot;}};g._launchNativeProjectiles(shooter,{poseId:200,serial:1,pose:{raw:{fields:{effectid:'pos200'}}},attacks:[{index:0}]});assert.ok(launched.direction.x>.99);assert.ok(Math.abs(launched.direction.z)<.01,'remote dart must aim at its chosen rival, not the host');
- let wheel;g.wheels={hasOwner:()=>false,spawn(shot){wheel=shot;return shot;}};shooter.weapon='wheel';g._launchNativeWheel(shooter,{poseId:NATIVE_WHEEL_PROFILE.poseIds[0],serial:2,pose:{raw:{fields:{effectid:'pos218'}}},attacks:[{index:0}]});assert.ok(wheel.direction.x>.99);assert.ok(Math.abs(wheel.direction.z)<.01);
+ let wheel;g.wheels={hasOwner:()=>false,spawn(shot){wheel=shot;return shot;}};shooter.weapon='wheel';g._launchNativeWheel(shooter,{poseId:NATIVE_WHEEL_PROFILE.poseIds[0],serial:2,pose:{raw:{fields:{effectid:'pos218'}}},attacks:[{index:0}]});assert.ok(wheel.direction.z>.99);assert.ok(Math.abs(wheel.direction.x)<.01,'飞轮按射手朝向释放，目标预测由实际飞轮系统负责');
  shooter.weaponModel.geometry.dispose();shooter.weaponModel.material.dispose();session.dispose();
 });

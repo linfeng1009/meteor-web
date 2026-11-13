@@ -4,6 +4,19 @@ import {NetworkRooms,createNetworkServer} from '../network-server.mjs';
 function room(){const rooms=new NetworkRooms(),a=rooms.create('房主',{maxPlayers:2}),b=rooms.join(a.room.code,'剑客');return {rooms,a,b,call:(p,op,data={})=>rooms.request(a.room.code,p.token,op,{round:rooms.rooms.get(a.room.code)?.round||0,...data})};}
 const frame=(a,b,sequence=1)=>({sequence,time:1,players:[a,b].map(p=>({id:p.playerId,position:[0,0,0],angle:0,hp:1000,maxHp:1000,rage:0,pose:6,source:0,frame:7400,serial:1,effectTime:0}))});
 
+test('飞轮回收翻滚可同步，快照与短路径中的非法数值或飞镖翻滚均被原子拒绝',()=>{
+ const {a,b,call}=playing(),state=frame(a,b),shot={kind:'wheel',id:1,ownerId:a.playerId,weaponId:2,position:[0,1,2],quaternion:[0,0,0,1],spin:2,tumble:3,phase:'return'};
+ const flight={kind:'wheel',id:2,ownerId:a.playerId,weaponId:2,quaternion:[0,0,0,1],startTime:.9,endTime:.95,points:[{time:.9,position:[0,1,0],spin:0,tumble:1},{time:.95,position:[0,1,2],spin:1,tumble:2}]};
+ state.projectiles=[shot];state.projectileFlights=[flight];call(a,'sync',{frame:state});assert.deepEqual(call(b,'sync').frame.projectiles,[shot]);
+ for(const tumble of [NaN,Infinity,1e6,'1',null,{}]){
+  assert.throws(()=>call(a,'sync',{frame:{...state,sequence:2,projectiles:[{...shot,tumble}]}}),/无效/);
+  assert.throws(()=>call(a,'sync',{frame:{...state,sequence:2,projectileFlights:[{...flight,points:[flight.points[0],{...flight.points[1],tumble}]}]}}),/无效/);
+  assert.equal(call(b,'sync').frame.sequence,1);
+ }
+ assert.throws(()=>call(a,'sync',{frame:{...state,sequence:2,projectiles:[{...shot,kind:'dart',phase:'outbound'}]}}),/无效/);
+ assert.throws(()=>call(a,'sync',{frame:{...state,sequence:2,projectileFlights:[{...flight,kind:'dart'}]}}),/无效/);
+});
+
 test('原动作过渡参数可同步，越界和不一致的目标帧被原子拒绝',()=>{
  const {a,b,call}=playing(),state=frame(a,b),blend={from:{source:0,frame:7300},to:{source:0,frame:7400},weight:.5,duration:.3,fromSnapshot:false};
  state.players[0].blend=blend;call(a,'sync',{frame:state});assert.deepEqual(call(b,'sync').frame.players[0].blend,blend);

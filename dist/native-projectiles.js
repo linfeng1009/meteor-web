@@ -1,4 +1,5 @@
 import * as THREE from './vendor/three.module.js';
+import {nativeSameTeam} from './native-teams.js';
 
 // Original source anchors are retained separately from the browser's flight
 // adapter. POS determines release, never flight lifetime. EF trajectory data is
@@ -153,11 +154,15 @@ export class NativeProjectileSystem {
 
 // Native00497f40 ->00570600/005702d0: finite segment vs actor AABB.
 export function sweepNativeMusketBody(from, to, actor) {
-  const p = actor.root.position, width = NATIVE_MUSKET_PROFILE.bodyHalfWidth;
+  return sweepNativeActorBox(from,to,actor,NATIVE_MUSKET_PROFILE.bodyHalfWidth,NATIVE_MUSKET_PROFILE.bodyHeight);
+}
+
+export function sweepNativeActorBox(from,to,actor,width,height) {
+  const p = actor.root.position;
   let enter = 0, exit = 1;
   for (const axis of ['x', 'y', 'z']) {
     const low = p[axis] - (axis === 'y' ? 0 : width);
-    const high = p[axis] + (axis === 'y' ? NATIVE_MUSKET_PROFILE.bodyHeight : width);
+    const high = p[axis] + (axis === 'y' ? height : width);
     const delta = to[axis] - from[axis];
     if (Math.abs(delta) < 1e-12) { if (from[axis] < low || from[axis] > high) return null; continue; }
     const a = (low - from[axis]) / delta, b = (high - from[axis]) / delta;
@@ -221,59 +226,127 @@ export class NativeMusketSystem {
   dispose() { this.clear(); this.disposed = true; }
 }
 
-// Native flight constants are recovered; target selection and the current
-// outbound/return state machine still contain explicit Web adapters.
+// 004f0230 builds [target?, launch-position]; 004f0ee0 owns collisions,
+// 004e5760 advances the queue. Native coordinates are converted at .08.
 export const NATIVE_WHEEL_PROFILE = Object.freeze({
   model: 'w6_0', weaponItem: 2, originHeight: 20 * .08, poseIds: Object.freeze([218, 220, 222]),
-  speed: 600 * .08, distance: 24, returnSpeed: 600 * .08, acceleration: 8000 * .08, steeringDelay: .09, arrivalRadius: 26 * .08, radius: .24, lifetime: 5, spin: 16,
-  provenance: '004dfc80 ->004d0ab0/004e5330/004e5760: speed600, steering acceleration8000 after .09s, waypoint radius26, spin16, converted at .08. Web target selection, range24, radius.24, lifetime5 and one damaging contact remain provisional; +7c collision-return boost is not equated with ordinary return.'
+  speed: 600 * .08, targetRange: 600 * .08, acceleration: 8000 * .08,
+  steeringDelay: .09, arrivalRadius: 26 * .08, lifetime: 5, spin: 16,
+  predictionPeriod: 1 / 30, predictionSeconds: .2, hitCooldown: .4,
+  bodyHalfWidth: Math.fround(2.6) * 7 * .08, bodyHeight: 36 * .08,
+  collisionReturnScale: Math.fround(1.2), tumble: 16,
+  provenance: '004f0230: target+20 then launch-position+20.004f2e70/004f3e70: nearest-to-forward enemy within600, no wall query.004f0ee0:30Hz target prediction+.2*velocity, per-victim timer>.4, first eligible box hit without changing path; scene collision rolls back, zeroes velocity, skips a waypoint or enables collision-free +7c return.004e5760: Euler translation, age>.09 steering8000, speed600 (+7c*float32(1.2)), arrival<26; empty queue completes next tick; age>5 expires. Web fixed-step timing, actor eligibility and scene triangle query are host adapters.'
 });
+
+function liveWheelActor(actor) {
+  return actor?.root?.position && !actor.dead && !actor.disposed && !actor.scriptRemoved && !(actor.hp <= 0);
+}
+
+// The native selector maximizes horizontal forward dot, rather than choosing
+// the closest actor or allowing a lock behind the thrower to redirect release.
+export function selectNativeWheelTarget(owner, candidates, direction) {
+  let best = null, bestDot = 0;
+  const forward = direction.clone(); forward.y = 0; forward.normalize();
+  for (const target of candidates || []) {
+    if (!liveWheelActor(target) || target === owner || (owner.id != null && target.id === owner.id) || nativeSameTeam(owner,target)) continue;
+    const delta = target.root.position.clone().sub(owner.root.position), horizontal = Math.hypot(delta.x,delta.z);
+    if (delta.length() > NATIVE_WHEEL_PROFILE.targetRange || horizontal < .001 * .08) continue;
+    const dot = (delta.x * forward.x + delta.z * forward.z) / horizontal;
+    if (dot > bestDot) { best = target; bestDot = dot; }
+  }
+  return best;
+}
+
 export class NativeWheelSystem {
   constructor({ scene, getTargets = () => [], canHit = () => true, getColliders = () => [], onActorHit = () => {}, onWorldHit = () => {}, bodyRadius = .4 } = {}) {
     Object.assign(this, { scene, getTargets, canHit, getColliders, onActorHit, onWorldHit, bodyRadius });
     this.active = []; this.serial = 0; this.raycaster = new THREE.Raycaster(); this.paused = false; this.disposed = false;
+    this.time = 0; this.contacts = new WeakMap();
   }
   get size() { return this.active.length; }
   hasOwner(owner) { return this.active.some(shot => shot.owner === owner); }
   pause(value = true) { this.paused = !!value; }
-  spawn({ owner, position, direction, visual, sourcePosition, context = {} } = {}) {
-    if (this.disposed || this.paused || !owner || !position || !direction || !direction.lengthSq() || this.hasOwner(owner)) return null;
-    const root = new THREE.Group(); root.position.copy(position); if (visual) root.add(visual);
-    const shot = { id: ++this.serial, owner, root, visual, context, position: position.clone(), direction: direction.clone().normalize(),
-      phase: 'outbound', age: 0, travelled: 0, removed: false, profile: NATIVE_WHEEL_PROFILE, velocity: direction.clone().normalize().multiplyScalar(NATIVE_WHEEL_PROFILE.speed) };
-    const wall = sourcePosition && worldSegmentContact(this, sourcePosition, position, shot.profile.radius);
-    if (wall) { shot.position.copy(wall.center); root.position.copy(shot.position); shot.phase = 'return'; this.onWorldHit(shot, wall); }
-    this.active.push(shot); this.scene?.add(root);this.onFlightSample?.(shot,'spawn'); return shot;
+  noteActorContact(target) { this.contacts.set(target,this.time); }
+  spawn({ owner, position, direction, visual, context = {}, target } = {}) {
+    if (this.disposed || this.paused || !liveWheelActor(owner) || !position || !direction || !direction.lengthSq() || this.hasOwner(owner)) return null;
+    const profile = NATIVE_WHEEL_PROFILE, root = new THREE.Group(); root.position.copy(position); if (visual) root.add(visual);
+    const shot = { id: ++this.serial, owner, root, visual, context, position: position.clone(), previous: position.clone(),
+      phase: 'outbound', age: 0, removed: false, profile, velocity: direction.clone().normalize().multiplyScalar(profile.speed),
+      waypoints: [], collisionReturn: false, nextPrediction: profile.predictionPeriod, spin: 0, tumble: 0 };
+    // An explicit null means no target; undefined asks the native selector.
+    shot.target = target === undefined ? selectNativeWheelTarget(owner,this.getTargets(shot),direction) : target;
+    if (liveWheelActor(shot.target)) shot.waypoints.push({ kind:'target', position:shot.target.root.position.clone().add(new THREE.Vector3(0,profile.originHeight,0)) });
+    else shot.target = null;
+    shot.waypoints.push({ kind:'return', position:owner.root.position.clone().add(new THREE.Vector3(0,profile.originHeight,0)) });
+    this._phase(shot); this.active.push(shot); this.scene?.add(root); this.onFlightSample?.(shot,'spawn'); return shot;
   }
+  _phase(shot) { shot.phase = shot.waypoints[0]?.kind === 'target' ? 'outbound' : 'return'; }
   update(dt) {
     if (this.disposed || this.paused || !(dt > 0) || !Number.isFinite(dt)) return;
+    this.time += dt;
     for (const shot of [...this.active]) {
-      const { owner, profile } = shot; shot.age += dt;
-      if (owner.dead || owner.disposed || owner.scriptRemoved || shot.age >= profile.lifetime) { this.remove(shot); continue; }
-      const destination = shot.phase === 'return' ? owner.root.position.clone().add(new THREE.Vector3(0, profile.originHeight, 0)) : null;
-      if (destination && destination.distanceTo(shot.position) < profile.arrivalRadius) { this.remove(shot); continue; }
-      // Native tick translates with the old velocity before steering.
-      const distance = Math.min(shot.velocity.length() * dt, destination ? Infinity : profile.distance - shot.travelled);
-      const to = shot.position.clone().addScaledVector(shot.velocity.clone().normalize(), distance);
-      if (destination && shot.age > profile.steeringDelay) {
-        shot.velocity.addScaledVector(destination.clone().sub(to).normalize(), profile.acceleration * dt);
-        shot.velocity.clampLength(0, profile.returnSpeed);
-      }
-      if (shot.phase === 'outbound') {
-        const world = worldSegmentContact(this, shot.position, to, profile.radius); let target = null, targetT = Infinity;
-        for (const actor of this.getTargets(shot) || []) {
-          if (!actor || actor === owner || actor.id === owner.id || actor.dead || actor.disposed || actor.scriptRemoved || actor.hp <= 0 || !this.canHit(owner,actor)) continue;
-          const t = sweepActorCapsule(shot.position, to, actor, profile.radius, this.bodyRadius);
-          if (t != null && t < targetT) { target = actor; targetT = t; }
+      if (shot.removed) continue;
+      const {owner,profile} = shot; shot.age += dt;
+      if (owner.disposed || owner.scriptRemoved) { this.remove(shot,'departure'); continue; }
+      // Native removal is strictly >5; ordinary owner death does not cancel an
+      // already released wheel. End-of-match cleanup still clears all shots.
+      if (shot.age > profile.lifetime) { this.remove(shot,'expired'); continue; }
+      if (!shot.waypoints.length) { this.remove(shot,'caught'); continue; }
+      if (shot.age + 1e-10 >= shot.nextPrediction) {
+        shot.nextPrediction = (Math.floor((shot.age + 1e-10) / profile.predictionPeriod) + 1) * profile.predictionPeriod;
+        if (shot.waypoints.length > 1 && shot.target?.root && !shot.target.disposed && !shot.target.scriptRemoved) {
+          const point = shot.waypoints[0].position;
+          point.copy(shot.target.root.position).y += profile.originHeight;
+          if (shot.target.velocity) point.addScaledVector(shot.target.velocity,profile.predictionSeconds);
+          // Host fighters store native vertical velocity separately from x/z.
+          if (Number.isFinite(shot.target.vy)) point.y += (shot.target.vy - (shot.target.velocity?.y || 0)) * profile.predictionSeconds;
         }
-        if (world && world.t <= targetT + 1e-7) { shot.position.copy(world.center); shot.phase = 'return'; this.onWorldHit(shot, world); }
-        else if (target) { shot.position.lerp(to, targetT); shot.phase = 'return'; this.onActorHit(shot, target, shot.position.clone()); }
-        else { shot.position.copy(to); shot.travelled += distance; if (shot.travelled >= profile.distance - 1e-7) shot.phase = 'return'; }
-      } else shot.position.copy(to);
-      shot.root.position.copy(shot.position); if (shot.visual) shot.visual.rotation.y += profile.spin * dt;this.onFlightSample?.(shot,'update');
+      }
+      shot.previous.copy(shot.position); shot.position.addScaledVector(shot.velocity,dt);
+      shot.spin += profile.spin * dt;
+      if (shot.collisionReturn) shot.tumble += profile.tumble * dt;
+      if (shot.visual) { shot.visual.rotation.y = shot.spin; shot.visual.rotation.x = shot.tumble; }
+      if (shot.age > profile.steeringDelay) {
+        const delta = shot.waypoints[0].position.clone().sub(shot.position);
+        if (delta.length() < profile.arrivalRadius) { shot.waypoints.shift(); this._phase(shot); }
+        else {
+          shot.velocity.addScaledVector(delta.normalize(),profile.acceleration * dt);
+          shot.velocity.clampLength(0,profile.speed * (shot.collisionReturn ? profile.collisionReturnScale : 1));
+        }
+      }
+      // +7c skips both scene and actor collisions. A normal return remains
+      // damaging and still tests walls until this special state is entered.
+      if (!shot.collisionReturn) {
+        const world = worldSegmentContact(this,shot.previous,shot.position,0);
+        if (world) {
+          shot.position.copy(shot.previous); shot.velocity.set(0,0,0);
+          if (!shot.waypoints.length) { shot.root.position.copy(shot.position); this.remove(shot,'world'); this.onWorldHit(shot,world); continue; }
+          if (shot.waypoints.length > 1) shot.waypoints.shift(); else shot.collisionReturn = true;
+          this._phase(shot); this.onWorldHit(shot,world);
+        } else {
+          // Native actor-map order chooses the first valid box contact in a
+          // tick, not the nearest contact; damage never consumes the wheel.
+          for (const actor of this.getTargets(shot) || []) {
+            if (!liveWheelActor(actor) || actor === owner || (owner.id != null && actor.id === owner.id) || !this.canHit(owner,actor)) continue;
+            if (this.time - (this.contacts.get(actor) ?? -Infinity) <= profile.hitCooldown + 1e-10) continue;
+            const t = sweepNativeActorBox(shot.previous,shot.position,actor,profile.bodyHalfWidth,profile.bodyHeight);
+            if (t == null) continue;
+            this.noteActorContact(actor); this.onActorHit(shot,actor,shot.previous.clone().lerp(shot.position,t)); break;
+          }
+        }
+      }
+      if (shot.removed) continue;
+      shot.root.position.copy(shot.position); this.onFlightSample?.(shot,'update');
     }
   }
-  remove(shot,reason='removed') { if(!shot||shot.removed)return;this.onFlightSample?.(shot,reason);shot.removed = true; shot.root.removeFromParent(); const i = this.active.indexOf(shot); if (i >= 0) this.active.splice(i, 1); if (shot.owner.weapon === 'wheel' && shot.owner.weaponModel) shot.owner.weaponModel.visible = true; }
-  clear(reason='clear') { for (const shot of [...this.active]) this.remove(shot,reason); }
+  remove(shot,reason='removed') {
+    if (!shot || shot.removed) return;
+    // Mark before callbacks, so cleanup/reentrant damage cannot release twice.
+    shot.removed = true; shot.removalReason = reason; shot.root.position.copy(shot.position);
+    this.onFlightSample?.(shot,reason); shot.root.removeFromParent();
+    const i = this.active.indexOf(shot); if (i >= 0) this.active.splice(i,1);
+    if (shot.owner.weapon === 'wheel' && shot.owner.weaponModel) shot.owner.weaponModel.visible = true;
+  }
+  clear(reason='clear') { for (const shot of [...this.active]) this.remove(shot,reason); this.contacts = new WeakMap(); }
   dispose() { this.clear('dispose'); this.disposed = true; }
 }

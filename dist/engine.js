@@ -167,16 +167,15 @@ export class MeteorGame {
   _launchNativeWheel(f, state) {
     if (!NATIVE_WHEEL_PROFILE.poseIds.includes(state.poseId) || !f.weaponModel || !this.running) return;
     for (const attack of state.attacks) {
-      const key = `release:${state.serial}:${attack.index}`; if (f.attackHits.has(key) || this.wheels?.hasOwner(f)) continue;
+      const key = `wheel-release:${state.serial}`; if (f.attackHits.has(key) || this.wheels?.hasOwner(f)) continue;
       const origin = f.root.position.clone().add(v3(0, NATIVE_WHEEL_PROFILE.originHeight, 0));
-      const control=this._controlFor(f);
-      const target = control ? control.locked || this._nearest(24,f) : f.scriptControl?.attackTarget;
-      const direction = target && !target.dead ? target.root.position.clone().add(v3(0, 1.35, 0)).sub(origin).normalize() : v3(Math.sin(f.root.rotation.y), 0, Math.cos(f.root.rotation.y));
+      // Original release uses actor forward; target steering begins after .09s.
+      const direction = v3(Math.sin(f.root.rotation.y),0,Math.cos(f.root.rotation.y));
       const visual = f.weaponModel.clone(true); visual.visible = true; visual.rotation.set(0,0,0); visual.position.set(0,0,0); visual.scale.setScalar(SCALE);
       visual.position.sub(new THREE.Box3().setFromObject(visual).getCenter(v3()));
       const attacker = { id:f.id, hero:f.hero, scriptId:f.scriptId, root:f.root, name:f.name, weapon:f.weapon, weaponId:f.weaponId,
         weaponRecord:f.weaponRecord, nativeStats:{...f.nativeStats}, activeItems:[...(f.activeItems||[])], team:f.team, teamMask:f.teamMask };
-      const shot = this.wheels?.spawn({ owner:f, position:origin, direction, visual, sourcePosition:f.root.position.clone().add(v3(0,1.35,0)),
+      const shot = this.wheels?.spawn({ owner:f, position:origin, direction, visual,
         context:{attacker,state:{poseId:state.poseId,pose:state.pose,source:state.source,serial:state.serial},attack:{...attack}} });
       if (shot) { f.attackHits.add(key); f.weaponModel.visible = false; this._soundDefinition(state.pose.raw.fields.effectid); }
     }
@@ -336,6 +335,7 @@ export class MeteorGame {
     // consumes that scene-motion delta independently of skin deformation.
     f.combat = new NativeCombatController(combatData, { weapon: this.weapon, sampleRoot: character.sampleSceneMotion, scale: SCALE });
     f.combat.play(NATIVE_WEAPONS[this.weapon].stance, { loop: true, force: true });
+    this.wheels?.noteActorContact?.(f);
     if (!hero) { if (this.combatData.npcAi) f.npcCombat = new NativeNpcCombat(this.combatData.npcAi,{random:this.combatRandom||Math.random}); this._nameplate(f); } return f;
   }
   _placeFighter(f, spawn) {
@@ -1334,6 +1334,8 @@ export class MeteorGame {
   }
   _applyNativeHit(attacker, target, state, attack, contact, extra = {}) {
     if (!this.running || target.dead || target.disposed || target.scriptRemoved || this.networkCombat&&nativeSameTeam(target,attacker)) return false;
+    // Native004f3360 and004f0ee0 share the victim's +858 contact timer.
+    if (!extra.musketId && !extra.projectileId) this.wheels?.noteActorContact?.(target);
     target.contacts = (target.contacts || 0) + 1; if (attacker.hero) this.contactHits++;
     const raw = { targetValue: attack.targetvalue, targetMove: attack.targetmove, defenseValue: attack.defensevalue, defenseMove: attack.defensemove, attackType: attack.attacktype, targetPose: attack.targetpose, moveRecord: this.combatData.moveRecords.get(state.poseId), weaponRecord: attacker.weaponRecord || this.combatData.weaponRecords.get(NATIVE_WEAPONS[attacker.weapon]?.model) };
     // Original POS parser rule 0x30 stores AttackType at record+0x30;

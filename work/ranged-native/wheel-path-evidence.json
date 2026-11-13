@@ -1,0 +1,73 @@
+{
+  "referenceSha256": "2479bc4bdf916d4a6386ed6352cfa9c5446708de9c1b5e859d4a674a3b42da94",
+  "method": "Ghidra12.2 readOnly/noanalysis exports; raw x86 cross-checks to correct lost ECX and stack operands",
+  "functions": [
+    {
+      "address": "004f0230",
+      "bytes": 807,
+      "sha256": "909074edd8620ca9c6e70d2a997ef6999b7f8daf5dc21674f375de9c94714781"
+    },
+    {
+      "address": "004f0ee0",
+      "bytes": 1582,
+      "sha256": "5567d15d3cb92c5a658cf45da62fb82c4ed1c2c51672e18c55d685865ac3c2e8"
+    },
+    {
+      "address": "004e5760",
+      "bytes": 786,
+      "sha256": "7a3fcafee7686c90b9400f9dfeda701415944e4fcfc72c6b2a3070bf319a9d89"
+    },
+    {
+      "address": "004f2e70",
+      "bytes": 1152,
+      "sha256": "ce5e253130d74f29edf7eb195a07c98766dc2a923b780ea8986ba9d4dc37b6f4"
+    },
+    {
+      "address": "004f3e70",
+      "bytes": 177,
+      "sha256": "97951e7d2f250cf09f2df963e5064e53a716e6b0bba77b52981b7758392fe2b5"
+    },
+    {
+      "address": "00493de0",
+      "bytes": 95,
+      "sha256": "84b4c3f72ca9b6731d9a177ae1f62d3351abb8a0664ce1fe5258bbd492ae46df"
+    },
+    {
+      "address": "00497f40",
+      "bytes": 215,
+      "sha256": "6235f1c8aef3cbd092e6c029eea97f1c93777718f93578ebca4157c2052bdba7"
+    },
+    {
+      "address": "005498c0",
+      "bytes": 140,
+      "sha256": "c4a55b2a22e69121cd11620a8fb234bb2b6932f9df159345d0620c43ee8fbe08"
+    },
+    {
+      "address": "005499a0",
+      "bytes": 240,
+      "sha256": "ac0da7545b4c2f9fc288fdb457c0d917d9462342da7c5bcbcbc818700b1e5ba4"
+    },
+    {
+      "address": "00549a90",
+      "bytes": 103,
+      "sha256": "bdc3585923a8a21a6eb78abcfecf9db0762d5df4b901a3389e10f484199d2720"
+    },
+    {
+      "address": "00549b00",
+      "bytes": 102,
+      "sha256": "e029ecd9f1e2220541d401b6b41565ef94bc7c8b5752094a98f0326bb2b1aa66"
+    }
+  ],
+  "criticalCorrections": {
+    "004f0f09": "ECX=projectile+8; >5s lifetime is projectile age",
+    "004f13c4": "ECX=target physicalActor+858, NOT projectile; >.4s gate is shared per-victim contact timer",
+    "004f1493": "Reset target+858 before damage message; no projectile destruction or phase change",
+    "004f1027": "Target position nativeZ+20 is added before velocity prediction; Ghidra omitted this float write",
+    "004f1088": "Overwrite first deque point; only while remaining count>1; timer base default30Hz",
+    "004f1215": "Zero all three velocity components and restore previous transform on wall; after advance point count>1 pops first, count1 sets+7c",
+    "004f1122": "+7c bypasses both world and actor tests",
+    "00493de0": "Target map lookup checks object existence, not dead status",
+    "004f2e70": "Largest strictly positive horizontal forward dot, target distance<=600, enemy active record; no scene LOS test",
+    "004e5760": "Queue empty returns0 next update; translate then steer after age>.09; pop when distance<26; +7c cap multiplied by float32(1.2)"
+  }
+}

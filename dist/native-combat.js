@@ -564,14 +564,18 @@ export class NativeCombatController {
 }
 
 async function fetchNativeCombat(base) {
-  const files = await Promise.all(['P0.POS', 'character.act'].map(async name => { const response = await fetch(base + name); if (!response.ok) throw new Error(`Native combat asset ${name}: ${response.status}`); return decodeNativeText(await response.arrayBuffer()); }));
-  const poses = parsePos(files[0], { file: 'pmodel/P0.POS' }), actions = parseAct(files[1], { file: 'Common/character.act' });
-  const resourceResponse = await fetch(new URL('./assets/original/characters/meteor-res-data.json', import.meta.url));
-  if (!resourceResponse.ok) throw new Error('Original Meteor.res record extraction unavailable');
-  const resourceData = await resourceResponse.json();
-  const npcResponse = await fetch(new URL('./assets/original/npc-ai/manifest.json', import.meta.url));
-  if (!npcResponse.ok) throw new Error('Original NPC command extraction unavailable');
-  const npcAi = await npcResponse.json();
+  const read = async (url, message, kind) => {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(message + ': ' + response.status);
+    return kind === 'json' ? response.json() : decodeNativeText(await response.arrayBuffer());
+  };
+  const [pos, act, resourceData, npcAi] = await Promise.all([
+    read(base + 'P0.POS', 'Original POS unavailable'),
+    read(base + 'character.act', 'Original ACT unavailable'),
+    read(new URL('./assets/original/characters/meteor-res-data.json', import.meta.url), 'Original Meteor.res record extraction unavailable', 'json'),
+    read(new URL('./assets/original/npc-ai/manifest.json', import.meta.url), 'Original NPC command extraction unavailable', 'json')
+  ]);
+  const poses = parsePos(pos, { file: 'pmodel/P0.POS' }), actions = parseAct(act, { file: 'Common/character.act' });
   if (npcAi.version !== 1 || Object.keys(npcAi.profiles || {}).length !== 12 || npcAi.airCommands?.length !== 17) throw new Error('Invalid original NPC command tables');
   const moveRecords = new Map(resourceData.allRecords.filter(r => r.type === 3).map(r => [r.id, r]));
   const weaponRecords = new Map(resourceData.allRecords.filter(r => r.type === 1).map(r => [r.model.toLowerCase(), r]));

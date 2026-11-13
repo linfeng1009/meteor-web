@@ -1,8 +1,9 @@
 import * as THREE from './vendor/three.module.js';
+import { QIYUN_MAP } from './qiyun-map.js';
+export { QIYUN_MAP };
 
 // A complete Blender-authored battlefield. Geometry is batched by material;
 // separate, continuous collision surfaces avoid catching feet in slab seams.
-export const QIYUN_MAP = Object.freeze({ id: 'qiyun', name: '栖云古庭', english: 'THE CLOUDREST COURT', poem: '山风入古庭，云深一剑鸣。' });
 const assetRoot = new URL('./assets/enhanced/maps/qiyun/', import.meta.url);
 
 async function checkedFetch(url) {

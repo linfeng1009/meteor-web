@@ -4,6 +4,8 @@ import http from 'node:http';
 import { battleCharacterSelection } from './dist/character-appearances.js';
 import {randomBytes} from 'node:crypto';
 import {readFile,stat} from 'node:fs/promises';
+import {createReadStream} from 'node:fs';
+import {pipeline} from 'node:stream/promises';
 import {gzip, brotliCompress, constants as zlibConstants} from 'node:zlib';
 import {promisify} from 'node:util';
 const gzipAsync=promisify(gzip), brotliAsync=promisify(brotliCompress);
@@ -96,12 +98,22 @@ const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=
 const incompressible=new Set(['.png','.jpg','.jpeg','.webp','.mp3','.wav','.bmp','.gif','.zip','.br','.gz','.woff2']);
 // This project's native data (.amb/.pos/.pst/.gmc/.gmb) is dense numeric text:
 // it shrinks 3-4x, which matters a lot on a 3 Mbit link.
-const compressibleExtra=new Set(['.amb','.pos','.pst','.gmc','.gmb','.bnc','.skc','.ef','.des','.map']);
+const compressibleExtra=new Set(['.amb','.pos','.pst','.gmc','.gmb','.bnc','.skc','.ef','.des','.map','.bin']);
 const shouldCompress=path=>{const ext=extname(path).toLowerCase();return !incompressible.has(ext)&&(
   ['.html','.js','.mjs','.css','.json','.svg','.txt','.md'].includes(ext)||compressibleExtra.has(ext)||types[ext]?.startsWith('text/'));};
 // Compressed bodies are cached by path+mtime so repeat requests skip zlib.
 const encodedCache=new Map(),ENCODED_CACHE_MAX=64;
-const accept=req=>String(req.headers['accept-encoding']||'').toLowerCase();
+function acceptedEncodings(header) {
+  const weights = new Map();
+  for (const entry of String(header || '').toLowerCase().split(',')) {
+    const [name, ...parameters] = entry.trim().split(';');
+    const q = parameters.map(value => value.trim()).find(value => value.startsWith('q='));
+    const weight = q === undefined ? 1 : Number(q.slice(2));
+    if (Number.isFinite(weight) && weight >= 0 && weight <= 1) weights.set(name.trim(), weight);
+  }
+  return ['br', 'gzip'].map(name => ({ name, weight: weights.get(name) ?? weights.get('*') ?? 0 }))
+    .filter(entry => entry.weight > 0).sort((a, b) => b.weight - a.weight).map(entry => entry.name);
+}
 async function encodeOnce(key,body,encoding){
   const hit=encodedCache.get(key);
   if(hit)return hit;
@@ -126,45 +138,45 @@ export function createNetworkServer({rooms=new NetworkRooms(),root=fileURLToPath
       if(!['GET','HEAD'].includes(req.method))fail('方法不允许',405);
       const target=resolve(root,'.'+decodeURIComponent(url.pathname==='/'?'/index.html':url.pathname));if(!target.startsWith(root.endsWith(sep)?root:root+sep))fail('禁止访问',403);
       const info=await stat(target);
+      if (!info.isFile()) fail('文件不存在',404);
       const mime=types[extname(target)]||'application/octet-stream';
       const isHtml=extname(target).toLowerCase()==='.html';
       const compressible=shouldCompress(target)&&info.size>1024;
-      const wanted=accept(req);
-      // Prefer the build-time .br/.gz sidecar: zero per-request CPU, best ratio.
-      let encoding=null,payload=null,stamp=`${info.size.toString(16)}-${Math.floor(info.mtimeMs).toString(16)}`;
-      if(compressible){
-        for(const candidate of [['br','.br'],['gzip','.gz']]){
-          const [enc,suffix]=candidate;
-          if(!wanted.includes(enc==='gzip'?'gzip':'br'))continue;
-          try{
-            const side=await stat(target+suffix);
-            if(side.mtimeMs<info.mtimeMs)continue;
-            payload=await readFile(target+suffix);
-            encoding=enc;stamp+=`-${enc}${side.size.toString(16)}`;
-            break;
-          }catch{}
-        }
+      const encoding = compressible ? acceptedEncodings(req.headers['accept-encoding'])[0] : null;
+      let path = target, size = info.size, dynamic = !!encoding;
+      let stamp = `${info.size.toString(16)}-${Math.floor(info.mtimeMs).toString(16)}`;
+      if (encoding) {
+        const sidecar = target + (encoding === 'br' ? '.br' : '.gz');
+        try {
+          const side = await stat(sidecar);
+          if (side.isFile() && side.mtimeMs >= info.mtimeMs) {
+            path = sidecar;
+            size = side.size;
+            stamp += `-${Math.floor(side.mtimeMs).toString(16)}-${side.size.toString(16)}`;
+            dynamic = false;
+          }
+        } catch {}
+        stamp += '-' + encoding;
       }
-      if(!payload){payload=await readFile(target);}
       const etag=`W/"${stamp}"`;
       // Repeat visits revalidate cheaply; the game's asset names are not
       // content-hashed, so nothing is cached as immutable.
       const cacheHeaders={'Cache-Control':isHtml?'no-cache':'public, max-age=3600','ETag':etag,'X-Content-Type-Options':'nosniff'};
-      if(req.headers['if-none-match']===etag){res.writeHead(304,{'Cache-Control':cacheHeaders['Cache-Control'],'ETag':etag});res.end();return;}
+      if(compressible)cacheHeaders['Vary']='Accept-Encoding';
+      if(req.headers['if-none-match']===etag){res.writeHead(304,cacheHeaders);res.end();return;}
       const headers={...cacheHeaders,'Content-Type':mime};
       if(encoding)headers['Content-Encoding']=encoding;
-      if(compressible&&!encoding&&wanted.includes('br'))headers['Vary']='Accept-Encoding';
-      // No sidecar and no encoding negotiated: compress on the fly, cached.
-      if(compressible&&!encoding){
-        const picked=wanted.includes('br')?'br':wanted.includes('gzip')?'gzip':null;
-        if(picked){
-          payload=await encodeOnce(`${target}:${info.mtimeMs}:${picked}`,payload,picked);
-          headers['Content-Encoding']=picked;headers['Vary']='Accept-Encoding';
-        }
+      if (!dynamic) headers['Content-Length'] = size;
+      if (req.method === 'HEAD') { res.writeHead(200, headers); res.end(); return; }
+      if (dynamic) {
+        const payload = await encodeOnce(`${target}:${info.mtimeMs}:${encoding}`, await readFile(target), encoding);
+        res.writeHead(200, {...headers,'Content-Length':payload.length});
+        res.end(payload);
+      } else {
+        res.writeHead(200, headers);
+        await pipeline(createReadStream(path), res);
       }
-      headers['Content-Length']=payload.length;
-      res.writeHead(200,headers);res.end(req.method==='HEAD'?undefined:payload);
-    }catch(error){json(error.status|| (error.code==='ENOENT'?404:500),{error:error.status?error.message:error.code==='ENOENT'?'文件不存在':'服务器处理失败'});}
+    }catch(error){if(res.headersSent||res.destroyed){res.destroy();return;}json(error.status|| (error.code==='ENOENT'?404:500),{error:error.status?error.message:error.code==='ENOENT'?'文件不存在':'服务器处理失败'});}
   });
 }
 export function startNetworkServers(){

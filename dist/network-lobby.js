@@ -1,8 +1,7 @@
 import {NETWORK_MODES,MAX_NETWORK_PLAYERS} from './network-rules.js';
 import {NetworkClient} from './network-client.js';
-import {NetworkGame} from './network-game.js';
 export class NetworkLobby{
-  constructor({getGame,getSelection=()=>undefined,onStart,onStop,onNotice,onResult=()=>{},createClient=options=>new NetworkClient(options),createSession=(...args)=>NetworkGame.create(...args)}){Object.assign(this,{getGame,getSelection,onStart,onStop,onNotice,onResult,createClient,createSession});}
+  constructor({getGame,getSelection=()=>undefined,onStart,onStop,onNotice,onResult=()=>{},createClient=options=>new NetworkClient(options),createSession=async (...args)=>(await import('./network-game.js')).NetworkGame.create(...args)}){Object.assign(this,{getGame,getSelection,onStart,onStop,onNotice,onResult,createClient,createSession});}
   mount(root){this.root=root;this.render();if(!this.client)this.refreshRooms();}
   async refreshRooms(){
     if(this.listLoading||this.client)return;this.listLoading=true;this.listError='';this.render();

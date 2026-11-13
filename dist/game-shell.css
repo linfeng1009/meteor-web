@@ -49,3 +49,7 @@
 .load-progress i{display:block;width:0;height:100%;background:linear-gradient(90deg,#9f8052,#f0d79a);box-shadow:0 0 14px #e2c17888;transition:width .4s ease}
 #load-progress-number{font:12px/1 Georgia,serif;letter-spacing:2px;color:#e3c98e}
 @media(max-width:800px){.guestbook-link{min-width:48px;padding:0 9px;font-size:12px}}
+
+#load-screen .load-progress i{width:38%;animation:battle-load 1.3s ease-in-out infinite alternate}
+@keyframes battle-load{from{transform:translateX(0)}to{transform:translateX(160%)}}
+@media(prefers-reduced-motion:reduce){#load-screen .load-progress i{animation:none}}

@@ -1,4 +1,4 @@
-import { DEFAULT_CHARACTER_APPEARANCE, NATIVE_APPEARANCES, NATIVE_CHARACTERS } from './native-character.js';
+import { DEFAULT_CHARACTER_APPEARANCE, NATIVE_APPEARANCES, NATIVE_CHARACTERS } from './character-catalog.js';
 
 // Shared presentation for the lobby, HUD and workshop. Native story identities
 // and character IDs remain in the original character data.

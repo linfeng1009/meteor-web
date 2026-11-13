@@ -120,6 +120,32 @@ test('远程命中反馈等投射物显示时钟到达后播放，退出不补�
  }finally{f.dispose();}
 });
 
+test('碰撞回收翻滚由房主传输，客人在快照与已完成短路径中都能插值',async()=>{
+ const f=fixture();try{
+  f.motion.receive([state({kind:'wheel',weaponId:2,tumble:2,spin:4})],.1);
+  const sample=f.motion.samples.get('wheel:1');await sample.ready;
+  assert.equal(sample.visual.rotation.x,2);assert.equal(sample.visual.rotation.y,4);
+  f.motion.receive([state({kind:'wheel',weaponId:2,tumble:4,spin:6})],.1);f.motion.update(.05);
+  assert.equal(sample.visual.rotation.x,3);assert.equal(sample.visual.rotation.y,5);
+  // Legacy snapshots omit tumble and return to a level wheel smoothly.
+  f.motion.receive([state({kind:'wheel',weaponId:2,spin:7})],.1);f.motion.update(.1);assert.equal(sample.visual.rotation.x,0);
+  f.motion.receive([],.1,[],0);
+  const flight={kind:'wheel',id:2,ownerId:'owner',weaponId:2,quaternion:[0,0,0,1],startTime:.02,endTime:.1,
+    points:[{time:.02,position:[0,1,0],spin:1,tumble:2},{time:.1,position:[1,1,0],spin:3,tumble:6}]};
+  f.motion.receive([],.1,[flight],.1);const short=f.motion.samples.get('wheel:2');await short.ready;f.motion.update(.06);
+  assert.ok(Math.abs(short.visual.rotation.x-4)<1e-9);assert.equal(f.hits,0);
+ }finally{f.dispose();}
+});
+
+test('碰撞返程的快照和短路径记录保留相同翻滚角度',()=>{
+ const f=fixture(),wheels=new NativeWheelSystem({scene:f.scene}),game={wheels,matchElapsed:0},recorder=new NetworkShortFlights(game);
+ try{
+  const shot=wheels.spawn({owner:f.owner,position:v(0,1.6,8),direction:v(0,0,-1),visual:new T.Group()});shot.collisionReturn=true;
+  wheels.update(.05);game.matchElapsed=.05;const snapshot=networkProjectileSnapshot(game)[0];assert.equal(snapshot.tumble,.8);
+  wheels.remove(shot,'caught');const paths=recorder.snapshot(f.actors);assert.equal(paths.length,1);assert.equal(paths[0].points.at(-1).tumble,snapshot.tumble);
+ }finally{recorder.dispose();wheels.dispose();f.dispose();}
+});
+
 test('较长飞行结束时仅保留最近实际路径，不把整段长飞行迟到重播',()=>{
  const f=fixture(),darts=new NativeProjectileSystem({scene:f.scene}),game={projectiles:darts,matchElapsed:0},history=new NetworkShortFlights(game);try{
   const shot=darts.spawn({owner:f.owner,position:v(),direction:v(0,0,1)});

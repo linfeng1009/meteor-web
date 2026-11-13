@@ -8,7 +8,7 @@ export function networkProjectileSnapshot(game){
     for(const shot of system?.active||[]){
       if(shot.removed||!shot.owner?.networkId||shot.owner.disposed||shot.owner.scriptRemoved)continue;
       result.push({kind,id:shot.id,ownerId:shot.owner.networkId,weaponId:shot.context?.weaponId??shot.context?.attacker?.weaponId??fallback,
-        position:shot.root.position.toArray(),quaternion:shot.root.quaternion.toArray(),spin:(kind==='dart'?-(shot.visual?.rotation.z||0):(shot.visual?.rotation.y||0)),phase:shot.phase||'outbound'});
+        position:shot.root.position.toArray(),quaternion:shot.root.quaternion.toArray(),spin:(kind==='dart'?-(shot.visual?.rotation.z||0):(shot.visual?.rotation.y||0)),phase:shot.phase||'outbound',...(kind==='wheel'?{tumble:shot.tumble||0}:{})});
     }
   }
   return result;
@@ -32,7 +32,7 @@ export class NetworkShortFlights{
         startTime:this.stepStart??this.game.matchElapsed,quaternion:shot.root.quaternion.toArray(),points:[]});
     }
     const flight=this.active.get(key);if(!flight)return;
-    const point={time:flight.startTime+shot.age,position:shot.position.toArray(),spin:(kind==='dart'?-(shot.visual?.rotation.z||0):(shot.visual?.rotation.y||0))};
+    const point={time:flight.startTime+shot.age,position:shot.position.toArray(),spin:(kind==='dart'?-(shot.visual?.rotation.z||0):(shot.visual?.rotation.y||0)),...(kind==='wheel'?{tumble:shot.tumble||0}:{})};
     if(flight.points.at(-1)?.time===point.time)flight.points.pop();flight.points.push(point);
     if(flight.points.length>16)flight.points.splice(1,1);
     if(!['spawn','update'].includes(event)){
@@ -68,7 +68,7 @@ export class NetworkProjectileMotion{
       }
       sample.from.copy(sample.root.position);sample.to.fromArray(state.position);
       sample.fromQuaternion.copy(sample.root.quaternion);sample.toQuaternion.fromArray(state.quaternion);
-      sample.fromSpin=sample.spin;sample.toSpin=state.spin;sample.elapsed=0;sample.duration=Math.max(.03,Math.min(.15,duration||.07));sample.phase=state.phase;
+      sample.fromSpin=sample.spin;sample.toSpin=state.spin;sample.fromTumble=sample.tumble||0;sample.toTumble=state.tumble||0;sample.elapsed=0;sample.duration=Math.max(.03,Math.min(.15,duration||.07));sample.phase=state.phase;
       if(!sample.visual&&!sample.loading)this.load(sample);
     }
     for(const flight of flights){
@@ -76,7 +76,7 @@ export class NetworkProjectileMotion{
       if(this.seenFlights.has(key)){if(existing?.flight)seen.add(key);continue;}
       this.seenFlights.set(key,flight.endTime);
       if(seen.has(key)||!Number.isFinite(worldTime)||!this.actors.has(flight.ownerId)||flight.endTime<=worldFrom||flight.startTime>=worldTime)continue;
-      const first=flight.points[0],sample=existing||this.create({...flight,position:first.position,spin:first.spin},key);
+      const first=flight.points[0],sample=existing||this.create({...flight,position:first.position,spin:first.spin,tumble:first.tumble},key);
       sample.flight=flight;sample.worldFrom=worldFrom;sample.worldTo=worldTime;sample.elapsed=0;sample.duration=span;
       sample.root.visible=worldFrom>=flight.startTime;sample.root.quaternion.fromArray(flight.quaternion);
       seen.add(key);if(!sample.visual&&!sample.loading)this.load(sample);
@@ -88,7 +88,7 @@ export class NetworkProjectileMotion{
   create(state,key){
     const root=new THREE.Group();root.position.fromArray(state.position);root.quaternion.fromArray(state.quaternion);
     const sample={key,root,kind:state.kind,ownerId:state.ownerId,weaponId:state.weaponId,from:new THREE.Vector3(),to:new THREE.Vector3(),
-      fromQuaternion:new THREE.Quaternion(),toQuaternion:new THREE.Quaternion(),spin:state.spin,loading:false};
+      fromQuaternion:new THREE.Quaternion(),toQuaternion:new THREE.Quaternion(),spin:state.spin,tumble:state.tumble||0,loading:false};
     this.samples.set(key,sample);this.group.add(root);return sample;
   }
   load(sample){
@@ -97,7 +97,7 @@ export class NetworkProjectileMotion{
       if(this.disposed||this.samples.get(sample.key)!==sample||!templates?.[0])return;
       const visual=templates[0].clone(true);visual.visible=true;visual.rotation.set(0,0,0);visual.position.set(0,0,0);visual.scale.setScalar(.08);
       visual.position.sub(new THREE.Box3().setFromObject(visual).getCenter(new THREE.Vector3()));
-      if(sample.kind==='dart')visual.rotation.z=-sample.spin;else visual.rotation.y=sample.spin;sample.visual=visual;sample.root.add(visual);
+      if(sample.kind==='dart')visual.rotation.z=-sample.spin;else {visual.rotation.y=sample.spin;visual.rotation.x=sample.tumble||0;}sample.visual=visual;sample.root.add(visual);
     }).catch(()=>{}).finally(()=>{sample.loading=false;});
   }
   updateHeldWheels(){
@@ -118,10 +118,10 @@ export class NetworkProjectileMotion{
         const points=flight.points;let i=1;while(i<points.length-1&&points[i].time<time)i++;
         const a=points[i-1],b=points[i],weight=Math.max(0,Math.min(1,(time-a.time)/(b.time-a.time)));
         sample.from.fromArray(a.position);sample.to.fromArray(b.position);sample.root.position.lerpVectors(sample.from,sample.to,weight);
-        sample.spin=a.spin+(b.spin-a.spin)*weight;if(sample.visual){if(sample.kind==='dart')sample.visual.rotation.z=-sample.spin;else sample.visual.rotation.y=sample.spin;}continue;
+        sample.spin=a.spin+(b.spin-a.spin)*weight;sample.tumble=(a.tumble||0)+((b.tumble||0)-(a.tumble||0))*weight;if(sample.visual){if(sample.kind==='dart')sample.visual.rotation.z=-sample.spin;else {sample.visual.rotation.y=sample.spin;sample.visual.rotation.x=sample.tumble||0;}}continue;
       }
       sample.root.position.lerpVectors(sample.from,sample.to,t);sample.root.quaternion.slerpQuaternions(sample.fromQuaternion,sample.toQuaternion,t);
-      sample.spin=sample.fromSpin+(sample.toSpin-sample.fromSpin)*t;if(sample.visual){if(sample.kind==='dart')sample.visual.rotation.z=-sample.spin;else sample.visual.rotation.y=sample.spin;}
+      sample.spin=sample.fromSpin+(sample.toSpin-sample.fromSpin)*t;sample.tumble=sample.fromTumble+(sample.toTumble-sample.fromTumble)*t;if(sample.visual){if(sample.kind==='dart')sample.visual.rotation.z=-sample.spin;else {sample.visual.rotation.y=sample.spin;sample.visual.rotation.x=sample.tumble||0;}}
     }
     if(removed||visibilityChanged)this.updateHeldWheels();
     // Equipment may finish loading between snapshots. Apply visibility to

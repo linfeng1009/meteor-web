@@ -27,9 +27,9 @@ test('锁定辅助补偿弹道，实际固定步长能到达不同高度和距�
 test('飞轮以原速度和自转飞行，返程通过加速度转向而非瞬间反向',()=>{
   const system=new NativeWheelSystem(),visual=new T.Group(),f=owner();
   const shot=system.spawn({owner:f,position:v(0,1.35,0),direction:v(0,0,1),visual});
-  system.update(.1);assert.ok(Math.abs(shot.position.z-4.8)<1e-9);assert.equal(visual.rotation.y,1.6);
+  system.update(.08);assert.ok(Math.abs(shot.position.z-3.84)<1e-9);assert.equal(visual.rotation.y,1.28);
   assert.equal(W.acceleration,640);assert.equal(W.arrivalRadius,2.08);
-  shot.phase='return';const previous=shot.position.z;system.update(1/60);
+  const previous=shot.position.z;system.update(1/60);
   assert.ok(shot.position.z>previous,'先按旧速度前进');assert.ok(shot.velocity.z>0&&shot.velocity.z<48,'加速度逐步改变速度');
   for(let i=0;i<180&&system.size;i++)system.update(1/60);
   assert.equal(system.size,0);system.dispose();

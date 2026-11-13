@@ -13,6 +13,7 @@ export const NATIVE_APPEARANCES=Object.freeze({
   lumine:Object.freeze({id:'lumine',label:'荧 · 模型适配',characterId:0,assetPath:'./assets/enhanced/lumine/'}),
   aether:Object.freeze({id:'aether',label:'空 · 模型适配',characterId:0,assetPath:'./assets/enhanced/aether/'}),
   furina:Object.freeze({id:'furina',label:'芙宁娜 · 模型适配',characterId:0,assetPath:'./assets/enhanced/furina/'}),
+  'furina-swimwear':Object.freeze({id:'furina-swimwear',label:'芙宁娜 · 泳装',characterId:0,variantOf:'furina',assetPath:'./assets/enhanced/furina-swimwear/'}),
   zhaojun:Object.freeze({id:'zhaojun',label:'王昭君 · 长夜焕生',characterId:0,assetPath:'./assets/enhanced/zhaojun/'}),
   keqing:Object.freeze({id:'keqing',label:'刻晴 · 模型适配',characterId:0,assetPath:'./assets/enhanced/keqing/'}),
   haku:Object.freeze({id:'haku',label:'TDA 弱音 · 夏日特调',characterId:0,assetPath:'./assets/enhanced/haku/'}),

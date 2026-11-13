@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import * as THREE from '../dist/vendor/three.module.js';
 import {createNativeCharacter,loadNativeCharacterData,loadEnhancedCharacterData,NATIVE_APPEARANCES} from '../dist/native-character.js';
-import {appearanceCharacterName,WORKSHOP_APPEARANCES} from '../dist/character-appearances.js';
+import {appearanceCharacterName,appearanceDetails,battleCharacterSelection,WORKSHOP_APPEARANCES} from '../dist/character-appearances.js';
 import {sourcePmxVertices} from './helpers/source-pmx-vertices.mjs';
 
 const imageSize = bytes => {
@@ -120,3 +120,39 @@ test('Furina is selectable in the workshop with its own identity',async()=>{
   assert.equal(NATIVE_APPEARANCES.furina.characterId,0);
   assert.equal(Object.isFrozen(NATIVE_APPEARANCES.furina),true);
 });
+
+test('Furina swimwear is a complete second appearance with shared face textures and live native moves', async()=>withFetch(async()=>{
+  const appearance='furina-swimwear';
+  const {manifest,skin,path}=await loadEnhancedCharacterData(0,appearance);
+  assert.equal(NATIVE_APPEARANCES[appearance].variantOf,'furina');
+  assert.equal(manifest.variantOf,'furina');
+  assert.equal(manifest.complete,true);
+  assert.equal(manifest.completeness.faceGeometry,true);
+  assert.deepEqual(battleCharacterSelection({character:0,characterAppearance:appearance}),{character:0,characterAppearance:appearance});
+  assert.equal(appearanceCharacterName(0,appearance),appearanceCharacterName(0,'furina'));
+  assert.ok(WORKSHOP_APPEARANCES.includes(appearance));
+  assert.notEqual(appearanceDetails(appearance).variantLabel,appearanceDetails('furina').variantLabel);
+  const textures=new Set(skin.materials.map(material=>new URL(material.texture,path).href));
+  assert.ok([...textures].some(url=>url.startsWith(new URL('../furina/textures/',path).href)));
+  for(const url of textures) assert.ok((await readFile(new URL(url))).length>0);
+
+  const actor=createNativeCharacter(data,{loadTextures:false});
+  try {
+    assert.equal((await actor.setAppearance('furina')).available,true);
+    const pose=data.poses[151];
+    actor.setPoseFrame(pose.source,pose.start+3);
+    const native=matrices(actor);
+    assert.equal((await actor.setAppearance(appearance)).available,true);
+    assert.equal(actor.appearance,appearance);
+    assert.deepEqual(matrices(actor),native);
+    assert.equal(actor.secondaryMotionStatus.enabled,true);
+    for(const id of [6,144,151,262]){
+      const {source,start,end}=data.poses[id];
+      actor.setPoseFrame(source,(start+end)/2);
+      actor.updateSecondaryMotion(1/60);
+      assert.ok(actor.mesh.skeleton.bones.every(b=>b.matrixWorld.toArray().every(Number.isFinite)));
+    }
+    assert.equal((await actor.setAppearance('furina')).available,true);
+    assert.equal(actor.appearance,'furina');
+  } finally { actor.dispose(); }
+}));

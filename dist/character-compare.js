@@ -1,5 +1,5 @@
 import * as THREE from './vendor/three.module.js';
-import { DEFAULT_CHARACTER_APPEARANCE, loadNativeCharacter } from './native-character.js';
+import { DEFAULT_CHARACTER_APPEARANCE, NATIVE_APPEARANCES, loadNativeCharacter } from './native-character.js';
 import { WORKSHOP_APPEARANCES, appearanceDetails } from './character-appearances.js';
 import { loadNativeCombat, NativePoseTimeline, summarizeNativeMove } from './native-combat.js';
 import { loadGmc, loadGmb } from './gmc-loader.js';
@@ -8,7 +8,7 @@ const $ = selector => document.querySelector(selector);
 const canvas = $('#compare-world'), stage = canvas.parentElement;
 const requestedAppearance = new URL(location.href).searchParams.get('appearance');
 const initialAppearance = WORKSHOP_APPEARANCES.includes(requestedAppearance) ? requestedAppearance : DEFAULT_CHARACTER_APPEARANCE;
-const referenceAppearance = appearance => appearance === 'hutao' ? 'raiden' : 'hutao';
+const referenceAppearance = appearance => NATIVE_APPEARANCES[appearance]?.variantOf ?? (appearance === 'hutao' ? 'raiden' : 'hutao');
 $('#compare-appearance').replaceChildren(...WORKSHOP_APPEARANCES.map(id => { const option = document.createElement('option'); option.value = id; option.textContent = appearanceDetails(id).title; return option; }));
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const state = { appearance: initialAppearance, complete: true, motion: 'idle', playing: false, physics:true, time: 0, angle: .1, pitch: .1, distance: 6.2, focus: 1.45, view: 'full', ready: false };
@@ -107,7 +107,7 @@ function updateVariantLabels() {
   $('#variant-title').textContent = details.title;
   $('#apply-appearance').textContent = state.complete ? '使用此外观进入游戏 ↗' : '模型不完整，暂不可启用';
   $('#apply-appearance').disabled = !state.complete;
-  $('#compare-description').textContent = `左侧为${reference.name}，右侧为${details.name}。两侧共用视角、灯光和动作进度。`;
+  $('#compare-description').textContent = `左侧为${reference.title}，右侧为${details.title}。两侧共用视角、灯光和动作进度。`;
   $('#appearance-note').textContent = state.complete ? details.note : actors[1]?.appearanceStatus.reason || '当前模型尚不完整，仅供工坊预览。';
   document.title = `${details.name} · 人物外观对照`;
   const url = new URL(location.href); url.searchParams.set('appearance', state.appearance); history.replaceState(null, '', url.pathname + url.search + url.hash);

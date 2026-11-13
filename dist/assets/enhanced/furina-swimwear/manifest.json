@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "characterId": 0,
+  "appearance": "furina-swimwear",
+  "variantOf": "furina",
+  "label": "芙宁娜 · 泳装",
+  "mesh": "mesh.json",
+  "complete": true,
+  "completeness": {
+    "bodyGeometry": true,
+    "headHairGeometry": true,
+    "eyes": true,
+    "faceGeometry": true,
+    "sourcePmxSkeleton": false,
+    "originalSourceGameSkeleton": false
+  },
+  "stats": {
+    "sourceVertices": 43336,
+    "sourceTriangles": 71492,
+    "vertices": 45893,
+    "triangles": 74958,
+    "bones": 30,
+    "secondaryBones": 6,
+    "materials": 13,
+    "textures": 4
+  },
+  "retarget": {
+    "method": "Recovered source weights transferred to the native Furina display rig layout at measured source joint centres.",
+    "hairPhysics": true,
+    "hairPhysicsProfile": "web-spring-bone-v2-restrained",
+    "clothPhysics": false
+  },
+  "provenance": {
+    "sourceArchive": "assets/source/furina/swimwear",
+    "sourceModel": "FurinaDark",
+    "sharedFace": {
+      "appearance": "furina",
+      "modelAuthor": "miHoYo",
+      "rigAuthor": "观海（BiliBili：观海子）"
+    },
+    "limits": [
+      "Package contains vertex streams and texture overrides, without the source game skeleton or face mesh.",
+      "Pose binding and web materials approximate the source game.",
+      "Dress overlay follows the body weights; no cloth physics."
+    ]
+  }
+}

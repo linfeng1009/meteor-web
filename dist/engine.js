@@ -26,7 +26,7 @@ import { createNativeEnvironment } from './native-environment.js';
 import { NativeWeather } from './native-weather.js';
 import { NativeItemSystem, useNativeScriptItem, useNativeAttackItem, useNativeSelfItem, nativeMovementScale, nativeAirMovementScale, nativeRageMaximum, nativeIsInvisible, updateNativeScriptItems, clearNativeScriptItems } from './native-items.js';
 import { QIANKUN_MODE_NAMES } from './native-weapon-menu.js';
-import { sweepActorCapsule, NativeProjectileSystem, NATIVE_DART_PROFILE, NativeMusketSystem, NATIVE_MUSKET_PROFILE, NativeWheelSystem, NATIVE_WHEEL_PROFILE } from './native-projectiles.js';
+import { sweepActorCapsule, NativeProjectileSystem, aimNativeDart, NATIVE_DART_PROFILE, NativeMusketSystem, NATIVE_MUSKET_PROFILE, NativeWheelSystem, NATIVE_WHEEL_PROFILE } from './native-projectiles.js';
 import { NativeImpactFeedback } from './native-impact-feedback.js';
 import { NativeBloodFeedback, bloodStyleForHit } from './native-blood-feedback.js';
 import { loadNativePoisonFeedback } from './native-poison-feedback.js';
@@ -134,7 +134,9 @@ export class MeteorGame {
       const origin = f.character.getAttachment('d_wpnR').getWorldPosition(v3());
       const control=this._controlFor(f);
       const target = control ? control.locked || this._nearest(8,f) : f.scriptControl?.attackTarget || this.hero;
-      const direction = target && !target.dead ? target.root.position.clone().add(v3(0, 1.35, 0)).sub(origin).normalize() : v3(Math.sin(f.root.rotation.y), 0, Math.cos(f.root.rotation.y));
+      const aimPoint = target && !target.dead ? target.root.position.clone().add(v3(0, 1.35, 0))
+        : origin.clone().add(v3(Math.sin(f.root.rotation.y), 0, Math.cos(f.root.rotation.y)).multiplyScalar(10));
+      const direction = aimNativeDart(origin, aimPoint);
       const visual = f.weaponModel.clone(true); visual.rotation.set(0, 0, 0); visual.position.set(0, 0, 0); visual.scale.setScalar(SCALE);
       // A hand attachment is native Z-up and had an inverse-X rotation; a free
       // world projectile instead keeps the loader's converted Y-up geometry.
@@ -147,33 +149,23 @@ export class MeteorGame {
     }
   }
   _fireNativeMusket(f, state) {
-    if (!NATIVE_MUSKET_PROFILE.poseIds.includes(state.poseId) || !f.weaponModel || !this.running) return;
-    const origin = f.character.getAttachment('d_wpnR').getWorldPosition(v3());
+    if (!NATIVE_MUSKET_PROFILE.poseIds.includes(state.poseId) || !this.running) return;
+    const origin = f.root.position.clone().add(v3(0, NATIVE_MUSKET_PROFILE.originHeight, 0));
     const control=this._controlFor(f),target=control?null:f.scriptControl?.attackTarget;
     let direction=target&&!target.dead?target.root.position.clone().add(v3(0,1.35,0)).sub(origin).normalize():v3(Math.sin(f.root.rotation.y),0,Math.cos(f.root.rotation.y));
     if(control&&f.musketAim){
       direction=v3(-Math.sin(control.cameraAngle)*Math.cos(control.aimPitch||0),Math.sin(control.aimPitch||0),-Math.cos(control.cameraAngle)*Math.cos(control.aimPitch||0));
-      // Reticle determines the world aim point; the muzzle-to-point ray still
-      // checks nearby walls, so aiming around cover cannot shoot through it.
-      const eye=f.root.position.clone().add(v3(0,1.65,0));this.raycaster.set(eye,direction);this.raycaster.far=80;
-      const hit=this.raycaster.intersectObjects(this.currentMap.colliders||[],false)[0];this.raycaster.far=Infinity;
-      let distance=hit?.distance??80;const end=eye.clone().addScaledVector(direction,80);
-      for(const actor of [this.hero,...(this.enemies||[])])if(actor&&actor!==f&&!actor.dead&&!actor.disposed&&!actor.scriptRemoved){const t=sweepActorCapsule(eye,end,actor,0,this.hostPhysics.radius);if(t!=null)distance=Math.min(distance,t*80);}
-      direction=eye.addScaledVector(direction,distance).sub(origin).normalize();
     }
     const attacker = { id: f.id, hero: f.hero, scriptId: f.scriptId, root: f.root, name: f.name, weapon: f.weapon, weaponId: f.weaponId,
       weaponRecord: f.weaponRecord, nativeStats: { ...f.nativeStats }, activeItems: [...(f.activeItems || [])], team: f.team, teamMask: f.teamMask };
-    // Explicit browser aim/range adapter until the original ballistic path is
-    // recovered. Never use the dart's speed, lifetime or weapon mesh as a bullet.
-    const shots = this.muskets?.firePose({ owner: f, state, position: origin, direction, range: 80,
-      sourcePosition: f.root.position.clone().add(v3(0, 1.35, 0)), context: { attacker } });
+    const shots = this.muskets?.firePose({ owner: f, state, position: origin, direction, context: { attacker } });
     if (shots?.length) this._soundDefinition(state.pose.raw.fields.effectid);
   }
   _launchNativeWheel(f, state) {
     if (!NATIVE_WHEEL_PROFILE.poseIds.includes(state.poseId) || !f.weaponModel || !this.running) return;
     for (const attack of state.attacks) {
       const key = `release:${state.serial}:${attack.index}`; if (f.attackHits.has(key) || this.wheels?.hasOwner(f)) continue;
-      const origin = f.character.getAttachment('d_wpnR').getWorldPosition(v3());
+      const origin = f.root.position.clone().add(v3(0, NATIVE_WHEEL_PROFILE.originHeight, 0));
       const control=this._controlFor(f);
       const target = control ? control.locked || this._nearest(24,f) : f.scriptControl?.attackTarget;
       const direction = target && !target.dead ? target.root.position.clone().add(v3(0, 1.35, 0)).sub(origin).normalize() : v3(Math.sin(f.root.rotation.y), 0, Math.cos(f.root.rotation.y));
@@ -1452,7 +1444,7 @@ export class MeteorGame {
   _tickCamera(dt, { directLook: directLookRequested = false } = {}) {
     if (!this.hero || !this.currentMap) return;
     if(this.hero.musketAim&&!this.hero.dead&&(this.running||this.paused)){
-      const control=this._controlFor(this.hero),eye=this.hero.root.position.clone().add(v3(0,1.65,0)),pitch=control?.aimPitch||0;
+      const control=this._controlFor(this.hero),eye=this.hero.root.position.clone().add(v3(0,NATIVE_MUSKET_PROFILE.originHeight,0)),pitch=control?.aimPitch||0;
       const direction=v3(-Math.sin(this.cameraAngle)*Math.cos(pitch),Math.sin(pitch),-Math.cos(this.cameraAngle)*Math.cos(pitch));
       this.camera.position.copy(eye);this.cameraTarget.copy(eye).add(direction);this.camera.lookAt(this.cameraTarget);this.hero.root.visible=false;this.cameraFollowY=this.hero.root.position.y;return;
     }

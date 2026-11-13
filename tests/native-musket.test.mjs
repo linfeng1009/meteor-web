@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import * as THREE from '../dist/vendor/three.module.js';
-import { NATIVE_MUSKET_PROFILE, NativeMusketSystem } from '../dist/native-projectiles.js';
+import { NATIVE_MUSKET_PROFILE, NativeMusketSystem, sweepNativeMusketBody } from '../dist/native-projectiles.js';
 import { NATIVE_WEAPONS, NATIVE_GUARD_REACTIONS, NativeCombatController, parsePos, parseAct, decodeNativeText, createNativeDamageResolver } from '../dist/native-combat.js';
 import { parseGmc } from '../dist/gmc-loader.js';
 
@@ -80,25 +80,62 @@ test('guard and friendly contact preserve recovered damage arithmetic', () => {
   friendly.system.firePose({ ...friendly.aim, state: sourceState(friendly.combat, 206) }); assert.equal(friendly.hits[0].amount, 7); assert.equal(friendly.target.hp, 993);
 });
 
-test('nearest actor or original map triangle wins, including a muzzle beyond a wall', () => {
+test('原场景截断火铳射线，命中角色不遮住后方墙体反馈', () => {
   const blocked = fixture({ colliders: [wall(5)] });
   blocked.system.firePose({ ...blocked.aim, state: sourceState(blocked.combat, 206) }); assert.equal(blocked.target.hp, 1000); assert.equal(blocked.worlds.length, 1);
   const close = actor(3, 'sword', 6), far = actor(7, 'sword', 6), first = fixture({ targets: [far, close], colliders: [wall(5)] });
-  first.system.firePose({ ...first.aim, state: sourceState(first.combat, 206) }); assert.equal(close.hp, 963); assert.equal(far.hp, 1000); assert.equal(first.worlds.length, 0);
+  first.system.firePose({ ...first.aim, state: sourceState(first.combat, 206) }); assert.equal(close.hp, 963); assert.equal(far.hp, 1000); assert.equal(first.worlds.length, 1);
   const clipped = fixture({ colliders: [wall(.1)] });
   clipped.system.firePose({ ...clipped.aim, state: sourceState(clipped.combat, 206) }); assert.equal(clipped.target.hp, 1000); assert.equal(clipped.worlds.length, 1);
 });
 
-test('host must choose ray range; pause, miss, stale windows and special EF do not duplicate shots', () => {
+test('原火铳默认射程与暂停、短查询、旧动作及特殊EF去重', () => {
   const { combat, system, aim, target, hits } = fixture(); const state = sourceState(combat, 206);
-  assert.equal(system.firePose({ ...aim, range: undefined, state }).length, 0);
+  assert.equal(system.fire({ ...aim, range: NaN }), null);
   system.pause(); assert.equal(system.firePose({ ...aim, state }).length, 0); system.pause(false);
   assert.equal(system.firePose({ ...aim, range: 2, state })[0].removalReason, 'miss'); assert.equal(target.hp, 1000);
   assert.equal(system.firePose({ ...aim, state }).length, 0, 'a missed shot still consumes its release identity');
   const second = sourceState(combat, 207); system.firePose({ ...aim, state: second }); assert.equal(hits.length, 1);
   assert.equal(system.firePose({ ...aim, state }).length, 0, 'stale source serial cannot fire again');
   for (const poseId of [215, 216, 217]) assert.equal(system.firePose({ ...aim, state: sourceState(combat, poseId) }).length, 0);
-  assert.equal(NATIVE_MUSKET_PROFILE.contactMode, 'web-hitscan-adapter'); assert.equal(Object.hasOwn(NATIVE_MUSKET_PROFILE, 'speed'), false);
-  assert.equal(Object.hasOwn(NATIVE_MUSKET_PROFILE, 'range'), false); assert.equal(system.size, 0);
+  assert.equal(NATIVE_MUSKET_PROFILE.contactMode, 'native-scene-clipped-ray'); assert.equal(Object.hasOwn(NATIVE_MUSKET_PROFILE, 'speed'), false);
+  assert.equal(NATIVE_MUSKET_PROFILE.range, 80); assert.equal(NATIVE_MUSKET_PROFILE.originHeight, 2.4); assert.equal(system.size, 0);
   system.dispose(); assert.equal(system.fire({ ...aim }), null);
+});
+
+
+test('原火铳可命中同一场景射线内的多名角色，墙后目标仍被阻挡', () => {
+  const close = actor(3, 'sword', 6), middle = actor(7, 'sword', 6), behind = actor(14, 'sword', 6);
+  const f = fixture({ targets: [middle, close, behind, close], colliders: [wall(10)] });
+  const shot = f.system.firePose({ ...f.aim, state: sourceState(f.combat, 206) })[0];
+  assert.equal(f.hits.length, 2); assert.equal(close.hp, 963); assert.equal(middle.hp, 963); assert.equal(behind.hp, 1000);
+  assert.equal(f.worlds.length, 1); assert.ok(Math.abs(shot.position.z - 10) < 1e-6);
+  assert.ok(f.hits.every(hit => hit.shot === shot));
+});
+
+test('原火铳目标盒为横向±7与脚底至36原单位，包括盒角和头顶', () => {
+  const target = actor(10, 'sword', 6), width = 7 * .08, height = 36 * .08;
+  assert.equal(NATIVE_MUSKET_PROFILE.bodyHalfWidth, width); assert.equal(NATIVE_MUSKET_PROFILE.bodyHeight, height);
+  for (const x of [-width, 0, width]) for (const y of [0, 2.7, height]) assert.notEqual(sweepNativeMusketBody(v(x, y, 0), v(x, y, 20), target), null);
+  assert.equal(sweepNativeMusketBody(v(width + 1e-6, 1, 0), v(width + 1e-6, 1, 20), target), null);
+  assert.equal(sweepNativeMusketBody(v(0, height + 1e-6, 0), v(0, height + 1e-6, 20), target), null);
+  assert.equal(sweepNativeMusketBody(v(0, -1e-6, 0), v(0, -1e-6, 20), target), null);
+  assert.equal(sweepNativeMusketBody(v(0, 1, 0), v(0, 1, 8), target), null);
+  assert.equal(sweepNativeMusketBody(v(0, 1, 10), v(0, 1, 11), target), 0);
+});
+
+test('原火铳不超过1000原单位，省略射程时仍使用原上限', () => {
+  const near = actor(79, 'sword', 6), beyond = actor(81, 'sword', 6), f = fixture({ targets: [near, beyond] });
+  f.system.firePose({ ...f.aim, range: undefined, state: sourceState(f.combat, 206) });
+  assert.equal(near.hp, 963); assert.equal(beyond.hp, 1000);
+  f.system.firePose({ ...f.aim, range: 1000, state: sourceState(f.combat, 206) });
+  assert.equal(near.hp, 926); assert.equal(beyond.hp, 1000);
+});
+
+test('同一火铳动作即使重发或带多个攻击窗，也只消耗一次发射标志', () => {
+  const f = fixture(), state = sourceState(f.combat, 206);
+  state.attacks.push({ ...state.attacks[0], index: 99 });
+  assert.equal(f.system.firePose({ ...f.aim, state }).length, 1);
+  assert.equal(f.hits.length, 1);
+  assert.equal(f.system.firePose({ ...f.aim, state }).length, 0);
 });

@@ -29,6 +29,7 @@ test('客人只插值权威位置方向及自转，网络停顿不外推且不�
   const q=new T.Quaternion().setFromAxisAngle(v(0,1,0),Math.PI).toArray();f.motion.receive([state({position:[2,1,0],quaternion:q,spin:10})],.1);
   f.motion.update(.05);assert.deepEqual(sample.root.position.toArray(),[1,1,0]);assert.ok(Math.abs(sample.root.quaternion.y-Math.SQRT1_2)<1e-9);assert.equal(sample.spin,5);
   f.motion.update(1);assert.deepEqual(sample.root.position.toArray(),[2,1,0]);assert.equal(sample.spin,10);
+  assert.equal(sample.visual.rotation.z,-10);assert.equal(sample.visual.rotation.y,0);
   for(let i=0;i<60;i++)f.motion.update(1/60);assert.deepEqual(sample.root.position.toArray(),[2,1,0]);assert.equal(f.owner.hp,1000);assert.equal(f.hits,0);assert.equal(f.loads,1);
  }finally{f.dispose();}
 });

@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0c1215">
+  <meta name="description" content="刀剑相逢，江湖再启。流星蝴蝶剑 Web 实验重构，浏览器中的 3D 武侠对战。">
+  <title>流星蝴蝶剑 · 江湖再启</title>
+  <link rel="icon" href="./assets/emblem.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./keybindings.css">
+  <link rel="stylesheet" href="./cold-ink.css">
+  <link rel="stylesheet" href="./game-shell.css?v=20261113-ui2">
+  <link rel="stylesheet" href="./disclaimer.css">
+</head>
+<body>
+  <svg class="svg-defs" aria-hidden="true"><defs>
+    <symbol id="i-sword" viewBox="0 0 24 24"><path d="M5 19 19 5l1-4-4 1L3 15m0-3 9 9m-7-2-3 3m10-10 3 3"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-volume" viewBox="0 0 24 24"><path d="m11 4-6 5H2v6h3l6 5V4Zm4 4c3 2 3 6 0 8m3-11c5 4 5 10 0 14"/></symbol>
+    <symbol id="i-muted" viewBox="0 0 24 24"><path d="m11 4-6 5H2v6h3l6 5V4Zm5 5 6 6m0-6-6 6"/></symbol>
+    <symbol id="i-full" viewBox="0 0 24 24"><path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-3-5h6l.5 3 2 1 3-.5 2 5-2.5 2v2l1.5 2.5-4 3.5-2.5-1.5h-3L9 22l-4-3 1-3-1-2L2 12l2-5 3 .5 2-1L9 3Z"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m5 5 14 14M5 19 19 5"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 5v16M3 3c4-1 7 0 9 2 2-2 5-3 9-2v16c-4-1-7 0-9 2-2-2-5-3-9-2V3Z"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 4v16m8-16v16"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+  </defs></svg>
+  <canvas id="world" aria-label="三维武侠竞技场"></canvas>
+  <div class="atmosphere" aria-hidden="true"></div>
+  <div id="load-screen" class="hidden"><div class="load-emblem">流</div><span>正在准备战场</span><div class="load-progress" role="progressbar" aria-label="载入战场"><i></i></div><small id="load-status" role="status">正在读取所选资源…</small></div>
+
+  <div id="lobby" class="screen">
+    <header class="topbar">
+      <a class="brand" href="#" data-route="home" aria-label="流星蝴蝶剑首页"><span class="brand-emblem">流</span><span>流星蝴蝶剑<small>刀光起处 · 故人重逢</small></span></a>
+      <div class="header-actions"><span class="web-badge">冷墨江湖 · WEB</span><a class="icon-button github-link" href="https://github.com/linfeng1009/meteor-web" target="_blank" rel="noopener noreferrer" aria-label="GitHub 开源项目"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.11.82-.26.82-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.083-.73.083-.73 1.205.084 1.84 1.237 1.84 1.237 1.07 1.835 2.807 1.304 3.492.997.108-.775.42-1.305.763-1.605-2.665-.304-5.467-1.332-5.467-5.93 0-1.31.468-2.38 1.235-3.22-.135-.303-.536-1.527.117-3.176 0 0 1.008-.322 3.3 1.23a11.49 11.49 0 0 1 6.006 0c2.29-1.552 3.297-1.23 3.297-1.23.655 1.65.253 2.873.118 3.176.77.84 1.233 1.91 1.233 3.22 0 4.61-2.807 5.624-5.48 5.922.43.37.815 1.102.815 2.222v3.293c0 .32.216.694.825.576C20.565 21.796 24 17.3 24 12 24 5.37 18.63 0 12 0Z"/></svg></a><button class="icon-button sound-toggle" aria-label="开启音效"><svg><use href="#i-muted"/></svg></button><button class="icon-button guestbook-link" data-open="guestbook" aria-label="留言">留言</button><button class="icon-button" data-open="settings" aria-label="游戏设置"><svg><use href="#i-settings"/></svg></button></div>
+    </header>
+    <nav class="side-nav" aria-label="主导航"><button aria-label="江湖" data-route="home" aria-current="page">江湖</button><button aria-label="联机" data-open="network">联机</button><button aria-label="单机" data-open="mission">单机</button><button aria-label="演武" data-route="prep">演武</button><button aria-label="武学" data-open="guide">武学</button><button aria-label="典藏" data-open="resources" class="side-secondary">典藏</button></nav>
+    <main class="lobby-main">
+      <section id="home-page" class="lobby-page" aria-labelledby="home-title">
+        <aside class="disclaimer-notice" aria-label="重要项目说明">
+          <span class="disclaimer-notice-mark" aria-hidden="true">!</span>
+          <p><strong>个人非商业学习项目 · 非官方</strong><span>本站用于 AI Coding、Web 开发与部署学习，与《流星蝴蝶剑.net》权利方无隶属关系。</span></p>
+          <a href="./disclaimer.html">查看免责声明 <span aria-hidden="true">↗</span></a>
+        </aside>
+        <div class="home-hero"><div><div class="eyebrow">流星 · 蝴蝶 · 剑</div><h1 id="home-title">剑未入鞘<br>江湖未远</h1><p>执剑入场。</p><span class="ink-tag">浏览器武侠对战</span></div><div class="ink-landscape" aria-label="所选地图场景画卷"><div class="landscape-top"><span>江湖图鉴</span><span id="menu-map-state" role="status">当前战场</span></div><span class="landscape-inscription" aria-hidden="true">江湖</span><div class="landscape-caption"><span class="landscape-seal" aria-hidden="true">江湖</span><div><strong id="menu-map-name">四方阵</strong><small id="menu-map-poem">方寸之间，自有天地。</small></div><span class="landscape-coordinate" aria-hidden="true">山 / 水 / 剑</span></div><div class="scenery-controls" aria-label="首页背景轮换"><button data-scenery-action="previous" aria-label="上一张背景">‹</button><div class="scenery-dots"><button class="scenery-dot" data-scenery="qiyun" aria-label="展示栖云古庭背景" aria-pressed="false"><img src="./assets/menu/thumbs/qiyun.webp" alt="" loading="lazy"><span>栖云古庭</span></button><button class="scenery-dot" data-scenery="sn06" aria-label="展示四方阵背景" aria-pressed="false"><img src="./assets/menu/thumbs/sn06.webp" alt="" loading="lazy"><span>四方阵</span></button><button class="scenery-dot" data-scenery="sn01" aria-label="展示钟乳洞背景" aria-pressed="false"><img src="./assets/menu/thumbs/sn01.webp" alt="" loading="lazy"><span>钟乳洞</span></button><button class="scenery-dot" data-scenery="sn10" aria-label="展示炼铁狱背景" aria-pressed="false"><img src="./assets/menu/thumbs/sn10.webp" alt="" loading="lazy"><span>炼铁狱</span></button><button class="scenery-dot" data-scenery="sn14" aria-label="展示炎硫岛背景" aria-pressed="false"><img src="./assets/menu/thumbs/sn14.webp" alt="" loading="lazy"><span>炎硫岛</span></button></div><button data-scenery-action="next" aria-label="下一张背景">›</button><button data-scenery-action="pause" aria-label="暂停背景轮换" aria-pressed="false">Ⅱ</button></div></div></div>
+        <div class="mode-grid"><button class="mode-card mode-primary" data-open="network"><span class="mode-emblem" aria-hidden="true"><svg><use href="#i-sword"/></svg></span><small>壹 / 与人交锋</small><strong>联机对战</strong><span>盟主 / 死斗 · 2–16 人</span><b>↗</b></button><button class="mode-card" data-open="mission"><span class="mode-emblem" aria-hidden="true"><svg><use href="#i-book"/></svg></span><small>贰 / 重走旧路</small><strong>单机任务</strong><span>重走江湖</span><b>→</b></button><button class="mode-card" data-route="prep"><span class="mode-emblem" aria-hidden="true"><svg><use href="#i-sword"/></svg></span><small>叁 / 磨砺招式</small><strong>自由演武</strong><span>自由练招</span><b>→</b></button></div>
+        <div class="home-bottom"><span id="home-loadout">孟星魂 · 原版长剑</span><button class="secondary-button prep-entry-button" data-route="prep"><span class="prep-entry-mark" aria-hidden="true"><svg><use href="#i-sword"/></svg></span><span class="prep-entry-copy"><strong>战前整装</strong><small>切换人物 · 选择兵器</small></span><span class="prep-entry-arrow" aria-hidden="true">→</span></button><button class="guide-button" data-open="guide">操作指南</button><button id="active-room" class="secondary-button" data-open="network" hidden>返回我的房间</button></div>
+
+      </section>
+      <section id="prep-page" class="lobby-page" hidden aria-labelledby="prep-title"><div class="page-heading"><div><div class="eyebrow">江湖 / 自由演武</div><h2 id="prep-title">战前整装</h2></div><span><button class="game-back" data-route="home">← 返回大厅</button></span></div>
+      <div class="prep-character"><button class="hero-character" data-open="characters" aria-label="选择人物"><span class="hero-portrait"><img id="character-preview" alt="" hidden><span class="hero-character-seal" id="hero-character-seal" aria-hidden="true">孟</span></span><span class="hero-character-copy"><small>本局人物</small><strong id="hero-character-name">孟星魂</strong><span class="character-change-action">更换人物 / 外观 <b aria-hidden="true">→</b></span></span></button><button class="model-inspect" data-model-view="character">⤢ 3D 查看人物</button><a href="./character-compare.html">人物工坊 ↗</a></div>
+      <div class="scene-caption"><div><small id="scene-english">THE FOUR SQUARES</small><strong id="scene-name">四方阵</strong><span id="scene-poem">方寸之间，自有天地。</span><small id="scene-load-status" role="status"></small></div><button class="secondary-button map-change-button" data-open="maps"><span>更换战场</span><span aria-hidden="true">→</span></button></div>
+      <div class="preparation-layout">
+      <section class="arena-selector" aria-label="选择战场">
+        <div class="section-heading"><div><span class="section-index">壹</span><h2>选一处江湖</h2><span class="section-en">CHOOSE YOUR BATTLEGROUND</span></div><span class="selection-hint">全部战场 · 滚动查看</span></div>
+        <div class="arena-grid" role="region" aria-label="全部战场，滚动查看更多" tabindex="0">
+          <button class="arena-card arena-qiyun" data-map="qiyun" aria-pressed="false"><div class="arena-art" data-native="true" style="background-image:url(./assets/enhanced/maps/qiyun/preview.webp)"></div><span class="arena-number">新</span><span class="arena-label"><strong>栖云古庭</strong><small>山间遗迹 · 古树听瀑</small></span><span class="arena-tag">全新</span><span class="arena-check"><svg><use href="#i-check"/></svg></span></button>
+          <button class="arena-card selected" data-map="sifang" aria-pressed="true"><div class="arena-art art-sifang" data-native="true" style="background-image:url(./assets/menu/maps/sn06.webp)"><span class="art-moon"></span><span class="art-hills"></span><span class="art-pavilion"></span></div><span class="arena-number">01</span><span class="arena-label"><strong>四方阵</strong><small>原版竞技场 · 四方交锋</small></span><span class="arena-tag">经典</span><span class="arena-check"><svg><use href="#i-check"/></svg></span></button>
+          <button class="arena-card" data-map="cave" aria-pressed="false"><div class="arena-art art-butterfly" data-native="true" style="background-image:url(./assets/menu/maps/sn01.webp)"><span class="art-moon"></span><span class="art-hills"></span><span class="art-bamboo"></span></div><span class="arena-number">02</span><span class="arena-label"><strong>钟乳洞</strong><small>原版第一关 · 洞窟交锋</small></span><span class="arena-check"><svg><use href="#i-check"/></svg></span></button>
+          <button class="arena-card" data-map="forge" aria-pressed="false"><div class="arena-art art-forge" data-native="true" style="background-image:url(./assets/menu/maps/sn10.webp)"><span class="art-moon"></span><span class="art-hills"></span><span class="art-gate"></span></div><span class="arena-number">03</span><span class="arena-label"><strong>炼铁狱</strong><small>原版第十图 · 熔炉试炼</small></span><span class="arena-check"><svg><use href="#i-check"/></svg></span></button>
+        </div>
+      </section>
+      <section class="sword-wardrobe" aria-labelledby="sword-wardrobe-title">
+        <div class="sword-wardrobe-heading"><div><span class="sword-wardrobe-kicker">WEAPON APPEARANCE</span><h2 id="sword-wardrobe-title">兵器与外观</h2><p><button class="guide-button" data-open="weapons">查看兵器谱 →</button></p></div><span class="sword-wardrobe-current" id="sword-wardrobe-current" aria-live="polite"></span></div>
+        <figure class="weapon-preview" aria-label="当前兵器模型"><img id="weapon-preview-image" alt="" hidden><button class="model-inspect" data-model-view="weapon" aria-label="三维查看兵器">⤢ 3D 查看</button><figcaption><strong id="weapon-preview-title">兵器模型</strong><span id="weapon-preview-status" role="status">正在准备模型预览…</span></figcaption></figure>
+        <div class="weapon-selector" role="group" aria-label="选择随身兵器"><div class="loadout"><span class="quiet-label">随身兵器</span><button data-weapon="sword" class="weapon-chip selected" aria-pressed="true">剑 <span>均衡</span></button><button data-weapon="blade" class="weapon-chip" aria-pressed="false">刀 <span>破势</span></button><button data-weapon="spear" class="weapon-chip" aria-pressed="false">枪 <span>远攻</span></button><button data-weapon="dagger" class="weapon-chip" aria-pressed="false">匕首 <span>疾攻</span></button><button data-weapon="dart" class="weapon-chip" aria-pressed="false">镖 <span>远射</span></button><button data-weapon="dual" class="weapon-chip" aria-pressed="false">双刺 <span>连击</span></button><button data-weapon="hammer" class="weapon-chip" aria-pressed="false">重锤 <span>重击</span></button><button data-weapon="musket" class="weapon-chip" aria-pressed="false">火铳 <span>射击</span></button><button data-weapon="wheel" class="weapon-chip" aria-pressed="false">飞轮 <span>回旋</span></button><button data-weapon="qiankun" class="weapon-chip" aria-pressed="false">乾坤刀 <span>三式</span></button><button data-weapon="knuckle" class="weapon-chip" aria-pressed="false">指虎 <span>短打</span></button><button data-weapon="ninja" class="weapon-chip" aria-pressed="false">忍刀 <span>刃脚</span></button></div></div>
+        <div id="sword-appearance-section">
+        <div class="wardrobe-divider"><span>长剑外观</span><small>选择外观将装备长剑</small></div>
+        <div class="sword-wardrobe-options" aria-label="长剑外观">
+          <button class="sword-style-card" type="button" data-sword-style="original" aria-pressed="false"><span class="sword-style-icon" aria-hidden="true">剑</span><span class="sword-style-copy"><strong>原版长剑</strong><small>经典剑形 · 江湖旧梦</small></span><span class="sword-style-status">选择</span></button>
+          <button class="sword-style-card" type="button" data-sword-style="butterfly" aria-pressed="false"><span class="sword-style-icon butterfly" aria-hidden="true">蝶</span><span class="sword-style-copy"><strong>月蝶剑</strong><small>冰蓝剑身 · 蝶翼护手</small></span><span class="sword-style-status">选择</span></button>
+          <button class="sword-style-card" type="button" data-sword-style="raiden" aria-pressed="false"><span class="sword-style-icon raiden" aria-hidden="true">影</span><span class="sword-style-copy"><strong>雷电影佩刀</strong><small>紫色弯刃 · 原模型贴图</small></span><span class="sword-style-status">选择</span></button>
+        </div>
+        </div>
+        <div id="spear-appearance-section" hidden>
+        <div class="wardrobe-divider"><span>长枪外观</span><small>选择外观将装备长枪</small></div>
+        <div class="sword-wardrobe-options" aria-label="长枪外观">
+          <button class="sword-style-card" type="button" data-spear-style="original" aria-pressed="false"><span class="sword-style-icon" aria-hidden="true">枪</span><span class="sword-style-copy"><strong>原版长枪</strong><small>经典长兵 · 一点寒芒</small></span><span class="sword-style-status">选择</span></button>
+          <button class="sword-style-card" type="button" data-spear-style="phoenix" aria-pressed="false"><span class="sword-style-icon phoenix" aria-hidden="true">凤</span><span class="sword-style-copy"><strong>霜翎凤鸣枪</strong><small>冰蓝双尖 · 银金凤翼</small></span><span class="sword-style-status">选择</span></button>
+        </div>
+        </div>
+        <div class="practice-options"><label class="rage-debug-toggle" for="infinite-rage">
+          <span class="rage-debug-copy"><strong id="infinite-rage-title">无限怒气 <small>技能调试</small></strong><span id="infinite-rage-description">开启后入场怒气全满，施招不消耗怒气。</span></span>
+          <span class="rage-debug-control"><input type="checkbox" role="switch" id="infinite-rage" aria-labelledby="infinite-rage-title" aria-describedby="infinite-rage-description"><span id="infinite-rage-status" aria-hidden="true">已关闭</span></span>
+        </label>
+        </div><p class="sword-wardrobe-note">单机任务的起始兵器由关卡决定。</p>
+        <div class="loadout-settings"><span hidden><span id="character-label">孟星魂</span><button id="appearance-toggle"><span id="appearance-label">原版</span></button></span><button class="difficulty-control" id="difficulty-toggle">对手难度 <strong id="difficulty-label">江湖新手</strong><svg><use href="#i-chevron"/></svg></button></div>
+
+      </section>
+
+      </div>
+      <div class="prep-dock"><span id="prep-summary">孟星魂 / 长剑 / 四方阵</span><button id="start-low-bandwidth" type="button" class="secondary-button" title="使用原版人物外观，减少首次下载">轻量演武</button><button id="start-game" class="primary-button"><span>进入演武<small>原版场景 · 招式演武</small></span><svg><use href="#i-arrow"/></svg></button></div>
+      </section>
+      <section id="page-content" class="lobby-page" hidden tabindex="-1" aria-label="游戏功能页面"></section>
+    </main>
+    <footer class="lobby-footer"><a class="comparison-link" href="./character-compare.html">人物工坊 · 高清与模组外观 ↗</a><a class="disclaimer-footer-link" href="./disclaimer.html">免责声明</a><span><i></i> 原版资源移植 · v0.7.6</span><p>江湖不老，故人重逢。</p><button data-open="resources">本地原版素材 · 资源鸣谢 <span>↗</span></button></footer>
+  </div>
+
+  <div id="game-hud" class="screen hidden">
+    <div class="hud-top"><div class="player-stats"><div class="player-heading"><span class="player-seal">胡</span><div><strong><span id="player-name">YS-胡桃</span> <small>你</small></strong><span id="hud-weapon">长剑 · 剑气纵横</span></div></div><div class="stat-line"><span>气血</span><div class="bar health"><i id="hp-bar"></i></div><b id="hp-label">1000 / 1000</b></div><div class="stat-line"><span>怒气</span><div class="bar rage"><i id="rage-bar"></i></div><b id="rage-mode-label" hidden>无限</b></div></div><div class="match-status"><span id="hud-map">四方阵 · 论剑</span><strong id="timer">00:00</strong><div><span><span id="battle-counter-label">命中</span> <b id="kills">0</b></span><span>倒下 <b id="deaths">0</b></span></div></div><div class="hud-actions"><button class="icon-button sound-toggle" aria-label="开启音效"><svg><use href="#i-muted"/></svg></button><button class="icon-button" id="pause-button" aria-label="暂停游戏"><svg><use href="#i-pause"/></svg></button><button class="icon-button" id="fullscreen" aria-label="全屏游戏"><svg><use href="#i-full"/></svg></button><canvas id="minimap" width="150" height="150" aria-label="战场小地图"></canvas></div></div>
+    <div id="musket-reticle" class="hidden" aria-label="火铳瞄准准星"><span></span><small>移动鼠标瞄准 · 攻击射击 · 防御或跳跃收枪</small></div>
+    <div id="enemy-status" class="hidden"><span id="enemy-name"></span><small id="enemy-hp"></small><div class="bar enemy"><i id="enemy-bar"></i></div></div>
+    <button id="pickup-hint" class="hidden" data-action="pickup" aria-label="拾取附近道具">拾取道具（F）</button><div id="mission-goal" class="hidden" aria-live="polite"></div><div id="player-status" class="hidden" aria-live="polite"></div><div id="game-announcement" aria-live="polite"></div><div id="hit-feedback"></div><div id="combo-feedback"></div>
+    <div class="hud-bottom"><span class="hud-shortcut">Esc 暂停 / 操作说明</span><span class="battle-hint"><i class="status-dot"></i> <span id="battle-hint-text">原版招式演武 · 鼠标左键出招</span></span><div class="key-guide" hidden><span><kbd>W A S D</kbd> 移动</span><span><kbd>鼠标左键</kbd> 出招</span><span><kbd>Space</kbd> 防御</span><span><kbd>鼠标右键</kbd> 跃起</span><span><kbd>Q</kbd> 锁定</span><span><kbd>E</kbd> 换兵器</span><span>靠近自动拾取</span><span><kbd>Esc</kbd> 暂停</span></div></div>
+    <div class="touch-controls"><div class="touch-dpad"><button data-action="forward" aria-label="前进">↑</button><button data-action="left" aria-label="左移">←</button><button data-action="back" aria-label="后退">↓</button><button data-action="right" aria-label="右移">→</button></div><div class="touch-attacks"><button data-action="jump">跃</button><button data-action="crouch">蹲</button><button data-action="guard">守</button><button data-action="attack" class="touch-main">攻</button><button data-action="switch">换</button><button data-action="drop" aria-label="丢弃副兵器">丢</button><button data-action="lock">锁</button></div></div>
+  </div>
+
+  <dialog id="modal"><button id="close-modal" class="icon-button modal-close" aria-label="关闭"><svg><use href="#i-close"/></svg></button><div id="modal-content"></div></dialog>
+  <div id="mission-dialogue" class="hidden" aria-live="polite"><strong id="dialogue-speaker"></strong><p id="dialogue-text"></p></div><div id="toast" role="status"></div>
+  <noscript><div class="fatal-error">请开启 JavaScript 后进入江湖。</div></noscript>
+  <script>
+    if(location.protocol==='file:'){
+      document.getElementById('load-screen').classList.remove('hidden');
+      document.getElementById('load-status').textContent='请先运行项目中的「启动游戏.command」，然后通过 HTTP 地址进入。';
+      const link=document.createElement('a');link.href='http://localhost:4173/';link.textContent='打开本地游戏 →';link.style.cssText='margin-top:22px;color:#d3b77f;border-bottom:1px solid;padding:8px';document.getElementById('load-screen').append(link);
+    }
+  </script>
+  <script>
+    if((location.hostname==='linfengya.cn'||location.hostname==='www.linfengya.cn')&&location.pathname.startsWith('/lx'))fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path:location.pathname}),keepalive:true}).catch(()=>{});
+  </script>
+  <script type="importmap">
+    {"imports":{
+      "./engine.js":"./engine.js?v=20261113-load",
+      "./network-lobby.js":"./network-lobby.js?v=20261113-load",
+      "./character-appearances.js":"./character-appearances.js?v=20261113-load",
+      "./native-character.js":"./native-character.js?v=20261113-load",
+      "./native-combat.js":"./native-combat.js?v=20261113-load",
+      "./qiyun-courtyard.js":"./qiyun-courtyard.js?v=20261113-load"
+    }}
+  </script>
+  <script type="module" src="./app.js?v=20261113-load"></script>
+</body>
+</html>

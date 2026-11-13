@@ -62,7 +62,7 @@ function displayScenery(id){
   $$('.scenery-dot').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.scenery===id)));
 }
 const scenery=new SceneryCarousel({show:displayScenery,active:()=>!running&&lobbyPage==='home'&&!document.hidden&&!modal.open});
-function syncScenery(){scenery.stop();if(running||document.hidden)return;if(lobbyPage==='home')scenery.start(canonicalMap(prefs.map));else displayScenery(canonicalMap(prefs.map));}
+function syncScenery(){scenery.stop();if(running||loadingMatch||document.hidden)return;if(lobbyPage==='home')scenery.start(canonicalMap(prefs.map));else displayScenery(canonicalMap(prefs.map));}
 function updateLoadoutPreview() {
   const portrait = $('#character-preview');
   const source = NATIVE_CHARACTERS[prefs.character]?.portrait;
@@ -175,6 +175,14 @@ function nextDialogue(){
   dialogueTimer=setTimeout(nextDialogue,Math.max(2000,Math.min(10000,(Number(line.duration)||4)*1000)));
 }
 function showDialogue(line){dialogueQueue.push(line);if(!dialogueTimer)nextDialogue();}
+function updateMatchLoad(text, completedSteps) {
+  $('#load-status').textContent = text;
+  const progress = $('#load-progress');
+  if (Number.isInteger(completedSteps)) progress.value = completedSteps;
+  $('#load-step').textContent = progress.value === progress.max
+    ? '加载完成'
+    : `第 ${progress.value + 1} / ${progress.max} 步`;
+}
 function matchLoading(active) {
   loadingMatch = active;
   $('#load-screen').classList.toggle('hidden', !active);
@@ -360,10 +368,11 @@ async function startMatch(mode = 'training', missionId = currentMissionId, isCur
   const weapon = currentMode === 'network' ? 'sword' : prefs.weapon;
   const canLock = !matchMedia('(pointer:coarse)').matches;
   if (canLock && navigator.userActivation?.isActive) game?.requestMouseLock();
+  if (modal.open) modal.close();
+  updateMatchLoad('正在准备游戏引擎和动作数据…', 0);
   matchLoading(true);
   releaseMenuSnapshots();
   const canvas = $('#world');
-  $('#load-status').textContent = '正在载入' + (mission?.name || maps[map]?.name || map) + '与人物动作…';
   try {
     if (currentMode !== 'network' && networkLobby?.client) await networkLobby.leave(false);
     if (!isCurrent()) return;
@@ -375,7 +384,6 @@ async function startMatch(mode = 'training', missionId = currentMissionId, isCur
     instance.setSpearStyle(prefs.spearStyle);
     instance.setInfiniteRage(currentMode === 'training' && prefs.infiniteRage);
     if (!isCurrent()) return;
-    if (modal.open) modal.close();
     $('#page-content').replaceChildren();
     ended = false; paused = false; running = true; lastCombo = 0; lastHp = mission?.playerHp ?? 1000;
     clearDialogue();
@@ -385,8 +393,10 @@ async function startMatch(mode = 'training', missionId = currentMissionId, isCur
     document.body.classList.add('playing');
     $('#hud-map').textContent = (mission?.name || maps[map]?.name || map) + (currentMode === 'network' ? ' · 联机对战' : mission ? ' · 单机任务' : ' · 演武');
     $('#battle-hint-text').textContent = '原版招式演武 · 按 ' + keyHint('attack') + ' 出招';
+    updateMatchLoad('正在载入' + (mission?.name || maps[map]?.name || map) + '与人物动作…', 1);
     await instance.start({ map, weapon, difficulty: prefs.difficulty, ...selection, mode: currentMode, lowBandwidth: currentLowBandwidth });
     if (!isCurrent()) return;
+    updateMatchLoad('战场已就绪', 4);
     instance.menuIdle = false;
     instance.setMuted(prefs.muted);
     instance.setQuality(prefs.quality);
@@ -404,6 +414,7 @@ async function startMatch(mode = 'training', missionId = currentMissionId, isCur
   } finally {
     if (!isCurrent() && running) returnLobby();
     matchLoading(false);
+    if (!running) syncScenery();
   }
 }
 
@@ -442,7 +453,7 @@ function updateHUD(s){if(!running)return;
   drawMinimap(s);
 }
 function drawMinimap(s){const c=$('#minimap'),ctx=c.getContext('2d'),w=c.width;ctx.clearRect(0,0,w,w);ctx.save();ctx.translate(w/2,w/2);ctx.strokeStyle='#a6916050';ctx.lineWidth=1;ctx.strokeRect(-49,-49,98,98);ctx.beginPath();ctx.moveTo(-65,0);ctx.lineTo(65,0);ctx.moveTo(0,-65);ctx.lineTo(0,65);ctx.stroke();ctx.font='8px sans-serif';ctx.fillStyle='#d9bf8d';ctx.textAlign='center';ctx.fillText('北',0,-61);const bounds=s.mapBounds;const scale=bounds?110/Math.max(bounds.maxX-bounds.minX,bounds.maxZ-bounds.minZ,1):2.2;const cx=bounds?(bounds.minX+bounds.maxX)/2:0,cz=bounds?(bounds.minZ+bounds.maxZ)/2:0;for(const e of [...(s.enemies||[]).map(e=>({...e,ally:false})),...(s.allies||[]).map(e=>({...e,ally:true}))]){ctx.fillStyle=e.ally?'#83bdb3':'#ce6650';ctx.beginPath();ctx.arc(Math.max(-57,Math.min(57,(e.x-cx)*scale)),Math.max(-57,Math.min(57,(e.z-cz)*scale)),3,0,Math.PI*2);ctx.fill();}const objective=s.mission?.objective?.position;if(objective){const x=Math.max(-57,Math.min(57,(objective.x-cx)*scale)),z=Math.max(-57,Math.min(57,(objective.z-cz)*scale));ctx.strokeStyle='#f0cc78';ctx.lineWidth=2;ctx.strokeRect(x-4,z-4,8,8);}if(s.position){ctx.fillStyle='#e4d8a9';const x=Math.max(-57,Math.min(57,(s.position.x-cx)*scale)),z=Math.max(-57,Math.min(57,(s.position.z-cz)*scale));ctx.beginPath();ctx.moveTo(x,z-5);ctx.lineTo(x-4,z+4);ctx.lineTo(x+4,z+4);ctx.closePath();ctx.fill();}ctx.restore();}
-function handleEvent(e){if(e.type==='pointer-unlock'){if(running&&!paused&&!loadingMatch)openModal('pause');return;}if(e.type==='pointer-error'){toast(e.text);return;}if(e.type==='load'){$('#load-status').textContent=e.text;return;}if(!running)return;if(e.type==='dialogue'){showDialogue(e);return;}if(e.type==='move'){const feedback=$('#combo-feedback');feedback.textContent=e.text||'';feedback.classList.add('named-move');feedback.dataset.command=e.command||'';return;}if(['mission-diagnostic','mission-compatibility'].includes(e.type)){console.warn(e.text,e);return;}if(e.type==='hit'){
+function handleEvent(e){if(e.type==='pointer-unlock'){if(running&&!paused&&!loadingMatch)openModal('pause');return;}if(e.type==='pointer-error'){toast(e.text);return;}if(e.type==='load'){if(loadingMatch)updateMatchLoad(e.text,e.completedSteps);return;}if(!running)return;if(e.type==='dialogue'){showDialogue(e);return;}if(e.type==='move'){const feedback=$('#combo-feedback');feedback.textContent=e.text||'';feedback.classList.add('named-move');feedback.dataset.command=e.command||'';return;}if(['mission-diagnostic','mission-compatibility'].includes(e.type)){console.warn(e.text,e);return;}if(e.type==='hit'){
   // Incoming damage has its HP/HUD response; this displays the player's blow.
   if(!e.attackerHero)return;
   clearTimeout(hitTimer);const feedback=$('#hit-feedback');

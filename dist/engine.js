@@ -188,7 +188,7 @@ export class MeteorGame {
     if (Number.isFinite(damage) && damage >= 0) this.missionHost.sceneItemAttack(object.name, shot.context.attacker.scriptId, damage);
     else this.onEvent({ type: 'scene-contact', objectName: object.name, attackerId: shot.context.attacker.scriptId, poseId: shot.context.state.poseId, projectileId: shot.id, damagePending: true });
   }
-  _loadStatus(text) { this.onEvent({ text, type: 'load' }); }
+  _loadStatus(text, completedSteps) { this.onEvent({ text, type: 'load', completedSteps }); }
   setNativeScene(name, ...values) {
     this.weather ||= new NativeWeather(this.scene);
     return this.weather.set(name, ...values);
@@ -737,18 +737,20 @@ export class MeteorGame {
     this.hero.scriptConfig = null; this.hero.scriptControl = null; this.hero.scriptInputBlocked = false; this.hero.team = this.hero.teamMask = 1;
     this.kills = 0; this.deaths = 0; this.totalDamage = 0; this.contactHits = 0; this.matchElapsed = 0; this.time = 0; this.locked = null;if(this.localControl)this.localControl.autoLockEnabled=true;
     if (this.mode === 'story') {
-      this._loadStatus('正在执行原版关卡脚本与载入原 NPC…');
+      this._loadStatus('正在载入关卡剧情和人物…', 2);
       const host = await NativeMissionHost.create(this, { mapId: this.currentMap.id });
       if (request !== this.sessionRequest || this.disposed) { host.dispose(); return; }
       this.missionHost = host; await host.start();
       if (request !== this.sessionRequest || this.disposed) { host.dispose(); return; }
     } else {
+      this._loadStatus(mode === 'network' ? '正在准备联机装备…' : '正在载入兵器和演武对手…', 2);
       this.weapon = NATIVE_WEAPONS[weapon] ? weapon : 'sword'; await this._equip(this.hero, this.weapon); this._placeFighter(this.hero, this.currentMap.spawns[0]);
       if (mode !== 'network') {
         await this._spawnTrainingOpponents(request, lowBandwidth);
       }
     }
     if (request !== this.sessionRequest || this.disposed) return;
+    this._loadStatus('正在进入战场…', 3);
     this._resetWorldClock(); this.running = true; this.cameraManualUntil = 0; this.cameraAngle = this.currentMap.id === 'sn01' ? Math.PI / 2 : 0; this.cameraPitch = this.currentMap.cameraPitch ?? .4; this.cameraDistance = this.currentMap.cameraDistance ?? 8;
     this.cameraTarget.copy(this.hero.root.position).add(v3(0, 1.5, 0)); this._tickCamera(1); this._unlockAudio();
     this._emit(this.mode === 'story' ? `原版${this.currentMap.entry.name || this.currentMap.id}` : '原版动作演练开始', 'info'); this._hud();

@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="./style.css">
   <link rel="stylesheet" href="./keybindings.css">
   <link rel="stylesheet" href="./cold-ink.css">
-  <link rel="stylesheet" href="./game-shell.css?v=20261113-load">
+  <link rel="stylesheet" href="./game-shell.css?v=20261113-progress">
   <link rel="stylesheet" href="./disclaimer.css">
 </head>
 <body>
@@ -28,7 +28,16 @@
   </defs></svg>
   <canvas id="world" aria-label="三维武侠竞技场"></canvas>
   <div class="atmosphere" aria-hidden="true"></div>
-  <div id="load-screen" class="hidden"><div class="load-emblem">流</div><span>正在准备战场</span><div class="load-progress" role="progressbar" aria-label="载入战场"><i></i></div><small id="load-status" role="status">正在读取所选资源…</small></div>
+  <div id="load-screen" class="hidden">
+    <div class="load-emblem" aria-hidden="true">流</div>
+    <span>正在准备战场</span>
+    <div id="load-details" class="load-details">
+      <progress id="load-progress" max="4" value="0" aria-label="战场加载进度"></progress>
+      <small id="load-step" aria-hidden="true">第 1 / 4 步</small>
+      <small>受服务器带宽影响，首次入场加载资源约需 40 秒，请耐心等待。</small>
+    </div>
+    <small id="load-status" role="status">正在读取所选资源…</small>
+  </div>
 
   <div id="lobby" class="screen">
     <header class="topbar">
@@ -112,6 +121,7 @@
   <script>
     if(location.protocol==='file:'){
       document.getElementById('load-screen').classList.remove('hidden');
+      document.getElementById('load-details').hidden=true;
       document.getElementById('load-status').textContent='请先运行项目中的「启动游戏.command」，然后通过 HTTP 地址进入。';
       const link=document.createElement('a');link.href='http://localhost:4173/';link.textContent='打开本地游戏 →';link.style.cssText='margin-top:22px;color:#d3b77f;border-bottom:1px solid;padding:8px';document.getElementById('load-screen').append(link);
     }
@@ -121,7 +131,7 @@
   </script>
   <script type="importmap">
     {"imports":{
-      "./engine.js":"./engine.js?v=20261113-load",
+      "./engine.js":"./engine.js?v=20261113-progress",
       "./network-lobby.js":"./network-lobby.js?v=20261113-load",
       "./character-appearances.js":"./character-appearances.js?v=20261113-load",
       "./native-character.js":"./native-character.js?v=20261113-load",
@@ -129,6 +139,6 @@
       "./qiyun-courtyard.js":"./qiyun-courtyard.js?v=20261113-load"
     }}
   </script>
-  <script type="module" src="./app.js?v=20261113-load"></script>
+  <script type="module" src="./app.js?v=20261113-progress"></script>
 </body>
 </html>

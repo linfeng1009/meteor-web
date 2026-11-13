@@ -90,6 +90,7 @@ test('static responses keep Brotli, gzip and raw caches separate and honor disab
 test('cold lightweight training loads its selected map and original cast through start()', async () => {
   const originalFetch = globalThis.fetch, originalLoad = THREE.TextureLoader.prototype.load;
   const paths = new Set();
+  const completedSteps = [];
   const record = input => {
     const url = new URL(input, root);
     paths.add(url.href.slice(root.href.length));
@@ -115,7 +116,9 @@ test('cold lightweight training loads its selected map and original cast through
     mapRequest: 0, sessionRequest: 0, characterRequest: 0, actorSerial: 0,
     hostPhysics: { speed: 8, gravity: 34, jumpVelocity: 12, radius: .4, step: .55 },
     collisionMaterial: new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }),
-    onUpdate() {}, onEvent() {}, _nameplate() {}, _unlockAudio() {}, _tickCamera() {}
+    onUpdate() {}, onEvent(event) {
+      if (event.type === 'load' && Number.isInteger(event.completedSteps)) completedSteps.push(event.completedSteps);
+    }, _nameplate() {}, _unlockAudio() {}, _tickCamera() {}
   });
   try {
     game.scene.background = new THREE.Color();
@@ -130,6 +133,7 @@ test('cold lightweight training loads its selected map and original cast through
     assert.equal(game.hero.character.appearance, 'original');
     assert.deepEqual(game.enemies.map(actor => actor.modelId), [1, 2, 3]);
     assert.equal(game.running, true);
+    assert.deepEqual(completedSteps, [2, 3]);
     assert.equal([...paths].some(path => path.includes('/sn06/') || path.startsWith('assets/enhanced/')), false);
     assert.ok(paths.has('assets/original/characters/common/character.v1.ambpack.gz'));
     assert.equal(paths.has('assets/original/characters/common/character.amb'), false);

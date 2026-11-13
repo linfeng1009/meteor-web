@@ -4,9 +4,13 @@
 
 **试玩地址：** [https://linfengya.cn/lx/](https://linfengya.cn/lx/)
 
-![试玩截图 1](docs/readme-media/screenshot1.png)
+![试玩截图 1](docs/readme-media/screenshot1.jpg)
 
-![试玩截图 2](docs/readme-media/screenshot2.png)
+![试玩截图 2](docs/readme-media/screenshot2.jpg)
+
+![试玩截图 3](docs/readme-media/screenshot3.jpg)
+
+![试玩截图 4](docs/readme-media/screenshot4.jpg)
 
 ![试玩演示 1](docs/readme-media/gif1.gif)
 

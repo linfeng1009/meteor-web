@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {NetworkClient} from '../dist/network-client.js';
+import {NetworkClient,NETWORK_SYNC_MS} from '../dist/network-client.js';
 import {NetworkRooms,createNetworkServer} from '../network-server.mjs';
 
 function fixture(){
@@ -11,6 +11,45 @@ function fixture(){
   client.api=async(path,data)=>request(guest,path.split('/').at(-1),data);
   return {client,request,host,guest,rooms};
 }
+
+test('对战同步至少30Hz，按键在下一轮轮询前立即合批发送',async()=>{
+  const {client,request,host}=fixture();assert.ok(NETWORK_SYNC_MS<=1000/30);
+  client.timer=setInterval(()=>{},10000);
+  try{client.send('forward');client.send('attack');client.send('forward',false);
+    await new Promise(resolve=>setTimeout(resolve,15));
+    assert.deepEqual(request(host,'sync').input.filter(x=>x.action!=='look').map(x=>[x.action,x.active]),[['forward',true],['attack',true],['forward',false]]);
+  }finally{await client.leave();}
+});
+
+test('等待中的旧批次完成后立即发送新操作，断线重试不变成紧密循环',async()=>{
+  const {client}=fixture(),api=client.api;let done,calls=0;
+  client.timer=setInterval(()=>{},10000);
+  client.api=(...args)=>{calls++;return calls===1?new Promise(resolve=>done=()=>resolve(api(...args))):api(...args);};
+  try{client.send('attack');await new Promise(resolve=>setTimeout(resolve,10));client.send('jump');
+    await new Promise(resolve=>setTimeout(resolve,10));assert.equal(calls,1);done();
+    await new Promise(resolve=>setTimeout(resolve,15));assert.equal(calls,2);assert.equal(client.queue.length,0);
+    client.api=async()=>{calls++;throw Error('断线');};client.send('attack');await new Promise(resolve=>setTimeout(resolve,15));
+    assert.equal(calls,3);assert.equal(client.failures,1);assert.ok(client.pendingInput);
+  }finally{await client.leave().catch(()=>{});}
+});
+
+test('对局结束时不反复补发旧队列，退出时取消尚未发出的立即发送任务',async()=>{
+  const {client}=fixture();let calls=0;client.timer=setInterval(()=>{},10000);
+  client.api=async()=>{calls++;return {room:{...client.room,phase:'finished'}};};
+  client.queue.push({action:'attack',sequence:1});client.room={...client.room,phase:'finished'};
+  client.flushInput();await new Promise(resolve=>setTimeout(resolve,10));assert.equal(calls,0);
+  client.room={...client.room,phase:'playing'};client.flushInput();await client.leave();
+  await new Promise(resolve=>setTimeout(resolve,10));assert.equal(calls,1,'只允许退出请求');
+});
+
+test('房主补发状态合并为一个请求，在途请求结束后保留新的发布需求',async()=>{
+  const f=fixture(),client=hostClient(f);let calls=0,done;client.timer=setInterval(()=>{},10000);
+  client.api=async()=>{calls++;if(calls===1)await new Promise(resolve=>done=resolve);return {room:client.room,input:[]};};
+  try{client.flushFrame();client.flushFrame();await new Promise(resolve=>setTimeout(resolve,10));assert.equal(calls,1);
+    client.flushFrame();client.flushFrame();await new Promise(resolve=>setTimeout(resolve,10));assert.equal(calls,1);
+    done();await new Promise(resolve=>setTimeout(resolve,15));assert.equal(calls,2);
+  }finally{await client.leave();}
+});
 
 test('lost response retries the identical batch without executing an attack twice',async()=>{
   const {client,request,host}=fixture(),api=client.api;let fail=true;

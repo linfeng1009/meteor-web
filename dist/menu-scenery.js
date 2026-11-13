@@ -1,5 +1,5 @@
 export const SCENERY_MAPS = [
-  {id:'qiyun',name:'栖云古庭',image:'./assets/enhanced/maps/qiyun/preview.png'},
+  {id:'qiyun',name:'栖云古庭',image:'./assets/enhanced/maps/qiyun/preview.webp'},
   {id:'sn06',name:'四方阵',image:'./assets/menu/maps/sn06.webp'},
   {id:'sn01',name:'钟乳洞',image:'./assets/menu/maps/sn01.webp'},
   {id:'sn10',name:'炼铁狱',image:'./assets/menu/maps/sn10.webp'},

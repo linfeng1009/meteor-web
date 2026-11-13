@@ -1,0 +1,149 @@
+/* Home page disclaimer notice and standalone disclaimer document. */
+.disclaimer-notice {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 22px;
+  padding: 13px 17px;
+  border: 1px solid #b85a493f;
+  border-left: 4px solid #c55b46;
+  background: linear-gradient(100deg, #39221d 0%, #211c19 58%, #182023 100%);
+  color: #e8dfcd;
+  box-shadow: 0 8px 26px #0002;
+}
+.disclaimer-notice-mark {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  flex: 0 0 27px;
+  border: 1px solid #cf8b67;
+  border-radius: 50%;
+  color: #efb48a;
+  font: 16px var(--serif);
+}
+.disclaimer-notice p {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.65;
+}
+.disclaimer-notice p strong {
+  color: #f0c18b;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+.disclaimer-notice p span { color: #d4cbb9; }
+.disclaimer-notice > a,
+.disclaimer-footer-link {
+  color: #e4bd87;
+  white-space: nowrap;
+}
+.disclaimer-notice > a {
+  padding: 9px 11px;
+  border: 1px solid #c28e6070;
+  font-size: 12px;
+}
+.disclaimer-notice > a:hover,
+.disclaimer-footer-link:hover { color: #ffe0a9; }
+.lobby-footer .disclaimer-footer-link { font-size: 11px; }
+
+.disclaimer-document {
+  min-height: 100svh;
+  padding: clamp(24px, 5vw, 72px) 20px;
+  background: radial-gradient(ellipse at 50% 0, #263333 0, #101719 54%);
+  color: var(--paper);
+}
+.disclaimer-shell { width: min(860px, 100%); margin: 0 auto; }
+.disclaimer-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 0 0 20px;
+  border-bottom: 1px solid #b8a17b35;
+}
+.disclaimer-page-brand {
+  color: #d9c8a5;
+  font: 15px var(--serif);
+  letter-spacing: 2px;
+}
+.disclaimer-return {
+  padding: 10px 13px;
+  border: 1px solid #b8a17b55;
+  color: #e2c18e;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.disclaimer-content {
+  margin-top: clamp(34px, 7vw, 68px);
+  padding: clamp(24px, 5vw, 52px);
+  border: 1px solid #b8a17b38;
+  background: linear-gradient(145deg, #1b2526f2, #131b1df5);
+  box-shadow: 0 22px 70px #0004;
+}
+.disclaimer-kicker {
+  color: #d6aa71;
+  font-size: 11px;
+  letter-spacing: 4px;
+}
+.disclaimer-content h1 {
+  margin: 12px 0 25px;
+  color: #f0e6d1;
+  font: 400 clamp(32px, 6vw, 48px)/1.35 var(--serif);
+  letter-spacing: 5px;
+}
+.disclaimer-summary {
+  margin: 0 0 30px;
+  padding: 16px 18px;
+  border-left: 3px solid #c55b46;
+  background: #8f38241a;
+  color: #f0c18b;
+  font-size: 15px;
+  line-height: 1.9;
+}
+.disclaimer-section { padding: 22px 0; border-top: 1px solid #b8a17b24; }
+.disclaimer-section h2 {
+  margin: 0 0 10px;
+  color: #ddc79d;
+  font: 20px var(--serif);
+  letter-spacing: 2px;
+}
+.disclaimer-section p {
+  margin: 0;
+  color: #c8c8ba;
+  font-size: 14px;
+  line-height: 2;
+}
+.disclaimer-contact { color: #efc68f; text-decoration: underline; text-underline-offset: 4px; }
+.disclaimer-page-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 22px;
+  color: #939c91;
+  font-size: 11px;
+}
+.disclaimer-page-footer a { color: #d8b781; }
+@media (max-width: 800px) {
+  .disclaimer-notice { align-items: flex-start; flex-wrap: wrap; gap: 9px 12px; margin-bottom: 18px; padding: 12px; }
+  .disclaimer-notice-mark { margin-top: 1px; }
+  .disclaimer-notice p { flex-basis: calc(100% - 42px); font-size: 11px; }
+  .disclaimer-notice p strong { font-size: 12px; }
+  .disclaimer-notice > a { margin-left: 39px; padding: 7px 9px; font-size: 11px; }
+  .lobby-footer .disclaimer-footer-link { font-size: 11px; }
+  .disclaimer-document { padding: 20px 14px; }
+  .disclaimer-page-header { align-items: flex-start; }
+  .disclaimer-page-brand { font-size: 13px; }
+  .disclaimer-return { padding: 8px 10px; font-size: 11px; }
+  .disclaimer-content { margin-top: 25px; padding: 23px 19px; }
+  .disclaimer-content h1 { margin-bottom: 19px; letter-spacing: 3px; }
+  .disclaimer-summary { padding: 13px 14px; font-size: 13px; }
+  .disclaimer-section { padding: 18px 0; }
+  .disclaimer-section h2 { font-size: 18px; }
+  .disclaimer-section p { font-size: 13px; }
+  .disclaimer-page-footer { flex-direction: column; }
+}

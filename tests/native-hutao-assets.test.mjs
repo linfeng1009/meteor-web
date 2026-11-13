@@ -2,6 +2,27 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
+const imageSize = bytes => {
+  if (bytes.subarray(0, 8).toString('hex') === '89504e470d0a1a0a') return [bytes.readUInt32BE(16), bytes.readUInt32BE(20)];
+  const fourcc = bytes.subarray(12, 16).toString('ascii');
+  if (fourcc === 'VP8X') return [1 + bytes.readUIntLE(24, 3), 1 + bytes.readUIntLE(27, 3)];
+  if (fourcc === 'VP8 ') return [bytes.readUInt16LE(26) & 0x3fff, bytes.readUInt16LE(28) & 0x3fff];
+  if (fourcc === 'VP8L') { const bits = bytes.readUInt32LE(21); return [1 + (bits & 0x3fff), 1 + ((bits >> 14) & 0x3fff)]; }
+  return [0, 0];
+};
+
+
+// Deployment converts texture atlases to WebP to fit a slow uplink, so a
+// runtime texture may be PNG or WebP. These helpers read either container.
+const imageMagic = bytes => {
+  const head = bytes.subarray(0, 12);
+  if (head.subarray(0, 8).toString('hex') === '89504e470d0a1a0a') return 'png';
+  if (head.subarray(0, 4).toString('ascii') === 'RIFF' && head.subarray(8, 12).toString('ascii') === 'WEBP') return 'webp';
+  return 'unknown';
+};
+
+
+
 // These face surface counts were independently decoded from the user PMX,
 // rather than inferred from the manifest's boolean completeness flag.
 const root = new URL('../dist/assets/enhanced/hutao/', import.meta.url);
@@ -41,7 +62,7 @@ test('PMX texture paths are real local PNGs and retain the source two-kilopixel 
     assert.equal(url.origin, root.origin);
     assert.ok(url.pathname.startsWith(root.pathname), `${name} must stay inside the bundle`);
     const bytes = await readFile(url);
-    assert.equal(bytes.subarray(0, 8).toString('hex'), '89504e470d0a1a0a', `${name} must be a real PNG`);
+    assert.notEqual(imageMagic(bytes), 'unknown', `${name} must be a real image`);
     assert.ok(bytes.readUInt32BE(16) >= 2048 && bytes.readUInt32BE(20) >= 2048, `${name}: retain useful original texture detail`);
   }
 });

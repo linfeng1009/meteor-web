@@ -6,6 +6,15 @@ import * as THREE from '../dist/vendor/three.module.js';
 import {createNativeCharacter,loadNativeCharacterData,loadEnhancedCharacterData,NATIVE_APPEARANCES} from '../dist/native-character.js';
 import {appearanceCharacterName,WORKSHOP_APPEARANCES} from '../dist/character-appearances.js';
 
+// Runtime textures may be PNG or WebP (the deployment converts atlases to WebP
+// to fit a 3 Mbit uplink), so the check is "a real image with a known magic".
+const imageMagic = bytes => {
+  const head = bytes.subarray(0, 12);
+  if (head.subarray(0, 8).toString('hex') === '89504e470d0a1a0a') return 'png';
+  if (head.subarray(0, 4).toString('ascii') === 'RIFF' && head.subarray(8, 12).toString('ascii') === 'WEBP') return 'webp';
+  return 'unknown';
+};
+
 const root=new URL('../',import.meta.url),dist=new URL('dist/',root);
 const json=async path=>JSON.parse(await readFile(new URL(path,root)));
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
@@ -48,8 +57,8 @@ test('Ningguang keeps every kept vertex and the textures packed inside the .blen
   assert.equal(textures.length,3);
   for(const source of textures){
     const target=new URL(source.runtime,path);assert.ok(target.pathname.startsWith(path.pathname));
-    const bytes=await readFile(target);assert.equal(sha(bytes),source.sha256);
-    assert.equal(bytes.subarray(0,8).toString('hex'),'89504e470d0a1a0a','runtime textures are PNG');
+    const bytes=await readFile(target);assert.equal(sha(bytes),source.runtimeSha256??source.sha256);
+    assert.notEqual(imageMagic(bytes),'unknown','runtime textures must be a real image');
   }
   assert.match(manifest.provenance.modelAuthor,/miHoYo/);
   assert.match(manifest.provenance.license,/No readme/);

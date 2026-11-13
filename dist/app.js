@@ -117,7 +117,7 @@ function nextDialogue(){
   dialogueTimer=setTimeout(nextDialogue,Math.max(2000,Math.min(10000,(Number(line.duration)||4)*1000)));
 }
 function showDialogue(line){dialogueQueue.push(line);if(!dialogueTimer)nextDialogue();}
-function matchLoading(active){loadingMatch=active;$('#load-screen').classList.toggle('hidden',!active);$('#load-screen').style.opacity=active?'1':'0';$('#start-game').disabled=active;}
+function matchLoading(active){loadingMatch=active;$('#load-screen').classList.toggle('hidden',!active);$('#load-screen').style.opacity=active?'1':'0';$('#start-game').disabled=active;if(active)window.__loadMeter?.begin();else window.__loadMeter?.finish('战场资源已就绪');}
 function renderArenaMaps(){
   const grid=$('.arena-grid');if(!grid||!originalManifest)return;
   grid.querySelectorAll('[data-generated-map]').forEach(node=>node.remove());
@@ -161,6 +161,10 @@ function guideHTML(){return header('THE WAY OF THE WARRIOR','武学招式','方�
 function weaponsHTML(){const w=weapons[prefs.weapon];const moves=nativeCombat?.moves?.[prefs.weapon]||[];return header('THE ARMORY','兵器谱','兵无常势，水无常形。选一柄趁手兵器，再入江湖。')+`<div class="weapon-options">${Object.entries(weapons).map(([key,v])=>`<button class="weapon-option ${key===prefs.weapon?'selected':''}" data-weapon="${key}" aria-pressed="${key===prefs.weapon}"><span class="weapon-glyph">${v.glyph}</span><strong>${v.name}</strong><small>${v.motto}<br>${'原版 · '+v.sourceName}</small></button>`).join('')}</div><p class="modal-desc" id="weapon-description">${w.desc}</p>${moves.length?`<div class="native-moves">${moves.map(move=>`<div><strong>${move.name||'第'+move.id+'式'}</strong><span>${move.frameCount} 帧 · ${move.duration.toFixed(2)} 秒</span></div>`).join('')}</div>`:''}<p class="modal-note">当前随身兵器：${w.name}。演武中按 ${keyHint('switch')} 切换主副兵器；单机任务按 ${keyHint('switch')} 切换原随身兵器。按 ${keyHint('attack')} 连击或投掷。</p><div class="modal-actions"><button class="primary-button" data-do="play"><span>返回战前整装</span>${icon('arrow')}</button></div>`;}
 
 function resourcesHTML(){return header('THE METEOR ARCHIVE','流星典藏','优先读取本地客户端的原始素材，流星资源网提供格式资料与缺失资源补充。')+`<div class="resource-list"><a class="resource-link" href="./assets/original/manifest.json" target="_blank" rel="noopener noreferrer"><span>本</span><div><strong>本地客户端原素材</strong><small>20 位人物 · 22 份地图 · 原始招式与配乐</small></div><span>↗</span></a><a class="resource-link" href="https://www.lxres.com/" target="_blank" rel="noopener noreferrer"><span>源</span><div><strong>流星资源网</strong><small>原版客户端 · 单机任务 · 人物兵器 · 地图资源</small></div><span>↗</span></a><a class="resource-link" href="https://www.lxres.com/LiuXingBiJi/1566.html" target="_blank" rel="noopener noreferrer"><span>图</span><div><strong>地图 GMC 结构笔记</strong><small>原生地图格式的 Web 解析依据</small></div><span>↗</span></a><a class="resource-link" href="./assets/SOURCES.md" target="_blank" rel="noopener noreferrer"><span>记</span><div><strong>本项目素材来源清单</strong><small>已使用的地图、贴图与转换记录</small></div><span>↗</span></a></div><p class="modal-note">这是《流星蝴蝶剑.net》的非官方 Web 实验重构。读取本地原版模型、骨骼、动画与招式表，在浏览器运行；剧情脚本与联网协议仍在逐项移植。原游戏与社区素材的权利归各自权利人所有。</p>`;}
+function guestbookHTML(){return header('MESSAGES FROM THE JIANGHU','江湖留言','留下你的只言片语，来去皆可匿名。')+`<form id="guestbook-form" class="guestbook-form"><label for="guestbook-message">写给江湖</label><textarea id="guestbook-message" name="message" maxlength="300" rows="3" required placeholder="最多 300 字，文明交流"></textarea><div class="guestbook-form-footer"><small>留言经管理员审核后公开显示为「匿名侠客」。提交时服务器会记录 IP 用于防刷，30 天后自动删除。</small><button class="primary-button" type="submit">落笔留言 →</button></div><p id="guestbook-status" class="guestbook-status" role="status" aria-live="polite"></p></form><section class="guestbook-list" aria-label="近期江湖留言"><h3>近来留言 <span id="guestbook-count"></span></h3><div id="guestbook-messages" aria-live="polite"><p class="modal-note">正在听取江湖消息…</p></div></section>`;}
+function guestbookEscape(value){return String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));}
+async function loadGuestbook(){const box=$('#guestbook-messages');if(!box)return;try{const response=await fetch('/api/messages',{headers:{Accept:'application/json'}});if(!response.ok)throw new Error('留言暂不可用');const data=await response.json();$('#guestbook-count').textContent=data.messages.length?`· ${data.messages.length} 条`:'';box.innerHTML=data.messages.length?data.messages.map(item=>`<article class="guestbook-message"><div><strong>匿名侠客</strong><time datetime="${guestbookEscape(item.created_at)}">${guestbookEscape(new Date(item.created_at+'Z').toLocaleString('zh-CN',{hour12:false}))}</time></div><p>${guestbookEscape(item.message)}</p></article>`).join(''):'<p class="modal-note">还没有留言，写下第一句吧。</p>';}catch(error){box.innerHTML='<p class="modal-note">留言加载失败，请稍后重试。</p>';}}
+async function submitGuestbook(event){event.preventDefault();const form=event.currentTarget,field=$('#guestbook-message'),status=$('#guestbook-status'),button=form.querySelector('[type=submit]'),message=field.value.trim();if(!message)return;button.disabled=true;status.textContent='正在送往江湖…';try{const response=await fetch('/api/messages',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({message})});const result=await response.json();if(!response.ok)throw new Error(result.error||'提交失败，请稍后再试');field.value='';status.textContent='已提交，审核通过后将显示。';await loadGuestbook();}catch(error){status.textContent=error.message||'网络不通，留言没有送出。';}finally{button.disabled=false;}}
 function settingsHTML(){
   const tabs={picture:'画面',sound:'声音',controls:'操作与键位',interface:'界面与提示'};
   const row=(title,desc,control)=>`<div class="settings-row"><label>${title}<small>${desc}</small></label>${control}</div>`;
@@ -222,7 +226,7 @@ function showLobbyPage(page){
 function openModal(kind){
   disposeKeySettings?.();disposeKeySettings=null;
   if(kind==='guide')guideWeapon=weapons[game?.hero?.weapon]?game.hero.weapon:prefs.weapon;
-  const renderers={guide:guideHTML,weapons:weaponsHTML,characters:charactersHTML,mission:missionHTML,maps:mapsHTML,network:()=>header('JIANGHU / MULTIPLAYER','江湖会武','同一游戏服务中的房间会出现在这里。')+'<div id="network-lobby"></div>',resources:resourcesHTML,settings:settingsHTML,keys:()=>header('SETTINGS / CONTROLS','自定义按键','保存键位后生效；关闭返回设置。')+'<div id="key-settings"></div>',pause:pauseHTML};
+  const renderers={guide:guideHTML,weapons:weaponsHTML,characters:charactersHTML,mission:missionHTML,maps:mapsHTML,network:()=>header('JIANGHU / MULTIPLAYER','江湖会武','同一游戏服务中的房间会出现在这里。')+'<div id="network-lobby"></div>',resources:resourcesHTML,settings:settingsHTML,guestbook:guestbookHTML,keys:()=>header('SETTINGS / CONTROLS','自定义按键','保存键位后生效；关闭返回设置。')+'<div id="key-settings"></div>',pause:pauseHTML};
   if(!running&&!ended&&pageKinds.has(kind)){
     showLobbyPage(kind);$('#page-content').innerHTML='<button class="game-back" data-route="home" aria-label="返回游戏大厅">← 返回大厅</button>'+(renderers[kind]||guideHTML)();
     if(kind==='network')networkLobby.mount($('#network-lobby'));
@@ -232,6 +236,7 @@ function openModal(kind){
   modalKind=kind;modal.dataset.kind=kind;
   if(running&&!paused){paused=true;game?.pause(true);}
   $('#modal-content').innerHTML=(renderers[kind]||guideHTML)();
+  if(kind==='guestbook'){loadGuestbook();$('#guestbook-form').addEventListener('submit',submitGuestbook);}
   if(kind==='network')networkLobby.mount($('#network-lobby'));
   if(kind==='keys')disposeKeySettings=mountKeySettings($('#key-settings'),{bindings:keyBindings,storage:keyStorage,onSave:next=>{keyBindings=next;game?.setKeyBindings(next);refreshKeyGuide();}});
   if(!modal.open)modal.showModal();
@@ -251,7 +256,7 @@ async function startMatch(mode='training',missionId=currentMissionId,isCurrent=(
   const map = mission?.mapId ?? (currentMode === 'network' ? 'sifang' : prefs.map);
   const selection = battleCharacterSelection(currentMode === 'network' ? roomSelection : prefs);
   if(!game)return;releaseMenuSnapshots();game.menuIdle=false;game.frameMeter?.reset();if(!matchMedia('(pointer:coarse)').matches)game.requestMouseLock();$('#start-game').disabled=true;
-  if(modal.open)modal.close();$('#page-content').replaceChildren();ended=false;paused=false;running=true;lastCombo=0;lastHp=mission?.playerHp??1000;clearDialogue();clearCombatFeedback();matchLoading(true);$('#load-status').textContent=mission?'正在载入'+mission.name+'与原版任务脚本…':'正在载入'+maps[map].name+'…';
+  if(modal.open)modal.close();$('#page-content').replaceChildren();ended=false;paused=false;running=true;lastCombo=0;lastHp=mission?.playerHp??1000;clearDialogue();clearCombatFeedback();matchLoading(true);$('#load-status').textContent=mission?'正在载入'+mission.name+'与原版任务脚本…':'正在载入'+maps[map].name+'战场、碰撞与人物动作…';window.__loadMeter?.update($('#load-status').textContent);
   $('#lobby').classList.add('hidden');$('#game-hud').classList.remove('hidden');document.body.classList.add('playing');
   $('#hud-map').textContent=currentMode==='network'?'四方阵 · 联机对战':maps[map].name+(currentMode==='story'?' · 单机任务':' · 演武');$('#battle-hint-text').textContent='原版招式演武 · 按 '+keyHint('attack')+' 出招';$('#combo-feedback').textContent='';
   try{if(!isCurrent())return;game.setInfiniteRage(currentMode==='training'&&prefs.infiniteRage);await game.start({map,weapon:currentMode==='network'?'sword':prefs.weapon,difficulty:prefs.difficulty,...selection,mode:currentMode});if(!isCurrent())return;game.setMuted(prefs.muted);game.setQuality(prefs.quality);syncMusic();announce(currentMode==='network'?'联机战场载入中':mission?mission.name+' · 单机任务':'演武 · 开始',2200);$('#world').setAttribute('tabindex','-1');$('#world').focus();}
@@ -280,7 +285,7 @@ function updateHUD(s){if(!running)return;
   drawMinimap(s);
 }
 function drawMinimap(s){const c=$('#minimap'),ctx=c.getContext('2d'),w=c.width;ctx.clearRect(0,0,w,w);ctx.save();ctx.translate(w/2,w/2);ctx.strokeStyle='#a6916050';ctx.lineWidth=1;ctx.strokeRect(-49,-49,98,98);ctx.beginPath();ctx.moveTo(-65,0);ctx.lineTo(65,0);ctx.moveTo(0,-65);ctx.lineTo(0,65);ctx.stroke();ctx.font='8px sans-serif';ctx.fillStyle='#d9bf8d';ctx.textAlign='center';ctx.fillText('北',0,-61);const bounds=s.mapBounds;const scale=bounds?110/Math.max(bounds.maxX-bounds.minX,bounds.maxZ-bounds.minZ,1):2.2;const cx=bounds?(bounds.minX+bounds.maxX)/2:0,cz=bounds?(bounds.minZ+bounds.maxZ)/2:0;for(const e of [...(s.enemies||[]).map(e=>({...e,ally:false})),...(s.allies||[]).map(e=>({...e,ally:true}))]){ctx.fillStyle=e.ally?'#83bdb3':'#ce6650';ctx.beginPath();ctx.arc(Math.max(-57,Math.min(57,(e.x-cx)*scale)),Math.max(-57,Math.min(57,(e.z-cz)*scale)),3,0,Math.PI*2);ctx.fill();}const objective=s.mission?.objective?.position;if(objective){const x=Math.max(-57,Math.min(57,(objective.x-cx)*scale)),z=Math.max(-57,Math.min(57,(objective.z-cz)*scale));ctx.strokeStyle='#f0cc78';ctx.lineWidth=2;ctx.strokeRect(x-4,z-4,8,8);}if(s.position){ctx.fillStyle='#e4d8a9';const x=Math.max(-57,Math.min(57,(s.position.x-cx)*scale)),z=Math.max(-57,Math.min(57,(s.position.z-cz)*scale));ctx.beginPath();ctx.moveTo(x,z-5);ctx.lineTo(x-4,z+4);ctx.lineTo(x+4,z+4);ctx.closePath();ctx.fill();}ctx.restore();}
-function handleEvent(e){if(e.type==='pointer-unlock'){if(running&&!paused&&!loadingMatch)openModal('pause');return;}if(e.type==='pointer-error'){toast(e.text);return;}if(e.type==='load'){$('#load-status').textContent=e.text;return;}if(!running)return;if(e.type==='dialogue'){showDialogue(e);return;}if(e.type==='move'){const feedback=$('#combo-feedback');feedback.textContent=e.text||'';feedback.classList.add('named-move');feedback.dataset.command=e.command||'';return;}if(['mission-diagnostic','mission-compatibility'].includes(e.type)){console.warn(e.text,e);return;}if(e.type==='hit'){
+function handleEvent(e){if(e.type==='pointer-unlock'){if(running&&!paused&&!loadingMatch)openModal('pause');return;}if(e.type==='pointer-error'){toast(e.text);return;}if(e.type==='load'){$('#load-status').textContent=e.text;window.__loadMeter?.update(e.text);return;}if(!running)return;if(e.type==='dialogue'){showDialogue(e);return;}if(e.type==='move'){const feedback=$('#combo-feedback');feedback.textContent=e.text||'';feedback.classList.add('named-move');feedback.dataset.command=e.command||'';return;}if(['mission-diagnostic','mission-compatibility'].includes(e.type)){console.warn(e.text,e);return;}if(e.type==='hit'){
   // Incoming damage has its HP/HUD response; this displays the player's blow.
   if(!e.attackerHero)return;
   clearTimeout(hitTimer);const feedback=$('#hit-feedback');
@@ -332,10 +337,24 @@ $$('[data-action]').filter(button=>button.id!=='pickup-hint').forEach(button=>{l
 networkLobby=new NetworkLobby({getGame:()=>game,getSelection:()=>battleCharacterSelection(prefs),onStart:(isCurrent,selection)=>startMatch('network',undefined,isCurrent,selection),onNotice:text=>toast(text),onResult:()=>openModal('network'),onStop:text=>{returnLobby();toast(text);}});
 updateSelection();
 try{
-  const {MeteorGame}=await import('./engine.js');game=new MeteorGame($('#world'),{onUpdate:updateHUD,onEvent:handleEvent,onEnd:handleEnd});game.menuIdle=true;menuSnapshots=new MenuSnapshots(game);game.setKeyBindings(keyBindings);window.__game=game;game.frameOverlay.setVisible(prefs.showFps);await game.ready;game.setSwordStyle(prefs.swordStyle);game.setSpearStyle(prefs.spearStyle);game.setInfiniteRage(prefs.infiniteRage);game.setMuted(prefs.muted);game.setQuality(prefs.quality);await game.setWeapon(prefs.weapon);await game.menu(prefs.map, battleCharacterSelection(prefs));if (Object.hasOwn(NATIVE_APPEARANCES, linkedAppearance)) save();refreshMapPreview();refreshWeaponPreview();refreshCharacterPreview();syncScenery();
-
-  $('#load-status').textContent='江湖已就绪';$('#load-screen').style.opacity=0;setTimeout(()=>$('#load-screen').classList.add('hidden'),650);
-}catch(error){console.error(error);$('#load-screen').classList.add('hidden');const el=document.createElement('div');el.className='fatal-error';const text=document.createElement('p');text.textContent='江湖画卷未能展开。请使用支持 WebGL 的新版浏览器，并通过本地服务器打开。';const btn=document.createElement('button');btn.textContent='重新加载';btn.addEventListener('click',()=>location.reload());el.append(text,btn);document.body.append(el);}
+  const {MeteorGame}=await import('./engine.js');game=new MeteorGame($('#world'),{onUpdate:updateHUD,onEvent:handleEvent,onEnd:handleEnd});
+  // Boot with the built-in character: the enhanced skin is a multi-megabyte
+  // download that the lobby does not need before first paint. The chosen
+  // appearance is applied by the warm-up below, and start() loads it anyway.
+  game.characterAppearance='original';
+  game.menuIdle=true;menuSnapshots=new MenuSnapshots(game);game.setKeyBindings(keyBindings);window.__game=game;game.frameOverlay.setVisible(prefs.showFps);await game.ready;game.setSwordStyle(prefs.swordStyle);game.setSpearStyle(prefs.spearStyle);game.setInfiniteRage(prefs.infiniteRage);game.setMuted(prefs.muted);game.setQuality(prefs.quality);await game.setWeapon(prefs.weapon);
+  // Lobby first, scenery second. `game.ready` already built the default
+  // character and arena, so the shell is usable now; the player's chosen map
+  // and appearance (several MB on a slow link) load in the background and are
+  // re-requested by start() anyway, which cancels this run through the
+  // sessionRequest guard if the player clicks 开始 before it finishes.
+  if (Object.hasOwn(NATIVE_APPEARANCES, linkedAppearance)) save();refreshMapPreview();refreshWeaponPreview();refreshCharacterPreview();syncScenery();
+  window.__loadMeter?.finish('江湖已就绪');$('#load-screen').style.opacity=0;setTimeout(()=>$('#load-screen').classList.add('hidden'),650);
+  const warmUp=()=>{ if(!game||running)return; game.menu(prefs.map, battleCharacterSelection(prefs)).then(()=>{ if(running||!game)return; refreshMapPreview();refreshWeaponPreview();refreshCharacterPreview();syncScenery(); }).catch(error=>console.warn('战场预热未完成：',error)); };
+  // Give the lobby a real head start: on a 3 Mbit link the chosen character is
+// ~3.5 MB, and racing it against first paint just delays the shell.
+setTimeout(()=>{ if('requestIdleCallback'in window)requestIdleCallback(warmUp,{timeout:1500});else warmUp(); },2500);
+}catch(error){console.error(error);window.__loadMeter?.fail();$('#load-screen').classList.add('hidden');const el=document.createElement('div');el.className='fatal-error';const text=document.createElement('p');text.textContent='江湖画卷未能展开。请使用支持 WebGL 的新版浏览器，并通过本地服务器打开。';const btn=document.createElement('button');btn.textContent='重新加载';btn.addEventListener('click',()=>location.reload());el.append(text,btn);document.body.append(el);}
 
 window.addEventListener('pagehide',()=>{scenery.stop();mapPictures.clear();menuSnapshots?.clear();});
 document.addEventListener('visibilitychange',syncScenery);

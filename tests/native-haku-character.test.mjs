@@ -7,6 +7,16 @@ import {createNativeCharacter,loadNativeCharacterData,loadEnhancedCharacterData,
 import {appearanceCharacterName,WORKSHOP_APPEARANCES} from '../dist/character-appearances.js';
 import {sourcePmxVertices} from './helpers/source-pmx-vertices.mjs';
 
+const imageSize = bytes => {
+  if (bytes.subarray(0, 8).toString('hex') === '89504e470d0a1a0a') return [bytes.readUInt32BE(16), bytes.readUInt32BE(20)];
+  const fourcc = bytes.subarray(12, 16).toString('ascii');
+  if (fourcc === 'VP8X') return [1 + bytes.readUIntLE(24, 3), 1 + bytes.readUIntLE(27, 3)];
+  if (fourcc === 'VP8 ') return [bytes.readUInt16LE(26) & 0x3fff, bytes.readUInt16LE(28) & 0x3fff];
+  if (fourcc === 'VP8L') { const bits = bytes.readUInt32LE(21); return [1 + (bits & 0x3fff), 1 + ((bits >> 14) & 0x3fff)]; }
+  return [0, 0];
+};
+
+
 const root=new URL('../',import.meta.url),dist=new URL('dist/',root);
 const json=async path=>JSON.parse(await readFile(new URL(path,root)));
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
@@ -41,8 +51,8 @@ test('TDA Haku keeps every source vertex, texture and the author credits',async(
   const sources=manifest.sourceFiles.filter(s=>s.runtime);assert.equal(sources.length,13);
   for(const source of sources){
     const target=new URL(source.runtime,path);assert.ok(target.pathname.startsWith(path.pathname));
-    const bytes=await readFile(target);assert.equal(sha(bytes),source.sha256);
-    assert.deepEqual([bytes.readUInt32BE(16),bytes.readUInt32BE(20)],source.size);
+    const bytes=await readFile(target);assert.equal(sha(bytes),source.runtimeSha256??source.sha256);
+    assert.deepEqual(imageSize(bytes),source.size);
     assert.equal(sha(await readFile(new URL('assets/source/haku/'+source.file,root))),source.sha256);
   }
   assert.match(manifest.provenance.modelAuthor,/TDA/);assert.match(manifest.provenance.rigAuthor,/DD-372Cassin/);

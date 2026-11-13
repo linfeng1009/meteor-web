@@ -146,7 +146,7 @@ export async function loadQiyunCourtyard({ collisionMaterial } = {}) {
   if (manifest.format !== 'qiyun-battlefield-v1') throw new Error('栖云古庭资源版本不匹配');
   const [buffer, stoneTexture] = await Promise.all([
     checkedFetch(new URL(manifest.geometry, assetRoot)).then(response => response.arrayBuffer()),
-    new THREE.TextureLoader().loadAsync(new URL('limestone.png', assetRoot).href),
+    new THREE.TextureLoader().loadAsync(new URL('limestone.webp', assetRoot).href),
   ]);
   stoneTexture.colorSpace = THREE.SRGBColorSpace; stoneTexture.wrapS = stoneTexture.wrapT = THREE.RepeatWrapping; stoneTexture.anisotropy = 8;
   const clock = { value: 0 }, model = new THREE.Group(), geometries = [], materials = new Map(), colliders = [];

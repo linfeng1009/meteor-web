@@ -8,6 +8,8 @@ import { NATIVE_MOVE_CATALOG } from '../dist/native-move-catalog.js';
 import { NativeCombatController, decodeNativeText, parsePos, parseAct } from '../dist/native-combat.js';
 import { WEAPON_TRAIL_ADAPTER } from '../dist/native-weapon-trails.js';
 import {NetworkGame} from '../dist/network-game.js';
+import {NativeEffectContacts} from '../dist/native-effect-contacts.js';
+import {effectNodeMatrix, setEffectTime} from '../dist/native-effect-transforms.js';
 
 const packRoot = new URL('../dist/assets/original/rage-vfx/', import.meta.url);
 const manifest = JSON.parse(await readFile(new URL('manifest.json', packRoot), 'utf8'));
@@ -417,7 +419,7 @@ test('圆柱特效遵循原网格圆周方向，虬龙扫暴阵半圆位于原�
 
 test('原球形特效显示完整共享球面，发射角度只约束粒子取点而不裁切显示', async () => {
   const combat = JSON.parse(await readFile(new URL('../dist/assets/original/combat-vfx.json', import.meta.url), 'utf8'));
-  const combined = { ...manifest, effects: { ...combat.effects, ...manifest.effects } }, f = fixture(); let checked = 0;
+  const combined = { ...manifest, effects: { ...combat.effects, ...manifest.effects } }, f = fixture(); let checked = 0, hidden = 0;
   try {
     f.vfx.manifest = combined;
     for (const [id, definition] of Object.entries(combined.effects)) {
@@ -425,7 +427,8 @@ test('原球形特效显示完整共享球面，发射角度只约束粒子取�
       assert.equal(createHash('sha256').update(await readFile(new URL(`../dist/assets/original/${definition.source}`, import.meta.url))).digest('hex'), definition.sha256);
       const effect = f.vfx._create(f.actor, { serial: checked + 1 }, id);
       for (const node of effect.nodes) {
-        if (node.source.type !== 'SPHERE' || !node.mesh) continue;
+        if (node.source.type !== 'SPHERE' || !node.source.texture) continue;
+        if (node.source.hidden) { assert.equal(node.mesh, null); hidden++; continue; }
         const radius = Math.abs(node.source.dimensions[0]), geometry = node.mesh.geometry;
         const p = geometry.attributes.position, uv = geometry.attributes.uv;
         for (let i = 0; i < p.count; i++) {
@@ -443,7 +446,7 @@ test('原球形特效显示完整共享球面，发射角度只约束粒子取�
       }
       f.vfx._remove(effect);
     }
-    assert.ok(checked >= 178);
+    assert.ok(checked >= 147); assert.ok(hidden >= 31);
   } finally { f.vfx.dispose(); }
 });
 
@@ -516,4 +519,69 @@ test('球形V滚动保留原符号与速度，静止节点不增加滚动着色�
     assert.ok(still); assert.equal(still.uvOffset, undefined);
     assert.equal(still.mesh.material.onBeforeCompile, THREE.Material.prototype.onBeforeCompile);
   } finally { f.vfx.dispose(); }
+});
+
+
+test('原隐藏辅助球不绘制，匕首空中斩仍沿它的关键帧和挂点显示', async () => {
+  const combat = JSON.parse(await readFile(new URL('../dist/assets/original/combat-vfx.json', import.meta.url), 'utf8'));
+  const f = fixture('dagger');
+  try {
+    f.vfx.manifest = { ...manifest, effects: { ...combat.effects, ...manifest.effects } };
+    const effect = f.vfx._create(f.actor, { serial: 1 }, 'pos245'); effect.time = .2; f.vfx.update(0);
+    const parent = effect.nodes.find(n => n.source.name === 'Sphere_2'), slash = effect.nodes.find(n => n.source.name === 'Board_1');
+    assert.equal(parent.source.hidden, true); assert.equal(parent.mesh, null);
+    assert.ok(effectNodeMatrix(effect, parent), 'hidden helper retains its native transform');
+    assert.ok(slash.mesh.visible, 'authored slash is not suppressed with its hidden parent');
+    const before = slash.mesh.matrix.clone(); f.actor.root.position.x += 7; f.vfx.update(0);
+    const after = new THREE.Vector3().setFromMatrixPosition(slash.mesh.matrix).sub(new THREE.Vector3().setFromMatrixPosition(before));
+    assert.ok(after.distanceTo(new THREE.Vector3(7, 0, 0)) < 1e-8);
+    f.vfx._retire(effect); f.actor.root.position.x += 11; f.vfx.update(.01);
+    assert.equal(parent.mesh, null); assert.ok(slash.mesh.visible);
+    assert.ok(effectNodeMatrix(effect, parent));
+    assert.equal(f.actor.hp, 1000); assert.equal(f.actor.rage, 100);
+  } finally { f.vfx.dispose(); }
+});
+
+test('所有原隐藏节点不分配显示网格，但仍保留在绑定图中', async () => {
+  const combat = JSON.parse(await readFile(new URL('../dist/assets/original/combat-vfx.json', import.meta.url), 'utf8'));
+  const items = JSON.parse(await readFile(new URL('../dist/assets/original/item-vfx.json', import.meta.url), 'utf8'));
+  const combined = { ...manifest, effects: { ...combat.effects, ...manifest.effects, ...items.effects } }, f = fixture();
+  let checked = 0, textured = 0;
+  try {
+    f.vfx.manifest = combined;
+    for (const [id, definition] of Object.entries(combined.effects)) {
+      if (!definition.nodes.some(n => n.hidden)) continue;
+      const effect = f.vfx._create(f.actor, { serial: checked + 1 }, id);
+      assert.equal(effect.nodes.length, definition.nodes.length);
+      setEffectTime(effect, .2);
+      for (const node of effect.nodes) if (node.source.hidden) {
+        assert.equal(node.mesh, null, `${id}/${node.source.name}`);
+        assert.ok(effect.nodes.includes(node));
+        if (node.source.texture) textured++;
+        checked++;
+      }
+      f.vfx._remove(effect);
+    }
+    assert.ok(checked >= 339); assert.ok(textured >= 45);
+  } finally { f.vfx.dispose(); }
+});
+
+test('原隐藏的指虎怒气攻击环仍按原effect窗口命中', () => {
+  const f = fixture(), contacts = new NativeEffectContacts({ manifest });
+  try {
+    const definition = manifest.effects.pos473, attackNode = definition.nodes.find(n => n.name === 'AttackDonut');
+    assert.equal(attackNode.hidden, true);
+    const live = { ...state(473, .7, { poseId: 473 }), previousEffectTime: .7, effectTime: .7 };
+    const attack = live.pose.attacks[0]; assert.deepEqual(attack.bones, ['effect']);
+    const volumes = contacts.sample(f.actor, live, attack); assert.ok(volumes.length);
+    assert.ok(volumes.every(v => v.nodeName === 'AttackDonut'));
+    const target = { root: new THREE.Group() }; target.root.position.copy(volumes[0].center).y -= 1.3;
+    assert.equal(contacts.contact(volumes, target)?.contactSource, 'effect');
+    const shown = structuredClone(manifest); delete shown.effects.pos473.nodes.find(n => n.name === 'AttackDonut').hidden;
+    const comparison = new NativeEffectContacts({ manifest: shown });
+    try {
+      const expected = comparison.sample(f.actor, live, attack);
+      assert.deepEqual(volumes.map(v => [v.center.toArray(), v.edges.map(e => e.toArray())]), expected.map(v => [v.center.toArray(), v.edges.map(e => e.toArray())]));
+    } finally { comparison.dispose(); }
+  } finally { contacts.dispose(); f.vfx.dispose(); }
 });

@@ -149,6 +149,9 @@ export class NativeRageVfx {
     const effect = { ...createEffectTransforms(actor, definition, this.manifest), id, serial: state.serial, castPoseId:state.context?.poseId, group, live: true, tail: 0, visualEnd: 0 };
     for (const node of effect.nodes) {
       const { source } = node; node.mesh = null;
+      // The native +dc display gate must not remove the graph node: hidden
+      // helper shapes still parent other effects and can provide attack bounds.
+      if (source.hidden) continue;
       const particle=definition.particleAdapter && source.type==='PARTICLE';
       if ((!FORMATS.has(source.type) && !particle) || !source.texture) continue;
       const geometry = particle ? new THREE.BufferGeometry().setAttribute('position',new THREE.BufferAttribute(new Float32Array(24),3)) : effectGeometry(source); if (!geometry) continue;

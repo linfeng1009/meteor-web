@@ -65,6 +65,9 @@ def read_effect(path, include_particles=False):
         if cursor+93>end:raise ValueError('Truncated EF material payload')
         uv_speed=list(struct.unpack_from('<2f',data,cursor+73))
         if not all(math.isfinite(value) for value in uv_speed):raise ValueError('Nonfinite EF UV speed')
+        # 0058e8a0 reads material+a4 (common effect data+dc). Native draw
+        # routines reject nonzero values; transform/contact queries do not.
+        hidden=struct.unpack_from('<I',data,cursor+69)[0]!=0
         cursor+=93
         count = struct.unpack_from('<I',data,cursor)[0]; cursor+=4
         if not 0<count<=256 or cursor+112*count+4>end: raise ValueError(f'Invalid EF key stream: {path}:{name}')
@@ -77,6 +80,7 @@ def read_effect(path, include_particles=False):
         if cursor>end: raise ValueError('EF blob exceeds node')
         node = dict(type=kind,name=name,flags=list(flags),bindings=bindings,texture=texture.lower(),keys=keys,offset=offset)
         if any(uv_speed):node['uvSpeed']=uv_speed
+        if hidden:node['hidden']=True
         if kind in DIMS:
             if end-cursor != DIMS[kind]*4: raise ValueError(f'Unexpected shape size {path}:{name}:{end-cursor}')
             node['dimensions'] = list(struct.unpack_from('<'+'f'*DIMS[kind],data,cursor))

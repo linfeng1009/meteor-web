@@ -8,6 +8,16 @@ import { NATIVE_MOVE_CATALOG } from '../dist/native-move-catalog.js';
 import { NativeCombatController, decodeNativeText, parsePos, parseAct } from '../dist/native-combat.js';
 import { WEAPON_TRAIL_ADAPTER } from '../dist/native-weapon-trails.js';
 
+const imageSize = bytes => {
+  if (bytes.subarray(0, 8).toString('hex') === '89504e470d0a1a0a') return [bytes.readUInt32BE(16), bytes.readUInt32BE(20)];
+  const fourcc = bytes.subarray(12, 16).toString('ascii');
+  if (fourcc === 'VP8X') return [1 + bytes.readUIntLE(24, 3), 1 + bytes.readUIntLE(27, 3)];
+  if (fourcc === 'VP8 ') return [bytes.readUInt16LE(26) & 0x3fff, bytes.readUInt16LE(28) & 0x3fff];
+  if (fourcc === 'VP8L') { const bits = bytes.readUInt32LE(21); return [1 + (bits & 0x3fff), 1 + ((bits >> 14) & 0x3fff)]; }
+  return [0, 0];
+};
+
+
 const packRoot = new URL('../dist/assets/original/rage-vfx/', import.meta.url);
 const manifest = JSON.parse(await readFile(new URL('manifest.json', packRoot), 'utf8'));
 const combatRoot = new URL('../dist/assets/native/combat/', import.meta.url);

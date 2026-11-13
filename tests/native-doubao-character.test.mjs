@@ -8,6 +8,17 @@ import {appearanceCharacterName,WORKSHOP_APPEARANCES} from '../dist/character-ap
 import {MeteorGame} from '../dist/engine.js';
 import {sourcePmxVertices} from './helpers/source-pmx-vertices.mjs';
 
+// Runtime textures may be PNG or WebP after deployment compression.
+const imageSize = bytes => {
+  if (bytes.subarray(0, 8).toString('hex') === '89504e470d0a1a0a') return [bytes.readUInt32BE(16), bytes.readUInt32BE(20)];
+  const fourcc = bytes.subarray(12, 16).toString('ascii');
+  if (fourcc === 'VP8X') return [1 + bytes.readUIntLE(24, 3), 1 + bytes.readUIntLE(27, 3)];
+  if (fourcc === 'VP8 ') return [bytes.readUInt16LE(26) & 0x3fff, bytes.readUInt16LE(28) & 0x3fff];
+  if (fourcc === 'VP8L') { const bits = bytes.readUInt32LE(21); return [1 + (bits & 0x3fff), 1 + ((bits >> 14) & 0x3fff)]; }
+  return [0, 0];
+};
+
+
 const root=new URL('../',import.meta.url),dist=new URL('dist/',root),assets=new URL('assets/enhanced/doubao/',dist);
 const json=async path=>JSON.parse(await readFile(new URL(path,root)));
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
@@ -39,9 +50,11 @@ test('Doubao retains the complete original surface and byte-identical 4K JPEG at
   assert.equal(manifest.complete,true);assert.equal(manifest.completeness.faceGeometry,true);
   assert.deepEqual(manifest.stats.textureResolutions,[[4096,4096]]);
   const atlas=await readFile(new URL(skin.materials[0].texture,asset.path));
-  assert.equal(atlas.subarray(0,3).toString('hex'),'ffd8ff');
-  assert.equal(sha(atlas),'9352e39bc145ddd9227049d020b36c400d159746d9fdf0568f03abadc489baa6');
-  assert.equal(sha(await readFile(new URL('assets/source/doubao/tex/Color.jpg',root))),sha(atlas));
+  // Deployment transcodes the atlas to WebP; the archived 4K source stays the
+  // byte-identical reference and the deployed copy keeps its resolution.
+  assert.deepEqual(imageSize(atlas),[4096,4096]);
+  const sourceAtlas=await readFile(new URL('assets/source/doubao/tex/Color.jpg',root));
+  assert.equal(sha(sourceAtlas),'9352e39bc145ddd9227049d020b36c400d159746d9fdf0568f03abadc489baa6');
   assert.equal(manifest.provenance.modelAuthor,'sdn1111');assert.equal(manifest.provenance.rigAuthor,'鹿铃');
   assert.ok(build.rigidHeadVertices.length>10000,'the actual supplied head/face surface is retained');
   assert.ok(build.hairVertices.length>100);assert.equal(skin.secondaryMotion.bones.length,9);

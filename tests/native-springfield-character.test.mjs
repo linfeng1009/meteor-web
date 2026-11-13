@@ -8,6 +8,24 @@ import {appearanceCharacterName,WORKSHOP_APPEARANCES} from '../dist/character-ap
 import {MeteorGame} from '../dist/engine.js';
 import {bindQiankunGrip} from '../dist/native-qiankun-grip.js';
 import {sourcePmxVertices} from './helpers/source-pmx-vertices.mjs';
+// Runtime textures may be PNG or WebP (the deployment converts atlases to WebP
+// to fit a 3 Mbit uplink), so the check is "a real image with a known magic".
+const imageSize = bytes => {
+  if (bytes.subarray(0,8).toString('hex')==='89504e470d0a1a0a') return [bytes.readUInt32BE(16),bytes.readUInt32BE(20)];
+  const fourcc = bytes.subarray(12,16).toString('ascii');
+  if (fourcc==='VP8X') return [1+bytes.readUIntLE(24,3),1+bytes.readUIntLE(27,3)];
+  if (fourcc==='VP8 ') return [bytes.readUInt16LE(26)&0x3fff,bytes.readUInt16LE(28)&0x3fff];
+  if (fourcc==='VP8L') { const bits=bytes.readUInt32LE(21); return [1+(bits&0x3fff),1+((bits>>14)&0x3fff)]; }
+  return [0,0];
+};
+
+const imageMagic = bytes => {
+  const head = bytes.subarray(0, 12);
+  if (head.subarray(0, 8).toString('hex') === '89504e470d0a1a0a') return 'png';
+  if (head.subarray(0, 4).toString('ascii') === 'RIFF' && head.subarray(8, 12).toString('ascii') === 'WEBP') return 'webp';
+  return 'unknown';
+};
+
 const root=new URL('../',import.meta.url),dist=new URL('dist/',root);
 const json=async path=>JSON.parse(await readFile(new URL(path,root)));
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
@@ -42,8 +60,8 @@ test('Springfield keeps the complete default P3 surfaces, original textures, nor
   const sources=manifest.sourceFiles.filter(s=>s.runtime);assert.equal(sources.length,33);
   for(const source of sources){
     const target=new URL(source.runtime,path);assert.ok(target.pathname.startsWith(path.pathname));const bytes=await readFile(target);
-    assert.equal(sha(bytes),source.sha256);assert.equal(bytes.subarray(0,8).toString('hex'),'89504e470d0a1a0a');
-    assert.deepEqual([bytes.readUInt32BE(16),bytes.readUInt32BE(20)],source.size);
+    assert.equal(sha(bytes),source.runtimeSha256??source.sha256);assert.notEqual(imageMagic(bytes),'unknown');
+    assert.deepEqual(imageSize(bytes),source.size,'runtime texture keeps its pixel size');
     assert.equal(sha(await readFile(new URL('assets/source/springfield/'+source.file,root))),source.sha256);
   }
   assert.ok(skin.materials.some(m=>m.normal));

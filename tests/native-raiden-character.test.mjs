@@ -5,6 +5,23 @@ import * as THREE from '../dist/vendor/three.module.js';
 import { MeteorGame } from '../dist/engine.js';
 import { NATIVE_APPEARANCES, createNativeCharacter, loadNativeCharacterData, loadEnhancedCharacterData } from '../dist/native-character.js';
 
+const imageMagic = bytes => {
+  if (bytes.subarray(0, 8).toString('hex') === '89504e470d0a1a0a') return 'png';
+  if (bytes.subarray(0, 4).toString('ascii') === 'RIFF' && bytes.subarray(8, 12).toString('ascii') === 'WEBP') return 'webp';
+  return 'unknown';
+};
+
+
+const imageSize = bytes => {
+  if (bytes.subarray(0, 8).toString('hex') === '89504e470d0a1a0a') return [bytes.readUInt32BE(16), bytes.readUInt32BE(20)];
+  const fourcc = bytes.subarray(12, 16).toString('ascii');
+  if (fourcc === 'VP8X') return [1 + bytes.readUIntLE(24, 3), 1 + bytes.readUIntLE(27, 3)];
+  if (fourcc === 'VP8 ') return [bytes.readUInt16LE(26) & 0x3fff, bytes.readUInt16LE(28) & 0x3fff];
+  if (fourcc === 'VP8L') { const bits = bytes.readUInt32LE(21); return [1 + (bits & 0x3fff), 1 + ((bits >> 14) & 0x3fff)]; }
+  return [0, 0];
+};
+
+
 const fileFetch = async url => { try { return new Response(await readFile(new URL(url))); } catch { return new Response('', { status: 404 }); } };
 const withFetch = async callback => { const before = globalThis.fetch; globalThis.fetch = fileFetch; try { return await callback(); } finally { globalThis.fetch = before; } };
 const data = await withFetch(() => loadNativeCharacterData(0));
@@ -59,7 +76,7 @@ test('the complete dress Raiden uses real mapped geometry and supplied texture f
   const sizes = [];
   for (const texture of textures) {
     const bytes = await readFile(new URL(texture, asset.path));
-    assert.equal(bytes.subarray(1, 4).toString(), 'PNG'); sizes.push([bytes.readUInt32BE(16), bytes.readUInt32BE(20)]);
+    assert.ok(new Set(['png','webp']).has(imageMagic(bytes)), 'real texture container'); sizes.push(imageSize(bytes));
   }
   assert.ok(sizes.some(([width, height]) => width >= 1024 && height >= 1024));
   const influences = new Set();

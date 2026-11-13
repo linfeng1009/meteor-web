@@ -5,6 +5,27 @@ import * as THREE from '../dist/vendor/three.module.js';
 import { MeteorGame } from '../dist/engine.js';
 import { NATIVE_APPEARANCES, createNativeCharacter, loadNativeCharacterData, loadEnhancedCharacterData } from '../dist/native-character.js';
 
+const imageSize = bytes => {
+  if (bytes.subarray(0, 8).toString('hex') === '89504e470d0a1a0a') return [bytes.readUInt32BE(16), bytes.readUInt32BE(20)];
+  const fourcc = bytes.subarray(12, 16).toString('ascii');
+  if (fourcc === 'VP8X') return [1 + bytes.readUIntLE(24, 3), 1 + bytes.readUIntLE(27, 3)];
+  if (fourcc === 'VP8 ') return [bytes.readUInt16LE(26) & 0x3fff, bytes.readUInt16LE(28) & 0x3fff];
+  if (fourcc === 'VP8L') { const bits = bytes.readUInt32LE(21); return [1 + (bits & 0x3fff), 1 + ((bits >> 14) & 0x3fff)]; }
+  return [0, 0];
+};
+
+
+// Deployment converts texture atlases to WebP to fit a slow uplink, so a
+// runtime texture may be PNG or WebP. These helpers read either container.
+const imageMagic = bytes => {
+  const head = bytes.subarray(0, 12);
+  if (head.subarray(0, 8).toString('hex') === '89504e470d0a1a0a') return 'png';
+  if (head.subarray(0, 4).toString('ascii') === 'RIFF' && head.subarray(8, 12).toString('ascii') === 'WEBP') return 'webp';
+  return 'unknown';
+};
+
+
+
 const fileFetch = async url => { try { return new Response(await readFile(new URL(url))); } catch { return new Response('', { status: 404 }); } };
 const withFetch = async callback => { const before = globalThis.fetch; globalThis.fetch = fileFetch; try { return await callback(); } finally { globalThis.fetch = before; } };
 const data = await withFetch(() => loadNativeCharacterData(0));
@@ -40,7 +61,7 @@ test('Emilia loads the supplied complete face, costume and mapped PNG textures r
   assert.ok(textureFiles.size >= 4, 'retain separate supplied color maps');
   for (const texture of textureFiles) {
     const bytes = await readFile(new URL(texture, asset.path));
-    assert.equal(bytes.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
+    assert.notEqual(imageMagic(bytes), 'unknown');
     assert.ok(bytes.readUInt32BE(16) >= 512 && bytes.readUInt32BE(20) >= 512);
   }
   const influences = new Set();

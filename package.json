@@ -8,6 +8,9 @@
     "start": "node server.mjs",
     "check": "node scripts/check.mjs",
     "package": "python3 scripts/package-game.py",
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test tests/*.test.mjs",
+    "optimize:textures": "python3 scripts/convert_textures_webp.py --apply",
+    "optimize:precompress": "node scripts/precompress.mjs",
+    "optimize": "npm run optimize:textures && npm run optimize:precompress"
   }
 }

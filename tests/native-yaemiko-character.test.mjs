@@ -8,6 +8,24 @@ import {appearanceCharacterName,WORKSHOP_APPEARANCES} from '../dist/character-ap
 import {MeteorGame} from '../dist/engine.js';
 import {sourcePmxVertices} from './helpers/source-pmx-vertices.mjs';
 
+// Deployment converts texture atlases to WebP to fit a slow uplink, so a
+// runtime texture may be PNG or WebP. These helpers read either container.
+const imageMagic = bytes => {
+  const head = bytes.subarray(0, 12);
+  if (head.subarray(0, 8).toString('hex') === '89504e470d0a1a0a') return 'png';
+  if (head.subarray(0, 4).toString('ascii') === 'RIFF' && head.subarray(8, 12).toString('ascii') === 'WEBP') return 'webp';
+  return 'unknown';
+};
+const imageSize = bytes => {
+  if (bytes.subarray(0, 8).toString('hex') === '89504e470d0a1a0a') return [bytes.readUInt32BE(16), bytes.readUInt32BE(20)];
+  const fourcc = bytes.subarray(12, 16).toString('ascii');
+  if (fourcc === 'VP8X') return [1 + bytes.readUIntLE(24, 3), 1 + bytes.readUIntLE(27, 3)];
+  if (fourcc === 'VP8 ') return [bytes.readUInt16LE(26) & 0x3fff, bytes.readUInt16LE(28) & 0x3fff];
+  if (fourcc === 'VP8L') { const bits = bytes.readUInt32LE(21); return [1 + (bits & 0x3fff), 1 + ((bits >> 14) & 0x3fff)]; }
+  return [0, 0];
+};
+
+
 const root=new URL('../',import.meta.url),dist=new URL('dist/',root);
 const json=async path=>JSON.parse(await readFile(new URL(path,root)));
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
@@ -23,7 +41,7 @@ const headNames=new Set(['颜','颜2','睫','二重','眉','目','星目','口�
 
 test('Yae Miko archive, editable actions and rebuild inputs are independent of Downloads',async()=>{
   const inventory=await json('work/yaemiko-import-2026-11-10/source-copy.json');assert.equal(inventory.complete,true);assert.equal(inventory.archive,'assets/source/yaemiko');assert.equal(inventory.files.length,12);
-  for(const item of inventory.files){const bytes=await readFile(new URL(inventory.archive+'/'+item.path,root));assert.equal(bytes.length,item.bytes);assert.equal(sha(bytes),item.sha256);}
+  for(const item of inventory.files){const bytes=await readFile(new URL(inventory.archive+'/'+item.path,root));assert.equal(bytes.length,item.bytes);assert.equal(sha(bytes),item.runtimeSha256??item.sha256);}
   const script=await readFile(new URL('scripts/blender/build_yaemiko.py',root),'utf8');assert.equal(script.includes('/Downloads/'),false);assert.equal(/Path\(['"]\/Users\//.test(script),false);
   assert.equal(build.sourceDownloadsRequired,false);assert.equal(build.proportionalDisplayRig,true);assert.equal(build.sourceGeometryMaxError,0);assert.ok(build.restMatrixError<1e-4&&build.poseMatrixError<1e-3);
   assert.deepEqual(build.bakedActions.map(a=>a.pose),[6,144,151,262]);assert.equal(build.packedImages.length,5);assert.ok(build.packedImages.every(i=>i.packed));
@@ -34,8 +52,8 @@ test('Yae Miko keeps all original surfaces, 2K textures, transparent hair highli
   assert.equal(skin.vertexCount,25219);assert.equal(skin.triangleCount,29140);assert.equal(skin.materials.length,25);assert.equal(manifest.stats.omittedTriangles,0);assert.equal(manifest.stats.sourceBones,456);
   assert.equal(manifest.complete,true);assert.equal(manifest.completeness.faceGeometry,true);assert.equal(manifest.provenance.modelAuthor,'miHoYo');assert.match(manifest.provenance.rigAuthor,/观海/);
   const sources=manifest.sourceFiles.filter(s=>s.runtime);assert.equal(sources.length,5);
-  for(const item of sources){const bytes=await readFile(new URL(item.runtime,path));assert.equal(sha(bytes),item.sha256);assert.equal(bytes.subarray(0,8).toString('hex'),'89504e470d0a1a0a');assert.deepEqual([bytes.readUInt32BE(16),bytes.readUInt32BE(20)],[2048,2048]);assert.equal(sha(await readFile(new URL('assets/source/yaemiko/'+item.file,root))),item.sha256);}
-  for(const name of ['髪+','前髪+']){const m=skin.materials.find(m=>m.name===name);assert.equal(m.transparent,true);assert.equal(m.depthWrite,false);assert.match(m.texture,/spa_h\.png$/);}
+  for(const item of sources){const bytes=await readFile(new URL(item.runtime,path));assert.equal(sha(bytes),item.runtimeSha256??item.sha256);assert.notEqual(imageMagic(bytes),'unknown');assert.deepEqual(imageSize(bytes),[2048,2048]);assert.equal(sha(await readFile(new URL('assets/source/yaemiko/'+item.file,root))),item.sha256);}
+  for(const name of ['髪+','前髪+']){const m=skin.materials.find(m=>m.name===name);assert.equal(m.transparent,true);assert.equal(m.depthWrite,false);assert.match(m.texture,/spa_h\.(png|webp)$/);}
   assert.ok(skin.materials.find(m=>m.name==='肌').skinSurface);assert.ok(skin.materials.find(m=>m.name==='肌').alphaTest>0);
 }));
 

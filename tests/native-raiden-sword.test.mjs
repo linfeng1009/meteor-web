@@ -5,6 +5,16 @@ import { createHash } from 'node:crypto';
 import * as THREE from '../dist/vendor/three.module.js';
 import { createRaidenSword, disposeRaidenSword, loadRaidenSword } from '../dist/raiden-sword.js';
 import { MeteorGame } from '../dist/engine.js';
+
+const imageSize = bytes => {
+  if (bytes.subarray(0, 8).toString('hex') === '89504e470d0a1a0a') return [bytes.readUInt32BE(16), bytes.readUInt32BE(20)];
+  const fourcc = bytes.subarray(12, 16).toString('ascii');
+  if (fourcc === 'VP8X') return [1 + bytes.readUIntLE(24, 3), 1 + bytes.readUIntLE(27, 3)];
+  if (fourcc === 'VP8 ') return [bytes.readUInt16LE(26) & 0x3fff, bytes.readUInt16LE(28) & 0x3fff];
+  if (fourcc === 'VP8L') { const bits = bytes.readUInt32LE(21); return [1 + (bits & 0x3fff), 1 + ((bits >> 14) & 0x3fff)]; }
+  return [0, 0];
+};
+
 const root = new URL('../dist/assets/enhanced/weapons/raiden-sword/', import.meta.url);
 const asset = { manifest: JSON.parse(await readFile(new URL('manifest.json', root), 'utf8')), mesh: JSON.parse(await readFile(new URL('mesh.json', root), 'utf8')) };
 
@@ -16,9 +26,10 @@ test('standalone PMX sword retains authored geometry, native attachment length a
   assert.ok([...mesh.positions, ...mesh.normals, ...mesh.uvs].every(Number.isFinite));
   const sword = createRaidenSword(asset), bounds = new THREE.Box3().setFromObject(sword);
   assert.ok(Math.abs(bounds.max.z - 20.03) < .001); assert.ok(bounds.min.z < -3 && bounds.min.z > -4);
-  const color = await readFile(new URL('textures/color.png', root));
-  assert.equal(color.readUInt32BE(16), 2048); assert.equal(color.readUInt32BE(20), 2048);
-  assert.equal(createHash('sha256').update(color).digest('hex'), manifest.sourceFiles.find(file => file.file === 'tex/刀.png').sha256);
+  const color = await readFile(new URL('textures/color.webp', root));
+  assert.deepEqual(imageSize(color), [2048, 2048]);
+  const archSource = await readFile(new URL('../../../../../assets/source/shogun/tex/刀.png', root));
+  assert.equal(createHash('sha256').update(archSource).digest('hex'), manifest.sourceFiles.find(file => file.file === 'tex/刀.png').sha256);
   assert.equal(mesh.faces.filter(face => face.material === 3).length, 42, 'glow belongs to the same base faces, not a second coplanar surface');
   disposeRaidenSword(sword);
 });
@@ -47,7 +58,7 @@ test('a missing Raiden skin falls back to the original sword with butterfly glow
 test('loaded templates can be cloned for equipment without disposing shared textures on a detach', () => {
   const color = new THREE.Texture(), emission = new THREE.Texture(), environment = new THREE.Texture();
   color.userData.raidenSwordOwned = emission.userData.raidenSwordOwned = true;
-  const template = createRaidenSword(asset, { environment, textures: new Map([['textures/color.png', color], ['textures/emission.png', emission]]) });
+  const template = createRaidenSword(asset, { environment, textures: new Map([['textures/color.webp', color], ['textures/emission.webp', emission]]) });
   const clone = template.clone(true), parent = new THREE.Group(); parent.add(clone);
   assert.equal(clone.children[0].geometry, template.children[0].geometry); assert.ok(clone.children[0].material.every((material, i) => material === template.children[0].material[i]));
   let colorDisposals = 0, emissionDisposals = 0, environmentDisposals = 0;

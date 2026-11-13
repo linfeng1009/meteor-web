@@ -5,6 +5,23 @@ import * as THREE from '../dist/vendor/three.module.js';
 import { MeteorGame } from '../dist/engine.js';
 import { NATIVE_APPEARANCES, createNativeCharacter, loadNativeCharacterData, loadEnhancedCharacterData, parseNativeSkin, parseNativeBones, parseNativeAnimation, parseNativePoses } from '../dist/native-character.js';
 
+const imageMagic = bytes => {
+  if (bytes.subarray(0, 8).toString('hex') === '89504e470d0a1a0a') return 'png';
+  if (bytes.subarray(0, 4).toString('ascii') === 'RIFF' && bytes.subarray(8, 12).toString('ascii') === 'WEBP') return 'webp';
+  return 'unknown';
+};
+
+
+const imageSize = bytes => {
+  if (bytes.subarray(0, 8).toString('hex') === '89504e470d0a1a0a') return [bytes.readUInt32BE(16), bytes.readUInt32BE(20)];
+  const fourcc = bytes.subarray(12, 16).toString('ascii');
+  if (fourcc === 'VP8X') return [1 + bytes.readUIntLE(24, 3), 1 + bytes.readUIntLE(27, 3)];
+  if (fourcc === 'VP8 ') return [bytes.readUInt16LE(26) & 0x3fff, bytes.readUInt16LE(28) & 0x3fff];
+  if (fourcc === 'VP8L') { const bits = bytes.readUInt32LE(21); return [1 + (bits & 0x3fff), 1 + ((bits >> 14) & 0x3fff)]; }
+  return [0, 0];
+};
+
+
 // The supplied PMX appearance reuses the original actor/bones. It is not a new
 // native P20 or evidence of recovered Genshin runtime animation/physics.
 const originalRoot = new URL('../dist/assets/original/characters/', import.meta.url);
@@ -72,7 +89,7 @@ test('the complete PMX HuTao mesh has real face geometry, separate textures and 
   const dimensions = [];
   for (const material of asset.skin.materials) if (material.texture && material.texture !== 'null') {
     const bytes = await readFile(new URL(material.texture, asset.path));
-    assert.equal(bytes.subarray(1, 4).toString(), 'PNG'); dimensions.push([bytes.readUInt32BE(16), bytes.readUInt32BE(20)]);
+    assert.ok(new Set(['png','webp']).has(imageMagic(bytes)), 'real texture container'); dimensions.push(imageSize(bytes));
   }
   assert.ok(dimensions.length >= 2, 'preserve the supplied model texture maps');
   assert.ok(dimensions.some(([width, height]) => width >= 1024 && height >= 1024), 'retain the supplied maps at a useful resolution');

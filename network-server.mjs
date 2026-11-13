@@ -3,7 +3,10 @@ const validBloodStyle=s=>!!s&&['slash','thrust','impact','launch','shot'].includ
 import http from 'node:http';
 import { battleCharacterSelection } from './dist/character-appearances.js';
 import {randomBytes} from 'node:crypto';
-import {readFile} from 'node:fs/promises';
+import {readFile,stat} from 'node:fs/promises';
+import {gzip, brotliCompress, constants as zlibConstants} from 'node:zlib';
+import {promisify} from 'node:util';
+const gzipAsync=promisify(gzip), brotliAsync=promisify(brotliCompress);
 import {resolve,extname,sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
 const actions=new Set(['forward','back','left','right','attack','guard','jump','crouch','lock','clear','look','switch','drop','pickup']);
@@ -78,7 +81,27 @@ export class NetworkRooms{
     return {room:this.public(r),input,acceptedSequence:p.lastSequence,frame:host?null:r.frame};
   }
 }
-const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.png':'image/png','.jpg':'image/jpeg','.bmp':'image/bmp','.svg':'image/svg+xml','.mp3':'audio/mpeg','.wav':'audio/wav','.webp':'image/webp'};
+const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.png':'image/png','.jpg':'image/jpeg','.bmp':'image/bmp','.svg':'image/svg+xml','.mp3':'audio/mpeg','.wav':'audio/wav','.webp':'image/webp','.mjs':'text/javascript; charset=utf-8','.txt':'text/plain; charset=utf-8','.md':'text/plain; charset=utf-8'};
+// Compressing already-compressed images wastes CPU for nothing.
+const incompressible=new Set(['.png','.jpg','.jpeg','.webp','.mp3','.wav','.bmp','.gif','.zip','.br','.gz','.woff2']);
+// This project's native data (.amb/.pos/.pst/.gmc/.gmb) is dense numeric text:
+// it shrinks 3-4x, which matters a lot on a 3 Mbit link.
+const compressibleExtra=new Set(['.amb','.pos','.pst','.gmc','.gmb','.bnc','.skc','.ef','.des','.map']);
+const shouldCompress=path=>{const ext=extname(path).toLowerCase();return !incompressible.has(ext)&&(
+  ['.html','.js','.mjs','.css','.json','.svg','.txt','.md'].includes(ext)||compressibleExtra.has(ext)||types[ext]?.startsWith('text/'));};
+// Compressed bodies are cached by path+mtime so repeat requests skip zlib.
+const encodedCache=new Map(),ENCODED_CACHE_MAX=64;
+const accept=req=>String(req.headers['accept-encoding']||'').toLowerCase();
+async function encodeOnce(key,body,encoding){
+  const hit=encodedCache.get(key);
+  if(hit)return hit;
+  const output=encoding==='br'
+    ? await brotliAsync(body,{params:{[zlibConstants.BROTLI_PARAM_QUALITY]:5,[zlibConstants.BROTLI_PARAM_SIZE_HINT]:body.length}})
+    : await gzipAsync(body,{level:6});
+  if(encodedCache.size>=ENCODED_CACHE_MAX)encodedCache.delete(encodedCache.keys().next().value);
+  encodedCache.set(key,output);
+  return output;
+}
 export function createNetworkServer({rooms=new NetworkRooms(),root=fileURLToPath(new URL('./dist/',import.meta.url))}={}){
   return http.createServer(async(req,res)=>{
     const json=(status,data)=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(JSON.stringify(data));};
@@ -92,7 +115,45 @@ export function createNetworkServer({rooms=new NetworkRooms(),root=fileURLToPath
       }
       if(!['GET','HEAD'].includes(req.method))fail('方法不允许',405);
       const target=resolve(root,'.'+decodeURIComponent(url.pathname==='/'?'/index.html':url.pathname));if(!target.startsWith(root.endsWith(sep)?root:root+sep))fail('禁止访问',403);
-      const body=await readFile(target);res.writeHead(200,{'Content-Type':types[extname(target)]||'application/octet-stream','Cache-Control':'no-cache','X-Content-Type-Options':'nosniff'});res.end(req.method==='HEAD'?undefined:body);
+      const info=await stat(target);
+      const mime=types[extname(target)]||'application/octet-stream';
+      const isHtml=extname(target).toLowerCase()==='.html';
+      const compressible=shouldCompress(target)&&info.size>1024;
+      const wanted=accept(req);
+      // Prefer the build-time .br/.gz sidecar: zero per-request CPU, best ratio.
+      let encoding=null,payload=null,stamp=`${info.size.toString(16)}-${Math.floor(info.mtimeMs).toString(16)}`;
+      if(compressible){
+        for(const candidate of [['br','.br'],['gzip','.gz']]){
+          const [enc,suffix]=candidate;
+          if(!wanted.includes(enc==='gzip'?'gzip':'br'))continue;
+          try{
+            const side=await stat(target+suffix);
+            if(side.mtimeMs<info.mtimeMs)continue;
+            payload=await readFile(target+suffix);
+            encoding=enc;stamp+=`-${enc}${side.size.toString(16)}`;
+            break;
+          }catch{}
+        }
+      }
+      if(!payload){payload=await readFile(target);}
+      const etag=`W/"${stamp}"`;
+      // Repeat visits revalidate cheaply; the game's asset names are not
+      // content-hashed, so nothing is cached as immutable.
+      const cacheHeaders={'Cache-Control':isHtml?'no-cache':'public, max-age=3600','ETag':etag,'X-Content-Type-Options':'nosniff'};
+      if(req.headers['if-none-match']===etag){res.writeHead(304,{'Cache-Control':cacheHeaders['Cache-Control'],'ETag':etag});res.end();return;}
+      const headers={...cacheHeaders,'Content-Type':mime};
+      if(encoding)headers['Content-Encoding']=encoding;
+      if(compressible&&!encoding&&wanted.includes('br'))headers['Vary']='Accept-Encoding';
+      // No sidecar and no encoding negotiated: compress on the fly, cached.
+      if(compressible&&!encoding){
+        const picked=wanted.includes('br')?'br':wanted.includes('gzip')?'gzip':null;
+        if(picked){
+          payload=await encodeOnce(`${target}:${info.mtimeMs}:${picked}`,payload,picked);
+          headers['Content-Encoding']=picked;headers['Vary']='Accept-Encoding';
+        }
+      }
+      headers['Content-Length']=payload.length;
+      res.writeHead(200,headers);res.end(req.method==='HEAD'?undefined:payload);
     }catch(error){json(error.status|| (error.code==='ENOENT'?404:500),{error:error.status?error.message:error.code==='ENOENT'?'文件不存在':'服务器处理失败'});}
   });
 }

@@ -4,13 +4,13 @@
 
 **试玩地址：** [https://linfengya.cn/lx/](https://linfengya.cn/lx/)
 
-![试玩截图 1](http://43.142.241.129/files/2026/11/5dac0b8867cd25ac93beb974.png)
+![试玩截图 1](docs/readme-media/screenshot1.png)
 
-![试玩截图 2](http://43.142.241.129/files/2026/11/b3221f455eee8b28ce8b21a1.png)
+![试玩截图 2](docs/readme-media/screenshot2.png)
 
-![试玩截图 3](http://43.142.241.129/files/2026/11/gif1.gif)
+![试玩演示 1](docs/readme-media/gif1.gif)
 
-![试玩截图 3](http://43.142.241.129/files/2026/11/gif2.gif)
+![试玩演示 2](docs/readme-media/gif2.gif)
 
 
 基于用户本地 `lxhdj_` 客户端的浏览器移植，直接读取原版地图、人物、骨骼、动作、武器、配乐和任务脚本。Windows EXE 使用 Ghidra 离线反编译，已核实的气血、伤害和怒气公式已移入 JavaScript。

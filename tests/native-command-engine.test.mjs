@@ -82,6 +82,33 @@ function tick(game, dt = 1 / 60) {
   game._updateFighter(game.hero, dt); game.projectiles.update(dt); game.wheels?.update(dt);
 }
 
+test('16名原版角色通过联机控制持续移动与三轮同时出招，原POS接触和RES伤害完整执行',async()=>{
+  const {game,hero,target}=await fixture('sword');
+  for(let i=2;i<16;i++){const actor=await game._createFighter(i%2?8:0,'多人验证'+i);game.enemies.push(actor);game.scene.add(actor.root);await game._equip(actor,'sword');}
+  await game._equip(target,'sword');const actors=[hero,...game.enemies];
+  for(const [i,actor] of actors.entries()){actor.networkId=String(i);actor.team=actor.teamMask=1<<i;actor.hp=actor.maxHp=10000;game._placeFighter(actor,{position:v((i%4)*8-12,.015,Math.floor(i/4)*8)});}
+  game.updateAccum=0;game.locked=null;
+  const session=new NetworkGame(game,{host:true,playerId:'0',send(){}},{players:actors.map(a=>({id:a.networkId}))});session.active=true;
+  const step=()=>game._stepWorld(1/60);
+  try{
+    const starts=actors.map(a=>a.root.position.clone());game.action('forward');
+    session.inputs(actors.slice(1).map(a=>({playerId:a.networkId,action:'forward',active:true,angle:0,time:game.elapsed})));
+    for(let i=0;i<60;i++)step();assert.ok(actors.every((a,i)=>a.root.position.distanceTo(starts[i])>.1));
+    game.action('forward',false);session.inputs(actors.slice(1).map(a=>({playerId:a.networkId,action:'forward',active:false,angle:0,time:game.elapsed})));
+    for(let i=0;i<60;i++)step();assert.ok([...session.controls.values()].every(c=>!c.keys.has('forward')));
+    for(let i=0;i<16;i++){
+      const actor=actors[i];game._placeFighter(actor,{position:v(Math.floor(i/2)*8-28,.015,i%2?1.1:0)});actor.combat.play(6,{force:true});actor.root.rotation.y=i%2?Math.PI:0;
+      if(i%2===0){const control=i===0?game:session.controls.get(actor.networkId);control.locked=actors[i+1];}
+    }
+    for(let round=0;round<3;round++){
+      const before=actors.filter((_,i)=>i%2).map(a=>a.hp);game.action('attack');game.action('attack',false);
+      for(let i=2;i<16;i+=2)session.inputs([{playerId:String(i),action:'attack',active:true,angle:-Math.PI,time:game.elapsed},{playerId:String(i),action:'attack',active:false,angle:-Math.PI,time:game.elapsed}]);
+      for(let i=0;i<90;i++)step();for(let i=0;i<8;i++)assert.ok(actors[i*2+1].hp<before[i],`第${round+1}轮第${i+1}组未命中`);
+    }
+    assert.ok(actors.filter((_,i)=>i%2).every(a=>a.contacts>=3));assert.ok(game.contactHits>=3);assert.equal(session.snapshot().players.length,16);
+  }finally{session.dispose();}
+});
+
 test('all twelve visible weapon choices equip their preserved original models without using E as a catalogue cycle', async () => {
   const html = await readFile(new URL('index.html',dist),'utf8');
   const choices = [...html.matchAll(/data-weapon="([^"]+)"/g)].map(m=>m[1]);

@@ -54,7 +54,7 @@ export class NetworkProjectileMotion{
   }
   receive(states=[],duration=.07,flights=[],worldTime=null){
     if(this.disposed)return;
-    const span=Math.max(.03,Math.min(.15,duration||.07));
+    const span=Math.max(1/120,Math.min(.15,duration||.07));
     const worldFrom=Number.isFinite(this.worldTime)?Math.max(this.worldTime,worldTime-.15):worldTime-span;
     if(Number.isFinite(worldTime))this.worldTime=worldTime;
     if(Number.isFinite(worldTime)){this.clockFrom=worldFrom;this.clockTo=worldTime;this.clockTime=worldFrom;this.clockElapsed=0;this.clockDuration=span;this.flushFeedback();}
@@ -68,7 +68,7 @@ export class NetworkProjectileMotion{
       }
       sample.from.copy(sample.root.position);sample.to.fromArray(state.position);
       sample.fromQuaternion.copy(sample.root.quaternion);sample.toQuaternion.fromArray(state.quaternion);
-      sample.fromSpin=sample.spin;sample.toSpin=state.spin;sample.fromTumble=sample.tumble||0;sample.toTumble=state.tumble||0;sample.elapsed=0;sample.duration=Math.max(.03,Math.min(.15,duration||.07));sample.phase=state.phase;
+      sample.fromSpin=sample.spin;sample.toSpin=state.spin;sample.fromTumble=sample.tumble||0;sample.toTumble=state.tumble||0;sample.elapsed=0;sample.duration=Math.max(1/120,Math.min(.15,duration||.07));sample.phase=state.phase;
       if(!sample.visual&&!sample.loading)this.load(sample);
     }
     for(const flight of flights){

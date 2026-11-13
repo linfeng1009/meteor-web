@@ -86,6 +86,16 @@ function hostClient(f,onInput=()=>{}){
   const client=new NetworkClient({onInput});Object.assign(client,{room:f.client.room,code:f.client.code,playerId:f.host.playerId});
   client.api=async(path,data)=>f.request(f.host,path.split('/').at(-1),data);return client;
 }
+
+test('同一物理帧只发布一次完整快照，确认请求仍发送，失败的快照允许重试',async()=>{
+  const f=fixture(),client=hostClient(f),requests=[],api=client.api;let sequence=0,time=1,lost=false;
+  const players=f.client.room.players.map(p=>({id:p.id,position:[0,0,0],angle:0,hp:100,maxHp:100,rage:0,pose:1,source:0,frame:0,serial:1,effectTime:0}));
+  client.getFrame=()=>({sequence:++sequence,time,players});
+  client.api=async(path,data)=>{requests.push(data);if(lost){lost=false;throw Error('模拟响应丢失');}return api(path,data);};
+  await client.sync();await client.sync();await client.sync();assert.deepEqual(requests.map(x=>!!x.frame),[true,false,false]);
+  assert.ok(requests.every(x=>x.inputAck));time=2;lost=true;await client.sync();await client.sync();
+  assert.ok(requests.at(-1).frame,'失败的同一时刻快照不能被当作已经确认');assert.equal(client.failures,0);
+});
 test('host response loss and acknowledgement response loss never drop or replay applied operations',async()=>{
   const f=fixture(),applied=[],host=hostClient(f,batch=>applied.push(...batch)),api=host.api;let request=0;
   host.api=async(path,data)=>{const result=await api(path,data);if([1,3].includes(++request))throw Error('房主响应丢失');return result;};

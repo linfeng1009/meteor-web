@@ -7,7 +7,7 @@ export class NetworkClient{
     Object.assign(this,{onRoom,onInput,onFrame,onError,getFrame,getAngle,getPitch,now});this.resetInput();this.failures=0;this.closed=false;
     this.enableStream=stream;this.streamUrl=streamUrl;
   }
-  resetInput(){this.queue=[];this.held=new Set();this.pendingInput=null;this.sequence=0;this.processed=new Map();this.lastReceivedFrameSequence=0;}
+  resetInput(){this.queue=[];this.held=new Set();this.pendingInput=null;this.sequence=0;this.processed=new Map();this.lastReceivedFrameSequence=0;this.lastPublishedTime=null;this.lastPublishedResult=false;}
   setRoom(room){
     if(room.protocol!==NETWORK_PROTOCOL||!Number.isSafeInteger(room.round)||!Number.isSafeInteger(room.revision??0)||(room.revision??0)<0)throw Error('联机协议已更新，请重启服务并刷新所有玩家页面。');
     if(this.room?.code===room.code&&(room.round<this.room.round||room.round===this.room.round&&(room.revision??0)<(this.room.revision??0)))return false;
@@ -86,7 +86,7 @@ export class NetworkClient{
     try{
       if(playing){
         data.round=round;
-        if(host){this.frameDirty=false;data.inputAck=Object.fromEntries(this.processed);const frame=this.getFrame();if(frame)data.frame=frame;}
+        if(host){this.frameDirty=false;data.inputAck=Object.fromEntries(this.processed);const frame=this.getFrame();if(frame&&(!Number.isFinite(frame.time)||frame.time!==this.lastPublishedTime||frame.result&&!this.lastPublishedResult))data.frame=frame;}
         else{
           // A later look sequence must never jump ahead of queued operations.
           if(!this.pendingInput){this.pendingInput=this.queue.splice(0,63);if(!this.queue.length)this.pendingInput.push({action:'look',active:false,sequence:++this.sequence,angle:this.getAngle(),pitch:this.getPitch(),time:this.now(),held:[...this.held]});}
@@ -99,7 +99,7 @@ export class NetworkClient{
       // Discard responses belonging to a room or round which is no longer active.
       if(this.closed||this.code!==code||this.room.round!==round)return;
       this.failures=0;if(!this.setRoom(result.room))return;
-      if(this.closed||result.room.round!==round)return;if(result.room.phase==='finished'){if(result.frame)this.deliverFrame(result.frame);return;}if(result.room.phase!=='playing')return;
+      if(this.closed||result.room.round!==round)return;if(data.frame){this.lastPublishedTime=data.frame.time;this.lastPublishedResult=!!data.frame.result;}if(result.room.phase==='finished'){if(result.frame)this.deliverFrame(result.frame);return;}if(result.room.phase!=='playing')return;
       if(!host&&playing){
         const last=this.pendingInput?.at(-1)?.sequence||0;
         if(!Number.isSafeInteger(result.acceptedSequence)||result.acceptedSequence<last)throw Error('服务未确认完整操作批次，本局已停止。');

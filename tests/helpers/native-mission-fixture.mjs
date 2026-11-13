@@ -1,3 +1,4 @@
+import {NATIVE_AIR_PHYSICS} from '../../dist/native-traversal.js';
 import { readFile } from 'node:fs/promises';
 import * as THREE from '../../dist/vendor/three.module.js';
 import { MeteorGame } from '../../dist/engine.js';
@@ -29,7 +30,7 @@ export async function nativeMission(mapId) {
     weaponCache: new Map(), effectDefinitions: new Map(), waveFiles: new Map(), effects: [],
     scene: new THREE.Scene(), camera: new THREE.PerspectiveCamera(), cameraTarget: v(),
     raycaster: new THREE.Raycaster(), collisionMaterial: new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }),
-    hostPhysics: { speed: 8, gravity: 34, jumpVelocity: 12, radius: .4, step: .55 },
+    hostPhysics: { speed: 8, gravity: NATIVE_AIR_PHYSICS.gravity, jumpVelocity: NATIVE_AIR_PHYSICS.jumpVelocity, radius: .4, step: .55 },
     map: mapId, mode: 'training', weapon: 'sword', characterId: 0, characterAppearance: 'original', appearanceRequest: 0,
     actorSerial: 0, enemies: [], keys: new Set(), directionBuffer: [], sessionRequest: 0, characterRequest: 0, mapRequest: 0,
     running: false, paused: false, elapsed: 0, difficulty: 'normal', kills: 0, deaths: 0, totalDamage: 0, contactHits: 0,

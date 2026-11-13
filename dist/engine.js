@@ -1,11 +1,13 @@
+import {NativeStealthFeedback} from './native-stealth-feedback.js';
 import {validCombatTarget,acquireCombatTarget} from './combat-targeting.js';
+import {nativeSameTeam} from './native-teams.js';
 import {nativeStrideSpeed} from './native-movement-profile.js';
-import { traversalTap, NATIVE_ROLL_POSES, nativeDashPose, NATIVE_CROUCH_POSES, NATIVE_GROUND_MOVE_POSES, NATIVE_JUMP_POSES, nativeTraversalDirection } from './native-traversal.js';
+import { traversalTap, NATIVE_AIR_PHYSICS, NATIVE_ACTION_MOTION, nativeActionMomentum, NATIVE_JUMP_HOLD_SECONDS, nativeAirPose, stepNativeAirMotion, NATIVE_ROLL_POSES, nativeDashPose, NATIVE_CROUCH_POSES, NATIVE_GROUND_MOVE_POSES, NATIVE_JUMP_POSES, nativeTraversalDirection } from './native-traversal.js';
 import { FixedStepClock } from './fixed-step.js';
-import { NATIVE_WALL_POSES, WALL_TRAVERSAL_ADAPTER as WALL } from './native-wall-traversal.js';
+import { NATIVE_WALL_POSES, NATIVE_WALL_PHYSICS, NATIVE_AIR_WALL_PHYSICS, nativeWallVerticalVelocity, nativeWallJumpVelocity, nativeAirWallJumpVelocity, WALL_TRAVERSAL_ADAPTER as WALL } from './native-wall-traversal.js';
 import { FrameMeter, RenderScaleController, createFrameOverlay } from './frame-meter.js';
 import { StaticColliderIndex } from './collision-index.js';
-import { bindLocalPlayerControl, clearPlayerCommands } from './player-control.js';
+import { bindLocalPlayerControl, clearPlayerCommands, applyPlayerLook, usesPlayerLook, updatePlayerTurn } from './player-control.js';
 import { createMouseLook, turnMouseCamera } from './mouse-look.js';
 import { bindKeyboard, defaultBindings } from './keybindings.js';
 import * as THREE from './vendor/three.module.js';
@@ -14,7 +16,7 @@ import { NativeNpcCombat, nativeNpcMove, nativeNpcInRange, nativeNpcFacing } fro
 import { loadGmb, loadGmc } from './gmc-loader.js';
 import { DEFAULT_CHARACTER_APPEARANCE, loadNativeCharacter, NATIVE_APPEARANCES } from './native-character.js';
 import { appearanceCharacterName, FEATURED_APPEARANCES } from './character-appearances.js';
-import { loadNativeCombat, NativeCombatController, NATIVE_WEAPONS, NATIVE_LOCOMOTION, createNativeDamageResolver, createNativeSceneDamageResolver, nativeReactionParameters, nativeHitAngle, nativeHitSelection, nativeGuardPose } from './native-combat.js';
+import { loadNativeCombat, NativeCombatController, NATIVE_WEAPONS, NATIVE_LOCOMOTION, createNativeDamageResolver, createNativeSceneDamageResolver, nativeReactionParameters, nativeHitAngle, nativeHitSelection, nativeGuardPose, nativeAttackFrames } from './native-combat.js';
 import { NATIVE_MOVE_CATALOG } from './native-move-catalog.js';
 import { recordNativeDirection, selectNativeMove, NATIVE_RECOVERY_INPUT_WINDOW } from './native-input.js';
 import { loadOriginalSceneModels } from './native-scene-models.js';
@@ -22,9 +24,9 @@ import { NativeMissionHost } from './native-mission-host.js';
 import { getNativeMission } from './native-missions.js';
 import { createNativeEnvironment } from './native-environment.js';
 import { NativeWeather } from './native-weather.js';
-import { NativeItemSystem, useNativeScriptItem, useNativeAttackItem, useNativeSelfItem, nativeMovementScale, nativeRageMaximum, updateNativeScriptItems, clearNativeScriptItems } from './native-items.js';
+import { NativeItemSystem, useNativeScriptItem, useNativeAttackItem, useNativeSelfItem, nativeMovementScale, nativeAirMovementScale, nativeRageMaximum, nativeIsInvisible, updateNativeScriptItems, clearNativeScriptItems } from './native-items.js';
 import { QIANKUN_MODE_NAMES } from './native-weapon-menu.js';
-import { sweepActorCapsule, NativeProjectileSystem, NATIVE_DART_PROFILE, NativeMusketSystem, NATIVE_MUSKET_PROFILE, NativeWheelSystem, NATIVE_WHEEL_PROFILE } from './native-projectiles.js';
+import { sweepActorCapsule, NativeProjectileSystem, aimNativeDart, NATIVE_DART_PROFILE, NativeMusketSystem, NATIVE_MUSKET_PROFILE, NativeWheelSystem, NATIVE_WHEEL_PROFILE } from './native-projectiles.js';
 import { NativeImpactFeedback } from './native-impact-feedback.js';
 import { NativeBloodFeedback, bloodStyleForHit } from './native-blood-feedback.js';
 import { loadNativePoisonFeedback } from './native-poison-feedback.js';
@@ -60,8 +62,9 @@ export function getNativeAttackAttachment(character, name) {
 // follows the recovered PE functions; contact volumes, physics and perception
 // are explicit browser adapters pending complete native reconstruction.
 export class MeteorGame {
-  constructor(canvas, { onUpdate = () => {}, onEvent = () => {}, onEnd = () => {}, damageResolver = null, sceneDamageResolver = null } = {}) {
+  constructor(canvas, { onUpdate = () => {}, onEvent = () => {}, onEnd = () => {}, damageResolver = null, sceneDamageResolver = null, combatRandom = Math.random } = {}) {
     this.canvas = canvas; this.onUpdate = onUpdate; this.onEvent = onEvent; this.onEnd = onEnd; this.damageResolver = damageResolver; this.sceneDamageResolver = sceneDamageResolver;
+    this.combatRandom=combatRandom;
     this.scene = new THREE.Scene(); this.scene.background = new THREE.Color(0x101718);
     this.camera = new THREE.PerspectiveCamera(48, 1, .1, 2500);
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
@@ -80,9 +83,10 @@ export class MeteorGame {
     this.kills = 0; this.deaths = 0; this.totalDamage = 0; this.contactHits = 0; this.time = 0; this.matchElapsed = 0;
     bindLocalPlayerControl(this);
     // Adapter constants are explicit and provisional until recovered from Meteor.exe.
-    this.hostPhysics = { speed: 100 * SCALE, gravity: 34, jumpVelocity: 12, radius: .4, step: .55, projectile: NATIVE_DART_PROFILE };
+    this.hostPhysics = { speed: 100 * SCALE, gravity: NATIVE_AIR_PHYSICS.gravity, jumpVelocity: NATIVE_AIR_PHYSICS.jumpVelocity, radius: .4, step: .55, projectile: NATIVE_DART_PROFILE };
     this.impactFeedback = new NativeImpactFeedback(this.scene);
     this.bloodFeedback = new NativeBloodFeedback(this.scene);
+    this.stealthFeedback = new NativeStealthFeedback();
     this._initializeProjectiles();
     this._bind(); this.resize(); this._frame = this._frame.bind(this); this.raf = requestAnimationFrame(this._frame);
     this.ready = this._initialize();
@@ -90,12 +94,14 @@ export class MeteorGame {
   }
   _initializeProjectiles() {
     this.projectiles = new NativeProjectileSystem({ scene: this.scene, bodyRadius: this.hostPhysics.radius,
+      canHit:(owner,target)=>!this.networkCombat||!nativeSameTeam(owner,target),
       getTargets: () => [this.hero, ...this.enemies].filter(Boolean),
       getColliders: (from, to, radius) => { const center = from.clone().add(to).multiplyScalar(.5); return this.currentMap ? this._collisionCandidates(center.x, center.z, from.distanceTo(to) / 2 + radius + 1) : []; },
       onActorHit: (shot, target, point) => this._applyNativeHit(shot.context.attacker, target, shot.context.state, shot.context.attack, point, { projectileId: shot.id }),
       onWorldHit: (shot, hit) => this._projectileWorldHit(shot, hit)
     });
     this.muskets = new NativeMusketSystem({ bodyRadius: this.hostPhysics.radius,
+      canHit:(owner,target)=>!this.networkCombat||!nativeSameTeam(owner,target),
       getTargets: () => [this.hero, ...this.enemies].filter(Boolean),
       getColliders: (from, to) => {
         if (!this.currentMap) return [];
@@ -108,6 +114,7 @@ export class MeteorGame {
       onWorldHit: (shot, hit) => this._projectileWorldHit(shot, hit)
     });
     this.wheels = new NativeWheelSystem({ scene: this.scene, bodyRadius: this.hostPhysics.radius,
+      canHit:(owner,target)=>!this.networkCombat||!nativeSameTeam(owner,target),
       getTargets: () => [this.hero, ...this.enemies].filter(Boolean),
       getColliders: (from, to, radius) => { const center = from.clone().add(to).multiplyScalar(.5); return this.currentMap ? this._collisionCandidates(center.x, center.z, from.distanceTo(to) / 2 + radius + 1) : []; },
       onActorHit: (shot, target, point) => this._applyNativeHit(shot.context.attacker, target, shot.context.state, shot.context.attack, point, { wheelId: shot.id }),
@@ -127,7 +134,9 @@ export class MeteorGame {
       const origin = f.character.getAttachment('d_wpnR').getWorldPosition(v3());
       const control=this._controlFor(f);
       const target = control ? control.locked || this._nearest(8,f) : f.scriptControl?.attackTarget || this.hero;
-      const direction = target && !target.dead ? target.root.position.clone().add(v3(0, 1.35, 0)).sub(origin).normalize() : v3(Math.sin(f.root.rotation.y), 0, Math.cos(f.root.rotation.y));
+      const aimPoint = target && !target.dead ? target.root.position.clone().add(v3(0, 1.35, 0))
+        : origin.clone().add(v3(Math.sin(f.root.rotation.y), 0, Math.cos(f.root.rotation.y)).multiplyScalar(10));
+      const direction = aimNativeDart(origin, aimPoint);
       const visual = f.weaponModel.clone(true); visual.rotation.set(0, 0, 0); visual.position.set(0, 0, 0); visual.scale.setScalar(SCALE);
       // A hand attachment is native Z-up and had an inverse-X rotation; a free
       // world projectile instead keeps the loader's converted Y-up geometry.
@@ -140,33 +149,23 @@ export class MeteorGame {
     }
   }
   _fireNativeMusket(f, state) {
-    if (!NATIVE_MUSKET_PROFILE.poseIds.includes(state.poseId) || !f.weaponModel || !this.running) return;
-    const origin = f.character.getAttachment('d_wpnR').getWorldPosition(v3());
+    if (!NATIVE_MUSKET_PROFILE.poseIds.includes(state.poseId) || !this.running) return;
+    const origin = f.root.position.clone().add(v3(0, NATIVE_MUSKET_PROFILE.originHeight, 0));
     const control=this._controlFor(f),target=control?null:f.scriptControl?.attackTarget;
     let direction=target&&!target.dead?target.root.position.clone().add(v3(0,1.35,0)).sub(origin).normalize():v3(Math.sin(f.root.rotation.y),0,Math.cos(f.root.rotation.y));
     if(control&&f.musketAim){
       direction=v3(-Math.sin(control.cameraAngle)*Math.cos(control.aimPitch||0),Math.sin(control.aimPitch||0),-Math.cos(control.cameraAngle)*Math.cos(control.aimPitch||0));
-      // Reticle determines the world aim point; the muzzle-to-point ray still
-      // checks nearby walls, so aiming around cover cannot shoot through it.
-      const eye=f.root.position.clone().add(v3(0,1.65,0));this.raycaster.set(eye,direction);this.raycaster.far=80;
-      const hit=this.raycaster.intersectObjects(this.currentMap.colliders||[],false)[0];this.raycaster.far=Infinity;
-      let distance=hit?.distance??80;const end=eye.clone().addScaledVector(direction,80);
-      for(const actor of [this.hero,...(this.enemies||[])])if(actor&&actor!==f&&!actor.dead&&!actor.disposed&&!actor.scriptRemoved){const t=sweepActorCapsule(eye,end,actor,0,this.hostPhysics.radius);if(t!=null)distance=Math.min(distance,t*80);}
-      direction=eye.addScaledVector(direction,distance).sub(origin).normalize();
     }
     const attacker = { id: f.id, hero: f.hero, scriptId: f.scriptId, root: f.root, name: f.name, weapon: f.weapon, weaponId: f.weaponId,
       weaponRecord: f.weaponRecord, nativeStats: { ...f.nativeStats }, activeItems: [...(f.activeItems || [])], team: f.team, teamMask: f.teamMask };
-    // Explicit browser aim/range adapter until the original ballistic path is
-    // recovered. Never use the dart's speed, lifetime or weapon mesh as a bullet.
-    const shots = this.muskets?.firePose({ owner: f, state, position: origin, direction, range: 80,
-      sourcePosition: f.root.position.clone().add(v3(0, 1.35, 0)), context: { attacker } });
+    const shots = this.muskets?.firePose({ owner: f, state, position: origin, direction, context: { attacker } });
     if (shots?.length) this._soundDefinition(state.pose.raw.fields.effectid);
   }
   _launchNativeWheel(f, state) {
     if (!NATIVE_WHEEL_PROFILE.poseIds.includes(state.poseId) || !f.weaponModel || !this.running) return;
     for (const attack of state.attacks) {
       const key = `release:${state.serial}:${attack.index}`; if (f.attackHits.has(key) || this.wheels?.hasOwner(f)) continue;
-      const origin = f.character.getAttachment('d_wpnR').getWorldPosition(v3());
+      const origin = f.root.position.clone().add(v3(0, NATIVE_WHEEL_PROFILE.originHeight, 0));
       const control=this._controlFor(f);
       const target = control ? control.locked || this._nearest(24,f) : f.scriptControl?.attackTarget;
       const direction = target && !target.dead ? target.root.position.clone().add(v3(0, 1.35, 0)).sub(origin).normalize() : v3(Math.sin(f.root.rotation.y), 0, Math.cos(f.root.rotation.y));
@@ -213,6 +212,7 @@ export class MeteorGame {
       getInstances: () => [...(this.currentMap?.props?.instances.values() || []),...(this.droppedWeapons?.values()||[])],
       canReach: (actor, item) => this._canReachItem(actor, item),
       onPickup: result => {
+        if(result.kind==='weapon')this._prepareWeapon(result.actor.weapon2Id).catch(()=>{});
         result.actor.pickupSerial=(result.actor.pickupSerial||0)+1;
         if(this.droppedWeapons.has(result.objectName)){result.instance.root.removeFromParent();this.droppedWeapons.delete(result.objectName);this.items.visuals.delete(result.instance);}
         const callback = `${result.objectName}_OnPickUp`;
@@ -230,7 +230,7 @@ export class MeteorGame {
     this._loadStatus('原版地图、人物、兵器与动作数据已就绪'); this._hud(); return this;
   }
   async _loadMap(name) {
-    this.rageVfx?.clear(); this.effectContacts?.clear(); this.projectiles?.clear('map-change'); this.muskets?.clear(); this.wheels?.clear();
+    this.rageVfx?.clear(); this.stealthFeedback?.clear(); this.effectContacts?.clear(); this.projectiles?.clear('map-change'); this.muskets?.clear(); this.wheels?.clear();
     this.clearNativeScene();
     this.items?.reset(); this._clearDroppedWeapons();
     name = MAP_IDS[name] || /^sn\d+$/.test(name) || name === QIYUN_MAP.id ? name : 'sifang'; const request = ++this.mapRequest, id = MAP_IDS[name] || name;
@@ -327,7 +327,7 @@ export class MeteorGame {
     // consumes that scene-motion delta independently of skin deformation.
     f.combat = new NativeCombatController(combatData, { weapon: this.weapon, sampleRoot: character.sampleSceneMotion, scale: SCALE });
     f.combat.play(NATIVE_WEAPONS[this.weapon].stance, { loop: true, force: true });
-    if (!hero) { if (this.combatData.npcAi) f.npcCombat = new NativeNpcCombat(this.combatData.npcAi); this._nameplate(f); } return f;
+    if (!hero) { if (this.combatData.npcAi) f.npcCombat = new NativeNpcCombat(this.combatData.npcAi,{random:this.combatRandom||Math.random}); this._nameplate(f); } return f;
   }
   _placeFighter(f, spawn) {
     f.weapon2Id=f.scriptConfig?Number(f.scriptConfig.weapon2Id??f.weapon2Id)||0:0;
@@ -335,6 +335,9 @@ export class MeteorGame {
     this.effectContacts?.clearActor(f);
     clearNativeScriptItems(f);
     f.musketAim=false; f.nativeJump = null; f.jumpSequence = null; f.wallRun = null; f.wallKick = null; f.wallEntries = 0;
+    f.actionMomentum=null;f.motionVelocity?.set(0,0,0);
+    f.wallJumpReady=false;f.wallJumpAge=0;
+    f.standingTurn=null;f.nativeAirGroundContact=false;
     const p = spawn?.position || this.currentMap.spawns[0].position; f.root.position.copy(p);
     // D_user DES quaternions use wxyz in the native Z-up coordinates.
     // Project their facing onto the walking plane instead of facing the player.
@@ -346,6 +349,7 @@ export class MeteorGame {
     const ground = this._ground(p.x, p.z, p.y + 3);
     if (ground) f.root.position.y = ground.point.y + .015;
     f.maxHp = f.scriptConfig?.HP ?? f.scriptConfig?.PlayerHP ?? this.currentMap.metadata.level?.integers.PlayerHP ?? 1000; f.hpSourceVerified = true;
+    this.stealthFeedback?.clearActor(f);
     f.velocity.set(0, 0, 0); f.vy = 0; f.grounded = true; f.guard = false; f.dead = false; f.environmentDeath = null; f.hitstop = 0; f.scriptCrouched = false; f.scriptItems = []; f.root.visible = true; f.hp = f.maxHp; f.rage = f.hero && this.infiniteRage ? 100 : 0; f.contacts = 0; f.previousPosition?.copy(f.root.position);
     clearPlayerCommands(this._controlFor(f));
     f.awarenessTarget = null; f.npcCombat?.reset();
@@ -370,7 +374,7 @@ export class MeteorGame {
       return null;
     });
   }
-  async _equip(f, selection) {
+  async _equip(f, selection, { preserveCombat = false } = {}) {
     this.rageVfx?.clearActor(f);
     this.effectContacts?.clearActor(f);
     const request = f.equipRequest = (f.equipRequest || 0) + 1;
@@ -378,9 +382,15 @@ export class MeteorGame {
     if (!item || !item.available) throw new Error(`Original weapon item ${selection} unavailable`);
     const prefix = item.modelId.toLowerCase().split('_')[0], name = Object.keys(NATIVE_WEAPONS).find(key => NATIVE_WEAPONS[key].model.split('_')[0] === prefix);
     if (!name) throw new Error(`Original weapon action family ${item.modelId} has not been ported`);
+    const retained=preserveCombat?{weapon:f.weapon,weaponId:f.weaponId,weaponName:f.weaponName,weaponRecord:f.weaponRecord,weaponReach:f.weaponReach,
+      mode:f.combat.weaponMode,models:(f.weaponModels||[]).map(model=>({model,parent:model.parent}))}:null;
+    this.stealthFeedback?.clearActor(f);
     f.weaponPoseUnsubscribe?.(); f.weaponPoseUnsubscribe = null;
     f.weapon = name; f.weaponId = Number(item.itemId); f.weaponName = item.name; f.weaponRecord = this.combatData.weaponRecords.get(item.modelId.toLowerCase());
-    f.musketAim=false; f.combat.setWeapon(name); f.combat.play(NATIVE_WEAPONS[name].stance, { loop: true, force: true }); f.heldPose = NATIVE_WEAPONS[name].stance;
+    if(name==='knuckle'&&this.weaponItems.get(f.weapon2Id)?.available)this._prepareWeapon(f.weapon2Id).catch(()=>{});
+    f.musketAim=false;
+    if(preserveCombat){f.combat.weapon=name;f.combat.weaponMode='blade';}
+    else{f.combat.setWeapon(name);f.combat.play(NATIVE_WEAPONS[name].stance,{loop:true,force:true});f.heldPose=NATIVE_WEAPONS[name].stance;}
     if (f.hero) { this.directionBuffer = []; this.recoveryAttack = null; }
     if (f.butterflySword) { disposeButterflySword(f.butterflySword); if (f.hero) this.butterflyVfx?.bind(null); }
     f.raidenSword?.removeFromParent(); f.raidenSword = null;
@@ -430,7 +440,17 @@ export class MeteorGame {
         f.character.getAttachment('d_wpnR').add(variant); f.character.registerVisualAttachment?.(variant,'d_wpnR'); f.phoenixSpear = variant;
         this._syncSpearStyle(f);
       }
-    } catch (error) { this._emit(`原版兵器读取失败：${name}`, 'info'); console.error(error); }
+    } catch (error) {
+      if(retained&&!this.disposed&&!f.disposed&&request===f.equipRequest){
+        Object.assign(f,{weapon:retained.weapon,weaponId:retained.weaponId,weaponName:retained.weaponName,weaponRecord:retained.weaponRecord,weaponReach:retained.weaponReach});
+        f.weaponModels=retained.models.map(entry=>entry.model);f.weaponModel=f.weaponModels[0];
+        for(const {model,parent} of retained.models)parent?.add(model);
+        if(f.combat.currentMove?.weapon!==retained.weapon&&!f.combat.currentMove?.switchesWeapon){f.combat.setWeapon(retained.weapon);f.combat.play(f.combat.stance,{force:true,loop:true});}
+        else{f.combat.weapon=retained.weapon;f.combat.weaponMode=retained.mode;}
+      }
+      this._emit(`原版兵器读取失败：${name}`, 'info'); console.error(error);return false;
+    }
+    return true;
   }
   _ground(x, z, ceiling) {
     if (!this.currentMap) return null;
@@ -458,10 +478,10 @@ export class MeteorGame {
     }
     return false;
   }
-  _wallContact(actor,side,facing=actor.root.rotation.y) {
+  _wallContact(actor,side,facing=actor.root.rotation.y,probe=null) {
     const forward=v3(Math.sin(facing),0,Math.cos(facing)),right=v3(-Math.cos(facing),0,Math.sin(facing));
-    const toward=side==='front'?forward:side==='right'?right:right.negate();
-    const reach=this.hostPhysics.radius+WALL.reach,hits=[];
+    const toward=probe?.direction??(side==='front'?forward:side==='right'?right:right.negate());
+    const reach=probe?.reach??this.hostPhysics.radius+WALL.reach,hits=[];
     for(const height of WALL.heights){
       this.raycaster.set(actor.root.position.clone().add(v3(0,height,0)),toward);this.raycaster.far=reach;
       const hit=this.raycaster.intersectObjects(this._collisionCandidates(actor.root.position.x,actor.root.position.z,reach+1),false).find(hit=>hit.face&&hit.distance>=.001);
@@ -474,37 +494,66 @@ export class MeteorGame {
     return {...hits[0],side,forward};
   }
   _endWallTraversal(actor) {
-    actor.wallRun=null;actor.nativeJump=null;actor.jumpSequence=null;actor.vy=Math.min(0,actor.vy);
+    const wall=actor.wallRun,air=NATIVE_JUMP_POSES.forward.air;
+    actor.wallRun=null;actor.nativeJump=null;
+    // 004cc120 state2→0 keeps velocity;004cf7c0 maps a wall pose to152
+    // once ordinary descent reaches the native<-40 speed threshold.
+    // Reactions retain their own pose and must not be overwritten here.
+    actor.jumpSequence=wall&&!actor.dead&&!actor.combat.busy?{start:air,air,direction:'forward',facing:wall.facing,ballistic:true}:null;
   }
   _updateWallTraversal(actor,direction,dt) {
     if(this.paused)return;
-    const allowed=this.running&&!actor.grounded&&!actor.dead&&!actor.scriptInputBlocked&&!actor.guard&&!actor.combat.busy;
+    if(actor.wallJumpReady&&!actor.grounded)actor.wallJumpAge=(actor.wallJumpAge||0)+dt;
+    const control=this._controlFor(actor),forwardHeld=control?.keys.has('forward')&&!control.keys.has('back');
+    const allowed=this.running&&forwardHeld&&!actor.grounded&&!actor.dead&&!actor.scriptInputBlocked&&!actor.guard&&!actor.combat.busy;
     if(actor.wallRun){
       const wall=actor.wallRun,hit=allowed&&direction.lengthSq()>0?this._wallContact(actor,wall.side,wall.facing):null;
-      if(!hit||wall.elapsed+dt>WALL.duration||hit.planeNormal.dot(wall.planeNormal)<.95||Math.abs(wall.planeNormal.dot(hit.point.clone().sub(wall.point)))>.15||direction.dot(wall.forward)<.25){this._endWallTraversal(actor);return;}
+      if(!hit||wall.elapsed+dt>NATIVE_WALL_PHYSICS.duration||hit.planeNormal.dot(wall.planeNormal)<.95||Math.abs(wall.planeNormal.dot(hit.point.clone().sub(wall.point)))>.15||direction.dot(wall.forward)<.25){this._endWallTraversal(actor);return;}
       wall.elapsed+=dt;return;
     }
-    if(!allowed||!this._controlFor(actor)||(actor.wallEntries||0)>=WALL.maxEntries||direction.lengthSq()===0)return;
+    // 004ccca0: forward>0, jump permission+e4=1, vy>=0, jump age>=.1.
+    if(!allowed||!actor.wallJumpReady||actor.vy<0||(actor.wallJumpAge||0)+1e-9<NATIVE_WALL_PHYSICS.entryDelay||direction.lengthSq()===0)return;
     for(const side of ['front','right','left']){
       const hit=this._wallContact(actor,side);if(!hit||direction.dot(hit.forward)<.25)continue;
       if(side==='front'?direction.dot(hit.normal)>-.25:Math.abs(direction.dot(hit.normal))>.75)continue;
       const pose=NATIVE_WALL_POSES[side].pose;if(!actor.combat.data.poses.get(pose)?.valid)continue;
       const tangent=hit.forward.clone().addScaledVector(hit.normal,-hit.forward.dot(hit.normal)).normalize();
-      actor.wallRun={...hit,pose,facing:actor.root.rotation.y,elapsed:dt,velocity:side==='front'?v3():tangent.multiplyScalar(WALL.sideSpeed),rise:side==='front'?WALL.frontRise:WALL.sideRise};
+      actor.wallRun={...hit,pose,facing:actor.root.rotation.y,elapsed:dt,velocity:side==='front'?v3():tangent.multiplyScalar(WALL.sideSpeed)};
       actor.wallEntries=(actor.wallEntries||0)+1;actor.nativeJump=null;actor.jumpSequence=null;actor.wallKick=null;actor.velocity.set(0,0,0);
+      actor.wallJumpReady=false;
       return;
     }
   }
-  _beginWallJump(actor) {
+  _beginWallJump(actor,{large=false}={}) {
     const wall=actor.wallRun;if(!wall||!this.running||this.paused||actor.dead||actor.scriptInputBlocked||actor.guard||actor.combat.busy)return false;
     const hit=this._wallContact(actor,wall.side,wall.facing);
     if(!hit||hit.planeNormal.dot(wall.planeNormal)<.95||Math.abs(wall.planeNormal.dot(hit.point.clone().sub(wall.point)))>.15){this._endWallTraversal(actor);return false;}
+    return this._startWallKick(actor,wall,{large});
+  }
+  _beginAirWallJump(actor,{large=false}={}){
+    if(!this.running||this.paused||!this.currentMap||!this.raycaster||actor.grounded||actor.wallRun||actor.dead||actor.scriptInputBlocked||actor.guard||actor.combat.busy)return false;
+    const facing=actor.root.rotation.y,forward=v3(Math.sin(facing),0,Math.cos(facing)),right=v3(-Math.cos(facing),0,Math.sin(facing));
+    // Body-height coverage and facing-based probe basis remain Web geometry
+    // adapters; the native contact range, result poses and impulse are kept.
+    for(const [side,direction] of [['front',forward],['right',forward.clone().add(right).normalize()],['left',forward.clone().sub(right).normalize()]]){
+      const hit=this._wallContact(actor,side,facing,{direction,reach:NATIVE_AIR_WALL_PHYSICS.reach});
+      if(hit&&this._startWallKick(actor,{...hit,facing},{large,air:true}))return true;
+    }
+    return false;
+  }
+  _startWallKick(actor,wall,{large=false,air=false}={}){
     const id=NATIVE_WALL_POSES[wall.side].exit,pose=actor.combat.data.poses.get(id);
-    if(!pose?.valid||!Number.isFinite(pose.link)||!actor.character.sampleSceneMotion)return false;
-    actor.wallRun=null;actor.grounded=false;actor.vy=this.hostPhysics.jumpVelocity;
-    actor.jumpSequence={start:id,air:pose.link,direction:wall.side,facing:wall.facing};
-    actor.nativeJump={pose,fps:actor.combat.fps,elapsed:0,height:0,duration:(pose.end-pose.start)/actor.combat.fps,origin:actor.character.sampleSceneMotion(pose.source,pose.start).z};
-    actor.wallKick={velocity:wall.normal.clone().multiplyScalar(WALL.kickSpeed),remaining:WALL.kickDuration};
+    if(!pose?.valid||!Number.isFinite(pose.link))return false;
+    const incoming=actor.motionVelocity||actor.velocity;
+    const velocity=air?nativeAirWallJumpVelocity({x:incoming.x,y:actor.vy,z:incoming.z},wall.planeNormal,{large}):nativeWallJumpVelocity(wall.planeNormal,{large});if(!velocity)return false;
+    actor.wallRun=null;actor.grounded=false;actor.vy=velocity.y;
+    actor.jumpSequence={start:id,air:pose.link,direction:wall.side,facing:wall.facing,ballistic:true};
+    actor.nativeJump=null;
+    // The native impulse enters ordinary state0 physics immediately; no
+    // Web timer freezes horizontal input after kicking away from a wall.
+    actor.wallKick=null;actor.nativeAirGroundContact=false;actor.velocity.set(velocity.x,0,velocity.z);
+    actor.motionVelocity??=v3();actor.motionVelocity.copy(actor.velocity);
+    actor.wallJumpReady=true;actor.wallJumpAge=0;
     actor.combat.play(id,{force:true});actor.heldPose='jump';return true;
   }
   _ceilingBlocked(position,rise) {
@@ -519,16 +568,34 @@ export class MeteorGame {
     }
     this.raycaster.far=Infinity;return false;
   }
-  _move(f, direction, speed, dt, motion = null) {
+  _move(f, direction, speed, dt, motion = null, actionMotion=f.combat.busy) {
     if(f.combat.reacting)f.wallKick=null;
-    const desired = f.wallRun?f.wallRun.velocity:direction.clone().multiplyScalar(speed); if(this._controlFor(f))f.velocity.copy(desired);else f.velocity.lerp(desired,1-Math.exp(-dt*14));
+    const drifting=!f.grounded&&!actionMotion&&!f.wallRun;
+    // 004ce840 writes current velocity from d_base plus copied momentum;
+    // old locomotion must not remain as a second NPC velocity channel.
+    if(actionMotion)f.velocity.set(0,0,0);
+    else if(drifting){
+      const control=this._controlFor(f),a=f.root.rotation.y;
+      let inputX=direction.x,inputZ=direction.z,forwardRunning=direction.x*Math.sin(a)+direction.z*Math.cos(a)>0;
+      if(control){
+        const forward=f.scriptInputBlocked?0:Number(control.keys.has('forward'))-Number(control.keys.has('back'));
+        const right=f.scriptInputBlocked?0:Number(control.keys.has('right'))-Number(control.keys.has('left'));
+        forwardRunning=forward>0&&!control.keys.has('crouch');const side=forwardRunning?Math.fround(.2):1;
+        inputX=Math.sin(a)*forward-Math.cos(a)*right*side;inputZ=Math.cos(a)*forward+Math.sin(a)*right*side;
+      }
+      f.vy=stepNativeAirMotion(f.velocity,f.vy,inputX,inputZ,forwardRunning,dt,nativeAirMovementScale(f),this.hostPhysics.gravity,f.nativeAirGroundContact===true);
+      f.nativeAirGroundContact=false;
+    }
+    else{const desired=f.wallRun?f.wallRun.velocity:direction.clone().multiplyScalar(speed);if(this._controlFor(f))f.velocity.copy(desired);else f.velocity.lerp(desired,1-Math.exp(-dt*14));}
     let dx = f.velocity.x * dt + (motion?.x || 0), dz = f.velocity.z * dt + (motion?.z || 0), p = f.root.position;
-    // The short exit impulse must win over held forward input, or it cancels
-    // itself against the same movement speed and the actor sticks to the wall.
-    if(f.wallKick){const step=Math.min(dt,f.wallKick.remaining);dx=f.wallKick.velocity.x*step;dz=f.wallKick.velocity.z*step;f.velocity.copy(f.wallKick.velocity);f.wallKick.remaining-=step;if(f.wallKick.remaining<=1e-8)f.wallKick=null;}
+    const momentum=actionMotion&&f.actionMomentum;
+    if(momentum){
+      momentum.x=nativeActionMomentum(momentum.x,dt,f.grounded);momentum.z=nativeActionMomentum(momentum.z,dt,f.grounded);
+      dx+=momentum.x*dt;dz+=momentum.z*dt;
+    }else f.actionMomentum=null;
     const from = p.clone();
-    if (!this._horizontalBlocked(p, dx, 0)) p.x += dx;
-    if (!this._horizontalBlocked(p, 0, dz)) p.z += dz;
+    if (!this._horizontalBlocked(p, dx, 0)) p.x += dx;else{if(momentum)momentum.x=0;if(drifting)f.velocity.x=0;}
+    if (!this._horizontalBlocked(p, 0, dz)) p.z += dz;else{if(momentum)momentum.z=0;if(drifting)f.velocity.z=0;}
     const ground = this._ground(p.x, p.z, p.y + this.hostPhysics.step);
     // Native 004ce850 overrides vertical velocity when the authored d_base
     // velocity has |trunc(native units/sec)|>=float0.1; otherwise gravity
@@ -538,22 +605,17 @@ export class MeteorGame {
     else {
       f.grounded = false;
       const beforeY=p.y;
-      if(f.wallRun){f.nativeJump=null;f.vy=f.wallRun.rise;p.y+=f.vy*dt;}
+      if(f.wallRun){f.nativeJump=null;f.vy=nativeWallVerticalVelocity(f.vy,dt,this.hostPhysics.gravity);p.y+=f.vy*dt;}
       else if (authoredVertical) {
         f.nativeJump = null; f.vy = motion.y / dt; p.y += motion.y;
-      } else if (f.nativeJump && !f.combat.busy) {
-        const jump = f.nativeJump, before = jump.height;
-        jump.elapsed = Math.min(jump.duration, jump.elapsed + dt);
-        const frame = jump.pose.start + jump.elapsed * jump.fps;
-        jump.height = (f.character.sampleSceneMotion(jump.pose.source, frame).z - jump.origin) * SCALE;
-        const dy = jump.height - before; p.y += dy; f.vy = dy / dt;
-        if (jump.elapsed >= jump.duration - 1e-8) f.nativeJump = null;
       } else {
-        f.nativeJump = null; f.vy -= this.hostPhysics.gravity * dt; p.y += f.vy * dt;
+        f.nativeJump = null;
+        if(!drifting)f.vy-=this.hostPhysics.gravity*dt;
+        p.y += f.vy * dt;
       }
       if(p.y>beforeY&&this._ceilingBlocked(v3(p.x,beforeY,p.z),p.y-beforeY)){p.y=beforeY;f.vy=0;f.nativeJump=null;f.jumpSequence=null;if(f.wallRun)this._endWallTraversal(f);}
       const landing = this._ground(p.x, p.z, p.y + Math.max(.7, -f.vy * dt + .15));
-      if (landing && p.y <= landing.point.y + .04 && f.vy <= 0) { p.y = landing.point.y + .015; f.vy = 0; f.grounded = true; f.musketAim=false; f.nativeJump = null; f.jumpSequence = null; f.wallRun=null;f.wallKick=null;f.wallEntries=0; }
+      if (landing && p.y <= landing.point.y + .04 && f.vy <= 0) { p.y = landing.point.y + .015; f.vy = 0; f.grounded = true; f.musketAim=false; f.nativeJump = null; f.jumpSequence = null; f.wallRun=null;f.wallKick=null;f.wallEntries=0;f.wallJumpReady=false;f.wallJumpAge=0; }
     }
     const hazard = this.currentMap.environment?.sweep(from, p);
     if (hazard && !f.dead) {
@@ -564,7 +626,18 @@ export class MeteorGame {
       this.onEvent({ type: 'environment-death', text: f.hero ? '坠入险地' : `${f.name}坠入险地`, actorId: f.scriptId ?? f.id, objectName: hazard.name, provenance: hazard.provenance });
       return;
     }
+    f.motionVelocity??=v3();if(dt>0)f.motionVelocity.set((p.x-from.x)/dt,0,(p.z-from.z)/dt);
+    // A pose may finish during combat.update before this motion step.
+    // Its final authored segment still uses action physics; state0/1 keeps
+    // the resulting current velocity rather than restoring old locomotion.
+    if(actionMotion&&!f.combat.busy){f.velocity.copy(f.motionVelocity);f.actionMomentum=null;f.nativeAirGroundContact=false;}
     if (p.y < this.currentMap.bounds.min.y - 20 || Math.abs(p.x) > 3000 || Math.abs(p.z) > 3000) { if (this.mode === 'story'||this.networkCombat) { f.hp = 0; this._kill(f,{awardKill:false}); } else this._placeFighter(f, this.currentMap.spawns[f.hero ? 0 : (f.spawnIndex || 1) % this.currentMap.spawns.length]); }
+  }
+  _captureActionMomentum(actor,{ninja=false}={}){
+    actor.standingTurn=null;
+    const velocity=actor.motionVelocity||actor.velocity,scale=ninja?NATIVE_ACTION_MOTION.ninjaScale:1;
+    actor.actionMomentum??=v3();actor.actionMomentum.set(Math.fround((velocity?.x||0)/SCALE*scale)*SCALE,0,Math.fround((velocity?.z||0)/SCALE*scale)*SCALE);
+    actor.wallKick=null;
   }
   _moveDirection(control = this) {
     const x = Number(control.keys.has('right')) - Number(control.keys.has('left')), z = Number(control.keys.has('forward')) - Number(control.keys.has('back')), a = control.cameraAngle;
@@ -619,7 +692,7 @@ export class MeteorGame {
     }
     const request = ++this.sessionRequest;
     await this.ready; if (request !== this.sessionRequest || this.disposed) return;
-    this.projectiles?.clear('restart'); this.projectiles?.pause(false); this.muskets?.clear(); this.wheels?.clear(); this.muskets?.pause(false); this.wheels?.pause(false); this.impactFeedback?.clear(); this.rageVfx?.clear(); this.effectContacts?.clear(); this.items?.reset(); this._clearDroppedWeapons(); this.missionHost?.dispose(); this.missionHost = null; this.missionState = null; this.storyResult = null;
+    this.projectiles?.clear('restart'); this.projectiles?.pause(false); this.muskets?.clear(); this.wheels?.clear(); this.muskets?.pause(false); this.wheels?.pause(false); this.impactFeedback?.clear(); this.rageVfx?.clear(); this.stealthFeedback?.clear(); this.effectContacts?.clear(); this.items?.reset(); this._clearDroppedWeapons(); this.missionHost?.dispose(); this.missionHost = null; this.missionState = null; this.storyResult = null;
     this.keyboard?.reset(); this.pointer = null; this.keys.clear(); this.traversalTap=null; this.directionBuffer = []; this.recoveryAttack = null; this.running = false; this.paused = false; this.mode = mode === 'story' ? 'story' : 'training';
     if (map !== this.map) await this._loadMap(map);
     if (request !== this.sessionRequest || this.disposed) return;
@@ -675,7 +748,7 @@ export class MeteorGame {
     this.mouseLook?.release();
     this.keyboard?.reset();
     const request = ++this.sessionRequest;
-    this.projectiles?.clear('menu'); this.projectiles?.pause(false); this.muskets?.clear(); this.wheels?.clear(); this.muskets?.pause(false); this.wheels?.pause(false); this.impactFeedback?.clear(); this.rageVfx?.clear(); this.effectContacts?.clear(); this.items?.reset(); this._clearDroppedWeapons(); this.missionHost?.dispose(); this.missionHost = null; this.missionState = null; this.mode = 'training';
+    this.projectiles?.clear('menu'); this.projectiles?.pause(false); this.muskets?.clear(); this.wheels?.clear(); this.muskets?.pause(false); this.wheels?.pause(false); this.impactFeedback?.clear(); this.rageVfx?.clear(); this.stealthFeedback?.clear(); this.effectContacts?.clear(); this.items?.reset(); this._clearDroppedWeapons(); this.missionHost?.dispose(); this.missionHost = null; this.missionState = null; this.mode = 'training';
     this.running = false; this.paused = false; this.keys.clear(); this.traversalTap=null; this.pointer = null; this.locked = null; this.directionBuffer = [];
     await this.ready; if (this.disposed || request !== this.sessionRequest) return;
     if (map !== this.map) await this._loadMap(map);
@@ -688,7 +761,7 @@ export class MeteorGame {
   }
   requestMouseLock() { return this.mouseLook?.request(); }
   setKeyBindings(bindings) { this.keyboard?.setBindings(bindings);this.mouseLook?.setBindings(bindings); }
-  releaseInput({releaseMouse=true}={}) { this.keyboard?.reset(); if(releaseMouse)this.mouseLook?.release(); this.keys.clear(); clearPlayerCommands(this.localControl||this); this.pointer=null; if(this.hero)this.hero.guard=false; }
+  releaseInput({releaseMouse=true}={}) { clearPlayerCommands(this.localControl||this); this.keyboard?.reset(); if(releaseMouse)this.mouseLook?.release(); this.keys.clear(); this.pointer=null; if(this.hero)this.hero.guard=false; }
   pause(value = true) { this.releaseInput({releaseMouse:!!value}); if(this.paused !== !!value)this._resetWorldClock(); this.paused = !!value; this.projectiles?.pause(this.paused); this.muskets?.pause(this.paused); this.wheels?.pause(this.paused); if (this.master) this.master.gain.value = this.paused || this.muted ? 0 : .25; this._hud(); }
   async setCharacter(id = 0, appearance = Number(id) === 0 ? DEFAULT_CHARACTER_APPEARANCE : 'original') {
     const request = ++this.characterRequest;
@@ -708,13 +781,14 @@ export class MeteorGame {
     const actor = await this._createFighter(id, null, true, null, appearance);
     if (this.disposed || request !== this.characterRequest) { actor.disposed = true; actor.character.dispose(); return; }
     this.characterAppearance = appearance;
-    if (this.hero) { this.rageVfx?.clearActor(this.hero); this.effectContacts?.clearActor(this.hero); disposePhoenixSpear(this.hero.phoenixSpear); this.hero.disposed = true; this.hero.character.dispose(); } this.hero = actor; this.characterId = id; this.scene.add(actor.root); this._placeFighter(actor, this.currentMap.spawns[0]); await this._equip(actor, this.weapon); this._hud();
+    if (this.hero) { this.stealthFeedback?.clearActor(this.hero); this.rageVfx?.clearActor(this.hero); this.effectContacts?.clearActor(this.hero); disposePhoenixSpear(this.hero.phoenixSpear); this.hero.disposed = true; this.hero.character.dispose(); } this.hero = actor; this.characterId = id; this.scene.add(actor.root); this._placeFighter(actor, this.currentMap.spawns[0]); await this._equip(actor, this.weapon); this._hud();
   }
   async setCharacterAppearance(mode = 'original') {
     if (!Object.hasOwn(NATIVE_APPEARANCES, mode)) throw new Error('Unknown character appearance');
     const request = this.appearanceRequest = (this.appearanceRequest || 0) + 1; this.characterAppearance = mode;
     await this.ready; if (this.disposed || request !== this.appearanceRequest) return this.hero?.character.appearanceStatus;
-    const actor = this.hero, status = await actor.character.setAppearance(mode);
+    const actor = this.hero; this.stealthFeedback?.clearActor(actor);
+    const status = await actor.character.setAppearance(mode);
     if (this.disposed || actor !== this.hero || request !== this.appearanceRequest) return status;
     if (!status.available || status.complete === false) this.characterAppearance = status.appearance || 'original';
     this.onEvent?.({ type: 'appearance', text: status.available ? `${status.label} · 已切换` : `外观保持不变：${status.reason}`, ...status }); this._hud();
@@ -759,6 +833,19 @@ export class MeteorGame {
       await this._equip(actor,next);actor.weapon2Id=previous;if(actor===this.hero)this.weapon=actor.weapon;this._hud();
     }catch(error){this._emit('兵器载入失败，保留原装备','info');console.warn(error);}finally{actor.switchingWeapon=false;}
   }
+  _switchWeaponForMove(actor){
+    const item=this.weaponItems.get(actor.weapon2Id);
+    if(actor.weapon!=='knuckle'||!item?.available)return;
+    // 004e3d20 emits actor command0x2c for groups110/111 (412/413).
+    // Keep the authored side-step/cancel graph while changing the inventory.
+    const previous=actor.weaponId,next=actor.weapon2Id;
+    actor.weapon2Id=previous;
+    const loading=this._equip(actor,next,{preserveCombat:true}).then(ok=>{
+      if(ok===false&&actor.weaponId===previous){actor.weapon2Id=next;if(actor===this.hero)this.weapon=actor.weapon;}
+    }).catch(error=>{console.warn('换兵招式的兵器未能载入',error);});
+    if(actor===this.hero)this.weapon=actor.weapon;
+    return loading;
+  }
   _clearDroppedWeapons(){for(const drop of this.droppedWeapons?.values()||[])drop.root.removeFromParent();this.droppedWeapons?.clear();this.replicaLootDesired=new Map();this.combatFeedbackEvents=[];this.bloodFeedback?.clear();this.poisonFeedback?.clear();this.slowFeedback?.clear();}
   _lootSnapshot(){return {consumed:[...(this.items?.consumedNames||[])],drops:[...(this.droppedWeapons?.values()||[])].filter(drop=>drop.attributes.active).map(drop=>({name:drop.name,weaponId:drop.weaponId,position:drop.root.position.toArray()}))};}
   _combatFeedbackSnapshot(){return (this.combatFeedbackEvents||[]).filter(event=>(this.matchElapsed||0)-event.time<=.6);}
@@ -801,36 +888,58 @@ export class MeteorGame {
   setMuted(value) { this.muted = !!value; if (this.master) this.master.gain.value = value ? 0 : .25; }
   setQuality(value) { this.quality = value; this.butterflyVfx?.setQuality(value); this._applyMapPresentation(); this.renderScale.reset(Math.min(window.devicePixelRatio || 1, value === 'low' ? 1 : 2)); this.renderer.setPixelRatio(this.renderScale.ratio); this.resize(); }
   setDamageResolver(resolver) { if (resolver !== null && typeof resolver !== 'function') throw new Error('Damage resolver must be a function or null'); this.damageResolver = resolver; }
-  _beginJump(actor) {
+  _beginJump(actor,{large=false}={}) {
     if (!actor.grounded || actor.combat.busy) return false;
     const control=this._controlFor(actor),direction=nativeTraversalDirection(control?.keys)||'forward';
     const sequence=NATIVE_JUMP_POSES[direction];
     const pose = actor.combat.data.poses.get(sequence.start);
     if(!pose?.valid)return false;
-    if(control&&!control.locked)actor.root.rotation.y=control.cameraAngle+Math.PI;
-    actor.jumpSequence={...sequence,direction,facing:actor.root.rotation.y};actor.wallEntries=0;actor.wallRun=null;actor.wallKick=null;
-    actor.musketAim=false; actor.grounded = false; actor.vy = this.hostPhysics.jumpVelocity;
-    if (pose?.valid && actor.character.sampleSceneMotion) {
-      // 004ce850 consumes d_base movement independently of the visible skin.
-      // Preserve the authored takeoff instead of a fixed-height substitute.
-      // Interrupted/descending free flight still uses the Web gravity adapter.
-      const fps = actor.combat.fps;
-      actor.nativeJump = { pose, fps, elapsed: 0, height: 0, duration: (pose.end - pose.start) / fps,
-        origin: actor.character.sampleSceneMotion(pose.source, pose.start).z };
-    }
+    // 004cf760 chooses a directional pose;004cf5a0 changes vertical speed
+    // and state without reorienting the model. Consume actual look input,
+    // but do not snap a keyboard-only jump toward an unrelated camera.
+    if(usesPlayerLook(control))applyPlayerLook(actor,control);
+    actor.jumpSequence={...sequence,direction,facing:actor.root.rotation.y,ballistic:true};actor.wallEntries=0;actor.wallRun=null;actor.wallKick=null;
+    actor.wallJumpReady=true;actor.wallJumpAge=0;
+    // 004cf5a0 changes state0 without clearing the previous floor-contact
+    // flag+35c; the first free-flight step can retain ground acceleration.
+    actor.nativeAirGroundContact=actor.grounded;
+    actor.musketAim=false; actor.grounded = false; actor.vy = large?NATIVE_AIR_PHYSICS.largeJumpVelocity:this.hostPhysics.jumpVelocity;
+    // 004cf5a0 enters state0 with physical vertical speed; ordinary jump
+    // animation must not add its d_base elevation on top of that flight.
+    actor.nativeJump=null;
     actor.combat.play(sequence.start, { force: true }); actor.heldPose = 'jump'; return true;
+  }
+  _finishJumpCharge(actor,control){
+    const charge=control?.jumpCharge;if(!charge)return false;control.jumpCharge=null;
+    if(charge.actor!==actor||!this.running||this.paused||actor.dead||actor.disposed||actor.scriptInputBlocked||actor.combat.busy||actor.guard)return false;
+    if(usesPlayerLook(control))applyPlayerLook(actor,control);
+    const duration=actor.playerControl?Math.max(0,(control.inputTime??charge.time)-charge.time):Math.max(charge.elapsed,(this.elapsed??charge.time)-charge.time);
+    control.directionBuffer=[];
+    const options={large:duration+1e-9>=NATIVE_JUMP_HOLD_SECONDS};
+    return actor.grounded?this._beginJump(actor,options):actor.wallRun?this._beginWallJump(actor,options):this._beginAirWallJump(actor,options);
+  }
+  _updateJumpCharge(actor,control,dt){
+    const charge=control?.jumpCharge;if(!charge)return;
+    if(actor.dead||actor.disposed||actor.scriptInputBlocked||actor.guard){control.jumpCharge=null;return;}
+    charge.elapsed+=dt;
+    // Remote hold duration follows the client's ordered event clock. Host
+    // polling delay alone must not turn a short tap into a large jump.
+    const elapsed=actor.playerControl?Math.max(0,(control.inputTime??charge.time)-charge.time):charge.elapsed;
+    if(elapsed>NATIVE_JUMP_HOLD_SECONDS+1e-9&&!actor.combat.busy)this._finishJumpCharge(actor,control);
   }
   _controlFor(actor) { return actor?.playerControl || (actor?.hero ? this.localControl || this : null); }
   _beginRoll(direction, poseId, actor = this.hero, control = this._controlFor(actor)) {
     if(!this.running||this.paused||!actor||actor.dead||!actor.grounded||actor.scriptInputBlocked||actor.combat.busy||!control?.keys.has('crouch')||poseId!==NATIVE_ROLL_POSES[direction])return false;
     if(!actor.combat.data.poses.get(poseId)?.valid)return false;
     if(!actor.combat.play(poseId,{motion:true,context:{kind:'roll',direction,poseId,name:({forward:'向前翻滚',back:'向后翻滚',left:'向左翻滚',right:'向右翻滚'})[direction]}}))return false;
-    actor.root.rotation.y=control.cameraAngle+Math.PI;actor.velocity.set(0,0,0);actor.guard=false;actor.heldPose=null;clearPlayerCommands(control);
+    this._captureActionMomentum(actor);
+    actor.root.rotation.y=control.cameraAngle+Math.PI;actor.velocity.set(0,0,0);actor.guard=false;actor.heldPose=null;clearPlayerCommands(control,{preserveJump:true});
     return true;
   }
   _beginDash(direction,poseId,actor=this.hero,control=this._controlFor(actor)) {
     if(!this.running||this.paused||!actor||actor.dead||!actor.grounded||actor.scriptInputBlocked||actor.guard||actor.combat.busy||!control||control.keys.has('crouch')||poseId!==nativeDashPose(actor.weapon,direction))return false;
     if(!actor.combat.play(poseId,{motion:true,context:{kind:'dash',direction,poseId,name:'闪避'}}))return false;
+    this._captureActionMomentum(actor);
     actor.root.rotation.y=control.cameraAngle+Math.PI;actor.velocity.set(0,0,0);actor.guard=false;actor.heldPose=null;control.recoveryAttack=null;
     return true;
   }
@@ -838,11 +947,19 @@ export class MeteorGame {
     if(!actor || !control)return;
     if(['switch','drop','pickup'].includes(name)){if(active){if(name==='switch')return this._switchInventoryWeapon(actor);if(name==='drop')return this.dropWeapon(actor);return this._tryPickupActor(actor);}return;}
     const inputTime=control.inputTime??this.elapsed;
+    if(name==='clear'){control.keys.clear();clearPlayerCommands(control);actor.guard=false;actor.musketAim=false;return;}
+    if(name==='jump'){
+      if(!active){this._finishJumpCharge(actor,control);return;}
+      if(!this.running||this.paused||actor.dead||actor.disposed||actor.scriptInputBlocked||actor.combat.busy||actor.guard)return;
+      if(!control.jumpCharge){if(actor===this.hero)this._unlockAudio();control.jumpCharge={actor,time:inputTime,elapsed:0};}
+      return;
+    }
     if (name === 'guard') {
       const held = active && this.running && !this.paused && !actor.dead;
+      if(held&&usesPlayerLook(control))applyPlayerLook(actor,control);
       if (held) control.keys.add('guard'); else control.keys.delete('guard');
       if(held)actor.musketAim=false;
-      actor.guard = held && !actor.scriptInputBlocked && (!actor.combat.busy || actor.combat.reactionPhase === 'guard');
+      actor.guard = held && !actor.scriptInputBlocked && !actor.wallRun && (actor.grounded||actor.combat.reactionPhase==='guard') && (!actor.combat.busy || actor.combat.reactionPhase === 'guard');
       return;
     }
     if (active && actor.scriptInputBlocked) return;
@@ -866,14 +983,11 @@ export class MeteorGame {
         buffer: [...control.directionBuffer], held: [...control.keys] };
       else { control.recoveryAttack = null; this._beginAttack(actor); }
     }
-    else if (name === 'jump' && !actor.combat.busy) {
-      control.directionBuffer = []; if(actor.grounded)this._beginJump(actor);else this._beginWallJump(actor);
-    }
     else if (name === 'lock' && !actor.musketAim) { this._toggleCombatLock(actor,control); if(actor===this.hero){this.cameraManualUntil = 0;this._hud();} }
   }
   action(name, active = true) {
     if(['switch','drop','pickup'].includes(name)){if(active){if(name==='switch')return this.switchWeapon();if(name==='drop')return this.dropWeapon();this._tryPickupActor(this.hero);this._hud();}return;}
-    if(['guard','crouch','forward','back','left','right','attack','jump','lock'].includes(name))return this._actionFighter(this.hero,this._controlFor(this.hero),name,active);
+    if(['clear','guard','crouch','forward','back','left','right','attack','jump','lock'].includes(name))return this._actionFighter(this.hero,this._controlFor(this.hero),name,active);
     if (!active || !this.running || this.paused || !this.hero || this.hero.dead || this.hero.scriptInputBlocked) return;
     this._unlockAudio();
     if (name === 'fury' || name === 'dodge') this._emit('该动作的原版指令与条件正在逆向，当前不使用替代招式', 'info');
@@ -882,7 +996,9 @@ export class MeteorGame {
   }
   _beginAttack(f, savedInput = null) {
     const control=this._controlFor(f);
-    if (f.dead || f.disposed || f.scriptRemoved || f.scriptCrouched || f.combat.reacting || control && f.scriptInputBlocked) return false;
+    // 004cff30 accepts actor states0/1/3/6, excluding wall state2.
+    if (f.dead || f.disposed || f.scriptRemoved || f.scriptCrouched || f.wallRun || f.combat.reacting || control && f.scriptInputBlocked) return false;
+    if(usesPlayerLook(control))applyPlayerLook(f,control);
     // Native musket state 004deca0: first ground attack enters ready pose212;
     // crouch/aim blocks movement (004ded10). Subsequent attacks use POS/ACT.
     if(control&&f.weapon==='musket'&&!f.musketAim){
@@ -905,6 +1021,8 @@ export class MeteorGame {
     if (move?.pending) { if (f.hero) this._emit(move.pending, 'info'); return false; }
     if (move && (f.rage || 0) < move.rage) { if (f.hero) this._emit(`怒气不足 · 需要 ${move.rage} 点`, 'info'); return false; }
     if (target && (!f.combat.busy || f.combat.currentMove?.kind==='dash') && !savedInput?.npcMove) this._face(f, target.root.position);
+    const outgoingSelfCast=f.combat.busy&&f.combat.timeline?.canCancel&&!f.combat.poseBlend
+      ?{pose:f.combat.timeline.pose,source:f.combat.timeline.pose.source,frame:f.combat.timeline.frame,serial:f.combat.serial,context:f.combat.currentMove,effectTime:f.combat._effectElapsed}:null;
     const accepted = f.combat.attack({ air: !f.grounded, poseId: move?.poseId ?? null, context: move,
       // Input posture is checked when the command is accepted. An ACT-legal
       // queued continuation stays attached to that active predecessor if it
@@ -912,16 +1030,21 @@ export class MeteorGame {
       // Rage and actor lifetime are still checked again at the actual start.
       canStart: command => !f.dead && !f.disposed && !f.scriptRemoved && (!command || (f.hero && this.infiniteRage || (f.rage || 0) >= command.rage) &&
         ((command.stance === 'air') === !f.grounded || f.combat.busy && command.continuationOf?.includes(f.combat.currentMove?.poseId))),
+      onAccept:()=>this._captureActionMomentum(f,{ninja:f.weapon==='ninja'}),
       onStart: command => {
         // Queued ACT transitions start later than the click: use the target's
         // current position at the actual start, rather than a captured position.
         if(control&&!f.musketAim){const current=this._attackTarget(f,control);if(current)this._face(f,current.root.position);}
         if (!command) return;
+        if(command.switchesWeapon)this._switchWeaponForMove(f);
         f.rage = f.hero && this.infiniteRage ? 100 : Math.max(0, (f.rage || 0) - command.rage);
         if (f.hero) this.onEvent?.({ type: 'move', text: command.name, moveId: command.id, poseId: command.poseId, command: command.command, rageCost: command.rage });
       }
     });
     if (accepted) {
+      // 004cff30 flushes pending parameter18 when an ACT request is accepted
+      // into native state2. Early Web buffering alone must not grant the item.
+      if(outgoingSelfCast)this._commitNativeSelfItem(f,outgoingSelfCast);
       f.guard = false; f.heldPose = 'attack';
       if (control) { control.directionBuffer = []; control.recoveryAttack = null; }
     }
@@ -937,7 +1060,7 @@ export class MeteorGame {
     if(!control.locked&&control.autoLockEnabled!==false&&!actor.musketAim&&!['musket','dart','wheel'].includes(actor.weapon))control.locked=acquireCombatTarget(actor,[this.hero,...this.enemies],{angle:control.cameraAngle+Math.PI,lineOfSight:(a,b)=>this.hasScriptLineOfSight(a,b)});
     return control.locked;
   }
-  _nearest(range = Infinity, actor = this.hero) { let best = null; for (const f of [this.hero,...this.enemies]) { if(!f||f===actor)continue; const d = flatDistance(f.root.position, actor.root.position); if (!f.dead && !f.disposed && !f.scriptRemoved && f.team !== actor.team && d < range) { range = d; best = f; } } return best; }
+  _nearest(range = Infinity, actor = this.hero) { let best = null; for (const f of [this.hero,...this.enemies]) { if(!f||f===actor)continue; const d = flatDistance(f.root.position, actor.root.position); if (!f.dead && !f.disposed && !f.scriptRemoved && !nativeIsInvisible(f) && !nativeSameTeam(f,actor) && d < range) { range = d; best = f; } } return best; }
   _npcCombatAction(f, target, due, { requested = false, allowed = true, reach = 0 } = {}) {
     if (!target || !allowed || target.dead || target.disposed || target.scriptRemoved || !this.hasScriptLineOfSight(f, target)) return;
     if (requested) {
@@ -946,15 +1069,15 @@ export class MeteorGame {
     }
     if (!due || !f.npcCombat) return;
     const profile = f.npcCombat.data.profiles[f.weapon];
-    if (!nativeNpcInRange(f, target, profile)) { f.npcCombat.guard = false; f.guard = false; return; }
+    if (!nativeNpcInRange(f, target, profile)) { f.npcCombat.guard = false; f.npcCombat.crouch = false; f.guard = false; return; }
     const choice = f.npcCombat.choose(f, { canAttack: () => nativeNpcFacing(f, target, profile) });
     if (choice.kind === 'attack' && choice.program != null) {
       const move = nativeNpcMove(f, choice.program, this.elapsed);
       const accepted = !!move && this._beginAttack(f, { npcMove: move });
       this.onEvent?.({ type: 'npc-decision', actorId: f.scriptId ?? f.id, kind: 'attack', category: choice.category,
         program: choice.program, poseId: move?.poseId, accepted });
-    } else this.onEvent?.({ type: 'npc-decision', actorId: f.scriptId ?? f.id, kind: choice.kind });
-    f.guard = f.npcCombat.guard && !f.combat.busy;
+    } else this.onEvent?.({ type: 'npc-decision', actorId: f.scriptId ?? f.id, kind: choice.kind, defense: choice.defense });
+    f.guard = f.npcCombat.guard && f.grounded && !f.wallRun && !f.combat.busy;
   }
   _updateFighter(f, dt) {
     if (f.disposed || f.scriptRemoved) return;
@@ -971,33 +1094,38 @@ export class MeteorGame {
     // Only the two contacting actors pause; mission time, projectiles and
     // other fighters keep running. These short durations are Web feedback.
     if (f.hitstop > 0) { const pause = Math.min(dt, f.hitstop); f.hitstop -= pause; dt -= pause; if (dt <= 1e-7) return; }
+    updatePlayerTurn(f,control,dt);
+    this._updateJumpCharge(f,control,dt);
     let direction = v3(), speed = this.hostPhysics.speed * nativeMovementScale(f);
     if (control && control.recoveryAttack) {
       const input = control.recoveryAttack;
       if (input.actor !== f || input.weaponId !== f.weaponId || this.elapsed > input.expires || input.air !== !f.grounded || f.scriptInputBlocked) control.recoveryAttack = null;
       else if (!f.combat.reacting) { control.recoveryAttack = null; this._beginAttack(f, input); }
     }
-    if (control) f.guard = control.keys.has('guard') && !f.scriptInputBlocked && (!f.combat.busy || f.combat.reactionPhase === 'guard');
+    if (control) f.guard = control.keys.has('guard') && !f.scriptInputBlocked && !f.wallRun && (f.grounded||f.combat.reactionPhase==='guard') && (!f.combat.busy || f.combat.reactionPhase === 'guard');
     if (f.combat.reacting || f.scriptCrouched || f.combat.busy && ['roll','dash'].includes(f.combat.currentMove?.kind)) {
       if (f.combat.reactionPhase !== 'guard') f.guard = false;
     } else if (control) {
       if (f.scriptInputBlocked) f.guard = false;
       direction = f.scriptInputBlocked ? v3() : this._moveDirection(control);
       if(f.wallRun&&!f.combat.busy)f.root.rotation.y=f.wallRun.facing;
-      else if(!f.grounded&&f.jumpSequence&&!f.combat.busy)f.root.rotation.y=f.jumpSequence.facing;
       else if (control.locked && validCombatTarget(f,control.locked)) this._face(f, control.locked.root.position, dt);
-      else if (!f.combat.busy && (control.keys.has('crouch') || control.lookLocked || control.mouseLook?.locked)) this._face(f, f.root.position.clone().add(v3(-Math.sin(control.cameraAngle),0,-Math.cos(control.cameraAngle))),dt);
-      else if (direction.lengthSq() > 0 && !f.combat.busy) this._face(f, f.root.position.clone().add(direction), dt);
+      else if(!f.grounded&&f.jumpSequence&&!f.combat.busy&&!f.guard){if(usesPlayerLook(control))applyPlayerLook(f,control);}
+      else if (!f.combat.busy && !f.guard && (control.keys.has('crouch') || usesPlayerLook(control))) {
+        if(usesPlayerLook(control))applyPlayerLook(f,control);
+        else this._face(f, f.root.position.clone().add(v3(-Math.sin(control.cameraAngle),0,-Math.cos(control.cameraAngle))),dt);
+      }
+      else if (direction.lengthSq() > 0 && !f.combat.busy && !f.guard) this._face(f, f.root.position.clone().add(direction), dt);
     } else if (f.scriptControlled) {
       const control = f.scriptControl;
-      f.guard = !!(control?.guard || !control?.paused && f.npcCombat?.guard) && !f.combat.busy; speed *= Number(control?.speedScale ?? 1) * .68;
+      f.guard = !!(control?.guard || !control?.paused && f.npcCombat?.guard) && f.grounded && !f.wallRun && !f.combat.busy; speed *= Number(control?.speedScale ?? 1) * .68;
       if (control && !control.paused) {
         const target = control.attackTarget, targetAlive = target && !target.dead && !target.disposed;
         const moveTarget = control.moveTarget, reach = f.weaponReach || (f.weapon === 'spear' ? 3.8 : 2.3);
         // Dijkstra/waypoint navigation is a Web adapter. Elevated source links
         // (e.g. sn09 WP7→0) need the same original takeoff as the player; a
         // walking-only follower would fall when the source floors disappear.
-        if (moveTarget && Number(f.scriptConfig?.Jump) > 0 && moveTarget.y - f.root.position.y > this.hostPhysics.step + .3 && flatDistance(moveTarget, f.root.position) < 8) this._beginJump(f);
+        if (moveTarget && Number(f.scriptConfig?.Jump) > 0 && moveTarget.y - f.root.position.y > this.hostPhysics.step + .3 && flatDistance(moveTarget, f.root.position) < 8) this._beginJump(f,{large:moveTarget.y-f.root.position.y>3.3});
         const distance = targetAlive ? flatDistance(target.root.position, f.root.position) : Infinity;
         if (moveTarget && (moveTarget !== target?.root.position || distance > reach + .2)) { direction.copy(moveTarget).sub(f.root.position); direction.y = 0; if (direction.length() > .45) direction.normalize(); else direction.set(0, 0, 0); }
         if (targetAlive && control.canAttack) {
@@ -1009,7 +1137,7 @@ export class MeteorGame {
     } else if (this.running && !this.hero.dead) {
       const target = findNativeEnemy(f, [this.hero], (observer, enemy) => this.hasScriptLineOfSight(observer, enemy));
       if (target) {
-        f.guard = !!f.npcCombat?.guard && !f.combat.busy;
+        f.guard = !!f.npcCombat?.guard && f.grounded && !f.wallRun && !f.combat.busy;
         const delta = target.root.position.clone().sub(f.root.position); delta.y = 0; const distance = delta.length();
         this._face(f, target.root.position, dt); speed *= this.difficulty === 'hard' ? .9 : .68;
         const reach = f.weaponReach || (f.weapon === 'spear' ? 3.8 : 2.3);
@@ -1036,48 +1164,52 @@ export class MeteorGame {
         if(current!==f.wallRun.pose)f.combat.play(f.wallRun.pose,{loop:true,force:true});
         f.heldPose=f.wallRun.pose;
       }else if(!f.grounded&&(!f.guard||startingJump)){
-        // POS owns start -> directional air -> 180. 004cf7d0 accepts all
-        // five air/fall poses; do not restart or loop the short air clip.
-        // 180's authored one-frame loop holds falling until physical landing.
-        const inFlight=current===NATIVE_LOCOMOTION.fall||!!sequence&&(current===sequence.start||current===sequence.air);
-        const pose=inFlight?current:sequence?.air??NATIVE_LOCOMOTION.fall;
-        if(current!==pose)f.combat.play(pose,{loop:pose===NATIVE_LOCOMOTION.fall,force:true});
-        else f.combat.timeline.loop=pose===NATIVE_LOCOMOTION.fall;
+        // Native free-flight keeps the current clip until descent<-40
+        // native units/s, then initializes directional air. Existing air
+        // clips keep their POS clock/link; a ledge is not immediately180.
+        const pose=nativeAirPose(current,f.vy);
+        if(current!==pose)f.combat.play(pose,{loop:false,force:true});
+        else if([152,154,156,158,180].includes(pose))f.combat.timeline.loop=pose===NATIVE_LOCOMOTION.fall;
         f.heldPose=pose;
       }else{
         const moving=direction.lengthSq()>0;
         const facingMove=control&&(control.lookLocked||control.mouseLook?.locked||control.locked&&!control.locked.dead&&!control.locked.disposed);
         const groundMove=facingMove?(NATIVE_GROUND_MOVE_POSES[nativeTraversalDirection(control.keys)]??(f.heldPose>=141&&f.heldPose<=143?f.heldPose:NATIVE_LOCOMOTION.run)):NATIVE_LOCOMOTION.run;
         let pose=f.musketAim?212:f.guard?NATIVE_WEAPONS[f.weapon].guard:moving?groundMove:f.combat.stance??NATIVE_WEAPONS[f.weapon].stance;
-        const crouching=(f.scriptCrouched||control&&control.keys.has('crouch'))&&f.grounded&&!f.musketAim&&!f.guard;
+        const crouching=(f.scriptCrouched||f.npcCombat?.crouch||control&&control.keys.has('crouch'))&&f.grounded&&!f.musketAim&&!f.guard;
         if(crouching){
           const walking=direction.lengthSq()>0,requested=nativeTraversalDirection(control?.keys);
           const movingPose=NATIVE_CROUCH_POSES[requested]??(f.heldPose>=145&&f.heldPose<=148?f.heldPose:NATIVE_CROUCH_POSES.forward);
           pose=walking?movingPose:NATIVE_CROUCH_POSES.idle;
         }
+        if(!moving&&!f.guard&&!f.musketAim&&f.standingTurn)pose=f.standingTurn.poseId;
         if(f.heldPose!==pose){f.combat.play(pose,{loop:true,force:true});if(f.musketAim&&pose===212){f.combat.timeline.frame=f.combat.timeline.pose.end;f.combat.timeline.finished=true;}f.heldPose=pose;}
       }
     }
     const locomotion=f.combat.timeline?.pose.id;
     if(f.grounded&&!f.combat.busy&&!f.guard&&!f.musketAim){
       const stride=nativeStrideSpeed(f.character.nativeCharacterId??0,locomotion);
-      if(stride>0){const rate=speed/this.hostPhysics.speed;if(control)speed=nativeStrideSpeed(0,locomotion)*rate;f.combat.timeline.playbackRate=speed/stride;}
+      if(stride>0){const rate=speed/this.hostPhysics.speed;if(control||locomotion>=145&&locomotion<=148)speed=nativeStrideSpeed(0,locomotion)*rate;f.combat.timeline.playbackRate=speed/stride;}
     }
-    const state = f.combat.update(dt, { grounded: f.grounded, projectileReady: !this.wheels?.hasOwner(f) }); if (!state) return;
+    const queuedRequest=f.combat._queuedRequest;
+    const queuedCastSerial=queuedRequest&&queuedRequest.canStart?.(queuedRequest.context)!==false?f.combat.serial:null;
+    const state = f.combat.update(dt, { grounded: f.grounded, projectileReady: !this.wheels?.hasOwner(f), getFacing:()=>f.root.rotation.y }); if (!state) return;
+    this.effectContacts?.beginStep(f,state);
     // A held defense is sampled continuously, including the exact frame a
     // hit/attack recovery ends. It must not depend on OS key-repeat or a new
     // touch press while several opponents are attacking.
-    if (control && !f.combat.busy && !f.scriptInputBlocked && control.keys.has('guard')) f.guard = true;
-    const motion = v3();
+    if (control && f.grounded && !f.wallRun && !f.combat.busy && !f.scriptInputBlocked && control.keys.has('guard')) f.guard = true;
+    const motion = v3();let actionMotion=false;
     for (const segment of state.segments || [state]) {
-      if(f.jumpSequence&&[f.jumpSequence.start,f.jumpSequence.air].includes(segment.poseId)&&f.character.sampleSceneMotion){
+      if(f.jumpSequence&&!f.jumpSequence.ballistic&&[f.jumpSequence.start,f.jumpSequence.air].includes(segment.poseId)&&f.character.sampleSceneMotion){
         // Consume BOTH takeoff and linked air d_base tracks, at actual POS time.
         // The former host stopped at takeoff, then injected an extra ballistic arc.
         f.nativeJump=null;
         for(const range of segment.frameIntervals||[]){const a=f.character.sampleSceneMotion(segment.source,range.from),b=f.character.sampleSceneMotion(segment.source,range.to);motion.y+=(b.z-a.z)*SCALE;}
       }
       if(segment.authoredMotionScale==null)continue;
-      const a = f.root.rotation.y, scale = segment.authoredMotionScale;
+      if(segment.consumed>0)actionMotion=true;
+      const a = Number.isFinite(segment.facing)?segment.facing:f.root.rotation.y, scale = segment.authoredMotionScale;
       const localX = segment.rootDelta.x * scale, localZ = -segment.rootDelta.y * scale;
       motion.x += Math.cos(a) * localX + Math.sin(a) * localZ;
       motion.z += -Math.sin(a) * localX + Math.cos(a) * localZ;
@@ -1085,39 +1217,57 @@ export class MeteorGame {
     }
     // Native animation advances before the actor's motion update (004cc130).
     // All authored recoil/lunges now share floor, wall and hazard checks.
-    this._move(f, direction, speed, dt, motion);
+    this._move(f, direction, speed, dt, motion,actionMotion||f.combat.busy);
     if (f.dead) return;
-    for (const segment of state.segments || [state]) {
+    // A queued move may turn toward its target during combat.update(). Old
+    // attack windows in that same tick still belong to their earlier facing.
+    const finalFacing=f.root.rotation.y;
+    try{for (const segment of state.segments || [state]) {
+      if(Number.isFinite(segment.facing))f.root.rotation.y=segment.facing;
       if (!segment.blend && segment.serial !== f.lastSerial) {
         f.attackHits.clear(); f.lastSerial = segment.serial;
         const basicEmitter = { dart: NATIVE_DART_PROFILE, musket: NATIVE_MUSKET_PROFILE, wheel: NATIVE_WHEEL_PROFILE }[f.weapon];
         if (segment.pose.attacks.length && !basicEmitter?.poseIds.includes(segment.pose.id)) this._soundDefinition(segment.pose.raw.fields.effectid);
       }
-      // Source parameter18 is a deferred self item, independent of landing a
-      // hit. Commit once on casting completion; interruption discards the cast.
-      if (!segment.blend && segment.finished && !['roll','dash'].includes(segment.context?.kind) && segment.context?.poseId === segment.pose.id && f.selfItemSerial !== segment.serial) {
-        f.selfItemSerial = segment.serial;
-        const item = useNativeSelfItem(f, this.combatData.moveRecords.get(segment.pose.id), this.combatData.itemRecords);
-        if (item) this.onEvent?.({ type: 'self-item', actorId: f.scriptId ?? f.id, poseId: segment.pose.id, itemId: item.id, name: item.name, duration: item.duration, refreshed: item.refreshed });
-      }
       // A rendered frame can cross several narrow original attack windows.
       // Sample each window's authored frame, keeping its original index and
       // serial so multi-thrusts hit once per window, never once per render.
-      for (const attack of segment.attacks) {
-        const frame = clamp(segment.frame, attack.start, attack.end);
-        f.character.setPoseFrame(segment.source, frame);
-        const contactState = { ...segment, frame, attacks: [attack] };
-        this._launchNativeProjectiles(f, contactState); this._resolveContacts(f, contactState);
-      }
+      for (const attack of segment.attacks)this._resolveAttackWindow(f,segment,attack);
+      // 004ce410 pushes2 to004dc8c0: End-floor(frame)<2. Parameter18
+      // applies near the final two source frames, independently of contact.
+      // Resolve this host step's attack before committing lethal self damage.
+      const armedQueue=segment.serial===queuedCastSerial&&segment.pose.cancels.some(window=>segment.frameIntervals?.some(range=>range.from<=window.end&&range.to>=window.start));
+      if(!segment.blend&&(segment.frame>=segment.pose.end-1||armedQueue))this._commitNativeSelfItem(f,segment);
+      if(f.dead)break;
     }
+    }finally{f.root.rotation.y=finalFacing;}
+    if(f.dead){const pose=f.combat.timeline.pose;f.character.setPoseFrame(pose.source,f.combat.timeline.frame);return;}
     if (state.blend && f.character.setPoseBlend) f.character.setPoseBlend(state.blend.from, state.blend.to, state.blend.weight);
     else f.character.setPoseFrame(state.source, state.frame);
     this.rageVfx?.sample(f, state, f.combat.fps);
     if (f.nameplate) { f.nameplate.quaternion.copy(f.root.quaternion).invert().multiply(this.camera.quaternion); }
   }
-  _resolveContacts(attacker, state) {
+  _commitNativeSelfItem(actor,state){
+    if(['roll','dash'].includes(state.context?.kind)||state.context?.poseId!==state.pose.id||actor.selfItemSerial===state.serial)return null;
+    actor.selfItemSerial=state.serial;
+    const item=useNativeSelfItem(actor,this.combatData?.moveRecords?.get(state.pose.id),this.combatData?.itemRecords);
+    if(item)this.onEvent?.({type:'self-item',actorId:actor.scriptId??actor.id,poseId:state.pose.id,itemId:item.id,name:item.name,duration:item.duration,refreshed:item.refreshed});
+    if(item&&actor.hp<=0){this.rageVfx?.detachOnDeath(actor,state,actor.combat.fps);this._kill(actor,{awardKill:false,deathPose:state.pose.link,deathContext:{...state.context,deathEffectTime:state.effectTime,deathEffectAt:this.matchElapsed}});}
+    return item;
+  }
+  _resolveAttackWindow(actor,segment,attack){
+    // Projectile release and independent EF clocks retain their existing path.
+    const melee=!['dart','musket','wheel'].includes(actor.weapon)&&attack.bones.some(bone=>bone!=='effect');
+    const frames=melee?nativeAttackFrames(segment,attack):[clamp(segment.frame,attack.start,attack.end)];
+    // Mixed bone/effect windows need crossed bone frames too. Their separate
+    // EF clock is queried once, rather than once per bone sample.
+    const effectVolumes=melee&&attack.bones.includes('effect')&&frames.length
+      ?this.effectContacts?.sample(actor,segment,attack,actor.combat?.fps)||[]:undefined;
+    for(const frame of frames){actor.character.setPoseFrame(segment.source,frame);const state={...segment,frame,attacks:[attack]};this._launchNativeProjectiles(actor,state);this._resolveContacts(actor,state,effectVolumes);}
+  }
+  _resolveContacts(attacker, state, sampledEffectVolumes) {
     if (!this.running) return;
-    const targets = attacker.playerControl ? [this.hero,...this.enemies].filter(f=>f!==attacker&&f.team!==attacker.team) : attacker.hero ? this.enemies.filter(f=>!this.networkCombat||f.team!==attacker.team) : this.mode === 'story' ? [this.hero, ...this.enemies].filter(f => f !== attacker && f.team !== attacker.team) : [this.hero];
+    const targets = attacker.playerControl ? [this.hero,...this.enemies].filter(f=>f!==attacker&&!nativeSameTeam(f,attacker)) : attacker.hero ? this.enemies.filter(f=>!this.networkCombat||!nativeSameTeam(f,attacker)) : this.mode === 'story' ? [this.hero, ...this.enemies].filter(f => f !== attacker && !nativeSameTeam(f,attacker)) : [this.hero];
     for (const attack of state.attacks) this._resolveSceneContacts(attacker, state, attack);
     for (const attack of state.attacks) {
       const points = [];
@@ -1125,7 +1275,7 @@ export class MeteorGame {
         if (name === 'weapon' && attacker.weaponModel) { for (const model of attacker.weaponModels?.length ? attacker.weaponModels : [attacker.weaponModel]) { const box = new THREE.Box3().setFromObject(model); points.push(box.getCenter(v3()), box.min.clone(), box.max.clone()); } }
         else { const bone = getNativeAttackAttachment(attacker.character, name); if (bone) points.push(bone.getWorldPosition(v3())); }
       }
-      const effectVolumes = this.effectContacts?.sample(attacker, state, attack, attacker.combat.fps) || [];
+      const effectVolumes = sampledEffectVolumes ?? (this.effectContacts?.sample(attacker, state, attack, attacker.combat.fps) || []);
       for (const target of targets) {
         const key = `${attack.index}:${target.id}`; if (!this.running || target.dead || target.disposed || target.scriptRemoved || attacker.attackHits.has(key)) continue;
         const center = target.root.position.clone().add(v3(0, 1.35, 0));
@@ -1142,7 +1292,7 @@ export class MeteorGame {
     }
   }
   _applyNativeHit(attacker, target, state, attack, contact, extra = {}) {
-    if (!this.running || target.dead || target.disposed || target.scriptRemoved || this.networkCombat&&target.team===attacker.team) return false;
+    if (!this.running || target.dead || target.disposed || target.scriptRemoved || this.networkCombat&&nativeSameTeam(target,attacker)) return false;
     target.contacts = (target.contacts || 0) + 1; if (attacker.hero) this.contactHits++;
     const raw = { targetValue: attack.targetvalue, targetMove: attack.targetmove, defenseValue: attack.defensevalue, defenseMove: attack.defensemove, attackType: attack.attacktype, targetPose: attack.targetpose, moveRecord: this.combatData.moveRecords.get(state.poseId), weaponRecord: attacker.weaponRecord || this.combatData.weaponRecords.get(NATIVE_WEAPONS[attacker.weapon]?.model) };
     // Original POS parser rule 0x30 stores AttackType at record+0x30;
@@ -1175,11 +1325,12 @@ export class MeteorGame {
       this._emit(guarded ? '格挡' : String(Math.round(damage)), 'hit', damage, contact, { poseId: state.poseId, raw, guarded, guardBypassed, knockdown: knockdown && !target.dead, attackerHero: !!attacker.hero, targetHero: !!target.hero, targetName: target.name, ...extra });
     } else { const name = raw.moveRecord?.name || state.pose.label || '兵刃交锋'; this._emit(attacker.hero ? `${name} · 命中` : `${name} · 对手命中`, 'hit', undefined, contact, { poseId: state.poseId, raw, guarded, guardBypassed, damagePending: true, ...extra }); }
     target.musketAim=false;
-    const displayedReaction = guarded ? nativeGuardPose(target.weapon, selection.direction) : reactionPose;
+    const displayedReaction = guarded ? nativeGuardPose(target.weapon, selection.direction,this.combatRandom||Math.random) : reactionPose;
     if (!target.dead && displayedReaction != null && target.combat?.react(displayedReaction, {
       ...nativeReactionParameters(attack, { guarded }), guarded, fromPose: target.character?.capturePose?.()
     })) {
       if (!guarded) target.guard = false;
+      this._captureActionMomentum(target);
       this.effectContacts?.clearActor(target);
       target.heldPose = 'reaction'; target.velocity?.set(0, 0, 0);
       // Native forced hits blend from the currently displayed transforms.
@@ -1205,7 +1356,7 @@ export class MeteorGame {
     this.combatFeedbackSerial=(this.combatFeedbackSerial||0)+1;
     const actors=[this.hero,...(this.enemies||[])];
     (this.combatFeedbackEvents||=[]).push({id:this.combatFeedbackSerial,time:this.matchElapsed||0,point:contact.toArray(),direction:direction.normalize().toArray(),guarded,knockdown,blood:!guarded&&confirmedDamage>0,bloodStyle:!guarded&&confirmedDamage>0?bloodStyle:undefined,
-      attackerId:actors.find(actor=>actor?.root===attacker.root)?.networkId,targetId:target.networkId,sound:prefix&&Number.isInteger(reactionPose)?`${prefix}${guarded?'GD':'BL'}${String(reactionPose).padStart(3,'0')}`:null});
+      attackerId:actors.find(actor=>actor?.root===attacker.root)?.networkId,targetId:target.networkId,projectile:Number.isInteger(extra.projectileId)?{kind:'dart',id:extra.projectileId}:Number.isInteger(extra.wheelId)?{kind:'wheel',id:extra.wheelId}:undefined,sound:prefix&&Number.isInteger(reactionPose)?`${prefix}${guarded?'GD':'BL'}${String(reactionPose).padStart(3,'0')}`:null});
     if(this.combatFeedbackEvents.length>32)this.combatFeedbackEvents.shift();
     if (attacker.hero && this.swordStyle === 'butterfly') this.butterflyVfx?.burst(contact, { guarded, knockdown, camera: this.camera });
     if (feedback) {
@@ -1242,11 +1393,11 @@ export class MeteorGame {
       else this.onEvent({ type: 'scene-contact', objectName: object.name, attackerId: attacker.scriptId, poseId: state.poseId, damagePending: true });
     }
   }
-  _kill(target, { awardKill = true } = {}) {
+  _kill(target, { awardKill = true, deathPose = NATIVE_LOCOMOTION.dead, deathContext = null } = {}) {
     if(!target.dead&&this.droppedWeapons?.size<64){const id=target.weaponId,item=this.weaponItems?.get(id),templates=item?.modelIds.map(id=>this.weaponCache.get(id.toLowerCase()));
       if(templates?.every(Boolean)){const session=this.sessionRequest,position=target.root.position.clone();Promise.all(templates).then(models=>{if(!this.disposed&&session===this.sessionRequest&&this.droppedWeapons.size<64)this._spawnDroppedWeapon(id,position,`web-drop-${++this.lootSerial}`,models);}).catch(()=>{});}}
     target.wallRun=null;target.wallKick=null;
-    if (target.dead) return; target.dead = true; target.guard = false; target.musketAim=false; target.hitstop = 0; target.respawn = this.mode === 'story' ? Infinity : 3; target.combat.play(NATIVE_LOCOMOTION.dead, { force: true });
+    if (target.dead) return; this.stealthFeedback?.clearActor(target); target.dead = true; target.guard = false; target.musketAim=false; target.hitstop = 0; target.respawn = this.mode === 'story' ? Infinity : 3; target.combat.play(this.combatData?.poses?.has(deathPose)?deathPose:NATIVE_LOCOMOTION.dead, { force: true,context:deathContext });
     clearPlayerCommands(this._controlFor(target));
     if (target.hero) this.deaths++; else if (awardKill) this.kills++;
     for(const actor of [this.hero,...this.enemies]){const control=this._controlFor(actor);if(control?.locked===target)control.locked=null;}
@@ -1268,7 +1419,7 @@ export class MeteorGame {
   }
   _finish(win) { if (!this.running) return; this.running = false; this.projectiles?.clear('match-end'); this.muskets?.clear(); this.wheels?.clear(); this.keys.clear(); this.traversalTap=null; this.onEnd({ win, kills: this.kills, deaths: this.deaths, damage: this.totalDamage, time: Math.round(this.matchElapsed), nativeData: true, damageVerified: !!this.damageResolver, mode: this.mode, mission: this.missionState, reason: this.storyResult?.reason }); }
   _nameplate(f) {
-    const c = document.createElement('canvas'); c.width = 256; c.height = 64; const ctx = c.getContext('2d'); ctx.font = '28px serif'; ctx.fillStyle = '#eee7cf'; ctx.textAlign = 'center'; ctx.fillText(`${f.team === this.hero?.team ? '同伴' : f.team === 0 ? '剧情' : '对手'} · ${f.name}`, 128, 43, 240);
+    const c = document.createElement('canvas'); c.width = 256; c.height = 64; const ctx = c.getContext('2d'); ctx.font = '28px serif'; ctx.fillStyle = '#eee7cf'; ctx.textAlign = 'center'; ctx.fillText(`${nativeSameTeam(f,this.hero) ? '同伴' : f.team === 0 ? '剧情' : '对手'} · ${f.name}`, 128, 43, 240);
     const g = new THREE.Group(); const label = new THREE.Mesh(new THREE.PlaneGeometry(1.7, .425), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c), transparent: true, depthWrite: false })); g.add(label); g.position.y = 3.1; f.root.add(g); f.nameplate = g;
   }
   _disposeNameplate(f) { if (!f.nameplate) return; f.nameplate.traverse(o => { o.geometry?.dispose(); o.material?.map?.dispose(); o.material?.dispose(); }); f.nameplate.removeFromParent(); }
@@ -1293,7 +1444,7 @@ export class MeteorGame {
   _tickCamera(dt, { directLook: directLookRequested = false } = {}) {
     if (!this.hero || !this.currentMap) return;
     if(this.hero.musketAim&&!this.hero.dead&&(this.running||this.paused)){
-      const control=this._controlFor(this.hero),eye=this.hero.root.position.clone().add(v3(0,1.65,0)),pitch=control?.aimPitch||0;
+      const control=this._controlFor(this.hero),eye=this.hero.root.position.clone().add(v3(0,NATIVE_MUSKET_PROFILE.originHeight,0)),pitch=control?.aimPitch||0;
       const direction=v3(-Math.sin(this.cameraAngle)*Math.cos(pitch),Math.sin(pitch),-Math.cos(this.cameraAngle)*Math.cos(pitch));
       this.camera.position.copy(eye);this.cameraTarget.copy(eye).add(direction);this.camera.lookAt(this.cameraTarget);this.hero.root.visible=false;this.cameraFollowY=this.hero.root.position.y;return;
     }
@@ -1339,7 +1490,7 @@ export class MeteorGame {
     this.hero.root.visible = !this.running || this.camera.position.distanceTo(eye) >= 2.1;
   }
   _hud() {
-    if (!this.hero) return; const f = this.hero, target = this.locked || (this.running ? this._nearest(18) : null), b = this.currentMap?.bounds;
+    if (!this.hero) return; const f = this.hero, target = this.locked&&!nativeIsInvisible(this.locked) ? this.locked : (this.running ? this._nearest(18) : null), b = this.currentMap?.bounds;
     let enemy = null;
     if (target) {
       const delta = target.root.position.clone().sub(f.root.position), view = this.camera.getWorldDirection(v3()); view.y = 0; view.normalize();
@@ -1349,7 +1500,7 @@ export class MeteorGame {
     const item = this.running ? this.items?.peek(f) : null;
     const pickup = item ? { name: item.name, heal: item.heal, description:item.description, fullReason:item.fullReason, full: item.full, distance: item.distance, objectName: item.objectName } : null;
     const statuses = (f.networkItemStatuses || f.scriptItems || []).map(item => ({ id: item.id, name: item.name, statKey: item.statKey, remaining: item.remaining, value: item.value, period: item.period }));
-    this.onUpdate({ musketAim:!!f.musketAim, infiniteRage: !!this.infiniteRage, characterAppearance: f.character.appearanceStatus, pickup, statuses, inputBlocked: !!f.scriptInputBlocked, hp: f.hp, maxHp: f.maxHp, playerReaction: f.combat.reactionPhase, rage: f.rage, hits: this.contactHits, kills: this.kills, deaths: this.deaths, time: this.matchElapsed, enemy, combo: f.combat.attacking ? f.combat.combo : 0, moveName: f.combat.busy ? f.combat.currentMove?.name : null, moveCommand: f.combat.busy ? f.combat.currentMove?.command : null, queuedMoveName: f.combat.queuedMove?.name || null, locked: !!this.locked, position: { x: f.root.position.x, z: f.root.position.z }, enemies: this.enemies.filter(e => !e.dead && !e.scriptRemoved && e.team !== f.team && e.team !== 0).map(e => ({ x: e.root.position.x, z: e.root.position.z })), allies: this.enemies.filter(e => !e.dead && !e.scriptRemoved && e.team === f.team).map(e => ({ x: e.root.position.x, z: e.root.position.z })), weapon: f.weapon, weaponId: f.weaponId, weaponName: f.weaponName, weapon2Name:this.weaponItems?.get(f.weapon2Id)?.name||null, weaponMode: f.combat.weaponMode, mission: this.missionState, paused: this.paused, mapBounds: b ? { minX: b.min.x, maxX: b.max.x, minZ: b.min.z, maxZ: b.max.z } : null, native: { pose: f.combat.timeline?.pose.id, source: f.character.source, frame: f.character.frame, contacts: this.contactHits, damagePending: !this.damageResolver, hpSourcePending: !f.hpSourceVerified, physicsPending: true, sceneDamagePending: this.mode === 'story' && !this.sceneDamageResolver, projectilePending: false, projectileSpecialsPending: true, projectilePhysics: NATIVE_DART_PROFILE.provenance.flight, projectiles: this.projectiles?.size || 0, missionVmPending: this.mode === 'story' ? !this.missionHost?.started : false } });
+    this.onUpdate({ musketAim:!!f.musketAim, infiniteRage: !!this.infiniteRage, characterAppearance: f.character.appearanceStatus, pickup, statuses, inputBlocked: !!f.scriptInputBlocked, hp: f.hp, maxHp: f.maxHp, playerReaction: f.networkReactionPhase??f.combat.reactionPhase, rage: f.rage, hits: this.contactHits, kills: this.kills, deaths: this.deaths, time: this.matchElapsed, enemy, combo: f.combat.attacking ? f.combat.combo : 0, moveName: f.combat.busy ? f.combat.currentMove?.name : null, moveCommand: f.combat.busy ? f.combat.currentMove?.command : null, queuedMoveName: this.networkCombat&&this.lootReplica?f.networkQueuedMoveName??null:f.combat.queuedMove?.name||null, locked: !!this.locked, position: { x: f.root.position.x, z: f.root.position.z }, enemies: this.enemies.filter(e => !e.dead && !e.scriptRemoved && !nativeSameTeam(e,f) && e.team !== 0 && !nativeIsInvisible(e)).map(e => ({ x: e.root.position.x, z: e.root.position.z })), allies: this.enemies.filter(e => !e.dead && !e.scriptRemoved && nativeSameTeam(e,f)).map(e => ({ x: e.root.position.x, z: e.root.position.z })), weapon: f.weapon, weaponId: f.weaponId, weaponName: f.weaponName, weapon2Name:this.weaponItems?.get(f.weapon2Id)?.name||null, weaponMode: f.combat.weaponMode, mission: this.missionState, paused: this.paused, mapBounds: b ? { minX: b.min.x, maxX: b.max.x, minZ: b.min.z, maxZ: b.max.z } : null, native: { pose: f.combat.timeline?.pose.id, source: f.character.source, frame: f.character.frame, contacts: this.contactHits, damagePending: !this.damageResolver, hpSourcePending: !f.hpSourceVerified, physicsPending: true, sceneDamagePending: this.mode === 'story' && !this.sceneDamageResolver, projectilePending: false, projectileSpecialsPending: true, projectilePhysics: NATIVE_DART_PROFILE.provenance.flight, projectiles: this.projectiles?.size || 0, missionVmPending: this.mode === 'story' ? !this.missionHost?.started : false } });
   }
   _emit(text, type = 'info', amount, point, extra = {}) { const p = point?.clone().project(this.camera); this.onEvent({ text, type, amount, x: p ? (p.x + 1) / 2 : undefined, y: p ? (1 - p.y) / 2 : undefined, ...extra }); }
   _resetWorldClock() { this.simulationClock?.reset(); this.clock?.getDelta(); this.frameMeter?.reset(); }
@@ -1372,6 +1523,7 @@ export class MeteorGame {
     this.updateAccum += dt; if (this.updateAccum > .08) { this.updateAccum = 0; this._hud(); }
   }
   _updatePresentation(dt) {
+      this.stealthFeedback?.update([this.hero,...this.enemies],this.hero);
       this.items?.updateVisuals(this.elapsed);
       this.weather?.update(dt, this.hero?.root.position);
       // Run cosmetic springs once, after final body motion and separation.
@@ -1415,16 +1567,16 @@ export class MeteorGame {
   _bind() {
     const bind = (el, name, fn, options) => { el.addEventListener(name, fn, options); this._listeners.push(() => el.removeEventListener(name, fn, options)); };
     bind(document, 'visibilitychange', () => { this.frameMeter.reset(); this.clock.getDelta(); this.simulationClock.reset(); });
-    this.keyboard = bindKeyboard(window, { bindings: defaultBindings(), enabled: () => this.running && !this.paused && !document.querySelector('dialog[open]') && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName), action: (name, down) => this.action(name, down) });
+    this.keyboard = bindKeyboard(window, { bindings: defaultBindings(), enabled: () => this.running && !this.paused && !document.querySelector('dialog[open]') && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName), action: (name, down) => this.action(name, down),onReset:()=>this.action('clear',false) });
     this._listeners.push(() => this.keyboard.dispose());
-    this.mouseLook = createMouseLook(this.canvas, { active: () => this.running && !this.paused && !document.querySelector('dialog[open]'), move: (dx, dy) => turnMouseCamera(this, dx, dy), action: (name, down) => this.action(name, down), onUnlock: () => this.onEvent({ type: 'pointer-unlock' }), onError: () => this.onEvent({ type: 'pointer-error', text: '鼠标锁定未成功，请点击游戏画面重试；也可继续使用键盘操作。' }) });
+    this.mouseLook = createMouseLook(this.canvas, { active: () => this.running && !this.paused && !document.querySelector('dialog[open]'), move: (dx, dy) => turnMouseCamera(this, dx, dy), action: (name, down) => this.action(name, down),onReset:()=>this.action('clear',false), onUnlock: () => this.onEvent({ type: 'pointer-unlock' }), onError: () => this.onEvent({ type: 'pointer-error', text: '鼠标锁定未成功，请点击游戏画面重试；也可继续使用键盘操作。' }) });
     this._listeners.push(() => this.mouseLook.dispose());
     bind(window, 'blur', () => this.releaseInput());
     bind(this.canvas, 'contextmenu', e => e.preventDefault());
     bind(this.canvas, 'pointerdown', e => { this._unlockAudio(); if(this.mouseLook.pointerDown(e))return; this.pointer = { x: e.clientX, y: e.clientY, startX: e.clientX, startY: e.clientY, button: e.button, moved: false }; this.canvas.setPointerCapture?.(e.pointerId); if (e.button === 2) this.action('jump'); });
     bind(this.canvas, 'pointermove', e => { if(this.mouseLook.locked || this.locked&&!this.locked.dead&&!this.locked.disposed)return; const p = this.pointer; if (!p) return; if (Math.hypot(e.clientX - p.startX, e.clientY - p.startY) > 5) p.moved = true; if (p.moved && this.running && !this.paused) { this.cameraManualUntil = this.elapsed + 2; this.cameraAngle -= (e.clientX - p.x) * .005; this.cameraPitch = clamp(this.cameraPitch + (e.clientY - p.y) * .003, .15, .95); } p.x = e.clientX; p.y = e.clientY; });
-    bind(this.canvas, 'pointerup', e => { this.mouseLook.pointerUp(e); if (this.pointer && !this.pointer.moved && this.pointer.button === 0) this.action('attack'); this.pointer = null; });
-    for (const event of ['pointercancel', 'lostpointercapture']) bind(this.canvas, event, () => { this.pointer = null; this.action('guard', false); });
+    bind(this.canvas, 'pointerup', e => { this.mouseLook.pointerUp(e); if (this.pointer && !this.pointer.moved && this.pointer.button === 0) this.action('attack'); if(this.pointer?.button===2)this.action('jump',false); this.pointer = null; });
+    for (const event of ['pointercancel', 'lostpointercapture']) bind(this.canvas, event, () => { if(this.pointer?.button===2)this.action('clear',false);this.pointer = null; this.action('guard', false); });
     bind(this.canvas, 'wheel', e => { if (!this.running || this.locked&&!this.locked.dead&&!this.locked.disposed) return; e.preventDefault(); this.cameraDistance = clamp(this.cameraDistance + e.deltaY * .008, 3.5, 18); }, { passive: false });
     bind(window, 'resize', () => this.resize());
   }
@@ -1460,7 +1612,7 @@ export class MeteorGame {
   dispose() {
     this.frameOverlay?.dispose();
     this.weather?.dispose();
-    this.rageVfx?.dispose(); this.effectContacts?.dispose(); this.projectiles?.dispose(); this.muskets?.dispose(); this.wheels?.dispose(); this.impactFeedback?.dispose(); this.bloodFeedback?.dispose(); this.poisonFeedback?.dispose(); this.slowFeedback?.dispose(); this.items?.dispose(); this._clearDroppedWeapons(); this.missionHost?.dispose(); this.disposed = true; cancelAnimationFrame(this.raf); this._listeners.forEach(fn => fn()); this.hero?.character.dispose(); this.enemies.forEach(f => { this._disposeNameplate(f); f.character.dispose(); });
+    this.rageVfx?.dispose(); this.effectContacts?.dispose(); this.projectiles?.dispose(); this.muskets?.dispose(); this.wheels?.dispose(); this.stealthFeedback?.dispose(); this.impactFeedback?.dispose(); this.bloodFeedback?.dispose(); this.poisonFeedback?.dispose(); this.slowFeedback?.dispose(); this.items?.dispose(); this._clearDroppedWeapons(); this.missionHost?.dispose(); this.disposed = true; cancelAnimationFrame(this.raf); this._listeners.forEach(fn => fn()); this.hero?.character.dispose(); this.enemies.forEach(f => { this._disposeNameplate(f); f.character.dispose(); });
     for (const data of this.mapData.values()) this._disposeMap(data); this.mapData.clear(); this.mapCache.clear();
     const geometries = new Set(), materials = new Set(), textures = new Set(); this.scene.traverse(o => { if (o.geometry) geometries.add(o.geometry); for (const m of o.material ? Array.isArray(o.material) ? o.material : [o.material] : []) { materials.add(m); if (m.map) textures.add(m.map); } });
     this.butterflyVfx?.dispose(); this.butterflyVfx = null;

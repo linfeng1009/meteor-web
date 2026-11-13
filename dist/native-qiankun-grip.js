@@ -5,7 +5,7 @@ import * as THREE from './vendor/three.module.js';
 // claim that the native renderer's complete binding compensation is recovered.
 const CLOSING = [431, 441], DRAWING = [447, 448, 449, 450, 451, 522];
 const CLOSED = [403, 486, 487, 520, 521];
-const OPEN = [401, 402, 430, 432, 433, 434, 435, 436, 437, 438, 439, 440, 442, 443, 444, 445, 452, 453, 454, 455, 456];
+const OPEN = [401, 402, 430, 432, 433, 434, 435, 436, 437, 438, 439, 440, 442, 443, 444, 445, 523, 452, 453, 454, 455, 456];
 const progress = (frame, from, to) => to > from ? THREE.MathUtils.clamp((frame - from) / (to - from), 0, 1) : 1;
 
 export function qiankunSheathWeight(data, pose, { mode = 'blade', rootPoseId = null } = {}) {
@@ -46,6 +46,7 @@ export function bindQiankunGrip(actor, data, manifest) {
   const blade = actor.weaponModels.find(model => /r$/i.test(model.name));
   const sheath = actor.weaponModels.find(model => /l$/i.test(model.name));
   const left = actor.character.getAttachment('d_wpnLP'), right = actor.character.getAttachment('d_wpnRP');
+  const flyingLeft=actor.character.getAttachment('d_wpnL'),flyingRight=actor.character.getAttachment('d_wpnR');
   if (!blade || !sheath || !left || !right) throw new Error('Original qiankun grip is incomplete');
   const seated = qiankunSeatedBlade(manifest, blade.name, sheath.name);
   const closedPosition = new THREE.Vector3(), closedRotation = new THREE.Quaternion(), unit = new THREE.Vector3();
@@ -57,6 +58,20 @@ export function bindQiankunGrip(actor, data, manifest) {
   // inverse/compose reconstructs the unchanged right-palm grip exactly.
   left.add(blade); left.add(sheath); blade.matrixAutoUpdate = false;
   const update = pose => {
+    const descriptor=pose.blend?.to||pose;
+    const thrown=actor.combat.currentMove?.poseId===523&&[523,485].some(id=>{
+      const p=data.poses.get(id);return p&&descriptor.source===p.source&&descriptor.frame>=p.start&&descriptor.frame<=p.end;
+    });
+    // 弧月 authors an independent flying trajectory on the original weapon
+    // dummies. Palm compensation would pin the attack to the caster's hands.
+    if(thrown&&flyingLeft&&flyingRight){
+      if(blade.parent!==flyingRight)flyingRight.add(blade);
+      if(sheath.parent!==flyingLeft)flyingLeft.add(sheath);
+      blade.matrix.copy(loaderUndo);blade.matrixWorldNeedsUpdate=true;blade.updateMatrixWorld(true);
+      sheath.updateMatrixWorld(true);actor.qiankunSheathWeight=1;return;
+    }
+    if(blade.parent!==left)left.add(blade);
+    if(sheath.parent!==left)left.add(sheath);
     const weight = qiankunSheathWeight(data, pose, { mode: actor.combat.weaponMode, rootPoseId: actor.combat.currentMove?.poseId });
     actor.character.getVisualAttachmentMatrix?.('d_wpnLP',displayLeft) || displayLeft.copy(left.matrixWorld);
     actor.character.getVisualAttachmentMatrix?.('d_wpnRP',displayRight) || displayRight.copy(right.matrixWorld);

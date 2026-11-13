@@ -1,3 +1,4 @@
+import {NATIVE_AIR_PHYSICS} from '../dist/native-traversal.js';
 import {nativeStrideSpeed} from '../dist/native-movement-profile.js';
 import test, { after } from 'node:test';
 import assert from 'node:assert/strict';
@@ -9,8 +10,9 @@ import { loadNativeCombat, NativeCombatController, createNativeDamageResolver } 
 import { NativeEffectContacts, nativeEffectBounds, intersectsEffectBody } from '../dist/native-effect-contacts.js';
 import { NativeRageVfx } from '../dist/native-rage-vfx.js';
 import { NativeImpactFeedback } from '../dist/native-impact-feedback.js';
+import {NetworkReplicaMotion} from '../dist/network-game.js';
 import { nativeEffectiveStat } from '../dist/native-combat.js';
-import { nativeMovementScale, useNativeScriptItem, updateNativeScriptItems, clearNativeScriptItems } from '../dist/native-items.js';
+import { nativeMovementScale, useNativeScriptItem, updateNativeScriptItems, clearNativeScriptItems, nativeIsInvisible } from '../dist/native-items.js';
 
 const dist = new URL('../dist/', import.meta.url), v = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z);
 const oldFetch = globalThis.fetch, oldTextureLoad = THREE.TextureLoader.prototype.load;
@@ -25,7 +27,7 @@ async function fixture(positions = [v(3.5, 0, 0), v(-3.5, 0, 0), v(0, 0, -3.5)])
   Object.assign(game, { combatData: data, weaponManifest: weapons,
     weaponItems: new Map(weapons.items.map(item => [Number(item.itemId), item])), weaponModels: new Map(weapons.models.map(model => [model.modelId.toLowerCase(), model])), weaponCache: new Map(),
     scene: new THREE.Scene(), camera: new THREE.PerspectiveCamera(), raycaster: new THREE.Raycaster(), effectDefinitions: new Map(), waveFiles: new Map(), effects: [],
-    hostPhysics: { speed: 8, gravity: 34, jumpVelocity: 12, radius: .4, step: .55 },
+    hostPhysics: { speed: 8, gravity: NATIVE_AIR_PHYSICS.gravity, jumpVelocity: NATIVE_AIR_PHYSICS.jumpVelocity, radius: .4, step: .55 },
     currentMap: { colliders: [floor], bounds: new THREE.Box3(v(-150, -1, -150), v(150, 60, 150)), metadata: {}, spawns: [{ position: v(0, .015, 0) }] },
     weapon: 'spear', actorSerial: 0, enemies: [], keys: new Set(), directionBuffer: [], cameraAngle: 0,
     running: true, paused: false, mode: 'training', elapsed: 0, matchElapsed: 0, kills: 0, deaths: 0, totalDamage: 0, contactHits: 0,
@@ -265,12 +267,16 @@ test('public spear AAA can chain into the original group-selected rage finish an
   assert.ok(events.some(e => e.type === 'hit' && e.poseId === 294 && e.contactSource === 'effect'));
 });
 
-test('effect query rejects unresolved parents, zero scales, non-effect windows and disposed systems', async () => {
+test('effect query uses native default anchors for unresolved names and rejects zero scales, non-effect windows and disposed systems', async () => {
   const { game } = await fixture([]), actor = game.hero, pose = data.poses.get(293);
   const state = { pose, source: 0, serial: 99, previousFrame: pose.start, frame: pose.start + 90, previousEffectTime: 0, effectTime: 3 };
   const altered = structuredClone(manifest), node = altered.effects.pos293.nodes.find(node => node.name === 'AttackBall01');
   node.bindings = ['missing-parent', 'missing-parent']; const system = new NativeEffectContacts({ manifest: altered });
-  assert.deepEqual(system.sample(actor, state, pose.attacks[0]), []);
+  actor.root.position.set(31,2,-7);
+  const fallback=system.sample(actor,state,pose.attacks[0]);assert.ok(fallback.length);
+  node.bindings=['ROOT','ROOT'];const expected=system.sample(actor,{...state,serial:101},pose.attacks[0]);
+  assert.deepEqual(fallback.map(v=>v.center.toArray()),expected.map(v=>v.center.toArray()));
+  assert.ok(fallback.every(v=>v.center.distanceTo(actor.root.position)<1e-7));
   assert.deepEqual(game.effectContacts.sample(actor, state, { ...pose.attacks[0], bones: ['weapon'] }), []);
   node.bindings = ['b', 'b']; for (const key of node.keys) key.splice(8, 3, 0, 0, 0);
   assert.deepEqual(system.sample(actor, { ...state, serial: 100 }, pose.attacks[0]), []);
@@ -339,8 +345,10 @@ function settle(game, seen = new Set()) {
   return seen;
 }
 
-test('qiankun ultimate renders every final slash after pose456 ends without changing original hits or rage', async t => {
-  const { game, events } = await fixture([v(0, .015, 8)]), actor = game.hero;
+test('uninterrupted qiankun ultimate renders every final slash after pose456 ends and charges rage once', async t => {
+  // Test the complete visual lifetime without a hit victim's native body
+  // attack interrupting it. Contact/interruption has a separate case.
+  const { game, events } = await fixture([]), actor = game.hero;
   await game._equip(actor, 'qiankun'); manual(game, ['back', 'back']); settle(game);
   const textures = new Map(Object.entries(manifest.textures).filter(([, record]) => record.url).map(([id]) => [id, new THREE.Texture()]));
   game.rageVfx = new NativeRageVfx({ scene: game.scene, manifest, textures });
@@ -352,7 +360,7 @@ test('qiankun ultimate renders every final slash after pose456 ends without chan
     for (const effect of game.rageVfx.active.filter(e => e.id === 'pos456')) {
       endTime = Math.max(endTime, effect.time);
       for (const node of effect.nodes.filter(n => /^SLASH/.test(n.source.name) && n.mesh?.visible)) {
-        seen.add(node.source.name); if (!effect.live) late.add(node.source.name);
+        seen.add(node.source.name); if (actor.combat.timeline.pose.id!==456) late.add(node.source.name);
         assert.ok(node.mesh.matrix.elements.every(Number.isFinite));
       }
     }
@@ -361,9 +369,26 @@ test('qiankun ultimate renders every final slash after pose456 ends without chan
   assert.equal(late.size, 12, 'the actual POS animation ends before the source slash keys begin');
   assert.ok(endTime > 2.6); assert.ok(trails, 'the original red weapon Drag is visible during the cast');
   assert.equal(actor.rage, 0); assert.equal(events.slice(start).filter(e => e.type === 'move').length, 1);
-  assert.ok(events.slice(start).some(e => e.type === 'hit' && e.contactSource === 'effect'));
   assert.equal(actor.combat.busy, false); assert.equal(game.rageVfx.active.length, 0);
-  t.diagnostic(`Public ↓↓A → ↓↓↑A; final shapes=${seen.size}, detached=${late.size}, last EF sample=${endTime.toFixed(3)}s; one100-rage command.`);
+  t.diagnostic(`Public ↓↓A → ↓↓↑A; final shapes=${seen.size}, after456=${late.size}, last EF sample=${endTime.toFixed(3)}s; one100-rage command.`);
+});
+
+test('乾坤连斩保留原命中，目标受击106的原身体攻击能打断后续活特效',async()=>{
+  const {game,events}=await fixture([v(0,.015,12)]),actor=game.hero;
+  await game._equip(actor,'qiankun');manual(game,['back','back']);settle(game);
+  const textures=new Map(Object.entries(manifest.textures).filter(([,record])=>record.url).map(([id])=>[id,new THREE.Texture()]));
+  game.rageVfx=new NativeRageVfx({scene:game.scene,manifest,textures});actor.rage=100;
+  const start=events.length;manual(game,['back','back','forward']);assert.equal(actor.rage,0);let interrupted=false;
+  for(let frame=0;frame<470;frame++){
+    tick(game);game.rageVfx.update(1/60);
+    if(events.slice(start).some(e=>e.type==='hit'&&e.targetHero&&e.poseId===106)){
+      assert.equal(actor.combat.reacting,true);assert.ok(!game.rageVfx.active.some(e=>e.actor===actor&&e.id==='pos456'));
+      interrupted=true;break;
+    }
+  }
+  assert.ok(events.slice(start).some(e=>e.type==='hit'&&e.attackerHero&&e.contactSource==='effect'));
+  assert.equal(interrupted,true);assert.ok(actor.rage>0,'受击按原伤害结算获得怒气，不是重复扣除绝招消耗');
+  assert.equal(events.slice(start).filter(e=>e.type==='move').length,1);
 });
 
 test('reported weapon specials use public inputs, original attack contacts, one rage charge and complete recovery', async t => {
@@ -393,7 +418,7 @@ test('reported weapon specials use public inputs, original attack contacts, one 
       for (let n = 0; n < 3; n++) tick(game);
     }
     game.hero.rage = 100; const firstEvent = events.length;
-    manual(game, keys); assert.equal(game.hero.combat.currentMove?.poseId, pose);
+    manual(game, keys); assert.equal(game.hero.combat.currentMove?.poseId, pose);assert.equal(game.hero.rage,100-cost);
     const seen = settle(game);
     for (const id of chain) assert.ok(seen.has(id), `missing automatic pose${id}`);
     const castEvents = events.slice(firstEvent), hits = castEvents.filter(e => e.type === 'hit' && chain.includes(e.poseId));
@@ -401,7 +426,9 @@ test('reported weapon specials use public inputs, original attack contacts, one 
     assert.ok(game.enemies.some(actor => actor.hp < 10000));
     assert.ok(hits.some(hit => hit.contactSource === 'effect'), 'special must use original EF attack volumes');
     assert.equal(castEvents.filter(e => e.type === 'move').length, 1);
-    assert.equal(game.hero.rage, 100 - cost);
+    const collateral=castEvents.filter(e=>e.type==='hit'&&e.targetHero);
+    assert.equal(game.hero.rage,Math.min(100,100-cost+collateral.reduce((sum,e)=>sum+Math.floor(14*(e.amount||0)/100),0)));
+    if(pose===451)assert.ok(collateral.every(e=>[103,106].includes(e.poseId)),'original hit-reaction body contacts can return victim rage; automatic links do not charge again');
     assert.equal(game.wheels.size, 0, 'specials do not leave a normal returning disc blocking recovery');
     assert.equal(game.muskets.size || 0, 0);
     if (pose === 224) assert.ok(game.enemies.some(actor => actor.scriptItems?.some(item => item.id === 13)));
@@ -475,4 +502,400 @@ test('雷神锥真实飞镖命中施加原钝筋，刷新不叠加且移动恢�
  dartCommand(guarded.game,['forward'],209,0);for(let i=0;i<120;i++)tick(guarded.game);
  assert.ok(guarded.events.some(e=>e.type==='hit'&&e.poseId===209&&e.guarded));
  assert.equal(guarded.game.enemies[0].scriptItems.length,0);assert.equal(nativeMovementScale(guarded.game.enemies[0]),1);
+});
+
+
+test('dagger 专诸鱼肠 resolves its two original windows independently through public input', async () => {
+  const {game,events}=await fixture([v(.4,0,-2.8)]),target=game.enemies[0];
+  await game._equip(game.hero,'dagger');
+  const textures=new Map(Object.entries(manifest.textures).filter(([,r])=>r.url).map(([id])=>[id,new THREE.Texture()]));
+  game.rageVfx=new NativeRageVfx({scene:game.scene,manifest,textures});const visible=new Set();
+  game.action('back');game.action('back',false);game.action('attack');
+  assert.equal(game.hero.combat.timeline.pose.id,343);
+  let secondReaction=false;
+  for(let i=0;i<150;i++){
+    tick(game);game.rageVfx.update(1/60);secondReaction ||= target.combat.timeline.pose.id===97;
+    for(const effect of game.rageVfx.active)for(const node of effect.nodes)if(node.mesh?.visible){visible.add(node.source.name);assert.ok(node.mesh.matrix.elements.every(Number.isFinite));}
+  }
+  const hits=events.filter(e=>e.type==='hit'&&e.poseId===343);
+  assert.equal(hits.length,2,'one contact per independent POS window, never per sampled frame');
+  assert.deepEqual(hits.map(e=>e.raw.targetValue),[.5,0]);
+  assert.ok(hits[0].amount>0);assert.equal(hits[1].amount,hits[0].amount);
+  assert.equal(target.hp,10000-hits[0].amount-hits[1].amount);
+  assert.deepEqual(hits.map(e=>e.raw.selectedTargetPose),[110,97]);
+  assert.equal(hits[1].contactSource,'effect');assert.equal(hits[1].effectNode,'AttackBox');
+  assert.ok(secondReaction,'second stage applies its authored knockback reaction');
+  assert.equal(game.hero.combat.busy,false);
+  assert.ok(visible.has('Board_8'));assert.ok(visible.has('Waves01'));
+  assert.equal(visible.has('AttackBox'),false,'invisible attack geometry never becomes an opaque visual box');
+  assert.equal(game.rageVfx.active.length,0);
+});
+
+test('专诸鱼肠 preserves original attack bounds, keys and source windows', async () => {
+  const effect=manifest.effects.pos343,bytes=await readFile(new URL(`assets/original/${effect.source}`,dist));
+  assert.equal(createHash('sha256').update(bytes).digest('hex'),effect.sha256);
+  const node=effect.nodes.find(n=>n.name==='AttackBox');
+  assert.deepEqual(node.dimensions,[5,5,20]);assert.deepEqual(node.bindings,['Character','Character']);
+  assert.deepEqual(data.poses.get(343).attacks.map(a=>[a.start,a.end]),[[9590,9591],[9602,9603]]);
+  assert.deepEqual(data.poses.get(343).attacks[1].bones,['effect']);
+});
+
+test('专诸鱼肠 second effect stage respects guard and disappears when interrupted', async () => {
+  for(const interrupt of [false,true]){
+    const {game,events}=await fixture([v(.4,0,-2.8)]),target=game.enemies[0];
+    await game._equip(game.hero,'dagger');target.scriptControl.guard=true;
+    game.action('back');game.action('back',false);game.action('attack');
+    while(game.hero.combat.timeline.pose.id===343&&game.hero.combat.timeline.frame<9595)tick(game);
+    if(interrupt)game.hero.combat.react(110,{duration:.5});
+    for(let i=0;i<150;i++)tick(game);
+    const hits=events.filter(e=>e.type==='hit'&&e.poseId===343);
+    assert.equal(hits.length,interrupt?1:2);assert.ok(hits.every(e=>e.guarded));
+    assert.equal(target.hp,10000);
+    if(!interrupt){assert.equal(hits[1].contactSource,'effect');assert.equal(hits[1].raw.defenseMove,3);}
+  }
+});
+
+
+test('乘风 grants its original90-second movement item only after completion, refreshes and expires', async () => {
+  const {game,events}=await fixture([]),actor=game.hero;await game._equip(actor,'dual');
+  const base=nativeMovementScale(actor);
+  const walk=()=>{const start=actor.root.position.clone();game.action('forward');for(let i=0;i<30;i++)tick(game);game.action('forward',false);return actor.root.position.distanceTo(start);};
+  const before=walk();game._placeFighter(actor,{position:v(0,.015,0)});
+  actor.rage=99;manual(game,['back','back','forward']);assert.equal(actor.combat._attackChain,false);assert.equal(actor.scriptItems.length,0);
+  actor.rage=100;manual(game,['back','back','forward']);assert.equal(actor.combat.currentMove.poseId,557);assert.equal(actor.rage,0);
+  assert.equal(actor.scriptItems.length,0);settle(game);
+  assert.equal(actor.scriptItems[0].id,41);assert.ok(actor.scriptItems[0].remaining>89);
+  const buffed=nativeMovementScale(actor);assert.ok(Math.abs(buffed-base-.49)<1e-10);
+  const after=walk();assert.ok(Math.abs(after/before-buffed/base)<.03,'real travel follows the stat modifier, not only HUD text');
+  actor.rage=100;manual(game,['back','back','forward']);settle(game);
+  assert.equal(actor.scriptItems.length,1);assert.equal(actor.activeItems.filter(r=>r.id===41).length,1);
+  assert.equal(events.filter(e=>e.type==='self-item').at(-1).refreshed,true);
+  assert.equal(nativeMovementScale(actor),buffed);
+  updateNativeScriptItems(actor,91);assert.equal(actor.scriptItems.length,0);assert.equal(nativeMovementScale(actor),base);
+  actor.rage=100;manual(game,['back','back','forward']);actor.combat.react(103);settle(game);
+  assert.equal(actor.scriptItems.length,0,'interruption cannot grant a deferred buff');
+});
+
+test('合太极 and 凤凰羽 apply original item21 after victim gain and retain source guard bypass', async t => {
+  for(const [weapon,keys,pose] of [['dual',['back','left','right'],244],['sword',['left','right','forward'],368]]){
+    const position=v(0,0,weapon==='dual'?-3.2:1.5);
+    const {game,events}=await fixture([position]),target=game.enemies[0];await game._equip(game.hero,weapon);
+    target.rage=100;game.hero.rage=100;manual(game,keys);
+    for(let i=0;i<120&&!events.some(e=>e.type==='attack-item');i++)tick(game);
+    const hit=events.find(e=>e.type==='hit'&&e.poseId===pose);
+    assert.ok(hit);assert.equal(hit.raw.attackItem.id,21);assert.equal(hit.raw.attackItem.rageBefore,100);assert.equal(hit.raw.attackItem.rageAfter,90);
+    const guarded=await fixture([position]);await guarded.game._equip(guarded.game.hero,weapon);guarded.game.enemies[0].scriptControl.guard=true;guarded.game.hero.rage=100;
+    manual(guarded.game,keys);for(let i=0;i<120;i++)tick(guarded.game);
+    const block=guarded.events.find(e=>e.type==='hit'&&e.poseId===pose);assert.ok(block?.guardBypassed);assert.equal(block.guarded,false);assert.equal(block.raw.attackItem.id,21);
+  }
+});
+
+
+test('凤凰羽 original369 wave hits a distant target while leaving rear and off-path actors untouched',async()=>{
+ const {game,events}=await fixture([v(0,0,14),v(0,0,-14),v(20,0,14)]);await game._equip(game.hero,'sword');
+ game.hero.rage=100;manual(game,['left','right','forward']);assert.equal(game.hero.combat.timeline.pose.id,368);assert.equal(game.hero.rage,0);
+ const seen=new Set();for(let i=0;i<240;i++){tick(game);seen.add(game.hero.combat.timeline.pose.id);}
+ const hits=events.filter(e=>e.type==='hit'&&[368,369].includes(e.poseId));
+ assert.equal(hits.length,1);assert.equal(hits[0].poseId,369);assert.equal(hits[0].contactSource,'effect');assert.equal(hits[0].effectNode,'AttackWaveBox');
+ assert.ok(game.enemies[0].hp<10000);assert.equal(game.enemies[1].hp,10000);assert.equal(game.enemies[2].hp,10000);
+ assert.ok(game.hero.root.position.length()<.1,'the distant contact is not a character lunge or enlarged weapon');
+ assert.ok(seen.has(369));assert.equal(game.hero.combat.busy,false);assert.equal(events.filter(e=>e.type==='move').length,1);
+ const definition=manifest.effects.pos369,bytes=await readFile(new URL(`assets/original/${definition.source}`,dist));
+ assert.equal(createHash('sha256').update(bytes).digest('hex'),definition.sha256);
+});
+
+
+test('血残气丧 uses its original thin moving planes for ranged contact without an oversized aura',async()=>{
+ const {game,events}=await fixture([v(0,0,5),v(0,0,-5),v(10,0,5)]);await game._equip(game.hero,'sword');game.hero.rage=100;
+ manual(game,['right','left']);assert.equal(game.hero.combat.timeline.pose.id,560);assert.equal(game.hero.rage,40);
+ for(let i=0;i<180;i++)tick(game);
+ const hits=events.filter(e=>e.type==='hit'&&e.poseId===560);assert.ok(hits.length>=1&&hits.length<=2);assert.ok(hits.every(e=>e.contactSource==='effect'&&/^AttackWave/.test(e.effectNode)));
+ assert.ok(game.enemies[0].hp<10000);assert.equal(game.enemies[1].hp,10000);assert.equal(game.enemies[2].hp,10000);assert.equal(game.hero.combat.busy,false);
+});
+
+test('忍刀暴怒爆弹 uses original DONUT bounds once per target, drains5 rage and respects source guard',async()=>{
+ const {game,events}=await fixture([v(5,0,0),v(-5,0,0),v(0,0,5),v(0,0,-5),v(30,0,0)]);await game._equip(game.hero,'ninja');game.hero.rage=100;
+ game.enemies[1].scriptControl.guard=true;game.enemies[0].rage=100;
+ manual(game,['back','forward','forward']);assert.equal(game.hero.combat.timeline.pose.id,473);assert.equal(game.hero.rage,50);
+ for(let i=0;i<180;i++)tick(game);
+ const hits=events.filter(e=>e.type==='hit'&&e.poseId===473);assert.equal(hits.length,4);assert.ok(hits.every(e=>e.contactSource==='effect'&&e.effectNode==='AttackDonut'));
+ const normal=hits.find(e=>e.targetName===game.enemies[0].name),block=hits.find(e=>e.targetName===game.enemies[1].name);
+ assert.equal(normal.raw.attackItem.id,37);assert.equal(normal.raw.attackItem.rageAfter,95);assert.equal(block.guarded,true);assert.equal(block.raw.attackItem,undefined);assert.equal(game.enemies[1].hp,10000);assert.equal(game.enemies[4].hp,10000);
+ assert.equal(game.hero.combat.busy,false);assert.equal(events.filter(e=>e.type==='move').length,1);
+});
+
+test('暴怒环杀 requires its actual predecessor, uses source fire columns and pays another50 rage once',async()=>{
+ const {game,events}=await fixture([v(3,0,0)]);await game._equip(game.hero,'ninja');game.hero.rage=100;game.enemies[0].scriptControl.guard=true;
+ manual(game,['back','forward','forward']);while(!game.hero.combat.timeline.canCancel&&!game.hero.combat.timeline.finished)tick(game);
+ manual(game,['back','forward','forward']);assert.equal(game.hero.combat.queuedMove?.poseId??game.hero.combat.currentMove.poseId,474);
+ const seen=new Set();for(let i=0;i<240;i++){tick(game);seen.add(game.hero.combat.timeline.pose.id);}
+ assert.ok(seen.has(474));assert.equal(game.hero.rage,0);assert.equal(game.hero.combat.busy,false);
+ const hits=events.filter(e=>e.type==='hit'&&e.poseId===474);assert.equal(hits.length,1);assert.equal(hits[0].contactSource,'effect');assert.match(hits[0].effectNode,/^Attack(Fire|Ball)/);assert.equal(hits[0].guardBypassed,true);
+ assert.deepEqual(events.filter(e=>e.type==='move').map(e=>e.poseId),[473,474]);
+});
+
+test('plane and donut bounds match the recovered native constructors, including source base offsets',()=>{
+ assert.deepEqual(nativeEffectBounds({type:'PLANE',dimensions:[32,20],flags:[0]}).half.toArray(),[16,10,3]);
+ assert.deepEqual(nativeEffectBounds({type:'PLANE',dimensions:[32,20],flags:[1]}).center.toArray(),[0,0,10]);
+ assert.deepEqual(nativeEffectBounds({type:'DONUT',dimensions:[3,5,0,360,0,360],flags:[0]}).half.toArray(),[5,5,1]);
+ assert.deepEqual(nativeEffectBounds({type:'DONUT',dimensions:[3,5,0,360,0,360],flags:[1]}).center.toArray(),[0,0,1]);
+});
+
+
+test('忍法隐身 completes535→536, charges50, refreshes120 seconds and remains hittable',async()=>{
+ const {game,events}=await fixture([]);await game._equip(game.hero,'ninja');game.hero.rage=100;manual(game,['left','right','back']);assert.equal(game.hero.combat.currentMove.poseId,535);assert.equal(game.hero.rage,50);assert.equal(nativeIsInvisible(game.hero),false);
+ const seen=settle(game);assert.ok(seen.has(536));assert.equal(game.hero.scriptItems[0].id,36);assert.equal(game.hero.scriptItems[0].duration,120);assert.ok(game.hero.scriptItems[0].remaining>=119);assert.equal(nativeIsInvisible(game.hero),true);
+ game.hero.rage=100;manual(game,['left','right','back']);settle(game);assert.equal(game.hero.scriptItems.length,1);assert.equal(events.filter(e=>e.type==='self-item').at(-1).refreshed,true);
+ updateNativeScriptItems(game.hero,121);assert.equal(nativeIsInvisible(game.hero),false);
+ game.hero.rage=100;manual(game,['left','right','back']);game.hero.combat.react(103);settle(game);assert.equal(nativeIsInvisible(game.hero),false);
+ const second=await fixture([v(0,0,1.5)]);await second.game._equip(second.game.hero,'sword');const target=second.game.enemies[0];useNativeScriptItem(target,data.itemRecords.get(36));second.game.action('attack');for(let i=0;i<120;i++)tick(second.game);
+ assert.ok(target.hp<10000,'actual original attack contacts still damage an invisible actor');
+});
+
+
+test('乾坤刀第三次攻击跨原引导段接出弧月，不跳过贪噬突刺',async()=>{
+ const {game,events}=await fixture([v(0,0,6)]);await game._equip(game.hero,'qiankun');manual(game,['back','back']);settle(game);
+ manual(game,[]);while(!game.hero.combat.timeline.canCancel&&!game.hero.combat.timeline.finished)tick(game);manual(game,[]);
+ for(let i=0;i<180&&game.hero.combat.currentMove?.poseId!==521;i++)tick(game);
+ manual(game,[]);assert.equal(game.hero.combat.queuedMove?.poseId,523);
+ const seen=new Set();let sampled=0,maxDistance=0;const original=game._resolveContacts.bind(game);
+ game._resolveContacts=(actor,state,volumes)=>{
+  if(state.poseId===523){for(const model of actor.weaponModels){const socket=actor.character.getAttachment(/r$/i.test(model.name)?'d_wpnR':'d_wpnL');assert.equal(model.parent,socket);assert.ok(model.getWorldPosition(v()).distanceTo(socket.getWorldPosition(v()))<1e-8);maxDistance=Math.max(maxDistance,model.getWorldPosition(v()).distanceTo(actor.root.position));}sampled++;}
+  return original(actor,state,volumes);
+ };
+ for(let i=0;i<300;i++){tick(game);seen.add(game.hero.combat.timeline.pose.id);}
+ assert.ok(seen.has(522));assert.ok(seen.has(523));assert.ok(seen.has(485));assert.equal(game.hero.combat.busy,false);assert.ok(sampled>0&&maxDistance>2);
+ assert.deepEqual(events.filter(e=>e.type==='hit').map(e=>e.poseId),[520,522,523]);
+ assert.deepEqual(events.filter(e=>e.type==='move').map(e=>e.poseId),[431,520,521,523]);
+ const left=game.hero.character.getAttachment('d_wpnLP');assert.ok(game.hero.weaponModels.every(model=>model.parent===left),'normal grip is restored after the authored return');
+});
+
+
+test('大锤伏虎腾翔跌的后段使用前段仍存活的原冲击波',async()=>{
+ const {game,events}=await fixture([v(0,.015,7),v(0,.015,-20),v(0,.015,12)]);await game._equip(game.hero,'hammer');manual(game,['left','right','back']);assert.equal(game.hero.combat.currentMove.poseId,372);
+ for(let i=0;i<300;i++)tick(game);
+ const hits=events.filter(e=>e.type==='hit'&&e.poseId===373);
+ assert.ok(hits.some(e=>e.contactSource==='effect'&&e.effectId==='pos324'&&e.effectNode==='AttackWave'));
+ assert.equal(game.enemies[1].hp,10000);assert.equal(game.enemies[2].hp,10000);assert.equal(game.hero.combat.busy,false);
+});
+
+test('攻击特效跨无特效动作保留独立寿命，过渡期间不提前创建目标特效',async()=>{
+ const {game}=await fixture([]),actor=game.hero,contacts=game.effectContacts;
+ const segment=(id,serial,consumed,extra={})=>({pose:data.poses.get(id),serial,consumed,previousEffectTime:0,...extra});
+ contacts.beginStep(actor,segment(372,1,2.15));
+ const original=contacts.timelines.get(actor).effects[0];assert.equal(original.graph.id,'pos324');
+ const pose=data.poses.get(373),attack=pose.attacks.find(a=>a.bones.includes('effect'));
+ const phase=segment(373,2,.1,{previousFrame:attack.start,frame:attack.end,frameIntervals:[{from:attack.start,to:attack.end,timeFrom:0,timeTo:.1}]});
+ contacts.beginStep(actor,phase);
+ const volumes=contacts.sample(actor,phase,attack);
+ assert.ok(volumes.length);assert.ok(volumes.every(v=>v.effectId==='pos324'&&v.time>=2.15));
+ const blend=segment(293,3,.2,{blend:{}});contacts.beginStep(actor,blend);
+ assert.equal(contacts.timelines.get(actor).effects.length,1);assert.equal(contacts.sample(actor,blend,attack).length,0);
+ contacts.beginStep(actor,segment(293,3,.01));
+ const next=contacts.timelines.get(actor).effects.find(e=>e.graph.id==='pos293');
+ assert.ok(next);assert.ok(Math.abs(next.born-2.45)<1e-9,'目标特效从过渡结束时出生');
+ contacts.beginStep(actor,segment(0,4,20));assert.equal(contacts.timelines.get(actor).effects.length,0);
+ contacts.clearActor(actor);assert.equal(contacts.timelines.has(actor),false);assert.equal(contacts.actors.has(actor),false);
+});
+
+test('乾坤刀大绝回鞘阶段的五个原攻击窗仍查询前段特效',async()=>{
+ const {game,events}=await fixture([]);await game._equip(game.hero,'qiankun');manual(game,['back','back']);settle(game);
+ const windows=new Set(),sample=game.effectContacts.sample.bind(game.effectContacts);
+ game.effectContacts.sample=(actor,state,attack,fps)=>{
+  const volumes=sample(actor,state,attack,fps);
+  if(actor===game.hero&&state.pose.id===487&&volumes.length){
+   assert.ok(volumes.every(v=>v.effectId==='pos456'));
+   const probe={root:{position:volumes[0].center.clone().add(v(0,-1.3,0))}};
+   assert.equal(game.effectContacts.contact(volumes,probe)?.effectId,'pos456');windows.add(attack.index);
+  }
+  return volumes;
+ };
+ game.hero.rage=100;manual(game,['back','back','forward']);settle(game);
+ assert.deepEqual([...windows].sort(),[0,1,2,3,4]);assert.equal(game.hero.rage,0);
+ assert.equal(events.filter(e=>e.type==='move'&&e.poseId===451).length,1);
+});
+
+test('忍刀夹头使用原攻击盒摔飞对手，破防且不吸附远处目标',async()=>{
+ const effect=manifest.effects.pos470,bytes=await readFile(new URL(`assets/original/${effect.source}`,dist));
+ assert.equal(createHash('sha256').update(bytes).digest('hex'),effect.sha256);
+ const {game,events}=await fixture([v(0,.015,3),v(0,.015,16),v(0,.015,-8)]);await game._equip(game.hero,'ninja');
+ game.enemies[0].scriptControl.guard=true;manual(game,['back','back','forward']);assert.equal(game.hero.combat.currentMove.poseId,470);
+ settle(game);
+ const hits=events.filter(e=>e.type==='hit'&&e.poseId===470);
+ assert.equal(hits.length,1);assert.equal(hits[0].contactSource,'effect');assert.equal(hits[0].effectNode,'AttackBox');
+ assert.equal(hits[0].guardBypassed,true);assert.equal(hits[0].raw.selectedTargetPose,106);
+ assert.equal(game.enemies[1].hp,10000);assert.equal(game.enemies[2].hp,10000);assert.equal(game.hero.combat.busy,false);
+ const miss=await fixture([v(0,.015,16)]);await miss.game._equip(miss.game.hero,'ninja');miss.game.hero.rage=73;
+ manual(miss.game,['back','back','forward']);settle(miss.game);
+ assert.equal(miss.events.filter(e=>e.type==='hit').length,0);assert.equal(miss.game.hero.rage,73);assert.equal(miss.game.hero.combat.busy,false);
+});
+
+test('忍刀四向地面瞬移逐一消费原场景运动轨迹，不造成攻击伤害',async t=>{
+ for(const [id,key] of [[526,'forward'],[527,'right'],[528,'left'],[529,'back']])await t.test(String(id),async()=>{
+  const {game,events}=await fixture([]);await game._equip(game.hero,'ninja');manual(game,[key,key]);
+  assert.equal(game.hero.combat.currentMove.poseId,id);
+  const origin=game.hero.root.position.clone(),angle=game.hero.root.rotation.y,pose=data.poses.get(id);
+  const a=game.hero.character.sampleSceneMotion(0,pose.start),b=game.hero.character.sampleSceneMotion(0,pose.end);
+  const x=(b.x-a.x)*.08,z=-(b.y-a.y)*.08,expected=v(Math.cos(angle)*x+Math.sin(angle)*z,0,-Math.sin(angle)*x+Math.cos(angle)*z);
+  settle(game);const actual=game.hero.root.position.clone().sub(origin);actual.y=0;
+  assert.ok(actual.distanceTo(expected)<.002,`${id}: ${actual.toArray()} vs ${expected.toArray()}`);
+  assert.ok(actual.length()>5.5&&actual.length()<5.7);assert.equal(game.hero.combat.busy,false);
+  assert.equal(events.filter(e=>e.type==='hit').length,0);assert.equal(game.hero.rage,0);
+ });
+});
+
+test('忍刀四向空中瞬移可正常起跳施展，保留下落并接空中轻斩',async t=>{
+ for(const [id,key] of [[530,'forward'],[531,'right'],[532,'left'],[533,'back']])await t.test(String(id),async()=>{
+  const {game,events}=await fixture([]);await game._equip(game.hero,'ninja');game.action('jump');game.action('jump',false);for(let i=0;i<12;i++)tick(game);
+  assert.equal(game.hero.grounded,false);manual(game,[key,key]);assert.equal(game.hero.combat.currentMove.poseId,id);
+  const origin=game.hero.root.position.clone();let lowest=origin.y;for(let i=0;i<36;i++){tick(game);lowest=Math.min(lowest,game.hero.root.position.y);}
+  const distance=Math.hypot(game.hero.root.position.x-origin.x,game.hero.root.position.z-origin.z);
+  assert.ok(distance>5.5&&distance<5.7,`${id}: ${distance}`);assert.ok(lowest<origin.y);
+  // A fresh naturally airborne cast can immediately queue the authored ACT continuation.
+  settle(game);game.action('jump');game.action('jump',false);for(let i=0;i<12;i++)tick(game);manual(game,[key,key]);game.action('attack',false);game.action('attack');
+  assert.equal(game.hero.combat.queuedMove?.poseId,478);settle(game);
+  assert.ok(events.some(e=>e.type==='move'&&e.poseId===478));assert.equal(game.hero.combat.busy,false);
+ });
+});
+
+test('忍刀瞬移仍受墙体约束，并能按原接招表接出攻击',async()=>{
+ const {game,events}=await fixture([]);await game._equip(game.hero,'ninja');
+ const wall=new THREE.Mesh(new THREE.BoxGeometry(30,30,.3),new THREE.MeshBasicMaterial());wall.position.set(0,10,3);wall.updateMatrixWorld(true);game.currentMap.colliders.push(wall);
+ try{manual(game,['forward','forward']);game.action('attack',false);game.action('attack');assert.equal(game.hero.combat.queuedMove?.poseId,461);settle(game);
+  assert.ok(game.hero.root.position.z<3);assert.ok(events.some(e=>e.type==='move'&&e.poseId===461));assert.equal(game.hero.combat.busy,false);
+ }finally{game.currentMap.colliders.pop();wall.geometry.dispose();wall.material.dispose();}
+});
+
+test('忍刀压制沿原起手初踩收刀链完成，重复指令按原ACT接再踩',async()=>{
+ const {game,events}=await fixture([v(0,.015,1.5),v(0,.015,15)]);await game._equip(game.hero,'ninja');game.hero.rage=100;
+ manual(game,['left','right']);assert.equal(game.hero.combat.currentMove.poseId,540);assert.equal(game.hero.rage,90);
+ for(let i=0;i<180&&game.hero.combat.timeline.pose.id!==541;i++)tick(game);
+ assert.equal(game.hero.combat.timeline.pose.id,541);manual(game,['left','right']);assert.equal(game.hero.combat.queued,542);
+ const seen=settle(game),hits=events.filter(e=>e.type==='hit');
+ assert.ok(seen.has(542));assert.ok(seen.has(543));assert.equal(game.hero.rage,80);assert.equal(game.hero.combat.busy,false);
+ assert.ok(hits.some(e=>e.poseId===540));assert.ok(hits.some(e=>e.poseId===541));assert.ok(hits.some(e=>e.poseId===542));assert.ok(hits.some(e=>e.poseId===543));
+ assert.equal(game.enemies[1].hp,10000);
+ assert.deepEqual(hits.map(e=>[e.poseId,e.amount]),[[540,25],[541,0],[542,0],[543,25]]);
+ assert.equal(hits.find(e=>e.poseId===541).raw.targetValue,4);assert.equal(hits.find(e=>e.poseId===542).raw.targetValue,3);
+});
+
+test('压制挥空会自动收刀，起手期间乱按不扣第二次怒气',async()=>{
+ const {game,events}=await fixture([v(0,.015,15)]);await game._equip(game.hero,'ninja');game.hero.rage=10;
+ manual(game,['left','right']);manual(game,['left','right']);assert.equal(game.hero.rage,0);
+ const seen=settle(game);assert.ok(seen.has(541));assert.ok(seen.has(543));assert.equal(seen.has(542),false);
+ assert.equal(game.hero.combat.busy,false);assert.equal(events.filter(e=>e.type==='move').length,1);assert.equal(events.filter(e=>e.type==='hit').length,0);
+});
+
+test('指虎左右打虎在原动作内自动换副兵器并接其原招式',async t=>{
+ for(const [id,key] of [[412,'left'],[413,'right']])await t.test(String(id),async()=>{
+  const {game,events}=await fixture([]);await game._equip(game.hero,'knuckle');game.hero.weapon2Id=8;
+  await game._prepareWeapon(8);manual(game,[key,key]);await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(game.hero.combat.timeline.pose.id,id);assert.equal(game.hero.weapon,'blade');assert.equal(game.hero.weapon2Id,51);
+  game.action('attack',false);game.action('attack');assert.equal(game.hero.combat.queuedMove?.poseId,295);
+  const seen=settle(game);assert.ok(seen.has(295));assert.equal(game.hero.combat.busy,false);
+  assert.deepEqual(events.filter(e=>e.type==='move').map(e=>e.poseId),[id,295]);
+ });
+});
+
+test('指虎换兵排队不提前交换装备，重复输入只在实际起手交换一次',async()=>{
+ const {game}=await fixture([]);await game._equip(game.hero,'knuckle');game.hero.weapon2Id=8;await game._prepareWeapon(8);
+ game.action('attack');manual(game,['right','right']);assert.equal(game.hero.combat.queued,413);assert.equal(game.hero.weapon,'knuckle');
+ manual(game,['right','right']);assert.equal(game.hero.weapon2Id,8);
+ for(let i=0;i<180&&game.hero.combat.timeline.pose.id!==413;i++)tick(game);
+ await new Promise(resolve=>setImmediate(resolve));assert.equal(game.hero.combat.timeline.pose.id,413);assert.equal(game.hero.weapon,'blade');assert.equal(game.hero.weapon2Id,51);
+ settle(game);assert.equal(game.hero.weaponId,8);assert.equal(game.hero.weapon2Id,51);
+ const bare=await fixture([]);await bare.game._equip(bare.game.hero,'knuckle');manual(bare.game,['left','left']);settle(bare.game);
+ assert.equal(bare.game.hero.weapon,'knuckle');assert.equal(bare.game.hero.weaponId,51);assert.equal(bare.game.hero.combat.busy,false);
+});
+
+test('换兵招式加载副兵器失败时恢复原兵器、模型和副兵器槽',async()=>{
+ const {game}=await fixture([]);await game._equip(game.hero,'knuckle');const models=[...game.hero.weaponModels];game.hero.weapon2Id=8;
+ game._readWeapon=async()=>{throw Error('测试副兵器缺失');};const prior=console.error;console.error=()=>{};
+ try{manual(game,['right','right']);await new Promise(resolve=>setImmediate(resolve));}finally{console.error=prior;}
+ assert.equal(game.hero.weaponId,51);assert.equal(game.hero.weapon2Id,8);assert.equal(game.hero.combat.weapon,'knuckle');assert.equal(game.weapon,'knuckle');
+ assert.deepEqual(game.hero.weaponModels,models);assert.ok(models.every(model=>model.parent));settle(game);assert.equal(game.hero.combat.busy,false);
+});
+
+test('忍刀自爆按原攻击窗伤敌并消耗原自身道具，不先死亡吞掉爆炸',async()=>{
+ const {game,events}=await fixture([v(0,.015,3),v(0,.015,8),v(0,.015,-8)]);await game._equip(game.hero,'ninja');game.hero.rage=100;
+ manual(game,['left','right','forward','back']);assert.equal(game.hero.rage,50);
+ for(let i=0;i<120&&!game.hero.dead;i++)tick(game);
+ const hits=events.filter(e=>e.type==='hit');
+ assert.ok(hits.length);assert.ok(hits.every(e=>e.poseId===468));assert.equal(game.hero.hp,0);assert.equal(game.hero.dead,true);assert.equal(game.hero.combat.timeline.pose.id,469);
+ assert.equal(game.deaths,1);assert.equal(events.filter(e=>e.type==='self-item'&&e.itemId===35).length,1);
+ assert.equal(hits.length,1);assert.equal(hits[0].amount,634);assert.equal(hits[0].effectNode,'AttackBox');assert.equal(game.enemies[1].hp,10000);assert.equal(game.enemies[2].hp,10000);
+});
+
+test('自爆可被格挡或打断，粗步长仍只结算一次爆炸和自身死亡',async()=>{
+ const blocked=await fixture([v(0,.015,3)]);await blocked.game._equip(blocked.game.hero,'ninja');blocked.game.hero.rage=100;blocked.game.enemies[0].scriptControl.guard=true;
+ manual(blocked.game,['left','right','forward','back']);for(let i=0;i<120&&!blocked.game.hero.dead;i++)tick(blocked.game);
+ assert.ok(blocked.events.find(e=>e.type==='hit')?.guarded);assert.equal(blocked.game.enemies[0].hp,10000);assert.equal(blocked.game.hero.dead,true);
+ const interrupted=await fixture([]);await interrupted.game._equip(interrupted.game.hero,'ninja');interrupted.game.hero.rage=100;manual(interrupted.game,['left','right','forward','back']);
+ interrupted.game.hero.combat.react(103);for(let i=0;i<120;i++)tick(interrupted.game);assert.equal(interrupted.game.hero.dead,false);assert.equal(interrupted.game.hero.hp,1000);assert.equal(interrupted.events.some(e=>e.type==='self-item'),false);
+ const coarse=await fixture([v(0,.015,3)]);await coarse.game._equip(coarse.game.hero,'ninja');coarse.game.hero.rage=100;manual(coarse.game,['left','right','forward','back']);
+ for(let i=0;i<12&&!coarse.game.hero.dead;i++)tick(coarse.game,.2);
+ assert.equal(coarse.events.filter(e=>e.type==='hit'&&e.poseId===468).length,1);assert.equal(coarse.game.hero.dead,true);assert.equal(coarse.game.deaths,1);
+});
+
+test('自身道具在原动作最后两帧生效，而非等整个动画结束',async()=>{
+ const {game}=await fixture([]);await game._equip(game.hero,'ninja');game.hero.rage=100;manual(game,['left','right','back']);
+ for(let i=0;i<180&&!nativeIsInvisible(game.hero);i++)tick(game);
+ const timeline=game.hero.combat.timeline;assert.equal(timeline.pose.id,535);assert.ok(timeline.frame>=timeline.pose.end-1);assert.ok(timeline.frame<timeline.pose.end);assert.equal(timeline.finished,false);
+});
+
+test('真实原角色的联机过渡插值与本地同权重骨骼姿势一致',async()=>{
+ const host=await fixture([]),guest=await fixture([]),a=host.game.hero,b=guest.game.hero;
+ const pose=data.poses.get(263),from={source:0,frame:data.poses.get(262).end},to={source:0,frame:pose.entryFrame};
+ b.combat.play(263,{force:true});const motion=new NetworkReplicaMotion(),state={position:b.root.position.toArray(),angle:0,dead:false,source:0,frame:to.frame,serial:1,blend:{from,to,weight:.2,duration:.3}};
+ motion.receive(b,state,.1,{poseChanged:true});motion.receive(b,{...state,blend:{...state.blend,weight:.8}},.1);motion.update(b,.05);
+ a.character.setPoseBlend(from,to,.5);
+ for(let i=0;i<a.character.bones.length;i++){
+  assert.ok(a.character.bones[i].position.distanceTo(b.character.bones[i].position)<1e-7);
+  assert.ok(a.character.bones[i].quaternion.angleTo(b.character.bones[i].quaternion)<1e-6);
+ }
+ assert.equal(a.hp,b.hp);
+});
+
+test('自身增益提前接招时在原接招窗生效，早输入不提前授予状态',async t=>{
+ for(const [weapon,keys,poseId,nextKeys,nextPose,itemId] of [
+  ['hammer',['back','forward','forward'],567,[],315,40],
+  ['knuckle',['back','back','forward'],489,['left','right'],411,34],
+  ['dual',['back','back','forward'],557,['right'],237,41]
+ ])await t.test(weapon,async()=>{
+  const {game,events}=await fixture([]);await game._equip(game.hero,weapon);game.hero.rage=100;manual(game,keys);
+  const pose=data.poses.get(poseId),window=pose.cancels[0];manual(game,nextKeys);
+  assert.equal(game.hero.combat.queued,nextPose);assert.equal(game.hero.scriptItems.length,0);
+  for(let i=0;i<180&&!game.hero.scriptItems.length;i++){
+   if(game.hero.combat.timeline.pose.id===poseId&&game.hero.combat.timeline.frame<window.start)assert.equal(game.hero.scriptItems.length,0);
+   tick(game);
+  }
+  assert.equal(game.hero.scriptItems[0]?.id,itemId);assert.ok(game.hero.combat.timeline.pose.id!==poseId||game.hero.combat.timeline.frame<pose.end-1);
+  const seen=settle(game);assert.ok(seen.has(nextPose));assert.equal(events.filter(e=>e.type==='self-item'&&e.itemId===itemId).length,1);
+  assert.equal(game.hero.scriptItems.length,1);assert.equal(game.hero.rage,0);
+ });
+});
+
+test('接招窗前受击取消增益，已合法接招得到的增益不会因后续受击消失',async()=>{
+ for(const afterArmed of [false,true]){
+  const {game,events}=await fixture([]);await game._equip(game.hero,'hammer');game.hero.rage=100;manual(game,['back','forward','forward']);manual(game,[]);
+  if(afterArmed)for(let i=0;i<180&&!game.hero.scriptItems.length;i++)tick(game);
+  game.hero.combat.react(103);settle(game);
+  assert.equal(game.hero.scriptItems.length,Number(afterArmed));assert.equal(events.filter(e=>e.type==='self-item').length,Number(afterArmed));
+ }
+});
+
+test('怒气不足的后招不提前结算待生效的自身增益',async()=>{
+ const {game}=await fixture([]);await game._equip(game.hero,'hammer');game.hero.rage=100;manual(game,['back','forward','forward']);manual(game,['left','right','forward']);
+ assert.equal(game.hero.combat.queued,null);assert.equal(game.hero.scriptItems.length,0);
+ const pose=data.poses.get(567);while(game.hero.combat.timeline.frame<pose.cancels[0].start+1)tick(game);
+ assert.equal(game.hero.scriptItems.length,0);settle(game);assert.equal(game.hero.scriptItems[0].id,40);
+});
+
+test('原接招窗内接受后招立即结算自身道具，连点不刷新同次施展',async()=>{
+ const {game,events}=await fixture([]);await game._equip(game.hero,'hammer');game.hero.rage=100;manual(game,['back','forward','forward']);
+ const pose=data.poses.get(567);while(game.hero.combat.timeline.frame<pose.cancels[0].start)tick(game);
+ assert.equal(game.hero.scriptItems.length,0);manual(game,[]);
+ assert.equal(game.hero.scriptItems[0].id,40);assert.equal(game.hero.combat.timeline.pose.id,567);assert.equal(game.hero.combat.queued,315);
+ const item=game.hero.scriptItems[0];item.remaining=60;manual(game,[]);assert.equal(item.remaining,60);
+ assert.equal(events.filter(e=>e.type==='self-item').length,1);settle(game);assert.equal(events.filter(e=>e.type==='self-item').length,1);
 });

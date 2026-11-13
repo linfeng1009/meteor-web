@@ -56,12 +56,11 @@ test('a buffered input keeps the old Action then uses native NextPose time befor
   assert.equal(combat.queuedMove, context);
   assert.equal(rage, 50);
   const state = combat.update(1, { grounded: true });
-  assert.equal(state.segments[0].poseId, 262);
-  assert.equal(state.segments[0].frame, 9777, 'native compiled first Blend after input arming; not NextPose.Start9767');
-  assert.ok(state.segments[0].attacks.length > 0, 'the current source strike is preserved');
-  assert.equal(state.segments[1].poseId, 263);
-  assert.equal(state.segments[1].blend.duration, .2);
-  assert.equal(state.segments[1].frame, 9806, 'native first Action; skip incoming pre-Action Blend frames');
+  const old=state.segments.filter(segment=>segment.poseId===262),incoming=state.segments.find(segment=>segment.poseId===263&&segment.blend);
+  assert.deepEqual(old.map(segment=>segment.frame),[9767,9777], 'accept at NextPose.Start, keep old Action until compiled first Blend');
+  assert.ok(old.some(segment=>segment.attacks.length>0), 'the current source strike is preserved across the acceptance boundary');
+  assert.equal(incoming.blend.duration, .2);
+  assert.equal(incoming.frame, 9806, 'native first Action; skip incoming pre-Action Blend frames');
   assert.equal(combat.currentMove, context);
   assert.equal(combat.queuedMove, null);
   assert.equal(rage, 10);

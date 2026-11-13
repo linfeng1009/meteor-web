@@ -3,6 +3,8 @@
 // (004fc980→004fc8a0). 004fdf00 can retain a known target within200 units.
 // Actor eye points, collision rays and nearest-target selection remain Web
 // adapters; the complete original AI decisions and PRNG are not implemented.
+import {nativeIsInvisible} from './native-items.js';
+import {nativeSameTeam} from './native-teams.js';
 const SCALE = .08;
 export const NATIVE_AWARENESS = Object.freeze({
   defaultView: 400, nearby: 80 * SCALE, retainDistance: 200 * SCALE,
@@ -11,11 +13,11 @@ export const NATIVE_AWARENESS = Object.freeze({
 
 const alive = actor => !!actor?.root?.position && !actor.dead && !actor.disposed && !actor.scriptRemoved && actor.hp > 0;
 export function nativeEnemies(actor, target) {
-  return actor !== target && alive(actor) && alive(target) && !(target.team > 0 && target.team === actor.team);
+  return actor !== target && alive(actor) && alive(target) && !nativeSameTeam(actor,target);
 }
 
 export function nativeCanDiscover(actor, target, lineOfSight) {
-  if (!nativeEnemies(actor, target)) return false;
+  if (!nativeEnemies(actor, target)||nativeIsInvisible(target)) return false;
   const distanceSquared = actor.root.position.distanceToSquared(target.root.position);
   const view = Number(actor.scriptConfig?.View ?? NATIVE_AWARENESS.defaultView) * SCALE;
   if (!Number.isFinite(view) || view < 0 || distanceSquared > view * view) return false;

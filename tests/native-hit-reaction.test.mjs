@@ -1,3 +1,4 @@
+import {NATIVE_AIR_PHYSICS} from '../dist/native-traversal.js';
 import {nativeStrideSpeed} from '../dist/native-movement-profile.js';
 import test, { after } from 'node:test';
 import assert from 'node:assert/strict';
@@ -91,7 +92,7 @@ async function fixture() {
     weaponItems: new Map(weapons.items.map(item => [Number(item.itemId), item])),
     weaponModels: new Map(weapons.models.map(model => [model.modelId.toLowerCase(), model])), weaponCache: new Map(),
     effectDefinitions: new Map(), waveFiles: new Map(), effects: [], scene: new THREE.Scene(), camera: new THREE.PerspectiveCamera(), raycaster: new THREE.Raycaster(),
-    hostPhysics: { speed: 8, gravity: 34, jumpVelocity: 12, radius: .4, step: .55 },
+    hostPhysics: { speed: 8, gravity: NATIVE_AIR_PHYSICS.gravity, jumpVelocity: NATIVE_AIR_PHYSICS.jumpVelocity, radius: .4, step: .55 },
     currentMap: { colliders: [floor], bounds: new THREE.Box3(v(-100, -1, -100), v(100, 30, 100)), metadata: {}, spawns: [{ position: v(0, .015, 0) }] },
     weapon: 'sword', actorSerial: 0, enemies: [], keys: new Set(), directionBuffer: [], cameraAngle: 0,
     running: true, paused: false, mode: 'training', elapsed: 0, matchElapsed: 0, kills: 0, deaths: 0, totalDamage: 0, contactHits: 0,
@@ -298,7 +299,7 @@ test('fixed world replay preserves sword hits, death, respawn and movement acros
     game._stepWorld=dt=>{
       if(tickIndex===0)game.action('attack');
       if(tickIndex===210)game.action('right');
-      if(tickIndex===240){game.action('right',false);game.action('jump');}
+      if(tickIndex===240){game.action('right',false);game.action('jump');game.action('jump',false);}
       if(tickIndex===300)game.action('guard');
       if(tickIndex===330)game.action('guard',false);
       step(dt);tickIndex++;
@@ -384,7 +385,7 @@ test('public held guard can be released and pressed during block stun, repeated 
   assert.equal(hero.combat.reactionPhase, 'guard'); assert.equal(hero.guard, true);
   game.action('guard', false); assert.equal(hero.guard, false);
   game.action('guard'); assert.equal(hero.guard, true);
-  game.action('attack'); game.action('jump'); assert.equal(hero.combat.queuedMove, null); assert.equal(hero.grounded, true);
+  game.action('attack'); game.action('jump');game.action('jump',false); assert.equal(hero.combat.queuedMove, null); assert.equal(hero.grounded, true);
   const hp = hero.hp; game._updateFighter(hero, .06); hit(game, target, hero, 262);
   assert.equal(hero.hp, hp); assert.equal(hero.combat.reactionPhase, 'guard');
   hit(game, target, hero, 298);
@@ -503,7 +504,7 @@ test('native hitstun cannot be cancelled by jumping; held defense engages on rec
   const { game, hero, target } = await fixture();
   hit(game, target, hero, 264);
   assert.equal(hero.combat.timeline.pose.id, 98);
-  game.action('forward'); game.action('attack'); game.action('jump'); game.action('guard');
+  game.action('forward'); game.action('attack'); game.action('jump');game.action('jump',false); game.action('guard');
   game._updateFighter(hero, 1 / 60);
   assert.equal(hero.combat.timeline.pose.id, 98); assert.equal(hero.combat.queuedMove, null); assert.equal(hero.grounded, true);
   assert.equal(hero.velocity.lengthSq(), 0, 'held movement cannot cancel authored recoil'); assert.equal(hero.guard, false);
@@ -511,7 +512,7 @@ test('native hitstun cannot be cancelled by jumping; held defense engages on rec
   for (let frame = 0; frame < 240; frame++) { game.elapsed += 1 / 60; game._updateFighter(hero, 1 / 60); }
   assert.equal(hero.combat.reacting, false); assert.equal(hero.combat.timeline.pose.id, 16); assert.equal(hero.guard, true);
   game.action('guard', false); game._updateFighter(hero, 1 / 60); assert.equal(hero.combat.timeline.pose.id, 6);
-  game.action('jump'); assert.equal(hero.grounded, false); assert.equal(hero.combat.timeline.pose.id, 151);
+  game.action('jump');game.action('jump',false); assert.equal(hero.grounded, false); assert.equal(hero.combat.timeline.pose.id, 151);
 });
 
 test('real impact feedback freezes only the contacting actors and consumes only its pause portion of the next update', async () => {

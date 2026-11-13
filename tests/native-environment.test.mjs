@@ -1,3 +1,4 @@
+import {NATIVE_AIR_PHYSICS} from '../dist/native-traversal.js';
 import test, { after } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -98,7 +99,7 @@ function fallingActor(mode = 'story') {
   actor.root.position.set(-96, 10, 64); actor.combat.play(152, { loop: true, force: true });
   Object.assign(engine, { currentMap: game.currentMap, hero: actor, enemies: [], manifest: game.manifest,
     collisionMaterial: game.collisionMaterial, raycaster: new THREE.Raycaster(), keys: new Set(), directionBuffer: [],
-    hostPhysics: { speed: 8, gravity: 34, jumpVelocity: 12, radius: .4, step: .55 }, cameraAngle: 0,
+    hostPhysics: { speed: 8, gravity: NATIVE_AIR_PHYSICS.gravity, jumpVelocity: NATIVE_AIR_PHYSICS.jumpVelocity, radius: .4, step: .55 }, cameraAngle: 0,
     mode, running: true, paused: false, kills: 0, deaths: 0, matchElapsed: 0, totalDamage: 0,
     onEvent: event => events.push(event), onEnd: result => endings.push(result) });
   return { engine, actor, events, endings, frames };

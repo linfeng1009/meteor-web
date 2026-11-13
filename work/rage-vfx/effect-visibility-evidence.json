@@ -1,0 +1,46 @@
+{
+  "sourceSha256": "2479bc4bdf916d4a6386ed6352cfa9c5446708de9c1b5e859d4a674a3b42da94",
+  "executed": false,
+  "functions": {
+    "0058e8a0": {
+      "bytes": 340,
+      "sha256": "901d79470804c2df1038521b8fcb7282955da2aed6f50138d1e487394fa2d61a"
+    },
+    "00582f30": {
+      "bytes": 441,
+      "sha256": "51bbff7f011dac72ee84415c339f61135988b08f55f04c29901ff23e5c4fa39d"
+    },
+    "00585130": {
+      "bytes": 559,
+      "sha256": "3afed9c7c9caef19686a95f58188ce34cc8ed4028ac12e05d4da917373a349f5"
+    },
+    "00589680": {
+      "bytes": 744,
+      "sha256": "558368d6d47c3afb04f7d1b8c2578a58e6d9ed309f5ae2bef96b2dd424a6908d"
+    },
+    "00587650": {
+      "bytes": 306,
+      "sha256": "ef5fcb231f0a55416d2e1f552e372c7205436f2253d4fe55497189a5fc94a45d"
+    },
+    "0056f1d0": {
+      "bytes": 143,
+      "sha256": "e4a980006cbfa9c38d4d2907e1d5de16df560dffb529e1d95bb4bb68ded55e60"
+    }
+  },
+  "field": {
+    "reader": "0058e8a0",
+    "materialOffset": "a4",
+    "commonEffectDataOffset": "dc",
+    "payloadOffsetAfterTextureName": 69,
+    "bytes": 4,
+    "hiddenWhen": "nonzero"
+  },
+  "displayGates": {
+    "mesh": "00582f30",
+    "sphere": "00585130",
+    "billboard": "00589680",
+    "particle": "00587650"
+  },
+  "attackSelector": "0056f1d0 filters AUDIO/PATH and A/a names; it does not filter the display flag",
+  "webImplementation": "Keep every graph node; allocate no visual mesh for source.hidden. Leave contact graphs unchanged."
+}

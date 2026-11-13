@@ -59,12 +59,14 @@ test('rage costs and unavailable projectile specials remain visible next to thei
   assert.match(row('dart', 203), /每2秒削减10气血，持续60秒/);
   assert.match(guide('dagger'), /17 项指令/);
   assert.doesNotMatch(row('dagger', 259), /暂不可用/);
-  assert.match(row('dagger', 343), /近身首击可用，后半段特效攻击待补/);
-  assert.equal(NATIVE_WEAPON_FAMILIES.filter(family => family.available).reduce((sum, family) => sum + (guide(family.id).match(/暂不可用/g) || []).length, 0), 17);
+  assert.match(row('dagger', 343), /向后刺击，再接推开动作/);
+  assert.equal(NATIVE_WEAPON_FAMILIES.filter(family => family.available).reduce((sum, family) => sum + (guide(family.id).match(/暂不可用/g) || []).length, 0), 0);
+  assert.match(row('ninja',540), /再次输入←→A/);
+  assert.doesNotMatch(row('ninja',470), /暂不可用/);
   assert.match(row('hammer', 567), /增加20防御.*120秒/);
   assert.match(row('knuckle', 489), /增加40攻击.*90秒/);
   assert.match(row('qiankun', 451), /先用.*↓↓A.*拔刀式/);
-  assert.match(row('sword', 560), /近身攻击可用，远端剑气(?:效果|命中)待补/);
+  assert.match(row('sword', 560), /剑刃与两道剑气可独立命中/);
 });
 
 test('follow-up requirements are explained by move names and arrow commands are screen-reader labeled', () => {

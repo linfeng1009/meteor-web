@@ -2,6 +2,16 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { defaultBindings, validateBindings, loadBindings, saveBindings, KEY_BINDINGS_STORAGE, bindKeyboard } from '../dist/keybindings.js';
 
+test('跳跃键真实松开与失焦取消分开，取消先于松键回调',()=>{
+  const target=new EventTarget(),events=[],bindings=defaultBindings();bindings.jump=['KeyL'];
+  const controller=bindKeyboard(target,{bindings,enabled:()=>true,action:(...args)=>events.push(args),onReset:()=>events.push(['clear',false])});
+  const emit=type=>{const event=new Event(type,{cancelable:true});if(type!=='blur')Object.assign(event,{code:'KeyL'});target.dispatchEvent(event);};
+  try{
+    emit('keydown');emit('keyup');assert.deepEqual(events,[['jump',true],['jump',false]]);
+    events.length=0;emit('keydown');emit('blur');assert.deepEqual(events,[['jump',true],['clear',false],['jump',false]]);
+  }finally{controller.dispose();}
+});
+
 test('original PC defaults use mouse attack/jump, Space guard, Ctrl crouch and Q camera lock',()=>{
   const b=defaultBindings();assert.deepEqual(b.attack,['Mouse0']);assert.deepEqual(b.jump,['Mouse2']);assert.deepEqual(b.guard,['Space']);assert.deepEqual(b.crouch,['ControlLeft','ControlRight']);assert.deepEqual(b.lock,['KeyQ']);assert.equal(validateBindings(b),true);
 });

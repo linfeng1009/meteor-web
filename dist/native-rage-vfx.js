@@ -9,6 +9,35 @@ export { sampleEffectKeys } from './native-effect-transforms.js';
 const ROOT = new URL('./assets/original/rage-vfx/', import.meta.url);
 const FORMATS = new Set(['PLANE', 'BILLBOARD', 'CYLINDER', 'SPHERE', 'BOX']);
 export const RAGE_VFX_ADAPTER = Object.freeze({ brightness: 1, colorGain: 1.15, tail: .18, maxActive: 12, scale: .08 });
+// 0058e6d0 maps original file indices to the factors named by 00475840.
+const NATIVE_BLEND_FACTORS = Object.freeze([THREE.OneFactor, THREE.ZeroFactor, THREE.SrcColorFactor,
+  THREE.OneMinusSrcColorFactor, THREE.SrcAlphaFactor, THREE.OneMinusSrcAlphaFactor,
+  THREE.DstColorFactor, THREE.OneMinusDstColorFactor, THREE.DstAlphaFactor, THREE.OneMinusDstAlphaFactor]);
+
+export function configureNativeEffectBlend(material, blend) {
+  if (!blend) return true; // Legacy/adaptor-only fixtures retain additive alpha gating.
+  const [mode, source, destination] = blend;
+  let factors;
+  switch (mode) {
+    case 0: material.blending = THREE.NoBlending; return false;
+    case 1: factors = [THREE.SrcColorFactor, THREE.OneFactor]; break;
+    case 2: factors = [THREE.ZeroFactor, THREE.OneMinusSrcColorFactor]; break;
+    case 3: factors = [THREE.SrcAlphaFactor, THREE.OneMinusSrcAlphaFactor]; break;
+    case 4:
+      if (!Number.isInteger(source) || !Number.isInteger(destination) || !NATIVE_BLEND_FACTORS[source] || !NATIVE_BLEND_FACTORS[destination])
+        throw new Error('Unverified original effect blend factor');
+      factors = [NATIVE_BLEND_FACTORS[source], NATIVE_BLEND_FACTORS[destination]]; break;
+    default: throw new Error('Unverified original effect blend mode');
+  }
+  material.blending = THREE.CustomBlending;
+  material.blendEquation = THREE.AddEquation;
+  [material.blendSrc, material.blendDst] = factors;
+  // Native uses the same factors for color and alpha, unlike Three's
+  // NormalBlending shortcut. The destination is unchanged at source alpha0
+  // only for the two source-alpha formulas below; darkening ignores alpha.
+  material.blendEquationAlpha = material.blendSrcAlpha = material.blendDstAlpha = null;
+  return factors[0] === THREE.SrcAlphaFactor && [THREE.OneFactor, THREE.OneMinusSrcAlphaFactor].includes(factors[1]);
+}
 
 function effectGeometry(node) {
   const d = node.dimensions;
@@ -17,14 +46,17 @@ function effectGeometry(node) {
   if (node.type === 'BOX') return new THREE.BoxGeometry(...d.map(Math.abs)).translate(0, 0, node.flags[0] === 1 ? d[1] / 2 : 0);
   if (node.type === 'CYLINDER') {
     const start = THREE.MathUtils.degToRad(d[3]), arc = THREE.MathUtils.degToRad(THREE.MathUtils.clamp(d[4] - d[3], 1, 360));
-    // 00588ed0: common flag0=1 anchors the cylinder's base at Z=0.
-    return new THREE.CylinderGeometry(Math.abs(d[0]), Math.abs(d[1]), Math.abs(d[2]), 24, 1, true, start, arc).rotateX(Math.PI / 2)
+    // 0047cdb0 emits (cos(angle)*radius, sin(angle)*radius, +/-height/2).
+    // Three's Y-axis cylinder needs the additional quarter turn to keep the
+    // original sector and texture seam; 00588ed0 then applies the base offset.
+    return new THREE.CylinderGeometry(Math.abs(d[0]), Math.abs(d[1]), Math.abs(d[2]), 24, 1, true, start, arc).rotateX(Math.PI / 2).rotateZ(Math.PI / 2)
       .translate(0, 0, node.flags[0] === 1 ? d[2] / 2 : 0);
   }
   if (node.type === 'SPHERE') {
-    const start = THREE.MathUtils.degToRad(d[3]), arc = THREE.MathUtils.degToRad(THREE.MathUtils.clamp(d[4] - d[3], 1, 360));
-    const polar = THREE.MathUtils.degToRad(90 - d[2]), span = THREE.MathUtils.degToRad(THREE.MathUtils.clamp(d[2] - d[1], 1, 180));
-    return new THREE.SphereGeometry(Math.abs(d[0]), 24, 12, start, arc, polar, span).rotateX(Math.PI / 2);
+    // 00584e50/00585130 draw a shared full unit sphere scaled by radius;
+    // the authored angle limits belong to 00584f70 particle point sampling.
+    // 0047d2c0/0047d000 map U to longitude90..450 and V to latitude-90..90.
+    return new THREE.SphereGeometry(Math.abs(d[0]), 24, 12).rotateX(Math.PI / 2).rotateZ(-Math.PI / 2);
   }
   return null;
 }
@@ -34,6 +66,13 @@ export async function loadNativeRageVfx(scene) {
   const itemEffects=await fetch(new URL('./assets/original/item-vfx.json',import.meta.url)).then(r=>r.ok?r.json():{effects:{}}).catch(()=>({effects:{}}));
   const combatEffects=await fetch(new URL('./assets/original/combat-vfx.json',import.meta.url)).then(r=>r.ok?r.json():{effects:{}}).catch(()=>({effects:{}}));
   const manifest={...base,effects:{...combatEffects.effects,...base.effects,...itemEffects.effects}}, textures = new Map(), loader = new THREE.TextureLoader();
+  // A contact definition can share the exact EF with an ordinary visual.
+  // Preserve its bounded particle presentation when promoting it to the
+  // contact manifest; never transfer adapters between different source files.
+  for (const [id, visual] of Object.entries(combatEffects.effects || {})) {
+    if (visual.particleAdapter && manifest.effects[id]?.sha256 === visual.sha256)
+      manifest.effects[id] = {...manifest.effects[id], particleAdapter:true};
+  }
   try {
     await Promise.all(Object.entries(manifest.textures).filter(([, record]) => record.url).map(async ([name, record]) => {
       // Loading failures keep that visual hidden rather than drawing an opaque
@@ -50,14 +89,25 @@ export async function loadNativeRageVfx(scene) {
 export class NativeRageVfx {
   constructor({ scene, manifest, textures = new Map() }) {
     this.scene = scene; this.manifest = manifest; this.textures = textures;
-    this.active = []; this.actors = new Map(); this.disposed = false;
+    this.active = []; this.actors = new Map(); this.deathCasts=new WeakMap();this.disposed = false;
     this.time = 0; this.trails = new NativeWeaponTrails(scene, manifest);
     this.group = new THREE.Group(); this.group.name = '原版怒气技能特效'; scene.add(this.group);
   }
   sample(actor, state, fps = 30) {
     if (this.disposed || !actor || !state) return null;
-    if (actor.dead || actor.disposed || actor.scriptRemoved) { this.clearActor(actor); return null; }
-    if (actor.combat?.reacting) {
+    if(actor.disposed||actor.scriptRemoved){this.clearActor(actor);return null;}
+    if(actor.dead){
+      const context=state.context;
+      if(state.pose?.id===469&&context?.poseId===468&&Number.isFinite(context.deathEffectTime)&&this.deathCasts.get(actor)!==state.serial){
+        this.deathCasts.set(actor,state.serial);
+        let effect=this.actors.get(actor);
+        if(effect?.id!=='pos468'){if(effect)this._remove(effect);effect=this.manifest.effects.pos468?this._create(actor,state,'pos468'):null;}
+        if(effect){effect.time=Math.max(0,context.deathEffectTime+(state.deathEffectAge||0));effect.persistAfterDeath=true;effect.anchorSnapshot=snapshotEffectAnchors(effect);this._retire(effect);}
+      }
+      for(const effect of [...this.active])if(effect.actor===actor&&!effect.persistAfterDeath)this._remove(effect);
+      this.trails.clearActor(actor);return null;
+    }
+    if (actor.combat?.reacting || actor.networkReactionPhase) {
       const live = this.actors.get(actor); if (live) this._remove(live);
       this.trails.clearActor(actor); return null;
     }
@@ -65,9 +115,10 @@ export class NativeRageVfx {
     const hasEffect = this.actors.has(actor) || segments.some(s => this.manifest.effects[String(s.pose?.raw?.fields.effectid || '').toLowerCase()]);
     const hasDrag = segments.some(s => !s.blend && s.pose?.drags?.some(d => s.frameIntervals?.some(r => r.to >= d.start && r.from < d.end + 1)));
     if (!hasEffect && !hasDrag) return null;
-    const saved = { source: character.source, frame: character.frame }; let offset = 0, result = null;
+    const saved = { source: character.source, frame: character.frame, facing: actor.root.rotation.y }; let offset = 0, result = null;
     try {
       for (const segment of segments) {
+        if (Number.isFinite(segment.facing)) actor.root.rotation.y = segment.facing;
         // A single update can traverse several automatic POS links. Capture
         // every stage on its own skeleton, including native dummy reparenting.
         if (segment.blend && character.setPoseBlend) character.setPoseBlend(segment.blend.from, segment.blend.to, segment.blend.weight);
@@ -77,6 +128,7 @@ export class NativeRageVfx {
         offset += Math.max(0, segment.consumed || 0);
       }
     } finally {
+      actor.root.rotation.y = saved.facing;
       if (state.blend && character.setPoseBlend) character.setPoseBlend(state.blend.from, state.blend.to, state.blend.weight);
       else if (saved.source != null && saved.frame != null) character.setPoseFrame?.(saved.source, saved.frame);
       else character.setPoseFrame?.(state.source ?? state.pose?.source, state.frame);
@@ -90,10 +142,22 @@ export class NativeRageVfx {
     effect.live=false;effect.time=0;effect.tail=Math.max(RAGE_VFX_ADAPTER.tail,effect.visualEnd);effect.updatedAt=this.time;
     return effect;
   }
+  detachOnDeath(actor,state,fps=30){
+    this.sample(actor,state,fps);
+    const effect=this.actors.get(actor);if(!effect)return;
+    effect.persistAfterDeath=true;this._retire(effect);this.trails.clearActor(actor);
+  }
   _sampleSegment(actor, state, fps, at) {
     const current = this.actors.get(actor), context = state.context;
+    if(state.blend){
+      if(current){current.time+=Math.max(0,state.consumed||0);current.anchorSnapshot=snapshotEffectAnchors(current);}
+      return current||null;
+    }
     const id = String(state.pose?.raw?.fields.effectid || '').toLowerCase();
     if (!this.manifest.effects[id]) {
+      if(current&&Number.isInteger(context?.poseId)&&current.castPoseId===context.poseId&&state.pose?.raw?.fields.effectid===0){
+        current.time+=Math.max(0,state.consumed||0);current.anchorSnapshot=snapshotEffectAnchors(current);return current;
+      }
       if (current) this._retire(current, at - (state.consumed || 0));
       return null;
     }
@@ -111,15 +175,30 @@ export class NativeRageVfx {
     while (this.active.length >= RAGE_VFX_ADAPTER.maxActive) this._remove(this.active[0]);
     const definition = this.manifest.effects[id], group = new THREE.Group(); group.name = `${id} · 怒气技`;
     this.group.add(group);
-    const effect = { ...createEffectTransforms(actor, definition, this.manifest), id, serial: state.serial, group, live: true, tail: 0, visualEnd: 0 };
+    const effect = { ...createEffectTransforms(actor, definition, this.manifest), id, serial: state.serial, castPoseId:state.context?.poseId, group, live: true, tail: 0, visualEnd: 0 };
     for (const node of effect.nodes) {
       const { source } = node; node.mesh = null;
+      // The native +dc display gate must not remove the graph node: hidden
+      // helper shapes still parent other effects and can provide attack bounds.
+      if (source.hidden) continue;
       const particle=definition.particleAdapter && source.type==='PARTICLE';
       if ((!FORMATS.has(source.type) && !particle) || !source.texture) continue;
       const geometry = particle ? new THREE.BufferGeometry().setAttribute('position',new THREE.BufferAttribute(new Float32Array(24),3)) : effectGeometry(source); if (!geometry) continue;
       const material = particle ? new THREE.PointsMaterial({size:.10,transparent:true,opacity:0,blending:THREE.AdditiveBlending,depthWrite:false,depthTest:true,toneMapped:false}) : new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, blending: THREE.AdditiveBlending,
         depthWrite: false, depthTest: true, side: THREE.DoubleSide, toneMapped: false });
       const mesh = node.mesh = particle ? new THREE.Points(geometry,material) : new THREE.Mesh(geometry, material); mesh.name = source.name;
+      node.alphaZeroInvisible = configureNativeEffectBlend(material, source.blend);
+      if (!particle && source.uvSpeed?.some(value => value !== 0)) {
+        node.uvOffset = new THREE.Vector2();
+        // Per-material uniform: keep shared textures/IFL frames immutable and
+        // avoid per-frame vertex-buffer uploads or duplicate GPU textures.
+        material.customProgramCacheKey = () => 'native-effect-uv-scroll-v1';
+        material.onBeforeCompile = shader => {
+          shader.uniforms.nativeUvOffset = { value: node.uvOffset };
+          shader.vertexShader = 'uniform vec2 nativeUvOffset;\n' + shader.vertexShader.replace('#include <uv_vertex>',
+            '#include <uv_vertex>\n#ifdef USE_MAP\n vMapUv += nativeUvOffset;\n#endif');
+        };
+      }
       effect.visualEnd = Math.max(effect.visualEnd, source.keys.at(-1)?.[0] || 0);
       mesh.matrixAutoUpdate = false; mesh.frustumCulled = false; mesh.visible = false; group.add(mesh);
     }
@@ -141,7 +220,7 @@ export class NativeRageVfx {
     const step = Number.isFinite(dt) ? Math.max(0, dt) : 0;
     this.time += step; this.trails.update(step);
     for (const effect of [...this.active]) {
-      if (effect.actor.dead || effect.actor.disposed || effect.actor.scriptRemoved || effect.live && effect.actor.combat?.reacting) { this._remove(effect); continue; }
+      if (effect.actor.dead&&!effect.persistAfterDeath || effect.actor.disposed || effect.actor.scriptRemoved || effect.live && effect.actor.combat?.reacting) { this._remove(effect); continue; }
       if (!effect.live) {
         const elapsed = Math.max(0, this.time - effect.updatedAt); effect.updatedAt = this.time;
         effect.time += elapsed; effect.tail -= elapsed;
@@ -167,9 +246,17 @@ export class NativeRageVfx {
           mesh.matrix.compose(p, camera.quaternion, s);
         }
         mesh.material.map = texture;
+        if (node.uvOffset) {
+          // 00582460 accumulates UV only while the node is active. The Web
+          // adapter integrates that interval continuously; 00585130 instead
+          // applies sphere U at float32(.4)*effect age, V at effect age.
+          const age = source.type === 'SPHERE' ? effect.time : Math.max(0, effect.time - keys[0][0]);
+          const uGain = source.type === 'SPHERE' ? Math.fround(.4) : 1;
+          node.uvOffset.set((source.uvSpeed[0] * age * uGain) % 1, (source.uvSpeed[1] * age) % 1);
+        }
         mesh.material.color.setRGB(...node.key.slice(11, 14).map(v => THREE.MathUtils.clamp(v, 0, 1) * RAGE_VFX_ADAPTER.colorGain));
         mesh.material.opacity = THREE.MathUtils.clamp(node.key[24], 0, 1) * RAGE_VFX_ADAPTER.brightness;
-        mesh.visible = mesh.material.opacity > .001;
+        mesh.visible = !node.alphaZeroInvisible || mesh.material.opacity > .001;
       }
     }
   }
@@ -179,8 +266,8 @@ export class NativeRageVfx {
     effect.group.removeFromParent();
     for (const node of effect.nodes) if (node.mesh) { node.mesh.geometry.dispose(); node.mesh.material.dispose(); }
   }
-  clearActor(actor) { for (const effect of [...this.active]) if (effect.actor === actor) this._remove(effect); this.trails.clearActor(actor); }
-  clear() { for (const effect of [...this.active]) this._remove(effect); this.trails.clear(); }
+  clearActor(actor) { for (const effect of [...this.active]) if (effect.actor === actor) this._remove(effect); this.trails.clearActor(actor);this.deathCasts.delete(actor); }
+  clear() { for (const effect of [...this.active]) this._remove(effect); this.trails.clear();this.deathCasts=new WeakMap(); }
   dispose() {
     if (this.disposed) return; this.clear(); this.group.removeFromParent(); this.trails.dispose();
     for (const texture of new Set(this.textures.values())) texture.dispose(); this.textures.clear(); this.disposed = true;

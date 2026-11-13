@@ -3,6 +3,7 @@
 // Evidence: work/meteor-original/evidence/E-native-combat.md.
 const BLOCK_TYPES = new Set(['pose', 'blend', 'action', 'attack', 'drag', 'nextpose']);
 import { NATIVE_MOVE_CATALOG } from './native-move-catalog.js';
+import {nativeTeamMask} from './native-teams.js';
 const scalar = value => /^[-+]?\d+(?:\.\d*)?(?:e[-+]?\d+)?$/i.test(value) ? Number(value) : value;
 const values = text => [...text.matchAll(/"([^"]*)"|([-+]?\d+(?:\.\d*)?(?:e[-+]?\d+)?|[^\s,=]+)/gi)].map(m => m[1] ?? scalar(m[2]));
 const includes = (block, frame) => frame >= block.start && frame < block.end + 1;
@@ -133,7 +134,7 @@ export const NATIVE_WEAPONS = Object.freeze({
   hammer: { weaponId: 9, model: 'w4_0', stance: 9, guard: 19, basic: [315], air: [338], special: [325, 566, 567], family: [315, 328] },
   knuckle: { weaponId: 51, model: 'w10_0r', stance: 400, guard: 480, basic: [407, 408, 409], air: [405, 406], special: [416, 421, 489], family: [405, 426] },
   qiankun: { weaponId: 47, model: 'w9_0r', stance: 401, guard: 481, basic: [432, 433, 434], air: [458], special: [451, 568, 570], family: [430, 456],
-    modes: { blade: { stance: 401, basic: [432, 433, 434] }, spear: { stance: 402, basic: [442] }, sheath: { stance: 403, basic: [520, 521] } } },
+    modes: { blade: { stance: 401, basic: [432, 433, 434] }, spear: { stance: 402, basic: [442] }, sheath: { stance: 403, basic: [520, 521, 523] } } },
   ninja: { weaponId: 55, model: 'w11_0', stance: 404, guard: 482, basic: [461, 462], air: [478, 479], special: [468, 473, 474, 535, 540], family: [461, 479] }
 });
 export const NATIVE_LOCOMOTION = Object.freeze({ idle: 0, walk: 140, run: 144, jumpStart: 151, jumpAir: 152, fall: 180, hit: 90, dead: 117 });
@@ -229,7 +230,7 @@ export function createNativeDamageResolver(data) {
     const weapon = actor => actor.weaponRecord || data.weaponRecords.get(NATIVE_WEAPONS[actor.weapon]?.model);
     const attack = nativeEffectiveStat(3, attacker.nativeStats?.[3] ?? 0, [weapon(attacker), ...(attacker.activeItems || [])]);
     const defense = nativeEffectiveStat(4, target.nativeStats?.[4] ?? 0, [weapon(target), ...(target.activeItems || [])]);
-    const sameTeam = ((attacker.teamMask ?? (attacker.hero ? 1 : 2)) & (target.teamMask ?? (target.hero ? 1 : 2))) !== 0;
+    const sameTeam = (nativeTeamMask(attacker,attacker.hero?1:2)&nativeTeamMask(target,target.hero?1:2))!==0;
     context.nativeResult = calculateNativeDamage({ attack, defense, moveRecord, factor: sameTeam ? .2 : 1, guarded, sameTeam });
     return context.nativeResult.damage;
   };
@@ -301,6 +302,22 @@ export class NativePoseTimeline {
   get canCancel() { return this.pose.cancels.some(w => includes(w, this.frame)); }
 }
 
+// Sample only authored frames actually crossed inside this POS attack window.
+// Sparse fixed ticks must not test just the last pose of a fast weapon swing.
+export function nativeAttackFrames(state,attack){
+  const frames=new Set(),intervals=state.frameIntervals||[];
+  if(!intervals.length)return includes(attack,state.frame)?[Math.min(state.frame,attack.end)]:[];
+  for(const interval of intervals){
+    // POS end is an inclusive source-frame number, valid until end+1.
+    if(interval.to<attack.start||interval.from>=attack.end+1)continue;
+    const from=Math.max(attack.start,Math.min(interval.from,attack.end)),to=Math.min(interval.to,attack.end);
+    if(interval.from<=attack.start)frames.add(from);
+    for(let frame=Math.ceil(from);frame<=to;frame++)frames.add(frame);
+    frames.add(to);
+  }
+  return [...frames];
+}
+
 export class NativeCombatController {
   constructor(data, { weapon = 'sword', fps = 30, sampleRoot = null, scale = .08 } = {}) {
     this.data = data; this.weapon = weapon; this.fps = fps; this.sampleRoot = sampleRoot; this.scale = scale;
@@ -333,16 +350,37 @@ export class NativeCombatController {
     for (let candidate = Math.ceil(armed - 1e-6); candidate < pose.end; candidate++) if (this.timeline.isBlendFrame(candidate)) return candidate;
     return pose.end;
   }
-  _canCancelFor(request) { return !this._transition && this.timeline.frame >= request.transitionFrame - 1e-6; }
+  _acceptFrame(){
+    const {pose,frame}=this.timeline;
+    return this.timeline.canCancel?frame:pose.cancels.find(window=>window.start>frame)?.start??pose.end;
+  }
+  _acceptRequest(request){
+    if(request.accepted)return true;
+    if(request.canStart?.(request.context)===false)return false;
+    request.accepted=true;request.onAccept?.(request.context);return true;
+  }
+  _acceptQueued(){
+    const request=this._queuedRequest;
+    if(request&&!request.accepted&&request.waitForPose==null&&this.timeline.frame>=request.acceptFrame-1e-6)this._acceptRequest(request);
+  }
+  _canCancelFor(request) {
+    if(request.waitForPose!=null){
+      if(this.timeline.pose.id!==request.waitForPose)return false;
+      request.waitForPose=null;request.transitionFrame=this._queueFrame();request.acceptFrame=this._acceptFrame();
+      if(request.acceptFrame<=this.timeline.frame+1e-6)this._acceptRequest(request);
+    }
+    return !this._transition && this.timeline.frame >= request.transitionFrame - 1e-6;
+  }
   _start(request, { linked = false } = {}) {
     const pose = this.data.poses.get(request.id); if (!pose?.valid) return false;
     // Queued requests reserve no resource. Re-check and pay only when the
     // requested pose actually starts; automatic POS links pay no second cost.
-    if (!linked && (request.canStart?.(request.context) === false || request.onStart?.(request.context) === false)) return false;
+    if (!linked && (request.canStart?.(request.context) === false || !this._acceptRequest(request) || request.onStart?.(request.context) === false)) return false;
     this.timeline = new NativePoseTimeline(pose, { fps: this.fps, loop: request.loop, sampleRoot: this.sampleRoot, scale: this.scale, frameTable: this.frameTable });
     this._effectElapsed = 0;
     this._transition = null;
-    this.serial++; this.queued = null; this._queuedRequest = null;
+    const deferred=linked&&this._queuedRequest?.waitForPose!=null?this._queuedRequest:null;
+    this.serial++; this.queued = deferred?.id??null; this._queuedRequest = deferred;
     if (!linked) {
       this._reaction = null;
       this._activeMove = request.context ?? null;
@@ -363,10 +401,10 @@ export class NativeCombatController {
     if (from && duration > 0) this._transition = { from, to: { source: this.timeline.pose.source, frame: this.timeline.frame, poseId: request.id }, duration, elapsed: 0 };
     return true;
   }
-  play(id, { loop = false, force = false, context = null, canStart = null, onStart = null, attack = false, motion = false } = {}) {
+  play(id, { loop = false, force = false, context = null, canStart = null, onAccept = null, onStart = null, attack = false, motion = false } = {}) {
     const pose = this.data.poses.get(id); if (!pose?.valid) return false;
     if (!force && this.reacting) return false;
-    const request = { id, loop, context, canStart, onStart, attack, motion };
+    const request = { id, loop, context, canStart, onAccept, onStart, attack, motion };
     // 004cbf10 enters controller state6;004cff40 explicitly accepts attacks
     // from state6. This is a locomotion interrupt, not an invented ACT link.
     if(!force&&attack&&this._motionChain&&this._activeMove?.kind==='dash')return this._start(request);
@@ -376,10 +414,34 @@ export class NativeCombatController {
       // 340 can still receive the second air strike 261). No link is invented.
       const recovery = !current.attacks.length && Number.isFinite(current.loopStart);
       const from = recovery && !this.data.actions.links.has(current.id) ? this._inputPose : current.id;
-      const resolved = this.data.actions.resolveTransition ? this.data.actions.resolveTransition(from, id) : this.data.actions.canLink(from, id) ? id : null;
+      let resolved = this.data.actions.resolveTransition ? this.data.actions.resolveTransition(from, id) : this.data.actions.canLink(from, id) ? id : null;
+      // A listed continuation may become legal only after an automatic
+      // wind-up link (521→522, then ACT→523). Keep one command until that
+      // authored phase; never cancel or skip the intervening animation.
+      if(resolved==null&&attack&&context?.continuationOf?.includes(this._inputPose)){
+        let future=current;const visited=new Set();
+        while(future&&!future.attacks.length&&future.link!=null&&!visited.has(future.id)){
+          visited.add(future.id);future=this.data.poses.get(future.link);
+          if(future&&this.data.actions.resolveTransition?.(future.id,id)===id){resolved=id;request.waitForPose=future.id;break;}
+        }
+      }
       if (resolved == null) return false;
       request.id = resolved;
-      request.transitionFrame = recovery ? this.timeline.frame : this._queueFrame();
+      const queued=this._queuedRequest;
+      if(attack&&queued?.attack){
+        // A single accepted command slot: repeat clicks acknowledge the same
+        // request without moving its original transition frame. Plain attack
+        // spam must not erase a deliberate directional/rage command.
+        const same=request.id===queued.id&&request.context?.poseId===queued.context?.poseId;
+        const deliberate=move=>!!move&&(move.input?.length>1||(move.rage||0)>0);
+        if(same||deliberate(queued.context)&&!deliberate(request.context))return true;
+        // 0055d130 clears model+620 on acceptance. State2 owns its one
+        // destination until the compiled switch; later input cannot replace it.
+        if(queued.accepted)return false;
+      }
+      request.transitionFrame = request.waitForPose!=null?Infinity:recovery ? this.timeline.frame : this._queueFrame();
+      request.acceptFrame=request.waitForPose!=null?Infinity:recovery?this.timeline.frame:this._acceptFrame();
+      if(request.acceptFrame<=this.timeline.frame+1e-6)this._acceptRequest(request);
       if (!this._canCancelFor(request)) { this.queued = request.id; this._queuedRequest = request; return true; }
       return this._startTransition(request);
     }
@@ -401,8 +463,8 @@ export class NativeCombatController {
     if (from) this._transition = { from, to: { source: pose.source, frame: pose.start, poseId: id }, duration: blendTime, elapsed: 0 };
     return true;
   }
-  attack({ air = false, poseId = null, context = null, canStart = null, onStart = null } = {}) {
-    const options = { attack: true, context, canStart, onStart };
+  attack({ air = false, poseId = null, context = null, canStart = null, onAccept = null, onStart = null } = {}) {
+    const options = { attack: true, context, canStart, onAccept, onStart };
     if (poseId != null) return this.play(poseId, options);
     const profile = NATIVE_WEAPONS[this.weapon];
     const sequence = air ? profile.air : profile.modes?.[this.weaponMode]?.basic || profile.basic;
@@ -411,7 +473,7 @@ export class NativeCombatController {
     if (this.timeline && !this.timeline.finished && index === sequence.length - 1 && !this.data.actions.canLink(current, next)) return false;
     return this.play(next, options);
   }
-  update(dt, { grounded, projectileReady = true } = {}) {
+  update(dt, { grounded, projectileReady = true, getFacing = null } = {}) {
     if (!this.timeline) return null;
     let remaining = Math.max(0, dt), state = null; const segments = [];
     for (let transitions = 0; transitions < 128; transitions++) {
@@ -423,7 +485,7 @@ export class NativeCombatController {
           serial: this.serial, combo: this.combo, context: this._activeMove, attacks: [], drags: [], cancel: false, finished: false,
           rootDelta: { x: 0, y: 0, z: 0 }, consumed, remaining,
           blend: { from: blend.from, to: blend.to, weight: Math.min(1, blend.elapsed / blend.duration), duration: blend.duration } };
-        this._stampEffectTime(state); segments.push(state);
+        if(getFacing)state.facing=getFacing();this._stampEffectTime(state); segments.push(state);
         if (blend.elapsed < blend.duration - 1e-7) break;
         this._transition = null;
         if (remaining <= 1e-7) break;
@@ -437,7 +499,7 @@ export class NativeCombatController {
         if (this._reaction.holdRemaining <= 1e-7) {
           if (waiting > 0) {
             state = { ...timeline.advance(waiting), serial: this.serial, combo: this.combo, pose, context: this._activeMove, authoredMotionScale: 1 };
-            this._stampEffectTime(state); segments.push(state); remaining -= waiting;
+            if(getFacing)state.facing=getFacing();this._stampEffectTime(state); segments.push(state); remaining -= waiting;
           }
           this._reaction.phase = 'recover';
           if (this._start({ id: NATIVE_REACTION_ADAPTER.recover[pose.id], loop: false }, { linked: true })) continue;
@@ -453,25 +515,29 @@ export class NativeCombatController {
       if (this.weapon === 'wheel' && pose.id === 219) timeline.loop = !projectileReady;
       const timedReaction = ['hit', 'guard'].includes(this._reaction?.phase) && Number.isFinite(pose.loopStart) && Number.isFinite(pose.loopEnd);
       if (timedReaction) timeline.loop = this._reaction.remainingDuration > 1e-7;
-      if (this._queuedRequest && (this._canCancelFor(this._queuedRequest) || timeline.finished)) {
+      this._acceptQueued();
+      if (this._queuedRequest && (this._canCancelFor(this._queuedRequest) || timeline.finished&&this._queuedRequest.waitForPose==null)) {
         const request = this._queuedRequest; this._queuedRequest = null; this.queued = null;
         if (this._startTransition(request)) continue;
       }
       let stopAtFrame = Infinity;
       if (this._queuedRequest && this._queuedRequest.transitionFrame > timeline.frame) stopAtFrame = this._queuedRequest.transitionFrame;
+      if(this._queuedRequest&&!this._queuedRequest.accepted&&this._queuedRequest.acceptFrame>timeline.frame)stopAtFrame=Math.min(stopAtFrame,this._queuedRequest.acceptFrame);
       const step = timedReaction && this._reaction.remainingDuration > 1e-7 ? Math.min(remaining, this._reaction.remainingDuration) : remaining;
       state = { ...timeline.advance(step, { stopAtFrame }), serial: this.serial, combo: this.combo, pose, context: this._activeMove,
         authoredMotionScale: this._reaction ? ['hit', 'guard'].includes(this._reaction.phase) ? this._reaction.motionScale : 1 : (this._attackChain || this._motionChain) ? 1 : null };
       remaining -= state.consumed;
       if (timedReaction) this._reaction.remainingDuration = Math.max(0, this._reaction.remainingDuration - state.consumed);
-      this._stampEffectTime(state); segments.push(state);
-      if (this._queuedRequest && (this._canCancelFor(this._queuedRequest) || timeline.finished)) {
+      if(getFacing)state.facing=getFacing();this._stampEffectTime(state); segments.push(state);
+      this._acceptQueued();
+      if (this._queuedRequest && (this._canCancelFor(this._queuedRequest) || timeline.finished&&this._queuedRequest.waitForPose==null)) {
         const request = this._queuedRequest; this._queuedRequest = null; this.queued = null;
         if (this._startTransition(request)) continue;
       }
       if (timeline.finished && pose.link != null) {
         if (this._startTransition({ id: pose.link, loop: pose.link === NATIVE_LOCOMOTION.fall && grounded === false }, { linked: true })) continue;
       }
+      if(remaining>1e-7&&this._queuedRequest&&timeline.frame<this._queuedRequest.transitionFrame-1e-6)continue;
       if (timedReaction && remaining > 1e-7 && this._reaction.remainingDuration <= 1e-7 && !timeline.finished) continue;
       break;
     }
@@ -482,7 +548,9 @@ export class NativeCombatController {
   }
   _stampEffectTime(state) {
     state.previousEffectTime = this._effectElapsed;
-    this._effectElapsed += Math.max(0, state.consumed || 0);
+    // 0055d560 creates the new POS effects only after crossfade completes.
+    // Existing effects age independently; the target effect is not born yet.
+    if(!state.blend)this._effectElapsed += Math.max(0, state.consumed || 0);
     state.effectTime = this._effectElapsed;
   }
   get attacking() { return !!this.timeline && !this.timeline.finished && this.timeline.pose.attacks.length > 0; }

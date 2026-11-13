@@ -1,3 +1,4 @@
+import {NATIVE_AIR_PHYSICS} from '../dist/native-traversal.js';
 import test, { after } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -27,7 +28,7 @@ async function fixture(itemId = 13, distance = 1.1) {
   const floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.MeshBasicMaterial({ side: THREE.DoubleSide })); floor.rotation.x = -Math.PI / 2; floor.updateMatrixWorld(true);
   Object.assign(game, { combatData: combat, weaponManifest: weapons,
     weaponItems: new Map(weapons.items.map(item => [Number(item.itemId), item])), weaponModels: new Map(weapons.models.map(model => [model.modelId.toLowerCase(), model])), weaponCache: new Map(),
-    scene: new THREE.Scene(), camera: new THREE.PerspectiveCamera(), raycaster: new THREE.Raycaster(), hostPhysics: { speed: 8, gravity: 34, jumpVelocity: 12, radius: .4, step: .55 },
+    scene: new THREE.Scene(), camera: new THREE.PerspectiveCamera(), raycaster: new THREE.Raycaster(), hostPhysics: { speed: 8, gravity: NATIVE_AIR_PHYSICS.gravity, jumpVelocity: NATIVE_AIR_PHYSICS.jumpVelocity, radius: .4, step: .55 },
     currentMap: { colliders: [floor], bounds: new THREE.Box3(v(-100, -1, -100), v(100, 30, 100)), metadata: {}, spawns: [{ position: v(0, .015, 0) }] },
     weapon: 'sword', actorSerial: 0, enemies: [], keys: new Set(), directionBuffer: [], cameraAngle: 0, running: true, paused: false, mode: 'training', elapsed: 0, matchElapsed: 0,
     kills: 0, deaths: 0, totalDamage: 0, contactHits: 0, onEvent: event => events.push(event), onUpdate() {}, _nameplate() {}, _unlockAudio() {}, _soundDefinition: name => sounds.push(name), _hud() {},
@@ -100,7 +101,7 @@ test('mission weapon profiles keep plain-A separate from the authored directiona
 test('ordinary jump and attack inputs render the original dual, hammer and knuckle air poses and return to their source stances', async () => {
   for (const [item, family, first] of [[13, 'dual', 226], [18, 'hammer', 338], [51, 'knuckle', 405]]) {
     const { game, hero } = await fixture(item);
-    game.action('jump'); game.action('attack'); assert.equal(hero.combat.timeline.pose.id, first);
+    game.action('jump');game.action('jump',false); game.action('attack'); assert.equal(hero.combat.timeline.pose.id, first);
     let displayed = false;
     for (let frame = 0; frame < 360; frame++) {
       tick(game);

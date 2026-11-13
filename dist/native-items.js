@@ -8,7 +8,7 @@ export const NATIVE_ITEM_PICKUP_PROFILE = Object.freeze({
     effect: 'Meteor.res type2/id1 Item01 肉包: stat2 mode0 value300, valueOffset53204; 004d4d30 clamps current HP to 0..effective maxHP.',
     interaction: 'Browser adapter: grounded automatic proximity pickup plus optional manual assist, horizontal radius1.8 world units, vertical tolerance2; exact EXE range/state gates remain unverified.',
     fullHp: 'Browser adapter: keep positive immediate HP/rage items when that resource is full; original full-HP consumption and item respawn timing remain unverified.',
-    scope: 'Verified world RES records1/2/3/4/5/8/16/17/18/27/28/29/30/31 and available original weapon-manifest records. Unsupported effects remain unconsumed; no automatic respawn.'
+    scope: 'Verified world RES records1/2/3/4/5/7/8/16/17/18/27/28/29/30/31 and available original weapon-manifest records. Unsupported effects remain unconsumed; no automatic respawn.'
   })
 });
 
@@ -29,15 +29,18 @@ export const NATIVE_SCRIPT_ITEM_PROVENANCE = Object.freeze({
   values: 'Original Meteor.res type2/id4 attack+25 for600/10 seconds; id11 HP-10 every3 seconds for150/10 seconds; id12 HP-10 every2 seconds for600/10 seconds; id14 HP-10 every5 seconds for99999/10 seconds; id15 immediate HP+5000; id19 attack+150 and id20 maxHP+6999 for99999/10 seconds; id22 immediate rage-20.',
   native: 'Meteor.exe 004d59d0 duplicate refresh, 004d5020 duration/rate, 004d4e30 period*10 with float10 at005a84ac; 004d4d30 clamps HP/stat2 to maxHP/stat1 and rage/stat6 to maxRage/stat7. 004d4a70 initializes stat7 to100.',
   attack: '004af630 applies type3 parameter16 only after HP damage and victim rage gain, on an unguarded surviving target; 004d5fc0 resolves the type2 record, server004afcf0 applies it through004d59d0.',
-  self: '004cff40 saves type3 parameter18 at controller+524;004ce3d0/004f1920 gates its deferred004f0c10 message2a. Web adapter applies it once on the completed source casting pose; the native manager+210 trigger phase is not reproduced.',
-  rageSkills: 'Original type2/id34 attack+40 for900/10 seconds; id40 defense+20 for1200/10 seconds; id37 immediate rage-5; id13 stat5 mode1 value30 for600/10 seconds. Stat5 scales Web movement using a100-point basis; exact native movement/network consumer remains unverified.',
+  self: '004cff30 saves type3 parameter18 at controller+524 and flushes it on an accepted ACT request in state2;004ce410 passes2 to004dc8c0 for End-floor(frame)<2. Web applies it once at that final-frame gate or the accepted original cancel window, never on early input buffering alone; the native manager+210 message scheduling is not reproduced.',
+  rageSkills: 'Original type2/id21 immediate rage-10; id41 stat5 mode1 value150 for900/10 seconds; id34 attack+40 for900/10 seconds; id40 defense+20 for1200/10 seconds; id37 immediate rage-5; id13 stat5 mode1 value30 for600/10 seconds. Actor004efb00 message26 queries stat5;004cd3a0 scales ordinary-air acceleration and speed gate by nonzero stat5×.01. Ground stride calibration and network scheduling remain Web adapters.',
   timing: '004b1e16 server and0048af49 client pass float32(.2). Each step expires before applying periodic effects;004d4e30 tests the old integer counter before adding trunc(counter+10*dt), applies at most once and resets to0. Web elapsed frames bridge to this source cadence; original wall-clock phase/network scheduling remain unverified.',
   maxHp: '004d5e30 stat1 adds the active modifier; removal restores maxHP without an invented immediate current-HP adjustment. 004d4d30 clamps the next HP adjustment.',
-  pending: 'id7 stat10+1 for600/10 seconds is not implemented until its native consumer is recovered; none of ids4/7/14/15/19/20 is an immediate rage effect. Poison removal is not inferred from item names.',
+  invisibility: 'Stat10: item7 for60s, item36 for120s;004c0020 serializes it,004fc980 rejects discovery,0048aeb0 invokes005591b0 with model default alpha0.1. Cached enemy retention remains independent.',
+  pending: 'None of ids4/7/14/15/19/20 is an immediate rage effect. Poison removal is not inferred from item names.',
   visuals: 'Original item EF presentation is pending; HUD status identifies the applied gameplay effect.'
 });
 
 const scriptItemSpecs = new Map([
+  [7, { statKey:10,value:1,lifetime:600,rate:10,effectType:-1,period:0,kind:'modifier' }],
+  [36, { statKey:10,value:1,lifetime:1200,rate:10,effectType:-1,period:0,kind:'modifier' }],
   [10, { statKey:5,mode:1,value:50,lifetime:150,rate:10,effectType:-1,period:0,kind:'modifier' }],
   [2, { statKey:1,value:500,lifetime:6000,rate:10,effectType:-1,period:0,kind:'modifier' }],
   [3, { statKey:4,value:20,lifetime:900,rate:10,effectType:-1,period:0,kind:'modifier' }],
@@ -59,9 +62,12 @@ const scriptItemSpecs = new Map([
   [15, { statKey: 2, value: 5000, lifetime: 0, rate: 0, effectType: 0, period: 0, kind: 'immediate' }],
   [19, { statKey: 3, value: 150, lifetime: 99999, rate: 10, effectType: -1, period: 0, kind: 'modifier' }],
   [20, { statKey: 1, value: 6999, lifetime: 99999, rate: 10, effectType: -1, period: 0, kind: 'modifier' }],
+  [21, { statKey: 6, value: -10, lifetime: 0, rate: 0, effectType: 0, period: 0, kind: 'immediate' }],
+  [41, { statKey: 5, mode: 1, value: 150, lifetime: 900, rate: 10, effectType: -1, period: 0, kind: 'modifier' }],
   [22, { statKey: 6, value: -20, lifetime: 0, rate: 0, effectType: 0, period: 0, kind: 'immediate' }],
   [34, { statKey: 3, value: 40, lifetime: 900, rate: 10, effectType: -1, period: 0, kind: 'modifier' }],
   [37, { statKey: 6, value: -5, lifetime: 0, rate: 0, effectType: 0, period: 0, kind: 'immediate' }],
+  [35, { statKey: 2, value: -99999, lifetime: 0, rate: 0, effectType: 0, period: 0, kind: 'immediate' }],
   [40, { statKey: 4, value: 20, lifetime: 1200, rate: 10, effectType: -1, period: 0, kind: 'modifier' }]
 ]);
 const maxHpBeforeScriptItems = new WeakMap();
@@ -82,11 +88,23 @@ export function nativeRageMaximum(actor) {
   return nativeEffectiveStat(7, actor.nativeStats?.[7] ?? 100, [actor.weaponRecord, ...(actor.activeItems || [])]);
 }
 
+export function nativeIsInvisible(actor) {
+  if(!actor)return false;
+  if(actor.networkItemStatuses)return actor.networkItemStatuses.some(item=>item.statKey===10&&item.value!==0&&item.remaining>0);
+  return nativeEffectiveStat(10,actor.nativeStats?.[10]??0,[actor.weaponRecord,...(actor.activeItems||[])])!==0;
+}
+
 // Apply original weapon and active-item stat5 modifiers once to the host's
 // unmodified stride baseline, preserving native additive integer arithmetic.
 export function nativeMovementScale(actor) {
   const basis = actor.nativeStats?.[5] ?? 100;
   return basis > 0 ? nativeEffectiveStat(5, basis, [actor.weaponRecord,...(actor.activeItems || [])]) / basis : 1;
+}
+// Controller message26 reaches actor004efb00 case0x1a, querying stat5;
+// 004cd49b uses nonzero returned integer×.01, otherwise leaves default1.
+export function nativeAirMovementScale(actor){
+  const value=nativeEffectiveStat(5,actor.nativeStats?.[5]??100,[actor.weaponRecord,...(actor.activeItems||[])]);
+  return value===0?1:value/100;
 }
 
 function syncScriptMaxHp(actor) {
@@ -180,15 +198,15 @@ export function nativeMeatbunEffect(record) {
   return { itemId: record.id, name: record.name, model: normalizedModel(record.model), heal: effect.value, recordOffset: record.offset, valueOffset: effect.valueOffset };
 }
 
-const worldItemIds=new Set([2,3,4,5,8,16,17,18,27,28,29,30,31]);
+const worldItemIds=new Set([2,3,4,5,7,8,16,17,18,27,28,29,30,31]);
 export function nativeWorldItemEffect(record){
   const bun=nativeMeatbunEffect(record);
   if(bun)return {...bun,record,kind:'immediate',statKey:2,value:bun.heal,duration:0,description:`气血 +${bun.heal}`};
   if(!worldItemIds.has(record?.id)||!/^item\d+$/i.test(normalizedModel(record.model)))return null;
   const effect=nativeScriptItemEffect(record);if(!effect)return null;
   const heal=effect.kind==='immediate'&&effect.statKey===2&&effect.value>0?effect.value:0;
-  const stat={1:'气血上限',2:'气血',3:'攻击',4:'防御',5:'移速',6:'怒气'}[effect.statKey];
-  const value=effect.statKey===5?`${effect.value}%`:`${effect.value>0?'+':''}${effect.value}`;
+  const stat={1:'气血上限',2:'气血',3:'攻击',4:'防御',5:'移速',6:'怒气',10:'隐身'}[effect.statKey];
+  const value=effect.statKey===10?'生效':effect.statKey===5?`${effect.value}%`:`${effect.value>0?'+':''}${effect.value}`;
   const description=effect.period?`每${effect.period}秒${stat} ${value} · ${effect.duration}秒`:`${stat} ${value}${effect.duration?` · ${effect.duration}秒`:''}`;
   return {...effect,itemId:record.id,model:normalizedModel(record.model),heal,recordOffset:record.offset,valueOffset:record.effects[0].valueOffset,description};
 }

@@ -1,3 +1,4 @@
+import {NATIVE_AIR_PHYSICS} from '../dist/native-traversal.js';
 import test, { after } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -32,6 +33,12 @@ test('native nearby awareness is omnidirectional but never bypasses range or an 
   actor.scriptConfig.View = 400; assert.equal(nativeCanDiscover(actor, target, () => false), false);
 });
 
+test('NPC不把重叠阵营掩码的角色当敌人，已锁定目标转为同伴时立即丢弃',()=>{
+  const actor=observer(),target=enemy(v(0,0,5));assert.equal(findNativeEnemy(actor,[target],()=>true),target);
+  target.teamMask=3;assert.equal(nativeCanDiscover(actor,target,()=>true),false);assert.equal(findNativeEnemy(actor,[target],()=>false),null);
+  target.teamMask=4;assert.equal(findNativeEnemy(actor,[target],()=>true),target);
+});
+
 test('an unknown actor is not a target; a known nearby enemy is retained and lost at the original200-unit boundary', () => {
   const actor = observer(), target = enemy(v(0, 0, -12));
   assert.equal(findNativeEnemy(actor, [target], () => true), null);
@@ -62,7 +69,7 @@ async function fixture({ originalMap = false } = {}) {
     weaponModels: new Map(weapons.models.map(model => [model.modelId.toLowerCase(), model])), weaponCache: new Map(),
     scene: new THREE.Scene(), camera: new THREE.PerspectiveCamera(), cameraTarget: v(), raycaster: new THREE.Raycaster(),
     effectDefinitions: new Map(), waveFiles: new Map(), effects: [], keys: new Set(), directionBuffer: [],
-    hostPhysics: { speed: 8, gravity: 34, jumpVelocity: 12, radius: .4, step: .55 },
+    hostPhysics: { speed: 8, gravity: NATIVE_AIR_PHYSICS.gravity, jumpVelocity: NATIVE_AIR_PHYSICS.jumpVelocity, radius: .4, step: .55 },
     currentMap: { id: 'sn06', entry: { name: '四方阵' }, metadata: {}, spawns: sourceSpawns, colliders: [floor], bounds: new THREE.Box3(v(-125, -1, -125), v(125, 60, 125)) },
     weapon: 'sword', elapsed: 0, mode: 'training', running: true, paused: false,
     onEvent: event => events.push(event), onUpdate() {}, _nameplate() {}, _unlockAudio() {}, _soundDefinition() {}, _hud() {}, _tickCamera() {} });
@@ -168,7 +175,7 @@ async function opponent(game, weapon, config, random) {
 }
 
 test('NPC source Guard weight drives real guard reactions instead of always restarting a basic attack', async () => {
-  const { game, events } = await fixture(), actor = await opponent(game, 'sword', { Think: 100, Guard: 100, Attack1: 0, Attack2: 0, Attack3: 0 }, () => 0);
+  const { game, events } = await fixture(), actor = await opponent(game, 'sword', { Think: 100, Guard: 100, Attack1: 0, Attack2: 0, Attack3: 0 }, () => 1 / 32768);
   await game._equip(game.hero, 'spear');
   for (let frame = 0; frame < 120 && !actor.guard; frame++) tick(game);
   assert.equal(actor.guard, true);
@@ -178,6 +185,18 @@ test('NPC source Guard weight drives real guard reactions instead of always rest
   assert.ok(hit?.guarded); assert.equal(actor.hp, actor.maxHp);
   assert.ok(events.some(event => event.type === 'npc-decision' && event.kind === 'guard'));
   assert.equal(events.some(event => event.type === 'npc-decision' && event.kind === 'attack'), false);
+});
+
+test('NPC 原防御抽样的蹲守分支使用真实蹲姿，不伪装成格挡或攻击',async()=>{
+  const {game,events}=await fixture(),actor=await opponent(game,'sword',{Think:100,Guard:100,Attack1:0,Attack2:0,Attack3:0},()=>0);
+  for(let frame=0;frame<120&&!actor.npcCombat.crouch;frame++)tick(game);
+  assert.equal(actor.npcCombat.crouch,true);assert.equal(actor.guard,false);
+  tick(game);assert.ok([10,145,146,147,148].includes(actor.combat.timeline.pose.id));
+  assert.ok(events.some(event=>event.type==='npc-decision'&&event.kind==='guard'&&event.defense==='crouch'));
+  assert.equal(events.some(event=>event.type==='npc-decision'&&event.kind==='attack'),false);
+  actor.scriptConfig={Think:100,Guard:0,Attack1:0,Attack2:0,Attack3:0};
+  for(let frame=0;frame<120&&actor.npcCombat.crouch;frame++)tick(game);
+  assert.equal(actor.npcCombat.crouch,false);assert.equal(actor.guard,false);
 });
 
 test('NPC Attack2 chooses the original spear forward program and damages through its real285 pose', async t => {
@@ -190,13 +209,14 @@ test('NPC Attack2 chooses the original spear forward program and damages through
   assert.equal(actor.weapon, 'spear');
 });
 
-test('NPC long commands retain pending and rage gates, then pay once across the original293→294 link', async () => {
+test('NPC long commands use restored buffs and retain rage gates, then pay once across the original293→294 link', async () => {
   const { game, events } = await fixture();
   const stream = (...values) => { let index = 0; return () => (values[Math.min(index++, values.length - 1)] || 0) / 32768; };
   const config = { Think: 100, Guard: 0, Attack1: 0, Attack2: 0, Attack3: 100 };
   const actor = await opponent(game, 'dual', config, stream(0, 0, 0, 1, 3)); actor.rage = 100;
   game._npcCombatAction(actor, game.hero, true, { reach: 10 });
-  assert.ok(events.some(event => event.type === 'npc-decision' && event.poseId === 557 && !event.accepted)); assert.equal(actor.combat.busy, false); assert.equal(actor.rage, 100);
+  assert.ok(events.some(event => event.type === 'npc-decision' && event.poseId === 557 && event.accepted)); assert.equal(actor.combat.busy, true); assert.equal(actor.rage, 0);
+  game._placeFighter(actor,{position:actor.root.position.clone()});
   await game._equip(actor, 'spear'); actor.rage = 0; actor.npcCombat = new NativeNpcCombat(game.combatData.npcAi, { random: stream(0, 0, 0, 1, 7) });
   game._npcCombatAction(actor, game.hero, true, { reach: 10 });
   assert.ok(events.some(event => event.type === 'npc-decision' && event.poseId === 293 && !event.accepted)); assert.equal(actor.combat.busy, false);

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import * as THREE from '../dist/vendor/three.module.js';
-import { NativeItemSystem, nativeMeatbunEffect, NATIVE_ITEM_PICKUP_PROFILE, nativeWorldItemEffect, updateNativeScriptItems, nativeMovementScale } from '../dist/native-items.js';
+import { NativeItemSystem, nativeMeatbunEffect, NATIVE_ITEM_PICKUP_PROFILE, nativeWorldItemEffect, updateNativeScriptItems, nativeMovementScale, nativeAirMovementScale } from '../dist/native-items.js';
 import { nativeEffectiveStat } from '../dist/native-combat.js';
 import { MeteorGame } from '../dist/engine.js';
 import { NativeMissionHost } from '../dist/native-mission-host.js';
@@ -11,6 +11,13 @@ const original = new URL('../dist/assets/original/', import.meta.url);
 const res = JSON.parse(await readFile(new URL('characters/meteor-res-data.json', original), 'utf8'));
 const itemRecords = new Map(res.allRecords.filter(record => record.type === 2).map(record => [record.id, record]));
 const actor = (hp = 1000) => ({ hp, maxHp: 1500, root: new THREE.Group() });
+
+test('空中移动读取原stat5百分比，包括非默认基值和零值回退',()=>{
+  assert.equal(nativeAirMovementScale({}),1);assert.equal(nativeAirMovementScale({nativeStats:{5:120}}),1.2);
+  assert.equal(nativeAirMovementScale({nativeStats:{5:0}}),1);
+  const hero=actor(),{system}=fixture([item('speed',itemRecords.get(5).model)]);assert.equal(system.tryPickup(hero).ok,true);
+  assert.equal(nativeAirMovementScale(hero),nativeEffectiveStat(5,100,hero.activeItems)/100);
+});
 function item(name = 'actual-item', model = '"Item01"') {
   return { name, source: { properties: { model } }, root: new THREE.Group(), attributes: { active: 1, interactive: 1, collision: 1 },
     setActive(value) { this.attributes.active = Number(value); this.root.visible = value; }, setCollision(value) { this.attributes.collision = Number(value); } };
@@ -55,9 +62,10 @@ test('hidden, noninteractive, distant, vertically separate, blocked and dead-pla
 });
 
 test('source model identity controls effects; names and arbitrary health-item models cannot grant meatbun healing', () => {
-  const { system } = fixture([item('Item01', '"Item02"'), item('肉包', '"Item07"'), item('Item01', '')]);
+  const seven=item('肉包','"Item07"');seven.root.position.x=1;
+  const { system } = fixture([item('Item01', '"Item02"'), seven, item('Item01', '')]);
   const hero=actor(),result=system.tryPickup(hero);assert.equal(result.ok,true);assert.equal(result.itemId,2);assert.equal(result.healed,0);assert.equal(hero.hp,1000);assert.equal(hero.maxHp,2000);
-  assert.equal(system.tryPickup(hero).ok,false,'unsupported Item07 cannot become a heal merely by its display name');
+  const stealth=system.tryPickup(hero);assert.equal(stealth.ok,true);assert.equal(stealth.itemId,7);assert.equal(stealth.healed,0);assert.equal(hero.hp,1000);assert.equal(hero.scriptItems.at(-1).statKey,10);
 });
 
 test('ground pickups apply native attack, defense and movement modifiers even at full HP and expire',()=>{
@@ -80,7 +88,7 @@ test('world buff duplicate refreshes without stacking and source poison buns act
   const poison=fixture([item('poison','Item0103')]);assert.equal(poison.system.tryPickup(hero).itemId,18);updateNativeScriptItems(hero,5.2);assert.equal(hero.hp,990);
 });
 test('unsupported effects stay unconsumed and full HP buns do not block a nearby usable buff',()=>{
-  for(const id of [6,7,9,32,33,39])assert.equal(nativeWorldItemEffect(itemRecords.get(id)),null);
+  for(const id of [6,9,32,33,39])assert.equal(nativeWorldItemEffect(itemRecords.get(id)),null);
   const {system,instances}=fixture([item('bun','Item01'),item('buff','Item03')]),hero=actor(1500);instances[1].root.position.x=1;
   assert.equal(system.tryPickup(hero).itemId,3);assert.equal(instances[0].attributes.active,1);
   const changed=structuredClone(itemRecords.get(3));changed.effects[0].words[6]=999;assert.equal(nativeWorldItemEffect(changed),null);

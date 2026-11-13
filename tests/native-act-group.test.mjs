@@ -8,6 +8,33 @@ const data = { poses: parsePos(decodeNativeText(await readFile(new URL('P0.POS',
   actions: parseAct(decodeNativeText(await readFile(new URL('character.act', root)))) };
 const { poses, actions } = data;
 
+test('原接招窗先接受命令，编译切换帧再起招，重复确认不重复接受',()=>{
+  const combat=new NativeCombatController(data,{weapon:'sword'}),events=[];
+  combat.attack({poseId:262});
+  const context={id:'接招',poseId:263};
+  const options={poseId:263,context,onAccept:()=>events.push({kind:'accept',pose:combat.timeline.pose.id,frame:combat.timeline.frame}),onStart:()=>events.push({kind:'start'})};
+  combat.attack(options);const request=combat._queuedRequest;
+  assert.equal(request.acceptFrame,9767);assert.equal(request.transitionFrame,9777);assert.deepEqual(events,[]);
+  for(let i=0;i<100&&!events.length;i++)combat.update(1/120,{grounded:true});
+  assert.deepEqual(events,[{kind:'accept',pose:262,frame:9767}]);assert.equal(combat.timeline.pose.id,262);
+  combat.attack(options);combat.attack(options);assert.equal(events.length,1);
+  assert.equal(combat.attack({poseId:264,context:{poseId:264},onAccept:()=>events.push({kind:'replaced'})}),false);
+  assert.equal(combat._queuedRequest,request);
+  for(let i=0;i<100&&!events.some(e=>e.kind==='start');i++)combat.update(1/120,{grounded:true});
+  assert.deepEqual(events.map(e=>e.kind),['accept','start']);assert.equal(combat.timeline.pose.id,263);
+  combat.update(5,{grounded:true});assert.equal(events.filter(e=>e.kind==='accept').length,1);
+});
+
+test('命令接受后被受击打断不会起招，接受前失去资源不触发接受回调',()=>{
+  for(const interrupted of [false,true]){
+    const combat=new NativeCombatController(data,{weapon:'sword'});let accepts=0,starts=0,rage=100;
+    combat.attack({poseId:262});combat.attack({poseId:263,canStart:()=>rage>=100,onAccept:()=>accepts++,onStart:()=>starts++});
+    if(interrupted){for(let i=0;i<100&&!accepts;i++)combat.update(1/120,{grounded:true});assert.equal(accepts,1);combat.react(90);}
+    else rage=0;
+    combat.update(5,{grounded:true});assert.equal(starts,0);assert.equal(accepts,interrupted?1:0);assert.equal(combat.queued,null);
+  }
+});
+
 test('original ACT resolves a requested command group through the current allowed list to its actual destination', () => {
   for (const [from, requested, actual] of [[264, 368, 369], [281, 293, 294], [299, 310, 313], [301, 310, 312], [231, 233, 234]]) {
     assert.equal(actions.canLink(from, requested), false, 'these are actual missing root-pose links');
@@ -88,4 +115,39 @@ test('original direct A chains and held air recovery links survive group resolut
   for (let i = 0; i < 180 && air.timeline.pose.id === 261; i++) air.update(1 / 60, { grounded: true });
   assert.equal(air.timeline.pose.id, 341);
   assert.equal(poses.get(261).link, 341);
+});
+
+import {NATIVE_MOVE_CATALOG} from '../dist/native-move-catalog.js';
+import {NATIVE_WEAPONS} from '../dist/native-combat.js';
+test('剑枪刀匕首已缓冲的方向招式不会被随后连点普通攻击覆盖',()=>{
+  for(const weapon of ['sword','spear','blade','dagger']){
+    const from=NATIVE_WEAPONS[weapon].basic[0],plain=NATIVE_MOVE_CATALOG.find(m=>m.weapon===weapon&&m.continuationOf?.includes(from)&&m.input.length===1),directed=NATIVE_MOVE_CATALOG.find(m=>m.weapon===weapon&&!m.pending&&!m.rage&&m.input.length>1&&m.poseId!==from&&actions.resolveTransition(from,m.poseId)!=null);
+    assert.ok(plain&&directed,weapon+' requires an original legal pair');const combat=new NativeCombatController(data,{weapon});combat.attack({poseId:from});assert.equal(combat.attack({poseId:directed.poseId,context:directed}),true);assert.equal(combat.queuedMove?.id,directed.id);
+    for(let i=0;i<4;i++)assert.equal(combat.attack({poseId:plain.poseId,context:plain}),true);
+    assert.equal(combat.queuedMove?.id,directed.id,weapon+' must keep deliberate directional input');const actual=actions.resolveTransition(from,directed.poseId);for(let i=0;i<180&&combat.timeline.pose.id===from;i++)combat.update(1/60,{grounded:true});assert.equal(combat.timeline.pose.id,actual);
+  }
+});
+
+test('连点同一后续不会推迟首次接招时间，新的方向指令仍可主动替换',()=>{
+ const combat=new NativeCombatController(data,{weapon:'sword'}),a=NATIVE_MOVE_CATALOG.find(m=>m.poseId===263),b=NATIVE_MOVE_CATALOG.find(m=>m.poseId===266);combat.attack({poseId:262});combat.attack({poseId:263,context:a});const queued=combat._queuedRequest,frame=queued.transitionFrame;combat.update(1/120,{grounded:true});combat.attack({poseId:263,context:a});assert.equal(combat._queuedRequest,queued);assert.equal(combat._queuedRequest.transitionFrame,frame);combat.attack({poseId:266,context:b});assert.equal(combat.queuedMove.id,b.id);
+});
+
+test('同一次更新跨过换招时，各段保留自己的起手朝向',()=>{
+ const combat=new NativeCombatController(data,{weapon:'sword'});let facing=0;combat.attack({poseId:262});combat.attack({poseId:263,onStart:()=>{facing=Math.PI/2;}});const segments=[];for(let i=0;i<12;i++){const state=combat.update(.2,{grounded:true,getFacing:()=>facing});segments.push(...state.segments);if(segments.some(s=>s.poseId===263&&!s.blend))break;}
+ assert.ok(segments.some(s=>s.poseId===262));assert.ok(segments.some(s=>s.poseId===263));for(const segment of segments)assert.equal(segment.facing,segment.poseId===262?0:Math.PI/2);
+});
+
+
+test('原引导段可保留一条后续输入，必须走完自动衔接和前段攻击窗才出下一招',()=>{
+ const combat=new NativeCombatController(data,{weapon:'qiankun'}),windup=NATIVE_MOVE_CATALOG.find(m=>m.poseId===521),follow=NATIVE_MOVE_CATALOG.find(m=>m.poseId===523);let starts=0;
+ combat.play(521,{force:true,attack:true,context:windup});
+ assert.equal(combat.attack({poseId:523,context:follow,onStart:()=>starts++}),true);const queued=combat._queuedRequest;
+ assert.equal(queued.waitForPose,522);assert.equal(starts,0);
+ for(let i=0;i<3;i++){combat.attack({poseId:523,context:follow});assert.equal(combat._queuedRequest,queued);}
+ const segments=[];for(let i=0;i<180;i++){const state=combat.update(1/60,{grounded:true});segments.push(...state.segments);if(segments.some(s=>s.poseId===523&&!s.blend))break;}
+ const firstHit=segments.findIndex(s=>s.poseId===522&&s.attacks.length),next=segments.findIndex(s=>s.poseId===523);
+ assert.ok(firstHit>=0&&next>firstHit);assert.ok(segments.filter(s=>s.poseId===522).at(-1).frame>=12647);assert.equal(starts,1);
+ const interrupted=new NativeCombatController(data,{weapon:'qiankun'});interrupted.play(521,{force:true,attack:true,context:windup});interrupted.attack({poseId:523,context:follow,onStart:()=>{throw Error('interrupted command fired');}});interrupted.react(90);
+ for(let i=0;i<180;i++)assert.notEqual(interrupted.update(1/60,{grounded:true}).poseId,523);
+ assert.equal(interrupted.queuedMove,null);
 });

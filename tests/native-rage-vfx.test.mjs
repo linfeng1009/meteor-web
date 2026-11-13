@@ -3,10 +3,13 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import * as THREE from '../dist/vendor/three.module.js';
-import { NativeRageVfx, sampleEffectKeys, RAGE_VFX_ADAPTER } from '../dist/native-rage-vfx.js';
+import { NativeRageVfx, loadNativeRageVfx, sampleEffectKeys, RAGE_VFX_ADAPTER } from '../dist/native-rage-vfx.js';
 import { NATIVE_MOVE_CATALOG } from '../dist/native-move-catalog.js';
 import { NativeCombatController, decodeNativeText, parsePos, parseAct } from '../dist/native-combat.js';
 import { WEAPON_TRAIL_ADAPTER } from '../dist/native-weapon-trails.js';
+import {NetworkGame} from '../dist/network-game.js';
+import {NativeEffectContacts} from '../dist/native-effect-contacts.js';
+import {effectNodeMatrix, setEffectTime} from '../dist/native-effect-transforms.js';
 
 const imageSize = bytes => {
   if (bytes.subarray(0, 8).toString('hex') === '89504e470d0a1a0a') return [bytes.readUInt32BE(16), bytes.readUInt32BE(20)];
@@ -38,6 +41,43 @@ function state(id, time, context = { rage: 60 }, serial = 1) {
   const pose = data.poses.get(id); return { pose, context, serial, frame: pose.start + time * 30 };
 }
 
+test('原特效继续跟随无特效衔接段，下一招在过渡完成后才创建特效',()=>{
+ const {actor,vfx}=fixture('hammer');try{
+  const context={poseId:372},first=vfx.sample(actor,{...state(372,2,context),effectTime:2});
+  assert.equal(first.id,'pos324');
+  const linked=vfx.sample(actor,{...state(373,0,context,2),consumed:.1});
+  assert.equal(linked,first);assert.ok(Math.abs(first.time-2.1)<1e-9);assert.equal(first.live,true);
+  const blend={from:{source:0,frame:1},to:{source:0,frame:2},weight:.5};
+  vfx.sample(actor,{...state(293,0,{poseId:293},3),blend,consumed:.2,effectTime:0});
+  assert.equal(vfx.active.length,1);assert.ok(Math.abs(first.time-2.3)<1e-9);
+  const next=vfx.sample(actor,{...state(293,0,{poseId:293},3),effectTime:.01});
+  assert.notEqual(next,first);assert.equal(next.time,.01);assert.equal(first.live,false);
+ }finally{vfx.dispose();}
+});
+
+test('忍刀八个瞬移保留原始闪光球与特效字节，不伪造攻击节点',async()=>{
+ const {actor,vfx}=fixture('ninja');try{
+  for(let id=526;id<=533;id++){
+   const source=manifest.effects[`pos${id}`],bytes=await readFile(new URL(`../dist/assets/original/${source.source}`,import.meta.url));
+   assert.equal(createHash('sha256').update(bytes).digest('hex'),source.sha256);
+   assert.ok(source.nodes.every(n=>!/^Attack/i.test(n.name)));
+   const effect=vfx.sample(actor,{...state(id,.15,{poseId:id},id),effectTime:.15});vfx.update(0);
+   assert.ok(effect.nodes.some(n=>n.source.type==='SPHERE'&&n.mesh?.visible),String(id));
+  }
+ }finally{vfx.dispose();}
+});
+
+test('自爆尾焰在死亡后继续，漏掉起手的联机快照也只补播一次',()=>{
+ const {actor,vfx}=fixture('ninja');try{
+  const cast={...state(468,1.15,{poseId:468},1),effectTime:1.15};vfx.detachOnDeath(actor,cast);actor.dead=true;
+  assert.equal(vfx.active.length,1);assert.equal(vfx.active[0].persistAfterDeath,true);vfx.update(.1);assert.equal(vfx.active.length,1);
+  vfx.clear();const death={...state(469,0,{poseId:468,deathEffectTime:1.15},2),deathEffectAge:.2};
+  vfx.sample(actor,death);assert.equal(vfx.active.length,1);assert.ok(Math.abs(vfx.active[0].time-1.35)<1e-9);
+  vfx.sample(actor,death);assert.equal(vfx.active.length,1);vfx.update(.1);assert.ok(vfx.active[0].nodes.some(n=>n.mesh?.visible));
+  vfx.update(5);assert.equal(vfx.active.length,0);vfx.sample(actor,death);assert.equal(vfx.active.length,0);
+ }finally{vfx.dispose();}
+});
+
 test('ordinary native EF definitions keep source hashes and render without a rage context',async()=>{
   const extra=JSON.parse(await readFile(new URL('../dist/assets/original/combat-vfx.json',import.meta.url),'utf8'));
   assert.ok(Object.keys(extra.effects).length>=66);
@@ -53,6 +93,33 @@ test('ordinary native EF definitions keep source hashes and render without a rag
     assert.ok(slash.nodes.filter(n=>n.mesh?.isPoints).every(n=>n.mesh.geometry.attributes.position.count===8));
     assert.equal(f.actor.hp,before.hp);assert.equal(f.actor.rage,before.rage);
   }finally{f.vfx.dispose();}
+});
+
+test('已导出基础网格特效的贴图引用全部闭合，动画贴图帧也有本地资源',async()=>{
+ const extra=JSON.parse(await readFile(new URL('../dist/assets/original/combat-vfx.json',import.meta.url),'utf8')),effects={...extra.effects,...manifest.effects};
+ const checked=new Set();async function check(name){
+  if(checked.has(name))return;checked.add(name);const record=manifest.textures[name];assert.ok(record,`缺少原贴图引用 ${name}`);
+  if(record.frames){assert.ok(record.frames.length);for(const frame of record.frames)await check(frame);}
+  else{assert.ok(record.url);const bytes=await readFile(new URL(record.url,packRoot));assert.equal(bytes.subarray(1,4).toString(),'PNG');assert.equal(bytes.readUInt32BE(16),record.width);assert.equal(bytes.readUInt32BE(20),record.height);}
+ }
+ let nodes=0;for(const effect of Object.values(effects))for(const node of effect.nodes)if(['PLANE','BILLBOARD','SPHERE','CYLINDER','BOX'].includes(node.type)&&node.texture){nodes++;await check(node.texture);}
+ assert.ok(nodes>=602);
+});
+
+test('曹沫举顶与虬龙扫暴阵使用补齐的原PAK贴图并实际显示相应网格',async()=>{
+ const extra=JSON.parse(await readFile(new URL('../dist/assets/original/combat-vfx.json',import.meta.url),'utf8'));
+ for(const [id,name,texture,time,sourceHash,pngHash] of [
+  [253,'Rectangle_9','fpirea00.bmp',.64,'bd5ad81f492315981c23506e957ec6bacdd62efb31b7d1c022bed953f2c912cf','19f6b40121639217c5775a50991c97ac785c6fcacce6e771302ca92d12c34cc7'],
+  [291,'Cylinder_8','ff807001.bmp',.9333333373,'3615fdf43fb201898690adf7d625e741054f1c25329fccae444fba51c2d9f250','3c29cbcfa54f21c916266c137471180c56c45965d6be239f47bacb38964fad34']]){
+  const record=manifest.textures[texture];assert.equal(record.sha256,sourceHash);assert.equal(record.archive,'ETexture.pak');
+  assert.equal(createHash('sha256').update(await readFile(new URL(record.url,packRoot))).digest('hex'),pngHash);
+  const f=fixture(id===253?'dagger':'spear');try{
+   f.vfx.manifest={...manifest,effects:{...extra.effects,...manifest.effects}};f.actor.character.getAttachment=()=>f.actor.character.nativeSpace;
+   const effect=f.vfx.sample(f.actor,{...state(id,time,null),effectTime:time});f.vfx.update(0);
+   const node=effect.nodes.find(n=>n.source.name===name);assert.ok(node.mesh?.visible);assert.equal(node.mesh.material.map,f.textures.get(texture));
+   assert.ok(node.mesh.geometry.attributes.position.count>0);assert.equal(f.actor.hp,1000);assert.equal(f.actor.rage,100);
+  }finally{f.vfx.dispose();}
+ }
 });
 
 test('enhanced weapon skins keep their original POS blade trail instead of hiding it with the original mesh',()=>{
@@ -155,12 +222,15 @@ test('hit interruption, weapon changes and clear remove visuals and dispose each
   const count = textures.size; vfx.dispose(); vfx.dispose(); assert.equal(textureDisposals, count);
 });
 
-test('invalid native parent bindings remain hidden instead of emitting at the world origin', () => {
+test('unresolved native parent bindings use the owner default matrix rather than world origin', () => {
   const pack = structuredClone(manifest), node = pack.effects.pos571.nodes.find(node => node.name === 'Board_15');
   node.bindings = ['not-a-native-bone', 'not-a-native-bone'];
-  const { actor, vfx } = fixture(); vfx.manifest = pack;
+  const { actor, vfx } = fixture(); vfx.manifest = pack;actor.root.position.set(31,2,-7);
   const effect = vfx.sample(actor, state(571, .4)); vfx.update(0);
-  assert.equal(effect.nodes.find(node => node.source.name === 'Board_15').mesh.visible, false);
+  const fallback=effect.nodes.find(node => node.source.name === 'Board_15').mesh;assert.equal(fallback.visible,true);
+  const matrix=fallback.matrix.clone();node.bindings=['ROOT','ROOT'];
+  const expected=vfx.sample(actor,state(571,.4,{rage:60},2));vfx.update(0);
+  assert.deepEqual(matrix.elements,expected.nodes.find(node=>node.source.name==='Board_15').mesh.matrix.elements);
   assert.ok(effect.nodes.filter(node => node.mesh).every(node => node.mesh.matrix.elements.every(Number.isFinite)));
   vfx.dispose();
 });
@@ -209,6 +279,29 @@ test('one large update preserves intermediate EF stages and cancels only the act
   assert.ok(vfx.active.every(e => !e.live), 'being struck cancels the currently casting stage');
   assert.ok(vfx.active.includes(detached), 'previously completed stages retain their visual tails');
   vfx.dispose();
+});
+
+test('客人按权威受击阶段中断当前攻击特效，保留已完成阶段并在退出时清理状态',()=>{
+ for(const phase of ['hit','guard','down','recover']){
+  const {actor,vfx}=fixture('qiankun');let session;try{
+   actor.character.getAttachment=()=>actor.character.nativeSpace;
+   actor.character.setPoseFrame=(source,frame)=>Object.assign(actor.character,{source,frame});actor.networkId='guest';
+   const retired=vfx.sample(actor,state(452,.25,{poseId:452},1)),live=vfx.sample(actor,state(453,.25,{poseId:452},2));
+   assert.equal(retired.live,false);assert.equal(live.live,true);
+   const trailPose=data.poses.get(279),drag=trailPose.drags[0];
+   vfx.trails.sample(actor,{pose:trailPose,source:trailPose.source,serial:2,frameIntervals:[{from:drag.start,to:drag.start+2,timeFrom:0,timeTo:1/30}]});assert.equal(vfx.trails.strips.length,1);
+   const game={hero:actor,enemies:[],rageVfx:vfx,pause(){},_hud(){},_soundDefinition(){},_clearDroppedWeapons(){}};
+   session=new NetworkGame(game,{host:false,playerId:'guest',send(){}},{players:[{id:'guest'}]});session.active=true;
+   const pose=data.poses.get(90),packet={id:'guest',position:[0,0,0],angle:0,hp:900,maxHp:1000,rage:100,dead:false,grounded:true,guard:phase==='guard',reactionPhase:phase,pose:90,source:pose.source,frame:pose.start,serial:3,effectTime:0};
+   session.apply({sequence:1,time:1,players:[packet]});
+   assert.equal(actor.combat.reacting,false,'客人不运行受击逻辑，仅反映权威阶段');assert.equal(actor.networkReactionPhase,phase);
+   assert.equal(vfx.active.includes(live),false);assert.equal(vfx.active.includes(retired),true);assert.equal(vfx.trails.strips.length,0);
+   session.apply({sequence:2,time:1.1,players:[packet]});assert.equal(vfx.active.includes(retired),true);
+   const next=data.poses.get(453);session.apply({sequence:3,time:1.2,players:[{...packet,reactionPhase:null,guard:false,pose:453,source:next.source,frame:next.start+1,serial:4,context:{poseId:453}}]});
+   assert.equal(actor.networkReactionPhase,null);assert.ok(vfx.actors.has(actor));assert.notEqual(vfx.actors.get(actor),live);
+   actor.networkReactionPhase=phase;session.dispose();session=null;assert.equal('networkReactionPhase' in actor,false);
+  }finally{session?.dispose();vfx.dispose();}
+ }
 });
 
 test('retired dart effects keep animated internal parents while freezing external cast anchors', () => {
@@ -267,4 +360,280 @@ test('rapid casts never join separate trail windows, preserve pose blends and ke
   vfx.sample(actor, { pose, source: 0, frame: drag.start + 1, serial: 72, frameIntervals: [{ from: drag.start, to: drag.start + 1, timeFrom: 0, timeTo: .01 }] });
   assert.equal(vfx.trails.strips.length, 0, 'skins hiding native geometry retain their own weapon VFX');
   vfx.dispose();
+});
+
+
+test('同一逻辑步换招时特效与刀光使用各自历史朝向，结束及异常时恢复角色朝向',()=>{
+ const f=fixture();try{
+  f.actor.root.rotation.y=1.1;const sampled=[],trails=[];
+  f.vfx._sampleSegment=(actor,segment)=>{sampled.push(actor.root.rotation.y);};
+  f.vfx.trails.sample=actor=>trails.push(actor.root.rotation.y);
+  const first={...state(293,.1,null,1),facing:.2},second={...state(293,.2,null,2),facing:1.1};
+  f.vfx.sample(f.actor,{...second,segments:[first,second]});
+  assert.deepEqual(sampled,[.2,1.1]);assert.deepEqual(trails,[.2,1.1]);assert.equal(f.actor.root.rotation.y,1.1);
+  f.vfx.trails.sample=()=>{throw Error('interrupted sampling');};
+  assert.throws(()=>f.vfx.sample(f.actor,{...second,segments:[first]}),/interrupted sampling/);
+  assert.equal(f.actor.root.rotation.y,1.1);
+ }finally{f.vfx.dispose();}
+});
+
+
+test('完整加载器合并同源攻击定义时保留已存在的普通招式粒子表现',async()=>{
+ const f=fixture(),beforeFetch=globalThis.fetch,beforeLoad=THREE.TextureLoader.prototype.load;let loaded;
+ try{
+  globalThis.fetch=async input=>{try{return new Response(await readFile(new URL(input)));}catch{return new Response('',{status:404});}};
+  THREE.TextureLoader.prototype.load=function(url,done){const texture=new THREE.Texture();done(texture);return texture;};
+  loaded=await loadNativeRageVfx(f.scene);
+  assert.equal(loaded.manifest.effects.pos343.sha256,manifest.effects.pos343.sha256);
+  assert.equal(loaded.manifest.effects.pos343.particleAdapter,true);
+  const effect=loaded.sample(f.actor,state(343,.3,null));loaded.update(0);
+  assert.ok(effect.nodes.some(n=>n.mesh?.isPoints&&n.mesh.visible),'importing contact bounds must not remove the existing lightweight visual');
+ }finally{loaded?.dispose();f.vfx.dispose();globalThis.fetch=beforeFetch;THREE.TextureLoader.prototype.load=beforeLoad;}
+});
+
+
+test('圆柱特效遵循原网格圆周方向，虬龙扫暴阵半圆位于原生负Y侧', async () => {
+  const combat = JSON.parse(await readFile(new URL('../dist/assets/original/combat-vfx.json', import.meta.url), 'utf8'));
+  const items = JSON.parse(await readFile(new URL('../dist/assets/original/item-vfx.json', import.meta.url), 'utf8'));
+  const combined = { ...manifest, effects: { ...combat.effects, ...manifest.effects, ...items.effects } };
+  const f = fixture('spear'); let checked = 0;
+  try {
+    f.vfx.manifest = combined;
+    for (const [id, definition] of Object.entries(combined.effects)) {
+      if (!definition.nodes.some(n => n.type === 'CYLINDER' && n.texture && n.dimensions?.length === 5)) continue;
+      assert.equal(createHash('sha256').update(await readFile(new URL(`../dist/assets/original/${definition.source}`, import.meta.url))).digest('hex'), definition.sha256);
+      const effect = f.vfx._create(f.actor, { serial: checked + 1 }, id);
+      for (const node of effect.nodes) {
+        if (node.source.type !== 'CYLINDER' || !node.mesh) continue;
+        const d = node.source.dimensions, p = node.mesh.geometry.attributes.position, uv = node.mesh.geometry.attributes.uv;
+        const offset = node.source.flags[0] === 1 ? d[2] / 2 : 0;
+        for (let i = 0; i < p.count; i++) {
+          const u = uv.getX(i), v = uv.getY(i), angle = (d[3] + (d[4] - d[3]) * u) * Math.PI / 180;
+          const radius = Math.abs(v > .5 ? d[0] : d[1]);
+          const expected = new THREE.Vector3(Math.cos(angle) * radius, Math.sin(angle) * radius, (v - .5) * Math.abs(d[2]) + offset);
+          const actual = new THREE.Vector3().fromBufferAttribute(p, i);
+          assert.ok(actual.distanceTo(expected) < 2e-5, `${id}/${node.source.name} vertex${i} native angle/UV: ${actual.toArray()} versus ${expected.toArray()}`);
+        }
+        if (id === 'pos291' && node.source.name === 'Cylinder_8') {
+          assert.deepEqual(d.slice(3), [180, 360]);
+          for (let i = 0; i < p.count; i++) assert.ok(p.getY(i) <= 1e-6, 'original 180..360 sector stays on native negative Y');
+        }
+        checked++;
+      }
+      f.vfx._remove(effect);
+    }
+    assert.ok(checked > 20, `checked ${checked} original cylinder nodes`);
+  } finally { f.vfx.dispose(); }
+});
+
+
+test('原球形特效显示完整共享球面，发射角度只约束粒子取点而不裁切显示', async () => {
+  const combat = JSON.parse(await readFile(new URL('../dist/assets/original/combat-vfx.json', import.meta.url), 'utf8'));
+  const combined = { ...manifest, effects: { ...combat.effects, ...manifest.effects } }, f = fixture(); let checked = 0, hidden = 0;
+  try {
+    f.vfx.manifest = combined;
+    for (const [id, definition] of Object.entries(combined.effects)) {
+      if (!definition.nodes.some(n => n.type === 'SPHERE' && n.texture && n.dimensions?.length === 5)) continue;
+      assert.equal(createHash('sha256').update(await readFile(new URL(`../dist/assets/original/${definition.source}`, import.meta.url))).digest('hex'), definition.sha256);
+      const effect = f.vfx._create(f.actor, { serial: checked + 1 }, id);
+      for (const node of effect.nodes) {
+        if (node.source.type !== 'SPHERE' || !node.source.texture) continue;
+        if (node.source.hidden) { assert.equal(node.mesh, null); hidden++; continue; }
+        const radius = Math.abs(node.source.dimensions[0]), geometry = node.mesh.geometry;
+        const p = geometry.attributes.position, uv = geometry.attributes.uv;
+        for (let i = 0; i < p.count; i++) {
+          const longitude = (90 + 360 * uv.getX(i)) * Math.PI / 180, latitude = (-90 + 180 * uv.getY(i)) * Math.PI / 180;
+          const expected = new THREE.Vector3(Math.cos(longitude) * Math.cos(latitude), Math.sin(longitude) * Math.cos(latitude), Math.sin(latitude)).multiplyScalar(radius);
+          const actual = new THREE.Vector3().fromBufferAttribute(p, i);
+          assert.ok(actual.distanceTo(expected) < 3e-5, `${id}/${node.source.name} native sphere vertex${i}: ${actual.toArray()} versus ${expected.toArray()}`);
+        }
+        geometry.computeBoundingBox();
+        for (const axis of ['x', 'y', 'z']) {
+          assert.ok(Math.abs(geometry.boundingBox.min[axis] + radius) < 1e-5, `${id} full negative ${axis}`);
+          assert.ok(Math.abs(geometry.boundingBox.max[axis] - radius) < 1e-5, `${id} full positive ${axis}`);
+        }
+        checked++;
+      }
+      f.vfx._remove(effect);
+    }
+    assert.ok(checked >= 147); assert.ok(hidden >= 31);
+  } finally { f.vfx.dispose(); }
+});
+
+
+test('原球面滚动采用独立材质偏移，两个角色共享贴图时不会串动或修改顶点', async () => {
+  const f = fixture();
+  const combat = JSON.parse(await readFile(new URL('../dist/assets/original/combat-vfx.json', import.meta.url), 'utf8'));
+  f.vfx.manifest = { ...manifest, effects: { ...combat.effects, ...manifest.effects } };
+  try {
+    const a = f.vfx._create(f.actor, { serial: 1 }, 'pos411');
+    const b = f.vfx._create({ ...f.actor }, { serial: 2 }, 'pos411');
+    a.time = .571; b.time = .613;
+    const nodeA = a.nodes.find(n => n.source.name === 'Sphere_6'), nodeB = b.nodes.find(n => n.source.name === 'Sphere_6');
+    assert.deepEqual(nodeA.source.uvSpeed, [-20, 0]);
+    const uv = Array.from(nodeA.mesh.geometry.attributes.uv.array), version = nodeA.mesh.geometry.attributes.uv.version;
+    f.vfx.update(0);
+    assert.ok(nodeA.mesh.visible && nodeB.mesh.visible);
+    assert.equal(nodeA.mesh.material.map, nodeB.mesh.material.map);
+    const close = (actual, expected) => assert.ok(Math.abs(actual - expected) < 1e-8, `${actual} versus ${expected}`);
+    close(nodeA.uvOffset.x, (-20 * a.time * Math.fround(.4)) % 1);
+    close(nodeB.uvOffset.x, (-20 * b.time * Math.fround(.4)) % 1);
+    assert.notEqual(nodeA.uvOffset.x, nodeB.uvOffset.x);
+    assert.deepEqual(nodeA.mesh.material.map.offset.toArray(), [0, 0]);
+    assert.deepEqual(Array.from(nodeA.mesh.geometry.attributes.uv.array), uv);
+    assert.equal(nodeA.mesh.geometry.attributes.uv.version, version);
+    const shader = () => ({ uniforms: {}, vertexShader: THREE.ShaderLib.basic.vertexShader });
+    const shaderA = shader(), shaderB = shader();
+    nodeA.mesh.material.onBeforeCompile(shaderA); nodeB.mesh.material.onBeforeCompile(shaderB);
+    assert.equal(shaderA.uniforms.nativeUvOffset.value, nodeA.uvOffset);
+    assert.equal(shaderB.uniforms.nativeUvOffset.value, nodeB.uvOffset);
+    assert.notEqual(shaderA.uniforms.nativeUvOffset.value, shaderB.uniforms.nativeUvOffset.value);
+    assert.equal(shaderA.vertexShader, shaderB.vertexShader);
+    assert.ok(shaderA.vertexShader.includes('vMapUv += nativeUvOffset;'));
+    assert.equal(nodeA.mesh.material.customProgramCacheKey(), nodeB.mesh.material.customProgramCacheKey());
+    const materialVersion = nodeA.mesh.material.version;
+    a.time += .057; f.vfx.update(0);
+    close(shaderA.uniforms.nativeUvOffset.value.x, (-20 * a.time * Math.fround(.4)) % 1);
+    assert.equal(nodeA.mesh.material.version, materialVersion, 'UV animation does not invalidate the material program');
+  } finally { f.vfx.dispose(); }
+});
+
+test('圆柱从自身关键帧起点滚动，动作尾效继续且暂停不会累加显示时钟', async () => {
+  const combat = JSON.parse(await readFile(new URL('../dist/assets/original/combat-vfx.json', import.meta.url), 'utf8'));
+  const f = fixture();
+  try {
+    f.vfx.manifest = { ...manifest, effects: { ...combat.effects, ...manifest.effects } };
+    const effect = f.vfx._create(f.actor, { serial: 1 }, 'pos279');
+    const node = effect.nodes.find(n => n.source.name === 'Cylinder_4'), start = node.source.keys[0][0];
+    assert.deepEqual(node.source.uvSpeed, [-15, 0]);
+    effect.time = start; f.vfx.update(0); assert.equal(Math.abs(node.uvOffset.x), 0);
+    effect.time = start + .037; f.vfx.update(0);
+    assert.ok(Math.abs(node.uvOffset.x - (-15 * .037) % 1) < 1e-8);
+    const before = node.uvOffset.x; f.vfx.update(0); assert.equal(node.uvOffset.x, before);
+    f.vfx._retire(effect); f.vfx.update(.011);
+    assert.ok(Math.abs(node.uvOffset.x - (-15 * .048) % 1) < 1e-8);
+    assert.equal(f.actor.hp, 1000); assert.equal(f.actor.rage, 100);
+  } finally { f.vfx.dispose(); }
+});
+
+test('球形V滚动保留原符号与速度，静止节点不增加滚动着色器', async () => {
+  const f = fixture();
+  const combat = JSON.parse(await readFile(new URL('../dist/assets/original/combat-vfx.json', import.meta.url), 'utf8'));
+  f.vfx.manifest = { ...manifest, effects: { ...combat.effects, ...manifest.effects } };
+  try {
+    const effect = f.vfx._create(f.actor, { serial: 1 }, 'pos420'); effect.time = .571; f.vfx.update(0);
+    const node = effect.nodes.find(n => n.source.name === 'Sphere_23');
+    assert.deepEqual(node.source.uvSpeed, [0, 5]); assert.ok(node.mesh.visible);
+    assert.ok(Math.abs(node.uvOffset.y - (5 * effect.time) % 1) < 1e-8);
+    const still = effect.nodes.find(n => n.mesh && !n.source.uvSpeed);
+    assert.ok(still); assert.equal(still.uvOffset, undefined);
+    assert.equal(still.mesh.material.onBeforeCompile, THREE.Material.prototype.onBeforeCompile);
+  } finally { f.vfx.dispose(); }
+});
+
+
+test('原隐藏辅助球不绘制，匕首空中斩仍沿它的关键帧和挂点显示', async () => {
+  const combat = JSON.parse(await readFile(new URL('../dist/assets/original/combat-vfx.json', import.meta.url), 'utf8'));
+  const f = fixture('dagger');
+  try {
+    f.vfx.manifest = { ...manifest, effects: { ...combat.effects, ...manifest.effects } };
+    const effect = f.vfx._create(f.actor, { serial: 1 }, 'pos245'); effect.time = .2; f.vfx.update(0);
+    const parent = effect.nodes.find(n => n.source.name === 'Sphere_2'), slash = effect.nodes.find(n => n.source.name === 'Board_1');
+    assert.equal(parent.source.hidden, true); assert.equal(parent.mesh, null);
+    assert.ok(effectNodeMatrix(effect, parent), 'hidden helper retains its native transform');
+    assert.ok(slash.mesh.visible, 'authored slash is not suppressed with its hidden parent');
+    const before = slash.mesh.matrix.clone(); f.actor.root.position.x += 7; f.vfx.update(0);
+    const after = new THREE.Vector3().setFromMatrixPosition(slash.mesh.matrix).sub(new THREE.Vector3().setFromMatrixPosition(before));
+    assert.ok(after.distanceTo(new THREE.Vector3(7, 0, 0)) < 1e-8);
+    f.vfx._retire(effect); f.actor.root.position.x += 11; f.vfx.update(.01);
+    assert.equal(parent.mesh, null); assert.ok(slash.mesh.visible);
+    assert.ok(effectNodeMatrix(effect, parent));
+    assert.equal(f.actor.hp, 1000); assert.equal(f.actor.rage, 100);
+  } finally { f.vfx.dispose(); }
+});
+
+test('所有原隐藏节点不分配显示网格，但仍保留在绑定图中', async () => {
+  const combat = JSON.parse(await readFile(new URL('../dist/assets/original/combat-vfx.json', import.meta.url), 'utf8'));
+  const items = JSON.parse(await readFile(new URL('../dist/assets/original/item-vfx.json', import.meta.url), 'utf8'));
+  const combined = { ...manifest, effects: { ...combat.effects, ...manifest.effects, ...items.effects } }, f = fixture();
+  let checked = 0, textured = 0;
+  try {
+    f.vfx.manifest = combined;
+    for (const [id, definition] of Object.entries(combined.effects)) {
+      if (!definition.nodes.some(n => n.hidden)) continue;
+      const effect = f.vfx._create(f.actor, { serial: checked + 1 }, id);
+      assert.equal(effect.nodes.length, definition.nodes.length);
+      setEffectTime(effect, .2);
+      for (const node of effect.nodes) if (node.source.hidden) {
+        assert.equal(node.mesh, null, `${id}/${node.source.name}`);
+        assert.ok(effect.nodes.includes(node));
+        if (node.source.texture) textured++;
+        checked++;
+      }
+      f.vfx._remove(effect);
+    }
+    assert.ok(checked >= 339); assert.ok(textured >= 45);
+  } finally { f.vfx.dispose(); }
+});
+
+test('原隐藏的忍刀暴怒爆弹攻击环仍按原effect窗口命中', () => {
+  const f = fixture(), contacts = new NativeEffectContacts({ manifest });
+  try {
+    const definition = manifest.effects.pos473, attackNode = definition.nodes.find(n => n.name === 'AttackDonut');
+    assert.equal(attackNode.hidden, true);
+    const live = { ...state(473, .7, { poseId: 473 }), previousEffectTime: .7, effectTime: .7 };
+    const attack = live.pose.attacks[0]; assert.deepEqual(attack.bones, ['effect']);
+    const volumes = contacts.sample(f.actor, live, attack); assert.ok(volumes.length);
+    assert.ok(volumes.every(v => v.nodeName === 'AttackDonut'));
+    const target = { root: new THREE.Group() }; target.root.position.copy(volumes[0].center).y -= 1.3;
+    assert.equal(contacts.contact(volumes, target)?.contactSource, 'effect');
+    const shown = structuredClone(manifest); delete shown.effects.pos473.nodes.find(n => n.name === 'AttackDonut').hidden;
+    const comparison = new NativeEffectContacts({ manifest: shown });
+    try {
+      const expected = comparison.sample(f.actor, live, attack);
+      assert.deepEqual(volumes.map(v => [v.center.toArray(), v.edges.map(e => e.toArray())]), expected.map(v => [v.center.toArray(), v.edges.map(e => e.toArray())]));
+    } finally { comparison.dispose(); }
+  } finally { contacts.dispose(); f.vfx.dispose(); }
+});
+
+
+test('飞轮夺命轮盘光效使用原减暗模式，匕首斩痕和火铳烟雾不再统一加亮', async () => {
+  const combat = JSON.parse(await readFile(new URL('../dist/assets/original/combat-vfx.json', import.meta.url), 'utf8'));
+  const f = fixture();
+  try {
+    f.vfx.manifest = { ...manifest, effects: { ...combat.effects, ...manifest.effects } };
+    const cases = [
+      ['pos554', 'BlackBall', .31, THREE.ZeroFactor, THREE.OneMinusSrcColorFactor, false],
+      ['pos245', 'Board_1', .2, THREE.SrcColorFactor, THREE.OneFactor, false],
+      ['pos206', 'Particle_yan', .1, THREE.SrcAlphaFactor, THREE.OneMinusSrcAlphaFactor, true],
+      ['pos279', 'Cylinder_4', .3, THREE.SrcAlphaFactor, THREE.OneFactor, true]
+    ];
+    for (const [id, name, time, source, destination, alphaGate] of cases) {
+      const effect = f.vfx._create(f.actor, { serial: 1 }, id); effect.time = time; f.vfx.update(0);
+      const node = effect.nodes.find(n => n.source.name === name);
+      assert.ok(node.mesh?.visible, `${id}/${name} authored visible interval`);
+      assert.equal(node.mesh.material.blending, THREE.CustomBlending);
+      assert.equal(node.mesh.material.blendSrc, source); assert.equal(node.mesh.material.blendDst, destination);
+      assert.equal(node.alphaZeroInvisible, alphaGate);
+      assert.ok(node.mesh.material.map); assert.equal(f.actor.hp, 1000); assert.equal(f.actor.rage, 100);
+      f.vfx._remove(effect);
+    }
+  } finally { f.vfx.dispose(); }
+});
+
+test('减暗网格在源alpha0但颜色非零时仍生效，alpha叠加网格则可略过', async () => {
+  const combat = JSON.parse(await readFile(new URL('../dist/assets/original/combat-vfx.json', import.meta.url), 'utf8'));
+  const f = fixture();
+  try {
+    const effectDefinition = structuredClone(combat.effects.pos245);
+    const slash = effectDefinition.nodes.find(n => n.name === 'Board_1');
+    slash.blend = [2, 1, 3]; for (const key of slash.keys) { key[24] = 0; key.splice(11, 3, 1, 1, 1); }
+    f.vfx.manifest = { ...manifest, effects: { ...manifest.effects, pos245: effectDefinition } };
+    const effect = f.vfx._create(f.actor, { serial: 1 }, 'pos245'); effect.time = .2; f.vfx.update(0);
+    const node = effect.nodes.find(n => n.source.name === 'Board_1');
+    assert.equal(node.mesh.material.opacity, 0); assert.equal(node.mesh.visible, true);
+    f.vfx._remove(effect); slash.blend = [3, 4, 5];
+    const alpha = f.vfx._create(f.actor, { serial: 2 }, 'pos245'); alpha.time = .2; f.vfx.update(0);
+    assert.equal(alpha.nodes.find(n => n.source.name === 'Board_1').mesh.visible, false);
+  } finally { f.vfx.dispose(); }
 });

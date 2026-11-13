@@ -1,3 +1,4 @@
+import {NATIVE_AIR_PHYSICS} from '../dist/native-traversal.js';
 import test, { after } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -8,6 +9,8 @@ import { NATIVE_MOVE_CATALOG } from '../dist/native-move-catalog.js';
 import { NATIVE_WEAPON_MENU } from '../dist/native-weapon-menu.js';
 import { createHash } from 'node:crypto';
 import { loadNativeRageVfx } from '../dist/native-rage-vfx.js';
+import {NetworkGame} from '../dist/network-game.js';
+import {NetworkProjectileMotion} from '../dist/network-projectiles.js';
 
 // Exercise production action(), native SKC/BNC/AMB, original GMC weapons,
 // POS attack windows and recovered RES/EXE damage math. Only textures/audio,
@@ -48,7 +51,7 @@ async function fixture(weapon = 'sword') {
     weaponModels: new Map(wm.models.map(model => [model.modelId.toLowerCase(), model])), weaponCache: new Map(),
     effectDefinitions: new Map(), waveFiles: new Map(), effects: [],
     scene: new THREE.Scene(), camera: new THREE.PerspectiveCamera(), raycaster: new THREE.Raycaster(),
-    hostPhysics: { speed: 8, gravity: 34, jumpVelocity: 12, radius: .4, step: .55 },
+    hostPhysics: { speed: 8, gravity: NATIVE_AIR_PHYSICS.gravity, jumpVelocity: NATIVE_AIR_PHYSICS.jumpVelocity, radius: .4, step: .55 },
     currentMap: { colliders: [floor], bounds: new THREE.Box3(v(-100, -1, -100), v(100, 30, 100)), metadata: {}, spawns: [{ position: v(0, .015, 0) }] },
     weapon, actorSerial: 0, enemies: [], keys: new Set(), directionBuffer: [], cameraAngle: 0,
     running: true, paused: false, mode: 'training', elapsed: 0, matchElapsed: 0,
@@ -132,7 +135,57 @@ function checkSeatedBlade(hero) {
   assert.ok(blade.visible&&mesh.visible,'seating must not be faked by hiding the whole knife');
 }
 
-test('qiankun keeps the raised grip and seats the visible blade inside all four original sheaths', async () => {
+test('客人飞镖飞轮复用对应原GMC变体，正确缩放并在退出时保留共享几何',async()=>{
+ const {game,hero}=await fixture('dart');hero.networkId='guest';const motion=new NetworkProjectileMotion(game,new Map([['guest',hero]]));
+ try{
+  motion.receive([{kind:'dart',id:1,ownerId:'guest',weaponId:10,position:[1,2,3],quaternion:[0,0,0,1],spin:.5,phase:'outbound'},
+   {kind:'wheel',id:1,ownerId:'guest',weaponId:11,position:[2,3,4],quaternion:[0,0,0,1],spin:1,phase:'return'}]);
+  await Promise.all([...motion.samples.values()].map(s=>s.ready));
+  for(const [key,name] of [['dart:1','w3_1'],['wheel:1','w6_1']]){
+   const sample=motion.samples.get(key);assert.ok(sample.visual);assert.equal(sample.visual.name,name);assert.equal(sample.visual.scale.x,.08);
+   const mesh=sample.visual.getObjectByProperty('isMesh',true);assert.ok(mesh.geometry.attributes.position.count>0);const template=(await game._prepareWeapon(sample.weaponId))[0].getObjectByProperty('isMesh',true);assert.equal(mesh.geometry,template.geometry);
+  }
+ }finally{motion.dispose();}
+});
+
+test('房主固定步内发射并命中的短飞镖进入结束快照，记录从该逻辑步起点计时',async()=>{
+ const {game,hero,target}=await fixture('dart');hero.networkId='host';target.networkId='guest';target.root.position.set(0,.015,2.5);game.projectiles.onActorHit=()=>{};
+ let launched=false;game._stepWorld=function(dt){this.matchElapsed+=dt;if(!launched){launched=true;this.projectiles.spawn({owner:hero,position:v(0,1.35,0),direction:v(0,0,1),context:{weaponId:1}});}this.projectiles.update(dt);};
+ const before=game.projectiles.onFlightSample,session=new NetworkGame(game,{host:true,playerId:'host',send(){}},{players:[{id:'host'},{id:'guest'}]});session.active=true;
+ try{
+  for(let i=0;i<6;i++)game._stepWorld(1/60);const snapshot=session.snapshot();assert.equal(snapshot.projectiles.length,0);assert.equal(snapshot.projectileFlights.length,1);
+  const flight=snapshot.projectileFlights[0];assert.equal(flight.startTime,0);assert.ok(flight.endTime>0&&flight.endTime<snapshot.time);assert.equal(flight.points[0].time,0);assert.equal(flight.points.at(-1).time,flight.endTime);
+ }finally{session.dispose();assert.equal(game.projectiles.onFlightSample,before);}
+});
+
+test('客人乾坤在通用跑步片段按权威形态收刀入鞘，切回刀枪形态时恢复持法',async()=>{
+ const {game,hero,target}=await fixture('qiankun');hero.networkId='guest';target.networkId='host';
+ const session=new NetworkGame(game,{host:false,playerId:'guest',send(){}},{players:[{id:'host'},{id:'guest'}]});session.active=true;
+ try{
+  const pose=combat.poses.get(144);let sequence=0;
+  for(const mode of ['sheath','blade','spear','sheath']){
+   const serial=++sequence;session.apply({sequence,time:sequence/15,players:[{id:'guest',position:[0,.015,0],angle:0,hp:1000,maxHp:1000,rage:0,grounded:true,dead:false,weaponId:hero.weaponId,weaponMode:mode,pose:144,source:pose.source,frame:pose.start+sequence,serial,effectTime:0}]});
+   assert.equal(hero.combat.weaponMode,mode);assert.equal(hero.qiankunSheathWeight,mode==='sheath'?1:0);
+   if(mode==='sheath')checkSeatedBlade(hero);
+   assert.equal(hero.combat.timeline.pose.id,144);
+  }
+ }finally{session.dispose();}
+});
+
+test('首次火铳快照的瞄准标志不被装备初始化清除，异步模型加载不覆盖后续开火动作',async()=>{
+ const {game,hero,target}=await fixture('sword');hero.networkId='guest';target.networkId='host';
+ const session=new NetworkGame(game,{host:false,playerId:'guest',send(){}},{players:[{id:'host'},{id:'guest'}]});session.active=true;
+ const equip=game._equip;let pending,count=0;game._equip=function(...args){count++;pending=equip.apply(this,args);return pending;};
+ try{
+  const ready=combat.poses.get(212),shot=combat.poses.get(206),packet={id:'guest',position:[0,.015,0],angle:.7,hp:1000,maxHp:1000,rage:0,grounded:true,dead:false,weaponId:3,weaponMode:'blade',musketAim:true,aimPitch:.3,pose:212,source:ready.source,frame:ready.end,serial:20,effectTime:0};
+  session.apply({sequence:1,time:1,players:[packet]});assert.equal(hero.weapon,'musket');assert.equal(hero.musketAim,true);assert.equal(hero.combat.timeline.pose.id,212);assert.equal(game.cameraAngle,.7-Math.PI);
+  session.apply({sequence:2,time:1.1,players:[{...packet,pose:206,source:shot.source,frame:shot.start+1,serial:21,context:{poseId:206}}]});
+  assert.equal(hero.combat.timeline.pose.id,206);assert.equal(hero.musketAim,true);await pending;
+  assert.equal(count,1);assert.equal(hero.combat.timeline.pose.id,206);assert.equal(hero.musketAim,true);assert.ok(hero.weaponModel);
+ }finally{await pending;session.dispose();}
+});
+
+  test('qiankun keeps the raised grip and seats the visible blade inside all four original sheaths', async () => {
   const { game, hero } = await fixture('qiankun');
   const checkGrip = () => {
     for (const model of hero.weaponModels) {
@@ -283,7 +336,7 @@ test('jump then down-A selects native down attacks, with sword wind-up held thro
     const { game, hero, target, events } = await fixture(weapon);
     // No caller-supplied position/pose override: jump is the same public action
     // used by the keyboard, followed by ordinary back-key down/up and attack.
-    game.action('jump');
+    game.action('jump');game.action('jump',false);
     // Enter on the ordinary descent, within reach of the standing target.
     // The native takeoff rises higher than the old fixed2.1m Web arc.
     for (let i = 0; i < 120 && !hero.grounded && (hero.vy >= 0 || hero.root.position.y > 3); i++) tick(game);
@@ -373,7 +426,7 @@ test('every listed ready command has a public-input route from the ground or a n
       }
     }
     if (move.stance === 'air') {
-      game.action('jump'); for (let frame = 0; frame < 12; frame++) tick(game);
+      game.action('jump');game.action('jump',false); for (let frame = 0; frame < 12; frame++) tick(game);
     }
     const beforePose = hero.combat.timeline.pose.id;
     const blockedBy = execute(game, move);
@@ -384,10 +437,10 @@ test('every listed ready command has a public-input route from the ground or a n
     } else {
       ready++; assert.equal(hero.combat.currentMove?.poseId, move.poseId, `${move.id}: public direction inputs selected wrong source pose`);
       assert.equal(hero.combat.timeline.pose.id, move.poseId, `${move.id}: source animation must actually start`);
-      assert.equal(hero.rage, 100 - move.rage, `${move.id}: consume rage once on actual start`);
+      assert.equal(hero.rage, 100 - move.rage - (move.continuationOf?.length ? NATIVE_MOVE_CATALOG.find(candidate=>candidate.weapon===move.weapon&&candidate.poseId===move.continuationOf[0]).rage : 0), `${move.id}: consume each prerequisite and command rage once on actual start`);
     }
   }
-  assert.equal(ready, 179); assert.equal(pending, 17);
+  assert.equal(ready, 197); assert.equal(pending, 0);
 });
 
 test('POS attack bone names resolve the actual original BNC bones without renaming the skeleton or inventing effect attachments', async () => {
@@ -415,7 +468,7 @@ test('the requested spear left-right-up-A body attack and airborne A kick remove
   }
   for (const weapon of ['spear', 'blade']) {
     const { game, hero, target, events } = await fixture(weapon);
-    game.action('jump');
+    game.action('jump');game.action('jump',false);
     // Attack near landing on the ordinary descent, within reach of the target.
     // No hero/target position, authored pose or attachment is overridden.
     for (let frame = 0; frame < 120 && !hero.grounded && (hero.vy >= 0 || hero.root.position.y > .6); frame++) tick(game);
@@ -481,7 +534,7 @@ test('actual heavy-hit TargetMove scales the original recoil and TargetValue hol
 
 test('a natural dagger jump can reach all three original air strikes through ordinary attack inputs without altitude overrides', async () => {
   const { game, hero } = await fixture('dagger'); game.enemies = []; game.locked = null;
-  game.action('jump'); for (let frame = 0; frame < 12; frame++) tick(game);
+  game.action('jump');game.action('jump',false); for (let frame = 0; frame < 12; frame++) tick(game);
   for (const id of [245, 246, 247]) {
     assert.equal(hero.grounded, false, `landed before requesting air ${id}`); game.action('attack');
     for (let frame = 0; frame < 180 && hero.combat.timeline.pose.id !== id; frame++) tick(game);
@@ -564,4 +617,23 @@ test('Raiden sword skin preserves native melee damage and reuses its cached temp
   await game.setWeapon('sword'); assert.equal(game.raidenSwordTemplate, template);
   assert.equal(hero.raidenSword.children[0].geometry, template.children[0].geometry);
   assert.equal(hero.raidenSword.visible, true);
+});
+
+test('四种常用兵器的实际方向连招在连续点攻后仍按缓冲起手并产生原版攻击窗',async()=>{
+ for(const weapon of ['sword','spear','blade','dagger']){
+   const {game,hero,events}=await fixture(weapon),from=NATIVE_MOVE_CATALOG.find(m=>m.weapon===weapon&&m.input.length===1&&m.stance==='ground'&&!m.continuationOf);
+   const directed=NATIVE_MOVE_CATALOG.find(m=>m.weapon===weapon&&!m.pending&&!m.rage&&m.stance==='ground'&&m.input.length>1&&!m.continuationOf&&combat.actions.resolveTransition(from.poseId,m.poseId)!=null);
+   assert.ok(directed);command(game,[]);assert.equal(hero.combat.currentMove.poseId,from.poseId);command(game,directed.input.filter(k=>k!=='attack'));assert.equal(hero.combat.queuedMove?.id,directed.id);
+   for(let i=0;i<5;i++)command(game,[]);assert.equal(hero.combat.queuedMove?.id,directed.id);
+   const predecessorSerial=hero.combat.serial;for(let i=0;i<180&&hero.combat.serial===predecessorSerial;i++)tick(game);assert.equal(hero.combat.currentMove?.id,directed.id);assert.ok(events.some(e=>e.type==='move'&&e.moveId===directed.id));
+   let windows=0;for(let i=0;i<180&&hero.combat.busy;i++){const state=hero.combat.update(1/120,{grounded:true});windows+=(state?.segments||[]).reduce((n,s)=>n+s.attacks.length,0);}assert.ok(windows>0,weapon+' retained original attack windows');
+ }
+});
+
+test('实际连招换向时上一招命中采样保持旧朝向，结束后恢复新招朝向',async()=>{
+ const {game,hero,target}=await fixture('sword');command(game,[]);command(game,[]);assert.ok(hero.combat.queuedMove);const serial=hero.combat.serial,queued=hero.combat._queuedRequest,start=queued.onStart;
+ queued.onStart=context=>{target.root.position.set(3,.015,0);return start(context);};
+ const samples=[],resolve=game._resolveContacts;game._resolveContacts=function(actor,state){samples.push({serial:state.serial,facing:state.facing,actual:actor.root.rotation.y});assert.ok(Math.abs(actor.root.rotation.y-state.facing)<1e-9);return resolve.call(this,actor,state);};
+ for(let i=0;i<12&&!samples.some(s=>s.serial!==serial);i++)tick(game,.25);
+ assert.ok(samples.some(s=>s.serial===serial),'previous strike is still sampled');assert.ok(samples.some(s=>s.serial!==serial),'next strike is also sampled');assert.ok(Math.abs(hero.root.rotation.y)>1,'final render keeps the new facing');
 });

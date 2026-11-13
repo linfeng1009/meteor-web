@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import * as THREE from '../dist/vendor/three.module.js';
 import { loadNativeCharacter } from '../dist/native-character.js';
-import { createEffectTransforms, effectNodeMatrix, setEffectTime } from '../dist/native-effect-transforms.js';
+import { createEffectTransforms, effectNodeMatrix, setEffectTime, snapshotEffectAnchors } from '../dist/native-effect-transforms.js';
 
 const dist = new URL('../dist/', import.meta.url), v = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z);
 const oldFetch = globalThis.fetch, oldLoad = THREE.TextureLoader.prototype.load;
@@ -82,4 +82,53 @@ test('separate position and rotation parents preserve a sheared affine basis and
   closeMatrix(matrix, expected, 'decomposing the independent rotation parent would discard shear');
   const before = matrix.clone(); f.bone.rotation.set(1.2, .9, -.4);
   closeMatrix(sample(f, source), before, 'position parent contributes its origin without its animated orientation');
+});
+
+
+test('original pos245/246/247 self-named billboard rotation uses the native default instead of disappearing', async () => {
+  const combat = JSON.parse(await readFile(new URL('assets/original/combat-vfx.json', dist)));
+  for (const id of ['pos245', 'pos246', 'pos247']) {
+    const definition = combat.effects[id], source = definition.nodes.find(node => node.name === 'Board_1');
+    assert.equal(createHash('sha256').update(await readFile(new URL(`assets/original/${definition.source}`, dist))).digest('hex'), definition.sha256);
+    assert.deepEqual(source.bindings, ['Sphere_2', 'Board_1']);
+    const f = simpleActor(), graph = createEffectTransforms(f, definition, manifest);
+    setEffectTime(graph, source.keys[0][0]);
+    const node = graph.nodes.find(node => node.source === source), actual = effectNodeMatrix(graph, node);
+    assert.ok(actual, `${id} authored billboard must remain visible`);
+    const fallback = structuredClone(definition);
+    fallback.nodes.find(node => node.name === 'Board_1').bindings[1] = '';
+    const expected = createEffectTransforms(f, fallback, manifest); setEffectTime(expected, source.keys[0][0]);
+    closeMatrix(actual, effectNodeMatrix(expected, expected.nodes.find(node => node.source.name === 'Board_1')), `${id} native self exclusion`);
+  }
+});
+
+test('bone and weapon socket references take precedence over identically named effect nodes', () => {
+  const f = simpleActor(), socket = new THREE.Group(); socket.name = 'wpn'; socket.position.set(3, 4, 5); f.root.add(socket); f.weaponModels = [socket];
+  const definitions = [synthetic(['b', 'Character']), { ...synthetic(['ROOT', ''], undefined, [1000, 0, 0]), name: 'b' }];
+  const graph = createEffectTransforms(f, { nodes: definitions }, manifest); setEffectTime(graph, 0);
+  closeMatrix(effectNodeMatrix(graph, graph.nodes[0]), sample(f, definitions[0]), 'bone must win over sibling');
+  const sockets = { weaponAttachments: { wpn: { test_socket: { position: [1, 2, 3], quaternion: [1, 0, 0, 0] } } } };
+  const source = synthetic(['test_socket', 'Character']);
+  const withSibling = createEffectTransforms(f, { nodes: [source, { ...definitions[1], name: 'test_socket' }] }, sockets);
+  const withoutSibling = createEffectTransforms(f, { nodes: [source] }, sockets);
+  setEffectTime(withSibling, 0); setEffectTime(withoutSibling, 0);
+  closeMatrix(effectNodeMatrix(withSibling, withSibling.nodes[0]), effectNodeMatrix(withoutSibling, withoutSibling.nodes[0]), 'socket must win over sibling');
+});
+
+test('detached tails freeze external anchors per requesting node while sibling keys continue moving', () => {
+  const f = simpleActor(), self = { ...synthetic(['ROOT', 'Self'], undefined, [0, 0, 0]), name: 'Self' };
+  self.keys.push([1, 100, 0, 0, ...self.keys[0].slice(4)]);
+  const follower = { ...synthetic(['Self', ''], undefined, [0, 0, 0]), name: 'Follower' };
+  const graph = createEffectTransforms(f, { nodes: [self, follower] }, manifest); setEffectTime(graph, 0);
+  const first = effectNodeMatrix(graph, graph.nodes[1]).clone();
+  graph.frozenAnchors = snapshotEffectAnchors(graph);
+  f.root.position.add(v(100, 200, 300)); setEffectTime(graph, 1);
+  const last = effectNodeMatrix(graph, graph.nodes[1]);
+  assert.ok(last); closeVector(new THREE.Vector3().setFromMatrixPosition(last).sub(new THREE.Vector3().setFromMatrixPosition(first)), v(8, 0, 0), 'follower keeps live sibling animation without following moved caster');
+});
+
+test('true two-node binding cycles remain invalid', () => {
+  const a = { ...synthetic(['B', '']), name: 'A' }, b = { ...synthetic(['A', '']), name: 'B' };
+  const graph = createEffectTransforms(simpleActor(), { nodes: [a, b] }, manifest); setEffectTime(graph, 0);
+  assert.equal(effectNodeMatrix(graph, graph.nodes[0]), null);
 });

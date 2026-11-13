@@ -4,6 +4,23 @@ import {NetworkRooms,createNetworkServer} from '../network-server.mjs';
 function room(){const rooms=new NetworkRooms(),a=rooms.create('房主',{maxPlayers:2}),b=rooms.join(a.room.code,'剑客');return {rooms,a,b,call:(p,op,data={})=>rooms.request(a.room.code,p.token,op,{round:rooms.rooms.get(a.room.code)?.round||0,...data})};}
 const frame=(a,b,sequence=1)=>({sequence,time:1,players:[a,b].map(p=>({id:p.playerId,position:[0,0,0],angle:0,hp:1000,maxHp:1000,rage:0,pose:6,source:0,frame:7400,serial:1,effectTime:0}))});
 
+test('原动作过渡参数可同步，越界和不一致的目标帧被原子拒绝',()=>{
+ const {a,b,call}=playing(),state=frame(a,b),blend={from:{source:0,frame:7300},to:{source:0,frame:7400},weight:.5,duration:.3,fromSnapshot:false};
+ state.players[0].blend=blend;call(a,'sync',{frame:state});assert.deepEqual(call(b,'sync').frame.players[0].blend,blend);
+ for(const patch of [{weight:NaN},{weight:2},{duration:0},{from:{source:99,frame:0}},{to:{source:0,frame:7401}}]){
+  const next={...state,sequence:2,players:[{...state.players[0],blend:{...blend,...patch}},state.players[1]]};assert.throws(()=>call(a,'sync',{frame:next}),/无效/);assert.equal(call(b,'sync').frame.sequence,1);
+ }
+});
+
+test('自爆尾焰状态可同步且拒绝非死亡状态、错误动作和无效计时',()=>{
+ const {a,b,call}=playing(),state=frame(a,b),self=state.players[0];
+ Object.assign(self,{dead:true,hp:0,pose:469,context:{poseId:468,deathEffectTime:1.15,deathEffectAt:.9}});
+ call(a,'sync',{frame:state});assert.deepEqual(call(b,'sync').frame.players[0].context,self.context);
+ for(const patch of [{dead:false},{pose:117},{context:{...self.context,deathEffectTime:NaN}},{context:{...self.context,deathEffectAt:2}},{context:{...self.context,poseId:535}}]){
+  const next={...state,sequence:2,players:[{...self,...patch},state.players[1]]};assert.throws(()=>call(a,'sync',{frame:next}),/无效/);assert.equal(call(b,'sync').frame.sequence,1);
+ }
+});
+
 test('host impact snapshots are bounded, validated atomically and cannot mark guarded contacts as blood',()=>{
   const {a,b,call}=playing(),event={id:1,time:1,point:[0,1,0],direction:[0,0,1],guarded:false,knockdown:false,blood:true,sound:'W00BL090',attackerId:a.playerId,targetId:b.playerId};
   const state={...frame(a,b),impacts:[event]};call(a,'sync',{frame:state});assert.deepEqual(call(b,'sync').frame.impacts,[event]);
@@ -43,6 +60,57 @@ test('HTTP integration shares authoritative frame between two independent room i
 });
 
 function playing(){const f=room();f.call(f.a,'ready',{ready:true});f.call(f.b,'ready',{ready:true});f.call(f.a,'start');f.call(f.a,'loaded');f.call(f.b,'loaded');return f;}
+
+test('受击倒地起身阶段随权威快照传递，无效阶段原子拒绝且兼容旧快照',()=>{
+ const {a,b,call}=playing();let sequence=0;
+ for(const phase of [undefined,null,'hit','guard','down','recover']){
+  const state=frame(a,b,++sequence);if(phase!==undefined)state.players[0].reactionPhase=phase;
+  call(a,'sync',{frame:state});assert.equal(call(b,'sync').frame.players[0].reactionPhase,phase);
+ }
+ for(const phase of ['',true,3,{},[],'attack','recovering']){
+  const state=frame(a,b,sequence+1);state.players[0].reactionPhase=phase;
+  assert.throws(()=>call(a,'sync',{frame:state}),/无效/);assert.equal(call(b,'sync').frame.sequence,sequence);
+ }
+});
+
+test('乾坤三种形态可同步，未知形态不会覆盖上一份快照',()=>{
+ const {a,b,call}=playing();let sequence=0;
+ for(const mode of [undefined,null,'blade','spear','sheath']){
+  const state=frame(a,b,++sequence);if(mode!==undefined)state.players[0].weaponMode=mode;
+  call(a,'sync',{frame:state});assert.equal(call(b,'sync').frame.players[0].weaponMode,mode);
+ }
+ for(const mode of ['',true,2,{},[],'gun']){
+  const state=frame(a,b,sequence+1);state.players[0].weaponMode=mode;
+  assert.throws(()=>call(a,'sync',{frame:state}),/无效/);assert.equal(call(b,'sync').frame.sequence,sequence);
+ }
+});
+
+test('飞镖飞轮快照可传输，重复标识、越界坐标及无效旋转被原子拒绝',()=>{
+ const {a,b,call}=playing(),state=frame(a,b),shot={kind:'dart',id:1,ownerId:a.playerId,weaponId:1,position:[0,1,2],quaternion:[0,0,0,1],spin:2,phase:'outbound'};
+ state.projectiles=[shot,{...shot,kind:'wheel',weaponId:2,phase:'return'}];call(a,'sync',{frame:state});assert.deepEqual(call(b,'sync').frame.projectiles,state.projectiles);
+ for(const patch of [{kind:'musket'},{id:0},{ownerId:'missing'},{weaponId:-1},{position:[Infinity,0,0]},{position:[5000,0,0]},{quaternion:[0,0,0,0]},{quaternion:[0,0,1]},{spin:NaN},{phase:'return'}]){
+  const invalid={...state,sequence:2,projectiles:[{...shot,...patch}]};assert.throws(()=>call(a,'sync',{frame:invalid}),/无效/);assert.equal(call(b,'sync').frame.sequence,1);
+ }
+ for(const shots of [[shot,shot],Array.from({length:81},(_,i)=>({...shot,id:i+1}))])assert.throws(()=>call(a,'sync',{frame:{...state,sequence:2,projectiles:shots}}),/无效/);
+ call(a,'sync',{frame:{...state,sequence:2,projectiles:[]}});assert.deepEqual(call(b,'sync').frame.projectiles,[]);
+});
+
+test('真实短飞行历史可跨快照传递，乱序时间及超限路径被整体拒绝',()=>{
+ const {a,b,call}=playing(),state=frame(a,b),flight={kind:'dart',id:1,ownerId:a.playerId,weaponId:1,quaternion:[0,0,0,1],startTime:.9,endTime:.95,points:[{time:.9,position:[0,1,0],spin:0},{time:.95,position:[0,1,2],spin:1}]};
+ state.projectileFlights=[flight];call(a,'sync',{frame:state});assert.deepEqual(call(b,'sync').frame.projectileFlights,[flight]);
+ for(const patch of [{startTime:-1},{endTime:1.1},{endTime:.9},{startTime:.1},{points:[]},{points:[flight.points[0],flight.points[0]]},{points:[flight.points[1],flight.points[0]]},{points:[flight.points[0],{...flight.points[1],time:.94}]},{points:[flight.points[0],{...flight.points[1],position:[NaN,0,0]}]}]){
+  assert.throws(()=>call(a,'sync',{frame:{...state,sequence:2,projectileFlights:[{...flight,...patch}]}}),/无效/);assert.equal(call(b,'sync').frame.sequence,1);
+ }
+ assert.throws(()=>call(a,'sync',{frame:{...state,sequence:2,projectileFlights:[flight,flight]}}),/无效/);
+});
+
+test('远程命中关联投射物只接受有效种类序号及已发生时间',()=>{
+ const {a,b,call}=playing(),state=frame(a,b),event={id:1,time:1,point:[0,1,2],direction:[0,0,1],guarded:false,knockdown:false,blood:true,projectile:{kind:'dart',id:1}};
+ state.impacts=[event];call(a,'sync',{frame:state});assert.deepEqual(call(b,'sync').frame.impacts[0].projectile,event.projectile);
+ for(const patch of [{time:1.01},{projectile:{kind:'musket',id:1}},{projectile:{kind:'dart',id:0}},{projectile:{kind:'wheel',id:NaN}}])assert.throws(()=>call(a,'sync',{frame:{...state,sequence:2,impacts:[{...event,...patch}]}}),/无效/);
+ assert.throws(()=>call(a,'sync',{frame:{...state,sequence:2,time:.5,impacts:[{...event,time:.5}]}}),/无效/);
+ assert.equal(call(b,'sync').frame.sequence,1);
+});
 test('relay retains delivery until host confirmation, accepts repeat confirmation, and rejects guest or future acknowledgements',()=>{
   const {rooms,a,b,call}=playing(),input={action:'attack',active:true,sequence:1,angle:0};
   call(b,'sync',{input:[input]});const first=call(a,'sync');assert.deepEqual(call(a,'sync').input,first.input);
@@ -111,3 +179,5 @@ test('房间列表跨玩家可见且不暴露凭证，关闭房间后列表清�
  const rooms=new NetworkRooms(),host=rooms.create('局域网房主',{mode:'deathmatch'});let list=rooms.list();assert.equal(list.rooms[0].code,host.room.code);assert.equal(list.rooms[0].hostName,'局域网房主');assert.equal(list.rooms[0].mode,'deathmatch');assert.equal(JSON.stringify(list).includes(host.token),false);assert.equal('token' in list.rooms[0],false);
  rooms.join(host.room.code,'客人');assert.equal(rooms.list().rooms[0].players,2);rooms.request(host.room.code,host.token,'leave');assert.deepEqual(rooms.list().rooms,[]);
 });
+
+test('已接收的连招名称随房主状态同步，超长显示字段不会污染上一帧',()=>{const {a,b,call}=playing(),state=frame(a,b);state.players[0].queuedMoveName='残日红江';call(a,'sync',{frame:state});assert.equal(call(b,'sync').frame.players[0].queuedMoveName,'残日红江');const invalid={...state,sequence:2,players:state.players.map((p,i)=>i?p:{...p,queuedMoveName:'字'.repeat(65)})};assert.throws(()=>call(a,'sync',{frame:invalid}),/无效/);assert.equal(call(b,'sync').frame.sequence,1);});

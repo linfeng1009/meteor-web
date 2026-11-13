@@ -1,17 +1,24 @@
 import { bindingMap, defaultBindings } from './keybindings.js';
+import {validCombatTarget} from './combat-targeting.js';
+import {PLAYER_LOOK_YAW_SCALE} from './player-control.js';
 export function turnMouseCamera(game, dx, dy) {
   if(game.hero?.musketAim){if(!Number.isFinite(dx)||!Number.isFinite(dy))return false;game.cameraAngle-=dx*.003;const c=game.localControl||game;c.aimPitch=Math.max(-1.2,Math.min(1.2,(c.aimPitch||0)-dy*.003));return true;}
-  if(game.locked&&!game.locked.dead&&!game.locked.disposed)return false;
+  if(validCombatTarget(game.hero,game.locked))return false;
   if(!Number.isFinite(dx)||!Number.isFinite(dy))return false;
+  if(game.locked)game.locked=null;
   game.cameraManualUntil=game.elapsed+2;
-  game.cameraAngle-=dx*.005;
+  game.cameraAngle-=dx*PLAYER_LOOK_YAW_SCALE;
   game.cameraPitch=Math.max(.15,Math.min(.95,game.cameraPitch+dy*.003));
+  (game.localControl||game).lookPending=true;
+  if(!game.lootReplica){const control=game.localControl||game;control.lookDeltaX=(control.lookDeltaX||0)+dx;}
+  // Raw mouse events update the camera only. Fixed steps and action entry
+  // consume this angle, avoiding model/quaternion work at sensor frequency.
   return true;
 }
 // Pointer Lock must be requested synchronously from a user gesture, before scene loading.
-export function createMouseLook(canvas, { document:doc=canvas.ownerDocument, active, move, action, onUnlock=()=>{}, onError=()=>{}, bindings=defaultBindings() }) {
+export function createMouseLook(canvas, { document:doc=canvas.ownerDocument, active, move, action, onUnlock=()=>{}, onError=()=>{}, onReset=()=>{}, bindings=defaultBindings() }) {
   let mapping=bindingMap(bindings); const held=new Map();
-  const resetButtons=()=>{for(const name of new Set(held.values()))action(name,false);held.clear();};
+  const resetButtons=()=>{if(held.size)onReset();for(const name of new Set(held.values()))action(name,false);held.clear();};
   let wasLocked=false, wanted=false, pending=false, disposed=false, reported=false;
   const locked=()=>doc.pointerLockElement===canvas;
   const fail=()=>{pending=false;if(wanted&&!reported){reported=true;onError();}};

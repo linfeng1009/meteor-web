@@ -1,0 +1,81 @@
+{
+  "sourceSha256": "2479bc4bdf916d4a6386ed6352cfa9c5446708de9c1b5e859d4a674a3b42da94",
+  "executed": false,
+  "functions": {
+    "0058e8a0": {
+      "bytes": 340,
+      "sha256": "901d79470804c2df1038521b8fcb7282955da2aed6f50138d1e487394fa2d61a"
+    },
+    "0058e540": {
+      "bytes": 374,
+      "sha256": "f1d37bb89ad1d549e442f784f78a9b2050adb6c57263c16cc8c9d956b6fe9e60"
+    },
+    "0058e6d0": {
+      "bytes": 95,
+      "sha256": "a0baff89b0bb7e497ef3cda20b2984c72dad975c0279ccfb8d723d78bc3d195d"
+    },
+    "00475840": {
+      "bytes": 266,
+      "sha256": "595f94b1dacecde3571d51fbc154617b6acd09d01c7f4c92b38aa526a9c76f6d"
+    },
+    "00475980": {
+      "bytes": 223,
+      "sha256": "c4496114e1beae94c6a7bed553967a2a714cfb19e97bb326b1af3293f5b995fa"
+    }
+  },
+  "reader": {
+    "function": "0058e8a0",
+    "payloadOffsetsAfterTextureName": [
+      81,
+      85,
+      89
+    ],
+    "materialObjectOffsets": [
+      "90",
+      "94",
+      "98"
+    ],
+    "wordType": "uint32"
+  },
+  "modes": {
+    "0": "blending disabled",
+    "1": [
+      "sourceColor",
+      "one"
+    ],
+    "2": [
+      "zero",
+      "oneMinusSourceColor"
+    ],
+    "3": [
+      "sourceAlpha",
+      "oneMinusSourceAlpha"
+    ],
+    "4": "custom factors from the two stored indices"
+  },
+  "factorIndices": [
+    "one",
+    "zero",
+    "sourceColor",
+    "oneMinusSourceColor",
+    "sourceAlpha",
+    "oneMinusSourceAlpha",
+    "destinationColor",
+    "oneMinusDestinationColor",
+    "destinationAlpha",
+    "oneMinusDestinationAlpha"
+  ],
+  "nativeEngineIndices": [
+    1,
+    0,
+    2,
+    4,
+    6,
+    7,
+    3,
+    5,
+    8,
+    9
+  ],
+  "webImplementation": "CustomBlending/AddEquation with identical RGB and alpha factors; no alpha-only visibility suppression for non-source-alpha formulas."
+}

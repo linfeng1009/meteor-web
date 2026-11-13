@@ -2,6 +2,81 @@
 // The .3s double-tap interval is a Web recognizer adapter based on the native
 // command-token lifetime; exact original double-tap sampling remains unverified.
 export const NATIVE_TRAVERSAL_WINDOW=.3;
+// Reference EXE 004cb083 initializes actor+0xd8 to float32(-882);
+// 004cf5a0 assigns float32(282) to actor+0x398 for jump argument0.
+// 004ce840 consumes the gravity vector during attack/free-flight motion.
+// 004cf4b0 starts the button timer;004cf530 selects the jump on release,
+// comparing against float64(.11) at005aa8e8.004cd3a0 auto-releases after it.
+// Collision shape and contact probes remain Web adapters.
+export const NATIVE_JUMP_HOLD_SECONDS=.11;
+// 004cb5e0 passes mouseX*(world.mouseSpeed+1)*float32(1/140) to
+// 004cc640; native default speed50 is initialized at00486a28. That handler
+// selects right141/left142 only beyond±1 and restarts actor+1c8.004cd3a0
+// returns to stance after its clock exceeds float64(.2) at005a8f90.
+export const NATIVE_STANDING_TURN=Object.freeze({hold:.2,mouseSpeed:50,inputScale:Math.fround(1/140)});
+export function nativeStandingTurnDirection(mouseX){
+  const value=Math.fround(mouseX*(NATIVE_STANDING_TURN.mouseSpeed+1)*NATIVE_STANDING_TURN.inputScale);
+  return value>1?'right':value< -1?'left':null;
+}
+// 004ce840 damps actor+3b8/+3bc by1-(grounded?9:.2)*dt.
+// Ninja004e34e0 scales those fields byfloat32(.67) on an accepted attack.
+export const NATIVE_ACTION_MOTION=Object.freeze({groundDamping:9,airDamping:Math.fround(.2),ninjaScale:Math.fround(.67)});
+export function nativeActionMomentum(velocity,dt,grounded){
+  const factor=1-(grounded?NATIVE_ACTION_MOTION.groundDamping:NATIVE_ACTION_MOTION.airDamping)*dt;
+  return Math.fround(velocity/.08*factor)*.08;
+}
+// 004cd3a0 calls004cf7c0 only below float32(-40) native vertical
+// speed. The initializer preserves existing air/fall clips, otherwise maps
+// directional takeoff153/155/157 to154/156/158, default152.
+export function nativeAirPose(current,vertical){
+  if(!(Math.fround(vertical/.08)<-40))return current;
+  switch(current){
+    case 152:case 154:case 156:case 158:case 180:return current;
+    case 153:return 154;
+    case 155:return 156;
+    case 157:return 158;
+    default:return 152;
+  }
+}
+export const NATIVE_AIR_PHYSICS=Object.freeze({gravity:882*.08,jumpVelocity:282*.08,largeJumpVelocity:375*.08,
+  provenance:'Reference Meteor.exe constructor004cb083 immc45c8000;004cf5a0 uses005aa93c float282 or005aa940 float375.004cf530 hold threshold float64(.11) at005aa8e8. Native units×.08.'});
+// 004cd3a0 without directional force: linear drag20 native units/s,
+// gravity, then quadratic drag(.1/600) act on the SAME three-axis vector.
+// Update the supplied horizontal velocity in place, returning vertical speed.
+export function stepNativeAirDrift(horizontal,vertical,dt,gravity=NATIVE_AIR_PHYSICS.gravity){
+  let x=horizontal.x/.08,y=vertical/.08,z=horizontal.z/.08,speed=Math.hypot(x,y,z);
+  const linear=speed>0?Math.max(0,1-20*dt/speed):0;
+  x=Math.fround(x*linear);y=Math.fround(y*linear);z=Math.fround(z*linear);
+  y=Math.fround(y-gravity/.08*dt);speed=Math.hypot(x,y,z);
+  const quadratic=Math.max(0,1-speed*dt/6000);
+  horizontal.x=Math.fround(x*quadratic)*.08;horizontal.z=Math.fround(z*quadratic)*.08;
+  return Math.fround(y*quadratic)*.08;
+}
+// Ordinary-air portion of004cd3a0: airborne acceleration100, speed gate
+// 10000 (×.24 outside uncrouched forward input), positive input projection
+// cancels the parallel part of linear drag. Caller supplies world input basis.
+export function stepNativeAirMotion(horizontal,vertical,inputX,inputZ,forwardRunning,dt,movementScale=1,gravity=NATIVE_AIR_PHYSICS.gravity,groundContact=false){
+  const inputLength=Math.hypot(inputX,inputZ);
+  if(inputLength===0)return stepNativeAirDrift(horizontal,vertical,dt,gravity);
+  let x=horizontal.x/.08,y=vertical/.08,z=horizontal.z/.08,speed=Math.hypot(x,y,z);
+  const limit=10000*movementScale*(forwardRunning?1:.24),ratio=Math.fround(speed/limit);
+  // Above the gate the native routine leaves its original input vector;
+  // it does not hard-clamp existing velocity or reverse the acceleration.
+  let ax=inputX,az=inputZ;
+  if(ratio<1){const force=(1-ratio**4)*(groundContact?1000:100)*movementScale;ax=inputX/inputLength*force;az=inputZ/inputLength*force;}
+  ax=Math.fround(ax);az=Math.fround(az);
+  if(speed>0){
+    const amount=20*dt,forceLength=Math.hypot(ax,az),dot=forceLength>0?(ax*x+az*z)/(forceLength*speed):0;
+    let dx=-x/speed*amount,dy=-y/speed*amount,dz=-z/speed*amount;
+    if(dot>0){dx+=ax/forceLength*amount*dot;dz+=az/forceLength*amount*dot;}
+    if(Math.hypot(dx,dy,dz)>=speed)x=y=z=0;
+    else{x=Math.fround(x+dx);y=Math.fround(y+dy);z=Math.fround(z+dz);}
+  }
+  x=Math.fround(x+ax*dt);y=Math.fround(y-gravity/.08*dt);z=Math.fround(z+az*dt);
+  speed=Math.hypot(x,y,z);const quadratic=Math.max(0,1-speed*dt/6000);
+  horizontal.x=Math.fround(x*quadratic)*.08;horizontal.z=Math.fround(z*quadratic)*.08;
+  return Math.fround(y*quadratic)*.08;
+}
 export const NATIVE_ROLL_POSES=Object.freeze({forward:176,right:177,left:178,back:179});
 // 004cc730 maps crouched idle -> 10 and walk/run 140/144,141,142,143
 // to 145,146,147,148. 004cf770 selects directional takeoff; 004cf7d0

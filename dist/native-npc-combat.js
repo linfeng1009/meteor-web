@@ -11,7 +11,8 @@ export const NATIVE_NPC_COMBAT_PROVENANCE = Object.freeze({
   weights: '005043d7..00504543: first rand()%100 selects Guard or gates attack by Guard+Attack1+Attack2+Attack3; a separate rand()%100 selects Attack1/2/3. Guard decisions set basefloat32(.4). No probability normalization.',
   commands: '004ff200 twelve original weapon tables;00500c90 uses one of17 air commands in controllerstate0, otherwise50% previous category/index reuse or random entry in requested category.',
   distance: '004fc9f0 uses strict distance²<maximumDistance², with ×3 for a non-ranged actor outside grounded states1/11.004fcb00→004fced0 checks the weapon angle tolerance before choosing a program. Native units×.08.',
-  adapters: 'Web random samples produce15-bit draws; original PRNG sequence and exact OS clocks are not reproduced. Full AI evasion, jumping, looking, range switching and tactical states remain incomplete. Guard currently holds browser defense; the20% alternate005012a0 flag branch remains pending. Direction programs use the existing Web recognizer and original POS/ACT gates.'
+  defense: '005043d1..00504422: Guard gate draws rand()%5; zero sets crouch through00501280→004ce1c0, otherwise holds guard through00500c40. Each branch leaves the other flag untouched; a non-defense decision clears both. Original older sample addresses00504407/0050441d/00504438/00504442.',
+  adapters: 'Web random samples produce15-bit draws; original PRNG sequence and exact OS clocks are not reproduced. Full AI evasion, jumping, looking, range switching and tactical states remain incomplete. Musket vtable005aac50+40 uses004ded30 to refuse crouch while actor+36c aim is set; other weapon classes return0. Direction programs use the existing Web recognizer and original POS/ACT gates.'
 });
 
 export function nativeNpcInterval(baseDelay, config) {
@@ -58,7 +59,7 @@ export class NativeNpcCombat {
   draw() { return Math.min(32767, Math.max(0, Math.floor(this.random() * 32768))); }
   reset() {
     this.elapsed = 0; this.baseDelay = Math.fround((this.draw() % 1000) * Math.fround(.0005));
-    this.guard = false; this.engaged = false;
+    this.guard = false; this.crouch = false; this.engaged = false;
   }
   advance(dt, config, { hasTarget = false, paused = false } = {}) {
     if (paused || !Number.isFinite(dt) || dt <= 0) return false;
@@ -71,7 +72,7 @@ export class NativeNpcCombat {
     const entering = hasTarget && !this.engaged;
     this.baseDelay = Math.fround(hasTarget && !entering ? .2 : .4);
     this.engaged = hasTarget;
-    if (!hasTarget) this.guard = false;
+    if (!hasTarget) { this.guard = false; this.crouch = false; }
     return hasTarget && !entering;
   }
   command(weapon, category, air = false) {
@@ -88,8 +89,14 @@ export class NativeNpcCombat {
     const actionRoll = this.draw() % 100;
     const gate = nativeNpcChoice(actor.scriptConfig, actionRoll, 0);
     const choice = gate.kind === 'attack' ? canAttack() ? nativeNpcChoice(actor.scriptConfig, actionRoll, this.draw() % 100) : { kind: 'wait' } : gate;
-    this.guard = choice.kind === 'guard';
-    if (this.guard) this.baseDelay = Math.fround(.4);
+    if (choice.kind === 'guard') {
+      const defense = this.draw() % 5 === 0 ? 'crouch' : 'guard';
+      if (defense === 'guard') this.guard = true;
+      else if(actor.weapon!=='musket'||!actor.musketAim)this.crouch = true;
+      this.baseDelay = Math.fround(.4);
+      return { ...choice, defense };
+    }
+    this.guard = false; this.crouch = false;
     return choice.kind === 'attack' ? { ...choice, program: this.command(actor.weapon, choice.category, !actor.grounded) } : choice;
   }
 }

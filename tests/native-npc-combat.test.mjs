@@ -37,8 +37,36 @@ test('source defense delays the next decision, and angle rejection consumes no c
   let calls = 0;
   const brain = new NativeNpcCombat(data, { random: () => { calls++; return 0; } }), f = actor();
   f.scriptConfig = { Guard: 100 }; assert.equal(brain.choose(f).kind, 'guard'); assert.equal(brain.baseDelay, Math.fround(.4));
-  assert.equal(calls, 2); f.scriptConfig = { Guard: 0, Attack1: 100 };
-  assert.equal(brain.choose(f, { canAttack: () => false }).kind, 'wait'); assert.equal(calls, 3);
+  assert.equal(calls, 3); f.scriptConfig = { Guard: 0, Attack1: 100 };
+  assert.equal(brain.choose(f, { canAttack: () => false }).kind, 'wait'); assert.equal(calls, 4);
+});
+
+test('原防御分支使用独立五选一抽样，蹲下与格挡标志保留到非防御决策',()=>{
+  const f=actor();f.scriptConfig={Guard:100};
+  for(let roll=0;roll<5;roll++){
+    const brain=new NativeNpcCombat(data,{random:draws(0,0,roll)}),choice=brain.choose(f);
+    assert.equal(choice.defense,roll===0?'crouch':'guard');assert.equal(brain.crouch,roll===0);assert.equal(brain.guard,roll!==0);
+  }
+  const brain=new NativeNpcCombat(data,{random:draws(0,0,1,0,0,99)});
+  brain.choose(f);assert.equal(brain.guard,true);assert.equal(brain.crouch,false);
+  brain.choose(f);assert.equal(brain.guard,true);assert.equal(brain.crouch,true,'蹲下分支不主动清除已有格挡');
+  f.scriptConfig={Guard:0,Attack1:0,Attack2:0,Attack3:0};brain.choose(f);
+  assert.equal(brain.guard,false);assert.equal(brain.crouch,false);
+});
+
+test('火铳专用蹲下拒绝条件读取瞄准标志，收枪后可重新蹲守',()=>{
+  const f=actor('musket');f.scriptConfig={Guard:100};f.musketAim=true;
+  const brain=new NativeNpcCombat(data,{random:draws(0)});brain.choose(f);assert.equal(brain.crouch,false);
+  f.musketAim=false;brain.choose(f);assert.equal(brain.crouch,true);
+});
+
+test('失去敌人和重置清除两种防御标志，暂停不会更改已选防御',()=>{
+  const f=actor('musket');f.scriptConfig={Guard:100};
+  const brain=new NativeNpcCombat(data,{random:draws(0)});
+  assert.equal(brain.choose(f).defense,'crouch');assert.equal(brain.crouch,true);brain.guard=true;
+  brain.advance(10,f.scriptConfig,{hasTarget:false,paused:true});assert.equal(brain.guard,true);assert.equal(brain.crouch,true);
+  brain.advance(10,f.scriptConfig,{hasTarget:false});assert.equal(brain.guard,false);assert.equal(brain.crouch,false);
+  brain.guard=true;brain.crouch=true;brain.reset();assert.equal(brain.guard,false);assert.equal(brain.crouch,false);
 });
 
 test('native weapon decision range is separate from damage geometry and preserves the strict boundary and angle gate', () => {
@@ -92,6 +120,6 @@ test('NPC direction programs use actual catalog roots, prerequisites and existin
   const spear = actor('spear'); assert.equal(nativeNpcMove(spear, 'bff').poseId, 293); assert.equal(nativeNpcMove(spear, 'fff').poseId, 571);
   assert.equal(nativeNpcMove(actor('hammer'), 'bff').poseId, 567);
   assert.equal(nativeNpcMove(actor('hammer'), 'bff').pending, undefined);
-  assert.ok(nativeNpcMove(actor('dual'), 'bbf').pending, 'unrecovered乘风 still reaches its resource gate');
+  assert.equal(nativeNpcMove(actor('dual'), 'bbf').pending, undefined, '乘风 is available to the same NPC resource gate');
   assert.equal(nativeNpcMove(f, 'invented-program'), null);
 });

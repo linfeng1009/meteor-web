@@ -13,6 +13,47 @@ const sources = new Map();
 for (const script of manifest.scripts.filter(s => /\.(pst|h)$/i.test(s.source.path))) sources.set(script.source.path.toLowerCase(), await readFile(new URL(script.utf8, root), 'utf8'));
 const world = p => new THREE.Vector3(p[0] * .08, p[2] * .08, -p[1] * .08);
 
+test('航点连接避开隔墙近点，无法连通时不回退为穿墙直走',()=>{
+  const wall=new THREE.Mesh(new THREE.BoxGeometry(.2,5,10),new THREE.MeshBasicMaterial({side:THREE.DoubleSide}));
+  wall.position.set(0,2.5,0);wall.updateMatrixWorld(true);
+  const host=Object.assign(Object.create(NativeMissionHost.prototype),{game:{},map:{colliders:[wall]},raycaster:new THREE.Raycaster()});
+  const point=(id,x,z,links=[])=>({id,navigationPosition:new THREE.Vector3(x,0,z),size:10,links});
+  const blocked=point(1,1,0),entry=point(2,-4,0,[{target:3,distance:3}]),goal=point(3,-4,3);
+  host.points=new Map([[1,blocked],[2,entry],[3,goal]]);
+  const actor={root:{position:new THREE.Vector3(-1,0,0)}};
+  try{
+    assert.equal(host.closestWaypoint(actor.root.position).id,1);
+    assert.equal(host.closestWaypoint(actor.root.position,{visible:true}).id,2);
+    assert.equal(host.moveViaWaypoint(actor,3),entry.navigationPosition);assert.deepEqual(actor.scriptPath.ids,[2,3]);
+    actor.scriptPath={goal:3,ids:[3],cursor:1};actor.root.position.set(1,0,0);
+    assert.equal(host.moveViaWaypoint(actor,3),null,'击退到隔墙区域后重新选路，不能复用已完成路径');
+    assert.equal(host.closestWaypoint(actor.root.position,{visible:true}).id,1);
+    actor.scriptPath=null;host.points=new Map([[2,entry],[3,goal]]);
+    assert.equal(host.closestWaypoint(actor.root.position,{visible:true}),null);
+    assert.equal(host.moveViaWaypoint(actor,3),null);
+  }finally{wall.geometry.dispose();wall.material.dispose();}
+});
+
+test('航点连接缓存限制失败重搜，移动墙体仍立即失效已缓存的可见连接',()=>{
+  const wall=new THREE.Mesh(new THREE.BoxGeometry(.2,5,10),new THREE.MeshBasicMaterial({side:THREE.DoubleSide}));
+  wall.position.set(0,2.5,0);wall.updateMatrixWorld(true);
+  const host=Object.assign(Object.create(NativeMissionHost.prototype),{game:{},map:{colliders:[wall]},raycaster:new THREE.Raycaster(),clock:0});
+  const near={id:1,navigationPosition:new THREE.Vector3(1,0,0)},far={id:2,navigationPosition:new THREE.Vector3(-4,0,0)};
+  host.points=new Map([[1,near],[2,far]]);const position=new THREE.Vector3(-1,0,0);
+  const original=host.lineOfSight.bind(host);let calls=0;host.lineOfSight=(...args)=>{calls++;return original(...args);};
+  try{
+    assert.equal(host.closestWaypoint(position,{visible:true}),far);calls=0;
+    assert.equal(host.closestWaypoint(position,{visible:true}),far);assert.equal(calls,1,'缓存命中只重查已选连接');
+    wall.position.x=-2;wall.updateMatrixWorld(true);calls=0;
+    assert.equal(host.closestWaypoint(position,{visible:true}),near);assert.ok(calls>=2,'新墙体遮住旧连接后立刻重新选点');
+    host.points=new Map([[2,far]]);host.clock=.21;
+    assert.equal(host.closestWaypoint(position,{visible:true}),null);calls=0;
+    for(let i=0;i<60;i++)assert.equal(host.closestWaypoint(position,{visible:true}),null);
+    assert.equal(calls,0,'固定位置的无解连接不逐帧重复扫描');
+    host.clock=.42;host.closestWaypoint(position,{visible:true});assert.ok(calls>0);
+  }finally{wall.geometry.dispose();wall.material.dispose();}
+});
+
 async function mission(options = {}) {
   const events = [], configurations = [], sceneObjects = new Map();
   const des = metadata.files.find(f => f.parsed?.format === 'DES').parsed;
@@ -30,9 +71,12 @@ async function mission(options = {}) {
     playScenePose: (name, pose) => { const object = sceneObjects.get(name.toLowerCase()); if (object) { object.pose = pose; object.state = 3; } },
     setSceneActive: (name, active) => { sceneObjects.get(name.toLowerCase()).attributes.active = Number(active); },
     setSceneCollision: (name, enabled) => { sceneObjects.get(name.toLowerCase()).attributes.collision = Number(enabled); },
-    hasScriptLineOfSight: actor => visibility.has(actor.scriptId),
+    // Only actor perception is mocked; this fixture has no map occluders,
+    // so point-to-waypoint navigation connections remain clear.
+    hasScriptLineOfSight: (actor,target) => actor.scriptId==null||target.scriptId==null||visibility.has(actor.scriptId),
     placeScriptPlayer: config => { game.playerConfig = config; hero.root.position.copy(config.spawn.position); },
     createScriptActor: async config => {
+      if(options.beforeActor)await options.beforeActor(config);
       configurations.push(config);
       const actor = { id: 500 + config.scriptId, scriptId: config.scriptId, modelId: config.modelId,
         root: new THREE.Group(), hp: config.hp, maxHp: config.hp, team: config.team, dead: false,
@@ -70,6 +114,25 @@ async function mission(options = {}) {
   if (options.autoStart !== false) await host.start();
   return { game, host, events, configurations, sceneObjects, visibility };
 }
+
+test('模型加载耗时不会重排原脚本的角色创建及初始化顺序',async()=>{
+  const started=[];
+  const {game,host,events}=await mission({beforeActor:async config=>{started.push(config.scriptId);if(config.scriptId===1)await new Promise(resolve=>setTimeout(resolve,25));}});
+  assert.deepEqual(started,[1,2,3]);assert.deepEqual(game.enemies.map(actor=>actor.scriptId),[1,2,3]);
+  assert.deepEqual(events.filter(event=>event.type==='mission-npc').map(event=>event.scriptId),[1,2,3]);
+  assert.deepEqual([...host.npcVms.keys()],[1,2,3]);assert.equal(host.pending.size,0);
+});
+
+test('一个角色加载失败后，后续原脚本创建请求仍可执行',async()=>{
+  const {game,host}=await mission(),create=game.createScriptActor;
+  const source=host.npcScripts.get(1).replace(/^level\//,'').replace(/\.pst$/,'');
+  game.createScriptActor=async config=>{if(config.scriptId===4)throw new Error('测试模型加载失败');return create(config);};
+  assert.equal(host.addNpc(source),4);assert.equal(host.addNpc(source),5);
+  const results=await Promise.allSettled([...host.pending]);await host.flushPending();
+  assert.equal(results[0].status,'rejected');assert.equal(results[1].status,'fulfilled');
+  assert.equal(host.actor(4),null);assert.ok(host.actor(5));assert.equal(host.pending.size,0);
+  assert.ok(host.diagnostics.some(item=>item.code==='NPC_LOAD_FAILED'));
+});
 
 test('the real cave mission creates three distinct runtime NPCs with their original source configuration and waypoints', async () => {
   const { game, host, configurations, events } = await mission();
@@ -279,11 +342,12 @@ test('late original NPC loads are removed after the source mission is disposed',
   const entered = new Promise(resolve => { allEntered = resolve; });
   game.createScriptActor = async config => {
     const actor = await originalCreate(config); loaded.push(actor);
-    if (loaded.length === 3) allEntered();
+    if (loaded.length === 1) allEntered();
     await gate; return actor;
   };
   const starting = host.start(); await entered; host.dispose(); finishLoad(); await starting;
   assert.equal(game.enemies.length, 0);
+  assert.equal(loaded.length,1,'未开始的排队加载在离开剧情后取消');
   assert.equal(loaded.every(actor => actor.disposed), true);
   assert.equal(events.some(event => event.type === 'mission-npc'), false);
 });

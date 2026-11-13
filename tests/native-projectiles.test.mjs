@@ -1,3 +1,4 @@
+import {NATIVE_AIR_PHYSICS} from '../dist/native-traversal.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -61,6 +62,32 @@ test('actual dart movement hits once using original 75/65 RES and recovered dama
   assert.equal(target.hp, 1000); game.projectiles.update(.25); assert.equal(target.hp, 966); assert.equal(shot.removalReason, 'actor');
   game.projectiles.update(2); assert.equal(target.hp, 966); assert.equal(game.contactHits, 1); assert.equal(game.totalDamage, 34);
   assert.equal(events.filter(e => e.type === 'hit').length, 1); assert.equal(target.rage, 4);
+});
+
+test('联机关闭队伤时，飞镖火铳飞轮在选最近碰撞前跳过队友并命中后方敌人',()=>{
+  for(const kind of ['dart','musket','wheel']){
+    const {game,hero,target}=fixture(),ally=actor(3,'spear');ally.team=ally.teamMask=3;game.enemies.unshift(ally);game.scene.add(ally.root);game.networkCombat=true;
+    try{
+      const pose=poses.get(kind==='musket'?206:200),context={attacker:hero,state:{poseId:pose.id,pose,serial:1},attack:pose.attacks[0]};
+      if(kind==='dart'){release(game,hero);game.projectiles.update(.4);}
+      else if(kind==='musket')game.muskets.fire({owner:hero,position:v(0,1.4,0),direction:v(0,0,1),range:20,context});
+      else{game.wheels.spawn({owner:hero,position:v(0,1.4,0),direction:v(0,0,1),context});game.wheels.update(.5);}
+      assert.equal(ally.hp,1000,kind);assert.ok(target.hp<1000,kind);assert.equal(game.contactHits,1,kind);
+    }finally{game.projectiles.dispose();game.muskets.dispose();game.wheels.dispose();}
+  }
+});
+
+test('队友过滤不穿过地图墙体，非联机仍保留已有原同阵营伤害倍率',()=>{
+  for(const networkCombat of [false,true]){
+    const blocker=networkCombat?wall(6):null,{game,hero,target}=fixture({colliders:blocker?[blocker]:[]}),ally=actor(3,'spear');
+    ally.team=ally.teamMask=3;game.enemies.unshift(ally);game.scene.add(ally.root);game.networkCombat=networkCombat;
+    try{
+      release(game,hero);const shot=game.projectiles.active[0];game.projectiles.update(.4);
+      assert.equal(target.hp,1000);
+      if(networkCombat){assert.equal(ally.hp,1000);assert.equal(shot.removalReason,'world');}
+      else{assert.equal(ally.hp,994);assert.equal(shot.removalReason,'actor');}
+    }finally{game.projectiles.dispose();game.muskets.dispose();game.wheels.dispose();blocker?.geometry.dispose();blocker?.material.dispose();}
+  }
 });
 
 test('continuous swept contact does not tunnel through a capsule at a low frame rate', () => {
@@ -136,7 +163,7 @@ test('actual SKC/BNC/AMB, d_wpnR, W3_0 and original cave triangles launch and da
     Object.assign(game, { manifest, combatData: data, weaponManifest: wm,
       weaponItems: new Map(wm.items.map(item => [item.itemId, item])), weaponModels: new Map(wm.models.map(model => [model.modelId, model])), weaponCache: new Map(),
       scene: new THREE.Scene(), camera: new THREE.PerspectiveCamera(), raycaster: new THREE.Raycaster(), collisionMaterial: new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }),
-      hostPhysics: { speed: 8, gravity: 34, jumpVelocity: 12, radius: .4, step: .55 }, weapon: 'dart', actorSerial: 0, enemies: [], running: true, paused: false, mode: 'story',
+      hostPhysics: { speed: 8, gravity: NATIVE_AIR_PHYSICS.gravity, jumpVelocity: NATIVE_AIR_PHYSICS.jumpVelocity, radius: .4, step: .55 }, weapon: 'dart', actorSerial: 0, enemies: [], running: true, paused: false, mode: 'story',
       cameraAngle: 0, keys: new Set(), directionBuffer: [], elapsed: 0, difficulty: 'normal', kills: 0, deaths: 0, totalDamage: 0, contactHits: 0,
       _nameplate() {}, _soundDefinition() {}, _hud() {}, _emit() {}, onEvent() {} });
     game.damageResolver = createNativeDamageResolver(data);

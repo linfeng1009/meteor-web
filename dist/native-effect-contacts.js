@@ -4,13 +4,14 @@ import { createEffectTransforms, setEffectTime, effectNodeMatrix } from './nativ
 // 00556910: POS "effect" =0x1001; 0055da50 ->0056f1d0 checks EF
 // nodes whose first name byte is A/a, excluding AUDIO/PATH. It queries
 // oriented bounds (005818f0/0055d950/00570630), not rendered triangles,
-// opacity or texture presence. SPHERE/BOX/CYLINDER bounds are recovered here.
+// opacity or texture presence. SPHERE/BOX/CYLINDER/PLANE/DONUT bounds are recovered here.
 // MODEL/PATH and the other primitive families still require their own rules.
 export const NATIVE_EFFECT_CONTACT_ADAPTER = Object.freeze({
   sampleStep: 1 / 120, maxSamplesPerInterval: 256, bodyRadius: .4, bodyHalfHeight: 1.3,
   provenance: 'Source EF bound dimensions, keys, A/a name filter and POS effect windows; Web transform interpolation, temporal sampling and actor body box.'
 });
 const WORLD_AXES = [new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 1)];
+const EFFECT_STEP=Symbol('native-effect-contact-step');
 
 export function nativeEffectBounds(source) {
   const d = source.dimensions;
@@ -24,6 +25,16 @@ export function nativeEffectBounds(source) {
     half.set(...d.map(value => Math.abs(value) / 2));
     // 00589a40 keeps the original second dimension as the base offset.
     if (source.flags?.[0] === 1) center.z = d[1] / 2;
+  }
+  else if (source.type === 'PLANE' && d.length === 2) {
+    // 00585400: authored width/height halves and fixed native Z half-size3.
+    half.set(Math.abs(d[0])/2,Math.abs(d[1])/2,3);
+    if(source.flags?.[0]===1)center.z=d[1]/2;
+  }
+  else if (source.type === 'DONUT' && d.length === 6) {
+    // 005881a0: the native attack uses its OBB, including the visual hole.
+    half.set(Math.abs(d[1]),Math.abs(d[1]),Math.abs(d[1]-d[0])/2);
+    if(source.flags?.[0]===1)center.z=(d[1]-d[0])/2;
   }
   else return null;
   return { center, half };
@@ -67,18 +78,49 @@ function activeIntervals(state, attack, fps) {
 
 export class NativeEffectContacts {
   constructor({ manifest, bodyRadius = .4 } = {}) {
-    this.manifest = manifest; this.bodyRadius = bodyRadius; this.actors = new Map(); this.disposed = false;
+    this.manifest = manifest; this.bodyRadius = bodyRadius; this.actors = new Map(); this.timelines=new Map(); this.disposed = false;
+  }
+  _graph(actor,id,serial){
+    const graph={...createEffectTransforms(actor,this.manifest.effects[id],this.manifest),id,serial};
+    graph.attackNodes=graph.nodes.filter(node=>/^[aA]/.test(node.source.name)&&nativeEffectBounds(node.source));
+    this.actors.set(actor,graph);return graph;
+  }
+  beginStep(actor,state){
+    if(this.disposed||!actor||!state)return;
+    if(actor.dead||actor.disposed||actor.scriptRemoved){this.clearActor(actor);return;}
+    let record=this.timelines.get(actor);
+    if(!record){record={clock:0,serial:null,effects:[]};this.timelines.set(actor,record);}
+    for(const segment of state.segments||[state]){
+      const start=record.clock,id=String(segment.pose?.raw?.fields.effectid||'').toLowerCase(),definition=this.manifest.effects[id];
+      if(!segment.blend&&record.serial!==segment.serial){
+        record.serial=segment.serial;
+        if(definition?.nodes.some(node=>/^[aA]/.test(node.name)&&nativeEffectBounds(node))){
+          const graph=this._graph(actor,id,segment.serial),born=start-(segment.previousEffectTime||0);
+          const end=born+Math.max(...graph.attackNodes.map(node=>node.source.keys.at(-1)[0]));
+          record.effects.push({graph,born,end});
+          if(record.effects.length>16)record.effects.shift();
+        }
+      }
+      // 0055da50 queries all living owner effects, not only the current POS
+      // effect ID. An automatic phase with EffectID0 does not erase its caster.
+      segment[EFFECT_STEP]=record.effects.filter(effect=>effect.end>=start-1e-7).map(effect=>({graph:effect.graph,offset:start-effect.born}));
+      record.clock+=Math.max(0,segment.consumed||0);
+      record.effects=record.effects.filter(effect=>effect.end>=record.clock-1e-7);
+    }
   }
   sample(actor, state, attack, fps = 30) {
     if (this.disposed || !actor || actor.dead || actor.disposed || actor.scriptRemoved || actor.combat?.reacting || state.blend || !attack.bones?.includes('effect')) return [];
+    if(state[EFFECT_STEP])return state[EFFECT_STEP].flatMap(({graph,offset})=>this._sampleGraph(actor,{...state,previousEffectTime:offset,effectTime:offset+(state.consumed||0)},attack,fps,graph));
     const id = String(state.pose?.raw?.fields.effectid || '').toLowerCase(), definition = this.manifest.effects[id];
     if (!definition) return [];
     let graph = this.actors.get(actor);
     if (!graph || graph.serial !== state.serial || graph.id !== id) {
-      graph = { ...createEffectTransforms(actor, definition, this.manifest), id, serial: state.serial };
-      graph.attackNodes = graph.nodes.filter(node => /^[aA]/.test(node.source.name) && nativeEffectBounds(node.source));
-      this.actors.set(actor, graph);
+      graph = this._graph(actor,id,state.serial);
     }
+    return this._sampleGraph(actor,state,attack,fps,graph);
+  }
+  _sampleGraph(actor,state,attack,fps,graph){
+    const id=graph.id;
     if (!graph.attackNodes.length) return [];
     const volumes = [], savedFrame = actor.character.frame, savedSource = actor.character.source;
     try {
@@ -113,7 +155,7 @@ export class NativeEffectContacts {
     }
     return null;
   }
-  clearActor(actor) { this.actors.delete(actor); }
-  clear() { this.actors.clear(); }
+  clearActor(actor) { this.actors.delete(actor); this.timelines.delete(actor); }
+  clear() { this.actors.clear(); this.timelines.clear(); }
   dispose() { this.clear(); this.disposed = true; }
 }

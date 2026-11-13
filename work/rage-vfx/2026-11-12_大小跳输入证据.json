@@ -1,0 +1,42 @@
+{
+  "sampleSha256": "2479bc4bdf916d4a6386ed6352cfa9c5446708de9c1b5e859d4a674a3b42da94",
+  "values": {
+    "holdSeconds": {
+      "address": "0x5aa8e8",
+      "bytes": "295c8fc2f528bc3f",
+      "value": 0.11
+    },
+    "smallVelocity": {
+      "address": "0x5aa93c",
+      "bytes": "00008d43",
+      "value": 282.0
+    },
+    "largeVelocity": {
+      "address": "0x5aa940",
+      "bytes": "0080bb43",
+      "value": 375.0
+    },
+    "linearDragFactor": {
+      "address": "0x5a8f7c",
+      "bytes": "00004843",
+      "value": 200.0
+    },
+    "quadraticDragFactor": {
+      "address": "0x5aa8f8",
+      "bytes": "4f1be8b4814e5b3f",
+      "value": 0.0016666666666666668
+    }
+  },
+  "calls": {
+    "input": "004cb810: canonical1200 down→vtable7c/004cf4b0, up→vtable104/004cf530",
+    "hold": "004cd3a0 elapsed>.11 auto release;004cf530 elapsed>=.11 selects argument1, otherwise0",
+    "jump": "004cf5a0 grounded1/11 sets375 or282 and state0;004cf760 chooses direction pose",
+    "vertical": "004cd3a0 state0 linear friction .1*200, gravity vector, quadratic drag .1*1/600;004ce840 action path separately consumes authored d_base",
+    "musket": "005aac50+3c→004dc030 returns0; +40→004ded30 reads actor36c aiming flag"
+  },
+  "limitations": [
+    "Static evidence; no original runtime comparison performed.",
+    "Horizontal acceleration and wall traversal remain Web adapters.",
+    "Vertical drag uses current Web horizontal velocity, not a full port of original three-axis input force."
+  ]
+}

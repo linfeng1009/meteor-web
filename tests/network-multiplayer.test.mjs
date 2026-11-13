@@ -24,6 +24,18 @@ test('四人房间逐人准备载入，队伍合法后开局，每路输入独�
  call(host,'sync',{inputAck:{[players[1].playerId]:1}});assert.equal(call(host,'sync').input.length,2);
  assert.throws(()=>call(players[2],'sync',{frame:f.frame(2)}),/房主/);
 });
+test('跳跃按下与松开重试保持时间间隔，部分确认不会吞掉松开事件',()=>{
+  const f=room();f.start();const {host,players,call}=f,guest=players[1];
+  const input=[{action:'jump',active:true,sequence:1,angle:0,time:10},{action:'jump',active:false,sequence:2,angle:0,time:10.04}];
+  call(guest,'sync',{input});const first=call(host,'sync').input;
+  assert.deepEqual(first.map(event=>[event.action,event.active,event.sequence,event.time]),[['jump',true,1,10],['jump',false,2,10.04]]);
+  call(guest,'sync',{input});assert.deepEqual(call(host,'sync').input,first);
+  call(host,'sync',{inputAck:{[guest.playerId]:1}});const release=call(host,'sync').input;
+  assert.equal(release.length,1);assert.equal(release[0].active,false);assert.equal(release[0].time,10.04);
+  call(guest,'sync',{input:[input[1]]});assert.deepEqual(call(host,'sync').input,release);
+  call(host,'sync',{inputAck:{[guest.playerId]:2}});assert.equal(call(host,'sync').input.length,0);
+});
+
 test('三人继续游戏时客人离场刷新名册，不吞旧队列，不接受幽灵帧',()=>{
  const f=room();f.start();const {host,players,call}=f;call(players[1],'leave');const stale=call(host,'sync',{frame:f.frame()});assert.equal(stale.room.phase,'playing');assert.equal(stale.room.players.length,3);assert.equal(f.rooms.rooms.get(host.room.code).frame,null);
  const frame=f.frame();frame.players=frame.players.filter(p=>p.id!==players[1].playerId);call(host,'sync',{frame});assert.equal(call(players[2],'sync').frame.players.length,3);
@@ -46,6 +58,25 @@ function game(mode='leader'){
 test('四名战斗玩家控制独立，第三人击杀不记给房主，环境死亡不乱记分',()=>{
  const {g,actors,session}=game();session.inputs([{playerId:'1',action:'forward',active:true,angle:1,time:1},{playerId:'2',action:'left',active:true,angle:2,time:2}]);assert.ok(session.controls.get('1').keys.has('forward'));assert.ok(session.controls.get('2').keys.has('left'));assert.equal(session.controls.get('3').keys.size,0);
  g._kill(actors[1],{attacker:actors[2]});assert.equal(session.scores.get('2').kills,1);assert.equal(session.scores.get('0').kills,0);g._kill(actors[1],{attacker:actors[2]});assert.equal(session.scores.get('2').kills,1);g._kill(actors[3],{awardKill:false});assert.equal(session.scores.get('2').kills,1);assert.equal(session.snapshot().players.length,4);session.dispose();
+});
+
+test('房主发布实际受击阶段，正常和结束后的角色发布空阶段',()=>{
+ const {actors,session}=game();actors[1].combat.reactionPhase='down';
+ assert.equal(session.snapshot().players[1].reactionPhase,'down');assert.equal(session.snapshot().players[0].reactionPhase,null);
+ actors[1].combat.reactionPhase=null;assert.equal(session.snapshot().players[1].reactionPhase,null);session.dispose();
+});
+
+test('房主快照保留乾坤三形态，未设形态的旧角色使用刀形默认值',()=>{
+ const {actors,session}=game();assert.equal(session.snapshot().players[0].weaponMode,'blade');
+ for(const mode of ['blade','spear','sheath']){actors[1].combat.weaponMode=mode;assert.equal(session.snapshot().players[1].weaponMode,mode);}
+ session.dispose();
+});
+
+test('玩家离开后房主移除其飞镖飞轮，其他玩家的在途攻击继续保留',()=>{
+ const {g,actors,session}=game(),gone=actors[1],staying=actors[2];
+ const system=()=>({active:[{owner:gone},{owner:staying}],remove(shot){this.active.splice(this.active.indexOf(shot),1);}});
+ g.projectiles=system();g.wheels=system();session.reconcile({players:actors.filter(a=>a!==gone).map(a=>({id:a.networkId}))});
+ assert.equal(gone.disposed,true);for(const value of [g.projectiles,g.wheels]){assert.equal(value.active.length,1);assert.equal(value.active[0].owner,staying);}session.dispose();
 });
 test('死斗队友近战不造成伤害，死亡不自动复活，清空敌队后冻结结算',()=>{
  const {g,actors,session}=game('deathmatch');assert.equal(MeteorGame.prototype._applyNativeHit.call(g,actors[0],actors[2],{}, {},new T.Vector3()),false);

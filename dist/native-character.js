@@ -8,6 +8,19 @@ import {configureSourceMaterial} from './character-materials.js';
 // All input assets are read-only copies extracted by scripts/extract-character-assets.py.
 const baseURL=new URL('./assets/original/characters/',import.meta.url);
 const dataCache=new Map(), textureCache=new Map(), enhancedCache=new Map();
+// Parent labels are immutable BANIM metadata, shared by actors using the same
+// animation. Bound the cache so traversing every pose cannot retain all frames.
+const parentFrameCache=new WeakMap();
+function frameParents(animation,frame){
+  let cache=parentFrameCache.get(animation);
+  if(!cache){cache=new Map();parentFrameCache.set(animation,cache);}
+  if(cache.has(frame))return cache.get(frame);
+  const start=animation.frameOffset(frame)+20+animation.boneCount*16;
+  const parents=Array.from({length:animation.dummyCount},(_,i)=>animation.decoder.decode(animation.bytes.subarray(start+i*33,start+i*33+5)).replace(/\0+$/,''));
+  const result={parents,signature:parents.join('|')};cache.set(frame,result);
+  if(cache.size>128)cache.delete(cache.keys().next().value);
+  return result;
+}
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 export const DEFAULT_CHARACTER_APPEARANCE = 'liuchao';
 export const NATIVE_APPEARANCES=Object.freeze({
@@ -238,8 +251,7 @@ export function createNativeCharacter(data,options={}){
     boneNodes[0].position.set(rootMotion?root.x:0,rootMotion?root.y:0,root.z);
     for(let i=0;i<boneNodes.length;i++){readQ(v,o+20+i*16,qa);readQ(v,p+20+i*16,qb);boneNodes[i].quaternion.copy(qa).slerp(qb,t);}
     const start=o+20+a.boneCount*16,next=p+20+a.boneCount*16;
-    const parents=dummyNodes.map((_,i)=>a.decoder.decode(a.bytes.subarray(start+i*33,start+i*33+5)).replace(/\0+$/,''));
-    const signature=parents.join('|');
+    const {parents,signature}=frameParents(a,lo);
     if(signature!==previousParentNames){for(const dummy of dummyNodes)nativeSpace.add(dummy);for(let i=0;i<dummyNodes.length;i++){const parent=resolve(parents[i]);(parent||nativeSpace).add(dummyNodes[i]);}previousParentNames=signature;}
     for(let i=0;i<dummyNodes.length;i++){
       const x=start+i*33+5,y=next+i*33+5;

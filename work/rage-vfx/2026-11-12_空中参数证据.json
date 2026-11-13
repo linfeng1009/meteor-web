@@ -1,0 +1,42 @@
+{
+  "sampleSha256": "2479bc4bdf916d4a6386ed6352cfa9c5446708de9c1b5e859d4a674a3b42da94",
+  "scale": 0.08,
+  "constants": {
+    "normalJumpVelocity": {
+      "address": "0x5aa93c",
+      "float32Bytes": "00008d43",
+      "nativeValue": 282.0,
+      "worldValue": 22.56
+    },
+    "alternateJumpVelocity": {
+      "address": "0x5aa940",
+      "float32Bytes": "0080bb43",
+      "nativeValue": 375.0,
+      "worldValue": 30.0
+    },
+    "gravity": {
+      "instructionAddress": "0x4cb083",
+      "immediate": "0xc45c8000",
+      "nativeValue": -882.0,
+      "worldMagnitude": 70.56
+    }
+  },
+  "constructorInstructions": [
+    {
+      "address": "0x4cb077",
+      "instruction": "mov dword ptr [esi + 0xd0], edi",
+      "bytes": "89bed0000000"
+    },
+    {
+      "address": "0x4cb07d",
+      "instruction": "mov dword ptr [esi + 0xd4], edi",
+      "bytes": "89bed4000000"
+    },
+    {
+      "address": "0x4cb083",
+      "instruction": "mov dword ptr [esi + 0xd8], 0xc45c8000",
+      "bytes": "c786d800000000805cc4"
+    }
+  ],
+  "scope": "Static EXE evidence. No original runtime measurement; default jump argument0 only. Ordinary jump curve and ground/air steering still Web adapters."
+}

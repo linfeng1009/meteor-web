@@ -8,6 +8,15 @@ function fixture(){
   const motion=new NetworkReplicaMotion(),state={position:[0,0,0],angle:0,dead:false,source:0,frame:10};
   motion.receive(actor,state,.1);return {actor,motion,state};
 }
+
+test('房主收到客人操作后先跑固定物理步，再立即发布结果且不重复补发',()=>{
+  const {actor}=fixture(),peer=fixture().actor,events=[];actor.networkId='host';peer.networkId='guest';
+  const game={hero:actor,enemies:[peer],matchElapsed:0,pause(){},_updatePresentation(){},_stepWorld(){events.push('physics');}};
+  const session=new NetworkGame(game,{host:true,playerId:'host',send(){},flushFrame(){events.push('publish');}},{players:[{id:'host'},{id:'guest'}]});session.active=true;
+  try{session.inputs([{playerId:'guest',action:'look',angle:0,held:[]}]);assert.deepEqual(events,[]);
+    game._stepWorld(1/60);assert.deepEqual(events,['physics','publish']);game._stepWorld(1/60);assert.deepEqual(events,['physics','publish','physics']);
+  }finally{session.dispose();}
+});
 test('replica interpolates position, shortest angle and same-motion frames without simulating HP',()=>{
   const {actor,motion,state}=fixture();actor.root.rotation.y=Math.PI-.1;
   motion.receive(actor,{...state,position:[2,1,0],angle:-Math.PI+.1,frame:20},.1);
@@ -19,6 +28,14 @@ test('new snapshot blends from the displayed position rather than the unfinished
   const {actor,motion,state}=fixture();motion.receive(actor,{...state,position:[2,0,0]},.1);motion.update(actor,.025);
   assert.equal(actor.root.position.x,.5);motion.receive(actor,{...state,position:[3,0,0]},.1);assert.equal(actor.root.position.x,.5);
   motion.update(actor,.05);assert.equal(actor.root.position.x,1.75);
+});
+
+test('同一物理帧的重复状态不重置未完成的移动插值，也不反复采样静止骨骼',()=>{
+  const {actor,motion,state}=fixture(),next={...state,position:[2,0,0],frame:20};
+  motion.receive(actor,next,.1);motion.update(actor,.025);const sample=motion.samples.get(actor);
+  motion.receive(actor,next,.001);assert.equal(motion.samples.get(actor),sample);motion.update(actor,.075);
+  assert.equal(actor.root.position.x,2);assert.equal(actor.character.frame,20);
+  let calls=0;actor.character.setPoseFrame=()=>calls++;motion.receive(actor,next,.1);motion.update(actor,.1);assert.equal(calls,0);
 });
 test('death, respawn and large corrections snap and remain stable on the next render',()=>{
   const {actor,motion,state}=fixture();

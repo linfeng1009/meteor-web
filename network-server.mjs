@@ -30,9 +30,26 @@ const validInventory=s=>!!s&&(s.weaponId===undefined||weaponId(s.weaponId))&&(s.
 const validLoot=loot=>loot===undefined||!!loot&&Array.isArray(loot.consumed)&&loot.consumed.length<=512&&loot.consumed.every(name=>typeof name==='string'&&name.length<=128)&&Array.isArray(loot.drops)&&loot.drops.length<=64&&new Set(loot.drops.map(drop=>drop?.name)).size===loot.drops.length&&loot.drops.every(drop=>drop&&typeof drop.name==='string'&&/^web-drop-\d{1,12}$/.test(drop.name)&&weaponId(drop.weaponId)&&Array.isArray(drop.position)&&drop.position.length===3&&drop.position.every(n=>finite(n)&&Math.abs(n)<5000));
 const fail=(message,status=400)=>{throw Object.assign(Error(message),{status});};
 export class NetworkRooms{
-  constructor({now=()=>Date.now()}={}){this.rooms=new Map();this.now=now;}
+  constructor({now=()=>Date.now()}={}){this.rooms=new Map();this.now=now;this.listeners=new Map();this.notifications=new Map();}
+  subscribe(code,credential,callback){
+    this.request(code,credential,'sync',{}, {touch:false});
+    let peers=this.listeners.get(code);if(!peers)this.listeners.set(code,peers=new Map());
+    let entries=peers.get(credential);if(!entries)peers.set(credential,entries=new Set());
+    if(entries.size>=2)fail('实时连接数量已达上限',429);entries.add(callback);
+    return ()=>{entries.delete(callback);if(!entries.size)peers.delete(credential);if(!peers.size)this.listeners.delete(code);};
+  }
+  notify(code,audience='all'){
+    const pending=this.notifications.get(code);if(pending){pending.add(audience);return;}
+    const selected=new Set([audience]);this.notifications.set(code,selected);
+    setImmediate(()=>{this.notifications.delete(code);const room=this.rooms.get(code);
+      for(const [credential,entries] of this.listeners.get(code)||[]){
+        const role=room?.players[0].token===credential?'host':'guest';
+        if(!room||selected.has('all')||selected.has(role))for(const callback of [...entries])callback();
+      }
+    });
+  }
   list(){this.sweep();return {rooms:[...this.rooms.values()].map(r=>({code:r.code,hostName:r.players[0].name,mode:r.rules.mode,players:r.players.length,maxPlayers:r.rules.maxPlayers,phase:r.phase}))};}
-  public(room){return {code:room.code,revision:room.revision||0,round:room.round||0,protocol:NETWORK_PROTOCOL,...room.rules,phase:room.phase,hostId:room.hostId,map:'sifang',result:room.result||null,scores:(room.frame?.players||[]).map(p=>({id:p.id,kills:p.kills||0,deaths:p.deaths||0,dead:!!p.dead})),players:room.players.map(p=>({id:p.id,name:p.name,ready:p.ready,loaded:p.loaded,team:p.team,selection:p.selection}))};}
+  public(room){return {stream:1,code:room.code,revision:room.revision||0,round:room.round||0,protocol:NETWORK_PROTOCOL,...room.rules,phase:room.phase,hostId:room.hostId,map:'sifang',result:room.result||null,scores:(room.frame?.players||[]).map(p=>({id:p.id,kills:p.kills||0,deaths:p.deaths||0,dead:!!p.dead})),players:room.players.map(p=>({id:p.id,name:p.name,ready:p.ready,loaded:p.loaded,team:p.team,selection:p.selection}))};}
 
   remove(room,player){
     (room.removedIds||=new Set()).add(player.id);room.players=room.players.filter(p=>p!==player);if(room.phase!=='finished')room.frame=null;room.revision=(room.revision||0)+1;
@@ -42,19 +59,20 @@ export class NetworkRooms{
   player(name,selection){return {id:token().slice(0,12),token:token(),name:String(name||'江湖来客').trim().slice(0,16)||'江湖来客',selection:battleCharacterSelection(selection),seen:this.now(),ready:false,loaded:false,input:[],lastSequence:0,deliveredSequence:0,ackSequence:0};}
   create(name,options={}){this.sweep();if(this.rooms.size>=32)fail('房间数量已达上限');let rules;try{rules=roomRules(options);}catch{fail('房间规则无效');}const p=this.player(name,options.selection);p.team=1;let code;do{code=randomBytes(3).toString('hex').toUpperCase();}while(this.rooms.has(code));const r={code,hostId:p.id,phase:'waiting',rules,players:[p],frame:null,frameSequence:0};this.rooms.set(code,r);return {room:this.public(r),playerId:p.id,token:p.token};}
   join(code,name,selection){this.sweep();const r=this.rooms.get(code);if(!r)fail('房间不存在或房主已离开',404);if(r.phase!=='waiting'||r.players.length>=r.rules.maxPlayers)fail('房间已满或已经开局',409);const p=this.player(name,selection);p.team=r.players.filter(x=>x.team===1).length<=r.players.filter(x=>x.team===2).length?1:2;r.players.push(p);for(const x of r.players)x.ready=false;r.revision=(r.revision||0)+1;return {room:this.public(r),playerId:p.id,token:p.token};}
-  request(code,credential,operation,data={}){
-    this.sweep();const r=this.rooms.get(code);if(!r)fail('房间已关闭',404);const p=r.players.find(p=>p.token===credential);if(!p)fail('房间身份无效',403);p.seen=this.now();
+  request(code,credential,operation,data={}, {touch=true}={}){
+    this.sweep();const r=this.rooms.get(code);if(!r)fail('房间已关闭',404);const p=r.players.find(p=>p.token===credential);if(!p)fail('房间身份无效',403);if(touch)p.seen=this.now();
     const host=p.id===r.hostId;
     if(operation==='team'){if(r.phase!=='waiting'||![1,2].includes(data.team))fail('当前不能切换队伍');p.team=data.team;for(const x of r.players)x.ready=false;}
     else if(operation==='ready'){if(r.phase!=='waiting')fail('对战已开始');p.ready=data.ready===true;}
     else if(operation==='start'){if(!host)fail('只有房主可以开局',403);if(r.players.length<2||!r.players.every(p=>p.ready))fail('至少两名玩家且所有玩家均需准备');if(r.rules.mode==='deathmatch'&&new Set(r.players.map(p=>p.team)).size!==2)fail('死斗需要红蓝两队均有玩家');r.round=(r.round||0)+1;r.phase='loading';r.frame=null;r.result=null;r.frameSequence=0;for(const x of r.players){x.loaded=false;x.input=[];x.lastSequence=0;x.deliveredSequence=0;x.ackSequence=0;x.lastInputTime=null;}}
     else if(operation==='rematch'){if(!host||r.phase!=='finished')fail('当前不能重开',409);r.phase='waiting';r.frame=null;r.result=null;for(const x of r.players){x.ready=false;x.loaded=false;}}
     else if(operation==='loaded'){if(r.phase!=='loading')fail('当前不在载入阶段');p.loaded=true;if(r.players.every(p=>p.loaded))r.phase='playing';}
-    else if(operation==='leave'){if(host)this.rooms.delete(code);else this.remove(r,p);return {left:true};}
+    else if(operation==='leave'){if(host)this.rooms.delete(code);else this.remove(r,p);this.notify(code);return {left:true};}
     else if(operation==='sync'){
       if((data.input!==undefined||data.frame!==undefined||data.inputAck!==undefined)&&data.round!==(r.round||0))fail('对局已变化，请重新进入房间',409);
       if(r.phase!=='playing')return {room:this.public(r),input:[],acceptedSequence:p.lastSequence,frame:r.phase==='finished'&&!host?r.frame:null};
       if(host&&Array.isArray(data.frame?.players)&&data.frame.players.some(s=>r.removedIds?.has(s.id)))return {room:this.public(r),input:[],acceptedSequence:p.lastSequence,frame:null};
+      if(data.afterFrame!==undefined&&(!Number.isSafeInteger(data.afterFrame)||data.afterFrame<0||data.afterFrame>r.frameSequence))fail('状态确认无效');
       const additions=[],acknowledgements=[];
       if(data.input!==undefined){
         if(host||r.phase!=='playing')fail('当前不能提交操作',409);
@@ -90,7 +108,8 @@ export class NetworkRooms{
       if(q.length)x.deliveredSequence=Math.max(x.deliveredSequence,q.at(-1).sequence);
       if(this.now()-x.seen>1500)q.push({playerId:x.id,action:'clear',active:false,angle:0,sequence:0});return q;
     }):[];
-    return {room:this.public(r),input,acceptedSequence:p.lastSequence,frame:host?null:r.frame};
+    if(operation!=='sync')this.notify(code);else{if(data.frame)this.notify(code,'guest');if(data.input?.length)this.notify(code,'host');}
+    return {room:this.public(r),input,acceptedSequence:p.lastSequence,frame:host||r.frame&&r.frame.sequence<=data.afterFrame?null:r.frame};
   }
 }
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.png':'image/png','.jpg':'image/jpeg','.bmp':'image/bmp','.svg':'image/svg+xml','.mp3':'audio/mpeg','.wav':'audio/wav','.webp':'image/webp','.mjs':'text/javascript; charset=utf-8','.txt':'text/plain; charset=utf-8','.md':'text/plain; charset=utf-8'};
@@ -130,6 +149,23 @@ export function createNetworkServer({rooms=new NetworkRooms(),root=fileURLToPath
     try{
       const url=new URL(req.url,'http://localhost');
       if(url.pathname.startsWith('/api/')){
+        const events=url.pathname.match(/^\/api\/rooms\/([A-F0-9]{6})\/events$/);
+        if(events&&req.method==='GET'){
+          if(req.headers.origin&&new URL(req.headers.origin).host!==req.headers.host)fail('不允许跨站请求',403);
+          const code=events[1],credential=req.headers.authorization?.replace(/^Bearer /,'');
+          let blocked=false,dirty=false,heartbeat,unsubscribe;
+          const cleanup=()=>{clearInterval(heartbeat);unsubscribe?.();};
+          const send=()=>{
+            if(res.destroyed)return;if(blocked){dirty=true;return;}
+            try{const result=rooms.request(code,credential,'sync',{}, {touch:false});blocked=!res.write(JSON.stringify(result)+'\n');}
+            catch(error){res.end(JSON.stringify({error:error.status?error.message:'实时连接已断开'})+'\n');cleanup();}
+          };
+          unsubscribe=rooms.subscribe(code,credential,send);
+          req.socket.setNoDelay(true);
+          res.writeHead(200,{'Content-Type':'application/x-ndjson','Cache-Control':'no-store, no-transform','X-Accel-Buffering':'no','X-Content-Type-Options':'nosniff'});res.flushHeaders();
+          res.on('close',cleanup);res.on('drain',()=>{blocked=false;if(dirty){dirty=false;send();}});
+          heartbeat=setInterval(()=>{if(blocked){res.destroy();cleanup();}else res.write('\n');},5000);heartbeat.unref();send();return;
+        }
         if(req.method!=='POST')fail('只接受POST',405);if(req.headers.origin&&new URL(req.headers.origin).host!==req.headers.host)fail('不允许跨站请求',403);
         let raw='',size=0;for await(const chunk of req){size+=chunk.length;if(size>262144)fail('请求过大',413);raw+=chunk;}let data;try{data=JSON.parse(raw||'{}');}catch{fail('JSON无效');}
         let result;if(url.pathname==='/api/rooms/list')result=rooms.list();else if(url.pathname==='/api/rooms/create')result=rooms.create(data.name,data);else if(url.pathname==='/api/rooms/join')result=rooms.join(String(data.code||'').toUpperCase(),data.name,data.selection);else{const match=url.pathname.match(/^\/api\/rooms\/([A-F0-9]{6})\/(ready|start|loaded|sync|leave|team|rematch)$/);if(!match)fail('接口不存在',404);result=rooms.request(match[1],req.headers.authorization?.replace(/^Bearer /,''),match[2],data);}json(200,result);return;
